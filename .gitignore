@@ -1,0 +1,7 @@
+/.gradle
+/.idea
+/build
+/logs
+/*.log
+/test.html
+/resource/compass/.sass-cache

@@ -1,0 +1,2 @@
+include ':awesome-wicket-components'
+project(':awesome-wicket-components').projectDir = new File(settingsDir, '../awesome-wicket-components')

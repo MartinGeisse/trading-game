@@ -1,0 +1,76 @@
+
+group = 'name.martingeisse'
+version = '0.1'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+sourceSets {
+	main {
+		java {
+			srcDir 'src/main/generated'
+		}
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+
+	// logging (should be on top to take precedence over whatever versions other libraries try to include)
+	compile 'log4j:log4j:1.2.17'
+	compile 'org.slf4j:slf4j-api:1.7.14'
+	compile 'org.slf4j:slf4j-log4j12:1.7.14'
+
+	// JSRs
+	compile 'com.google.code.findbugs:jsr305:3.0.0'
+
+	// web server
+	compile 'javax.servlet:javax.servlet-api:3.1.0'
+
+	// common helper libraries
+	compile 'org.apache.commons:commons-lang3:3.0'
+	compile 'commons-io:commons-io:2.4'
+	compile 'commons-collections:commons-collections:3.2.1'
+	compile 'org.apache.commons:commons-exec:1.3'
+	compile 'com.google.guava:guava:18.0'
+	compile 'joda-time:joda-time:2.5'
+	compile 'commons-beanutils:commons-beanutils:1.9.2'
+	compile 'commons-codec:commons-codec:1.9'
+	
+	// dependency injection
+	compile 'com.google.inject:guice:4.0'
+	compile 'com.google.inject.extensions:guice-servlet:4.0'
+	compile 'com.google.inject.extensions:guice-multibindings:4.0'
+
+	// Wicket
+	compile('org.apache.wicket:wicket-core:7.1.0') {
+		exclude group: 'org.apache.wicket', module: 'wicket'
+	}
+	compile('org.apache.wicket:wicket-extensions:7.1.0') {
+		exclude group: 'org.apache.wicket', module: 'wicket'
+	}
+	compile('org.wicketstuff:wicketstuff-stateless:7.1.0') {
+		exclude group: 'org.apache.wicket', module: 'wicket'
+	}
+
+	// JSON
+	compile 'com.google.code.gson:gson:2.3'
+	
+	// awesome-wicket-components
+	compile project(':awesome-wicket-components')
+
+	// HTTP client (used for fake CDN)
+	compile 'org.apache.httpcomponents:httpcore:4.3.2'
+	compile 'org.apache.httpcomponents:httpmime:4.3.3'
+	compile 'org.apache.httpcomponents:httpclient:4.3.3'
+
+}

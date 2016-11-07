@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<style type="text/css">
+
+			.map .cell {
+				width: 64px;
+				height: 64px;
+				background-image: url(/wicket/resource/name/martingeisse/trading_game/gui/tiles/grass.png);
+			}
+
+			.message-view {
+				width: 300px;
+				height: 99%;
+				float: right;
+			}
+
+		</style>
+	</head>
+	<body>
+		<div wicket:id="messageView" class="message-view">
+			<div>messages</div>
+			<div>more messages</div>
+			<div>...</div>
+		</div>
+		<table class="map">
+			<tr wicket:id="rows" class="row">
+				<td wicket:id="cells" class="cell">&bsp;</td>
+			</tr>
+		</table>
+	</body>
+</html>
