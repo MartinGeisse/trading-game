@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2015 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -13,15 +13,15 @@ import com.google.inject.servlet.GuiceServletContextListener;
 /**
  * This listener initializes Guice and the plugin system on servlet context start.
  */
-public class BootstrappingServletContextListener extends GuiceServletContextListener {
+public class ServerApplicationBootstrapper extends GuiceServletContextListener {
 
-    // override
-    @Override
-    protected Injector getInjector() {
-    	Injector injector = Guice.createInjector(new ApplicationModule(), new MyServletModule());
-    	injector.getInstance(ApplicationBootstrapper.class).run();
-        return injector;
-    }
+	// override
+	@Override
+	protected Injector getInjector() {
+		Injector injector = Guice.createInjector(new ServerApplicationModule(), new WebModule());
+		injector.getInstance(ServerApplicationInitializer.class).run();
+		return injector;
+	}
 
 }
 

@@ -6,12 +6,6 @@
 
 package name.martingeisse.trading_game.gui.wicket;
 
-import java.util.Set;
-import org.apache.wicket.Page;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.request.IExceptionMapper;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.IProvider;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -19,6 +13,13 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import name.martingeisse.trading_game.gui.MainPage;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
+import org.apache.wicket.Page;
+import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.IExceptionMapper;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.IProvider;
+
+import java.util.Set;
 
 /**
  * The Wicket {@link WebApplication} implementation.

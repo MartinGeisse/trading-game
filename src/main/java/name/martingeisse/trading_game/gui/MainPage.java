@@ -8,9 +8,7 @@ package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.list.Loop;

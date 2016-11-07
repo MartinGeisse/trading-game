@@ -6,12 +6,12 @@
 
 package name.martingeisse.trading_game.gui.util;
 
+import name.martingeisse.wicket.internal.JsUtil;
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.cycle.RequestCycle;
-import name.martingeisse.wicket.internal.JsUtil;
 
 /**
  * Utility methods to deal with AJAX requests and specifically

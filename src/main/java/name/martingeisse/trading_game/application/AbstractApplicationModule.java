@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2016 Martin Geisse
+ *
+ * This file is distributed under the terms of the MIT license.
+ */
 package name.martingeisse.trading_game.application;
 
 import com.google.inject.AbstractModule;
@@ -7,7 +12,7 @@ import com.google.inject.multibindings.Multibinder;
 /**
  *
  */
-public class ApplicationModule extends AbstractModule {
+public abstract class AbstractApplicationModule extends AbstractModule {
 
 	@Override
 	protected void configure() {

@@ -6,12 +6,13 @@
 
 package name.martingeisse.trading_game.gui.util;
 
+import name.martingeisse.trading_game.gui.wicket.MyWicketApplication;
+import org.apache.wicket.model.AbstractReadOnlyModel;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import org.apache.wicket.model.AbstractReadOnlyModel;
-import name.martingeisse.trading_game.gui.wicket.MyWicketApplication;
 
 /**
  * Model for a dependency set.

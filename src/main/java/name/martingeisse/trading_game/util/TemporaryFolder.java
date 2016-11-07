@@ -6,10 +6,11 @@
 
 package name.martingeisse.trading_game.util;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import org.apache.commons.io.FileUtils;
 
 /**
  * Each instance of this class corresponds to a temporary folder for

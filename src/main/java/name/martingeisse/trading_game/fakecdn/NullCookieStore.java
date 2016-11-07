@@ -4,12 +4,12 @@
 
 package name.martingeisse.trading_game.fakecdn;
 
+import org.apache.http.client.CookieStore;
+import org.apache.http.cookie.Cookie;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.http.client.CookieStore;
-import org.apache.http.cookie.Cookie;
 
 /**
  * A {@link CookieStore} implementation that does not store any cookies.

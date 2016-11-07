@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * This module provides the low-level servlet objects.
  */
-public class MyServletModule extends ServletModule {
+public class WebModule extends ServletModule {
 
 	// override
 	@Override

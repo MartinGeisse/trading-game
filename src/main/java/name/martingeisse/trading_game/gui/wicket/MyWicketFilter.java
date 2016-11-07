@@ -6,11 +6,11 @@
 
 package name.martingeisse.trading_game.gui.wicket;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import org.apache.wicket.protocol.http.IWebApplicationFactory;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WicketFilter;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 /**
  * Extends the regular Wicket filter to create the application object using
