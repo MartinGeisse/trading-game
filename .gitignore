@@ -1,6 +1,7 @@
 /.gradle
-/.idea
 /build
+/.idea
+/.classes
 /logs
 /*.log
 /test.html
