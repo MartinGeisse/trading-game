@@ -9,13 +9,50 @@ package name.martingeisse.trading_game.application;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
+import name.martingeisse.trading_game.util.logging.JulToLog4jBridge;
+import name.martingeisse.trading_game.util.logging.MyLayout;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.web.Log4jServletContextListener;
+
+import javax.servlet.ServletContextEvent;
 
 /**
  * This listener initializes Guice and the plugin system on servlet context start.
  */
 public class ServerApplicationBootstrapper extends GuiceServletContextListener {
 
-	// override
+	private final Log4jServletContextListener log4jListener = new Log4jServletContextListener();
+	private Injector injector;
+
+	@Override
+	public void contextInitialized(ServletContextEvent servletContextEvent) {
+		if (MyLayout.instanceSource != null) {
+			throw new IllegalStateException("log4j initialized too early!", MyLayout.instanceSource);
+		}
+		log4jListener.contextInitialized(servletContextEvent);
+		LogManager.getLogger().info("starting application...");
+		JulToLog4jBridge.enable();
+		super.contextInitialized(servletContextEvent);
+	}
+
+	@Override
+	public void contextDestroyed(ServletContextEvent servletContextEvent) {
+		LogManager.getLogger().info("application shutdown requested...");
+
+		// remove injector from the servlet context first, so we don't accept any new HTTP requests
+		super.contextDestroyed(servletContextEvent);
+
+		// clean up the application (currently nothing to do)
+		if (injector != null) {
+			// ...
+		}
+
+		// shut down logging last
+		LogManager.getLogger().info("application shutdown completed!");
+		log4jListener.contextDestroyed(servletContextEvent);
+
+	}
+
 	@Override
 	protected Injector getInjector() {
 		Injector injector = Guice.createInjector(new ServerApplicationModule(), new WebModule());

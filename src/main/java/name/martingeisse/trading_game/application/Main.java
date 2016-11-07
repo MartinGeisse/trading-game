@@ -43,7 +43,7 @@ public final class Main {
 		servletHandler.addServletWithMapping(NopServlet.class, "/*");
 
 		ServletContextHandler contextHandler = new ServletContextHandler();
-		contextHandler.setContextPath("/companion");
+		contextHandler.setContextPath("/trading_game");
 		contextHandler.setServletHandler(servletHandler);
 		contextHandler.setInitParameter("logfilePath", "logs");
 		contextHandler.addEventListener(new ServerApplicationBootstrapper());

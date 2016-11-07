@@ -26,9 +26,10 @@ repositories {
 dependencies {
 
 	// logging (should be on top to take precedence over whatever versions other libraries try to include)
-	compile 'log4j:log4j:1.2.17'
-	compile 'org.slf4j:slf4j-api:1.7.14'
-	compile 'org.slf4j:slf4j-log4j12:1.7.14'
+	compile 'org.apache.logging.log4j:log4j-api:2.5'
+	compile 'org.apache.logging.log4j:log4j-core:2.5'
+	compile 'org.apache.logging.log4j:log4j-web:2.5'
+	compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.5'
 
 	// JSRs
 	compile 'com.google.code.findbugs:jsr305:3.0.0'

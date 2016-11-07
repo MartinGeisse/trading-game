@@ -1,0 +1,76 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<Configuration status="WARN"
+               packages="name.martingeisse.trading_game.util.logging">
+    <Appenders>
+
+        <!--
+            This appender is not used on LIVE, but can be enabled temporarily for single-package loggers during
+            development. Since it is not typically used for the root logger, it doesn't have the usual filters.
+        -->
+        <Console name="console" target="SYSTEM_OUT">
+            <MyLayout/>
+        </Console>
+
+        <!-- post-hoc debugging logfile -->
+        <RollingRandomAccessFile name="debug"
+                                 immediateFlush="false"
+                                 fileName="${myweb:initParam.logfilePath}/debug.log"
+                                 filePattern="${myweb:initParam.logfilePath}/debug-%i.log">
+            <Filters>
+                <ThresholdFilter level="DEBUG"/>
+                <LibraryFilter level="INFO"/>
+            </Filters>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+            <MyLayout/>
+        </RollingRandomAccessFile>
+
+        <!-- error logfile -->
+        <RollingRandomAccessFile name="error"
+                                 immediateFlush="false" fileName="${myweb:initParam.logfilePath}/error.log"
+                                 filePattern="${myweb:initParam.logfilePath}/error-%i.log">
+            <Filters>
+                <ThresholdFilter level="WARN"/>
+                <LibraryFilter level="OFF"/>
+            </Filters>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+            <MyLayout/>
+        </RollingRandomAccessFile>
+
+        <!-- emergency error logfile -->
+        <RollingRandomAccessFile name="emergency"
+                                 immediateFlush="false"
+                                 fileName="${myweb:initParam.logfilePath}/emergency.log"
+                                 filePattern="${myweb:initParam.logfilePath}/emergency-%i.log">
+            <Filters>
+                <ThresholdFilter level="FATAL"/>
+                <LibraryFilter level="OFF"/>
+            </Filters>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+            <MyLayout/>
+        </RollingRandomAccessFile>
+
+    </Appenders>
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="debug"/>
+            <AppenderRef ref="error"/>
+            <AppenderRef ref="emergency"/>
+        </Root>
+        <!--
+        <Logger name="name.martingeisse.trading_game.Foo" level="INFO"
+                additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        -->
+    </Loggers>
+</Configuration>
