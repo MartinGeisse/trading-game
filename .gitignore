@@ -6,3 +6,4 @@
 /*.log
 /test.html
 /resource/compass/.sass-cache
+.DS_Store
