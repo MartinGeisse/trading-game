@@ -4,12 +4,18 @@ import name.martingeisse.trading_game.game.action.PlayerAction;
 import name.martingeisse.trading_game.game.action.PlayerActionProgress;
 import name.martingeisse.trading_game.game.item.Inventory;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 /**
  *
  */
 public final class Player {
 
 	private final Inventory inventory = new Inventory();
+	private final List<PlayerAction> pendingActions = new ArrayList<>();
 	private PlayerActionProgress actionProgress;
 
 	/**
@@ -22,18 +28,39 @@ public final class Player {
 	}
 
 	/**
-	 * Starts a new action, interrupting whatever action was in progress.
+	 * Getter method.
 	 *
-	 * @param action the action to start
+	 * @return the pendingActions
 	 */
-	public void startAction(PlayerAction action) {
-		actionProgress = new PlayerActionProgress(action);
+	public List<PlayerAction> getPendingActions() {
+		return pendingActions;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the actionProgress
+	 */
+	public PlayerActionProgress getActionProgress() {
+		return actionProgress;
+	}
+
+	/**
+	 * Schedules an action to be performed after all currently pending actions.
+	 *
+	 * @param action the action to schedule
+	 */
+	public void scheduleAction(PlayerAction action) {
+		pendingActions.add(action);
 	}
 
 	/**
 	 * Advances game logic.
 	 */
 	void tick() {
+		if (actionProgress == null && !pendingActions.isEmpty()) {
+			actionProgress = new PlayerActionProgress(pendingActions.remove(0));
+		}
 		if (actionProgress != null) {
 			actionProgress.advance(1);
 			if (actionProgress.isFinishable()) {

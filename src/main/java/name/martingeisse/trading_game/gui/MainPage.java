@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2015 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -43,11 +43,18 @@ public class MainPage extends AbstractPage {
 			@Override
 			public void onClick() {
 				Player player = game.getPlayer();
-				player.startAction(new CreateRedPixelAction(player));
+				player.scheduleAction(new CreateRedPixelAction(player));
 			}
 		});
 
 		add(new Label("currentAction", new PropertyModel<>(game, "player.actionProgress")));
+
+		add(new ListView<PlayerAction>("pendingActions", new PropertyModel<>(game, "player.pendingActions")) {
+			@Override
+			protected void populateItem(ListItem<PlayerAction> item) {
+				item.add(new Label("text", item.getModelObject().toString()));
+			}
+		});
 
 		add(new ListView<ItemStack>("itemStacks", game.getPlayer().getInventory().getItemStacks()) {
 			@Override
