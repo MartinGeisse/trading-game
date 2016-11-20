@@ -9,11 +9,13 @@
 			<h2>Actions</h2>
 			<div><a wicket:id="createRedPixelLink">Create red pixel.</a></div>
 			<div>
-				Current action: <span wicket:id="currentAction"></span>
-                <wicket:enclosure>
+				Current action:
+                <wicket:enclosure child="currentAction">
+					<span wicket:id="currentAction"></span>
                     <div class="progress" style="display: inline-block; width: 200px; margin-bottom: 0px; vertical-align: bottom; ">
                         <div class="progress-bar" wicket:id="currentActionProgressBar" />
                     </div>
+					<a wicket:id="cancelCurrentActionLink" class="glyphicon glyphicon-remove"></a>
                 </wicket:enclosure>
 			</div>
 			<div>

@@ -55,6 +55,24 @@ public final class Player {
 	}
 
 	/**
+	 * Cancels the currently executed action (if any).
+	 */
+	public void cancelCurrentAction() {
+		actionProgress = null;
+	}
+
+	/**
+	 * Cancels the pending action at the specified index.
+	 *
+	 * @param index the index of the action to cancel
+	 */
+	public void cancelPendingAction(int index) {
+		if (index >= 0 && index < pendingActions.size()) {
+			pendingActions.remove(index);
+		}
+	}
+
+	/**
 	 * Advances game logic.
 	 */
 	void tick() {

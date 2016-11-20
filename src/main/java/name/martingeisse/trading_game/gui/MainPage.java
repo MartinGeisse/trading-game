@@ -49,14 +49,13 @@ public class MainPage extends AbstractPage {
 			}
 		});
 
-		add(new Label("currentAction", new PropertyModel<>(game, "player.actionProgress.action")));
-		add(new WebComponent("currentActionProgressBar") {
-
+		add(new Label("currentAction", new PropertyModel<>(game, "player.actionProgress.action")) {
 			@Override
 			public boolean isVisible() {
-				return game.getPlayer().getActionProgress() != null;
+				return (getDefaultModelObject() != null);
 			}
-
+		});
+		add(new WebComponent("currentActionProgressBar") {
 			@Override
 			protected void onComponentTag(ComponentTag tag) {
 				super.onComponentTag(tag);
@@ -65,7 +64,12 @@ public class MainPage extends AbstractPage {
 					tag.put("style", "width: " + actionProgress.getProgressPoints() * 100 / actionProgress.getAction().getRequiredProgressPoints() + "%");
 				}
 			}
-
+		});
+		add(new Link<Void>("cancelCurrentActionLink") {
+			@Override
+			public void onClick() {
+				game.getPlayer().cancelCurrentAction();
+			}
 		});
 
 		add(new ListView<PlayerAction>("pendingActions", new PropertyModel<>(game, "player.pendingActions")) {
