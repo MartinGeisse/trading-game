@@ -76,6 +76,12 @@ public class MainPage extends AbstractPage {
 			@Override
 			protected void populateItem(ListItem<PlayerAction> item) {
 				item.add(new Label("text", item.getModelObject().toString()));
+				add(new Link<Void>("cancelLink") {
+					@Override
+					public void onClick() {
+						game.getPlayer().cancelPendingAction(item.getIndex());
+					}
+				});
 			}
 		});
 
