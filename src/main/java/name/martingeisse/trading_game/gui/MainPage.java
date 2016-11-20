@@ -10,11 +10,13 @@ import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.CreateRedPixelAction;
 import name.martingeisse.trading_game.game.action.PlayerAction;
+import name.martingeisse.trading_game.game.action.PlayerActionProgress;
 import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -47,7 +49,24 @@ public class MainPage extends AbstractPage {
 			}
 		});
 
-		add(new Label("currentAction", new PropertyModel<>(game, "player.actionProgress")));
+		add(new Label("currentAction", new PropertyModel<>(game, "player.actionProgress.action")));
+		add(new WebComponent("currentActionProgressBar") {
+
+			@Override
+			public boolean isVisible() {
+				return game.getPlayer().getActionProgress() != null;
+			}
+
+			@Override
+			protected void onComponentTag(ComponentTag tag) {
+				super.onComponentTag(tag);
+				PlayerActionProgress actionProgress = game.getPlayer().getActionProgress();
+				if (actionProgress != null) {
+					tag.put("style", "width: " + actionProgress.getProgressPoints() * 100 / actionProgress.getAction().getRequiredProgressPoints() + "%");
+				}
+			}
+
+		});
 
 		add(new ListView<PlayerAction>("pendingActions", new PropertyModel<>(game, "player.pendingActions")) {
 			@Override
