@@ -1,32 +1,23 @@
 package name.martingeisse.trading_game.game;
 
 import name.martingeisse.trading_game.game.action.PlayerActionProgress;
+import name.martingeisse.trading_game.game.item.Inventory;
 
 /**
  *
  */
 public final class Player {
 
-	private int x;
-	private int y;
+	private final Inventory inventory = new Inventory();
 	private PlayerActionProgress actionProgress;
 
 	/**
 	 * Getter method.
 	 *
-	 * @return the x
+	 * @return the inventory
 	 */
-	public int getX() {
-		return x;
-	}
-
-	/**
-	 * Getter method.
-	 *
-	 * @return the y
-	 */
-	public int getY() {
-		return y;
+	public Inventory getInventory() {
+		return inventory;
 	}
 
 	/**

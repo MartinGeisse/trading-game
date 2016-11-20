@@ -8,11 +8,9 @@ import java.util.TimerTask;
  */
 public final class Game {
 
-	private final Map map;
 	private final Player player;
 
 	public Game() {
-		this.map = new Map();
 		this.player = new Player();
 		new Timer(true).schedule(new TimerTask() {
 			@Override
@@ -20,15 +18,6 @@ public final class Game {
 				tick();
 			}
 		}, 100);
-	}
-
-	/**
-	 * Getter method.
-	 *
-	 * @return the map
-	 */
-	public Map getMap() {
-		return map;
 	}
 
 	/**
