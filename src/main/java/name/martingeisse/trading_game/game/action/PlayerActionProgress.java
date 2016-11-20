@@ -47,4 +47,9 @@ public final class PlayerActionProgress {
 		action.finish();
 	}
 
+	@Override
+	public String toString() {
+		return action.getClass() + " (" + progressPoints + " / " + action.getRequiredProgressPoints() + ")";
+	}
+
 }

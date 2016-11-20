@@ -17,7 +17,7 @@ public final class Game {
 			public void run() {
 				tick();
 			}
-		}, 100);
+		}, 0, 100);
 	}
 
 	/**
@@ -33,7 +33,7 @@ public final class Game {
 	 * Called once every 100 msec to advance the game logic.
 	 */
 	private synchronized void tick() {
-
+		player.tick();
 	}
 
 }
