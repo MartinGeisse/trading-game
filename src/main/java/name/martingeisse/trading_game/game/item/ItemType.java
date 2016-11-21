@@ -7,6 +7,8 @@ package name.martingeisse.trading_game.game.item;
  */
 public enum ItemType {
 
-	RED_PIXEL;
+	RED_PIXEL,
+
+	RED_PIXEL_ASSEMBLY;
 
 }

@@ -36,6 +36,30 @@ public final class FixedInventory {
 		return new FixedInventory(ImmutableList.copyOf(itemStacks));
 	}
 
+	public static FixedInventory from(FixedItemStack stack1) {
+		return new FixedInventory(ImmutableList.of(stack1));
+	}
+
+	public static FixedInventory from(FixedItemStack stack1, FixedItemStack stack2) {
+		return new FixedInventory(ImmutableList.of(stack1, stack2));
+	}
+
+	public static FixedInventory from(FixedItemStack stack1, FixedItemStack stack2, FixedItemStack stack3) {
+		return new FixedInventory(ImmutableList.of(stack1, stack2, stack3));
+	}
+
+	public static FixedInventory from(ItemType itemType1, int amount1) {
+		return from(new FixedItemStack(itemType1, amount1));
+	}
+
+	public static FixedInventory from(ItemType itemType1, int amount1, ItemType itemType2, int amount2) {
+		return from(new FixedItemStack(itemType1, amount1), new FixedItemStack(itemType2, amount2));
+	}
+
+	public static FixedInventory from(ItemType itemType1, int amount1, ItemType itemType2, int amount2, ItemType itemType3, int amount3) {
+		return from(new FixedItemStack(itemType1, amount1), new FixedItemStack(itemType2, amount2), new FixedItemStack(itemType3, amount3));
+	}
+
 	/**
 	 * Getter method.
 	 *

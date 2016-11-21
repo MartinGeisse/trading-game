@@ -41,16 +41,17 @@ public class Inventory {
 		return result;
 	}
 
-	public void add(ItemType itemType) {
+	public Inventory add(ItemType itemType) {
 		add(itemType, 1);
+		return this;
 	}
 
-	public void add(ItemType itemType, int amount) {
+	public Inventory add(ItemType itemType, int amount) {
 		if (amount < 0) {
 			throw new IllegalArgumentException("amount is negative");
 		}
 		if (amount == 0) {
-			return;
+			return this;
 		}
 		ItemStack itemStack = find(itemType);
 		if (itemStack == null) {
@@ -59,13 +60,15 @@ public class Inventory {
 		} else {
 			itemStack.add(amount);
 		}
+		return this;
 	}
 
-	public void remove(ItemType itemType) throws NotEnoughItemsException {
+	public Inventory remove(ItemType itemType) throws NotEnoughItemsException {
 		remove(itemType, 1);
+		return this;
 	}
 
-	public void remove(ItemType itemType, int amount) throws NotEnoughItemsException {
+	public Inventory remove(ItemType itemType, int amount) throws NotEnoughItemsException {
 
 		// first check if there are enough items, so we don't mess up the item stacks if not
 		if (count(itemType) < amount) {
@@ -77,16 +80,17 @@ public class Inventory {
 			ItemStack itemStack = find(itemType);
 			if (itemStack.getSize() > amount) {
 				itemStack.remove(amount);
-				return;
+				return this;
 			} else if (itemStack.getSize() == amount) {
 				itemStacks.remove(itemStack);
-				return;
+				return this;
 			} else {
 				itemStacks.remove(itemStack);
 				amount -= itemStack.getSize();
 			}
 		}
 
+		return this;
 	}
 
 }

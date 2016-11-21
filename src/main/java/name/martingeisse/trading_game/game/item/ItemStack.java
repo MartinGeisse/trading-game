@@ -36,18 +36,20 @@ public final class ItemStack {
 	 *
 	 * @param size the size
 	 */
-	public void setSize(int size) {
+	public ItemStack setSize(int size) {
 		this.size = size;
+		return this;
 	}
 
-	public void add(int amount) {
+	public ItemStack add(int amount) {
 		if (amount < 0) {
 			throw new IllegalArgumentException("amount is negative");
 		}
 		size += amount;
+		return this;
 	}
 
-	public void remove(int amount) throws NotEnoughItemsException {
+	public ItemStack remove(int amount) throws NotEnoughItemsException {
 		if (amount < 0) {
 			throw new IllegalArgumentException("amount is negative");
 		}
@@ -55,6 +57,7 @@ public final class ItemStack {
 			throw new NotEnoughItemsException();
 		}
 		size -= amount;
+		return this;
 	}
 
 }
