@@ -64,7 +64,10 @@ public final class FakeCdn {
 	 * 
 	 */
 	private FakeCdnRecord fetch(String key) throws IOException {
-		HttpResponse response = fetchResponse("http://localhost/foo" + key);
+		// TODO make sure that timestamp-protected resources cannot be "poisoned" by sending requests
+		// with future timestamps. Maybe just use signed URLs -- they can be stored / cached to avoid the
+		// calculation of an MD5 each time.
+		HttpResponse response = fetchResponse("http://localhost" + key);
 		byte[] data;
 		try (InputStream responseStream = response.getEntity().getContent()) {
 			data = IOUtils.toByteArray(responseStream);
@@ -78,7 +81,7 @@ public final class FakeCdn {
 	private HttpResponse fetchResponse(String url) throws IOException {
 		HttpClientConnectionManager connectionManager = new BasicHttpClientConnectionManager();
 		HttpClient client = HttpClients.custom().setConnectionManager(connectionManager).setDefaultCookieStore(new NullCookieStore()).build();
-		while (true) {
+		for (int i=0; i<10; i++) {
 			HttpUriRequest request = new HttpGet(url);
 			HttpResponse response = client.execute(request);
 			int statusCode = response.getStatusLine().getStatusCode();
@@ -90,6 +93,7 @@ public final class FakeCdn {
 				throw new IOException("redirect without location header");
 			}
 		}
+		throw new IOException("too many redirects");
 	}
 
 }
