@@ -12,12 +12,14 @@ import name.martingeisse.trading_game.game.action.CreateRedPixelAction;
 import name.martingeisse.trading_game.game.action.PlayerAction;
 import name.martingeisse.trading_game.game.action.PlayerActionProgress;
 import name.martingeisse.trading_game.game.item.ItemStack;
+import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -90,6 +92,7 @@ public class MainPage extends AbstractPage {
 			protected void populateItem(ListItem<ItemStack> item) {
 				item.add(new Label("size", "" + item.getModelObject().getSize()));
 				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
+				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
 			}
 		});
 
