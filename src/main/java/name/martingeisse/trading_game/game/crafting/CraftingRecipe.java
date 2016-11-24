@@ -9,7 +9,8 @@ import name.martingeisse.trading_game.game.item.ItemType;
  */
 public enum CraftingRecipe {
 
-	RED_PIXEL_ASSEMBLY(300, FixedInventory.from(ItemType.RED_PIXEL, 5), ItemType.RED_PIXEL_ASSEMBLY);
+	// TODO RED_PIXEL_ASSEMBLY(300, FixedInventory.from(ItemType.RED_PIXEL, 5), ItemType.RED_PIXEL_ASSEMBLY);
+	RED_PIXEL_ASSEMBLY(60, FixedInventory.from(ItemType.RED_PIXEL, 5), ItemType.RED_PIXEL_ASSEMBLY);
 
 	private final int requiredProgressPoints;
 	private final FixedInventory billOfMaterials;

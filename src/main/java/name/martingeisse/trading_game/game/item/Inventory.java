@@ -46,6 +46,17 @@ public class Inventory {
 		return this;
 	}
 
+	public Inventory add(FixedInventory items) {
+		for (FixedItemStack stack : items.getItemStacks()) {
+			add(stack);
+		}
+		return this;
+	}
+
+	public Inventory add(FixedItemStack stack) {
+		return add(stack.getItemType(), stack.getSize());
+	}
+
 	public Inventory add(ItemType itemType, int amount) {
 		if (amount < 0) {
 			throw new IllegalArgumentException("amount is negative");

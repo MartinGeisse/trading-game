@@ -5,6 +5,7 @@ import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.ItemType;
+import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 
 /**
  *
@@ -19,8 +20,24 @@ public class CraftingAction extends PlayerAction {
 	}
 
 	@Override
-	public void finish() {
-		getPlayer().getInventory().add(ItemType.RED_PIXEL);
+	public boolean onStart() {
+		try {
+			getPlayer().reserveActionItems(recipe.getBillOfMaterials());
+			return true;
+		} catch (NotEnoughItemsException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public void onCancel() {
+		getPlayer().putBackActionItems();
+	}
+
+	@Override
+	public void onFinish() {
+		getPlayer().consumeActionItems();
+		getPlayer().getInventory().add(recipe.getProducts());
 	}
 
 	@Override

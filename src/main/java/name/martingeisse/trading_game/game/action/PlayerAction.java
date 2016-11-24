@@ -33,6 +33,24 @@ public abstract class PlayerAction {
 		return requiredProgressPoints;
 	}
 
-	public abstract void finish();
+	/**
+	 * Called when the player starts performing the action.
+	 *
+	 * @return true to proceed, false to fail the action immediately
+	 */
+	public boolean onStart() {
+		return true;
+	}
+
+	/**
+	 * Called when the player cancels the action.
+	 */
+	public void onCancel() {
+	}
+
+	/**
+	 * Called when the player finishes the action.
+	 */
+	public abstract void onFinish();
 
 }

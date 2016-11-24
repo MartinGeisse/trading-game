@@ -8,9 +8,11 @@ package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.action.CraftingAction;
 import name.martingeisse.trading_game.game.action.CreateRedPixelAction;
 import name.martingeisse.trading_game.game.action.PlayerAction;
 import name.martingeisse.trading_game.game.action.PlayerActionProgress;
+import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
@@ -42,12 +44,18 @@ public class MainPage extends AbstractPage {
 		this.game = new Game();
 		add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
 
-
 		add(new Link<Void>("createRedPixelLink") {
 			@Override
 			public void onClick() {
 				Player player = game.getPlayer();
 				player.scheduleAction(new CreateRedPixelAction(player));
+			}
+		});
+		add(new Link<Void>("createRedPixelAssemblyLink") {
+			@Override
+			public void onClick() {
+				Player player = game.getPlayer();
+				player.scheduleAction(new CraftingAction(player, CraftingRecipe.RED_PIXEL_ASSEMBLY));
 			}
 		});
 

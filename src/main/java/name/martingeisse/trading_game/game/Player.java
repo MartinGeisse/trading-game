@@ -2,7 +2,10 @@ package name.martingeisse.trading_game.game;
 
 import name.martingeisse.trading_game.game.action.PlayerAction;
 import name.martingeisse.trading_game.game.action.PlayerActionProgress;
+import name.martingeisse.trading_game.game.item.FixedInventory;
+import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.Inventory;
+import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,6 +20,7 @@ public final class Player {
 	private final Inventory inventory = new Inventory();
 	private final List<PlayerAction> pendingActions = new ArrayList<>();
 	private PlayerActionProgress actionProgress;
+	private FixedInventory actionItems;
 
 	/**
 	 * Getter method.
@@ -58,6 +62,7 @@ public final class Player {
 	 * Cancels the currently executed action (if any).
 	 */
 	public void cancelCurrentAction() {
+		actionProgress.getAction().onCancel();
 		actionProgress = null;
 	}
 
@@ -73,11 +78,61 @@ public final class Player {
 	}
 
 	/**
+	 * Reserves items from the inventory for an action.
+	 *
+	 * The BOM must be valid according to {@link FixedInventory#isValidBillOfMaterials()}.
+	 *
+	 * @throws NotEnoughItemsException if the player doesn't have the required items
+	 */
+	public void reserveActionItems(FixedInventory billOfMaterials) throws NotEnoughItemsException {
+		if (actionItems != null) {
+			throw new IllegalStateException("action items already set");
+		}
+		for (FixedItemStack stack : billOfMaterials.getItemStacks()) {
+			if (inventory.count(stack.getItemType()) < stack.getSize()) {
+				throw new NotEnoughItemsException();
+			}
+		}
+		for (FixedItemStack stack : billOfMaterials.getItemStacks()) {
+			try {
+				inventory.remove(stack.getItemType(), stack.getSize());
+			} catch (NotEnoughItemsException e) {
+				throw new RuntimeException("could not remove items for action -- inventory is not inconsistent");
+			}
+		}
+		this.actionItems = billOfMaterials;
+	}
+
+	/**
+	 * Puts the current action items back into the inventory.
+	 */
+	public void putBackActionItems() {
+		if (actionItems == null) {
+			throw new IllegalStateException("no action items");
+		}
+		inventory.add(actionItems);
+		actionItems = null;
+	}
+
+	/**
+	 * Consumes the action items.
+	 */
+	public void consumeActionItems() {
+		if (actionItems == null) {
+			throw new IllegalStateException("no action items");
+		}
+		actionItems = null;
+	}
+
+	/**
 	 * Advances game logic.
 	 */
 	void tick() {
-		if (actionProgress == null && !pendingActions.isEmpty()) {
-			actionProgress = new PlayerActionProgress(pendingActions.remove(0));
+		while (actionProgress == null && !pendingActions.isEmpty()) {
+			PlayerAction action = pendingActions.remove(0);
+			if (action.onStart()) {
+				actionProgress = new PlayerActionProgress(action);
+			}
 		}
 		if (actionProgress != null) {
 			actionProgress.advance(1);

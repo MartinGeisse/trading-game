@@ -44,7 +44,7 @@ public final class PlayerActionProgress {
 		if (!isFinishable()) {
 			throw new IllegalStateException("this action cannot be finished");
 		}
-		action.finish();
+		action.onFinish();
 	}
 
 	@Override

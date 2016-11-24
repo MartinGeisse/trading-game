@@ -79,4 +79,27 @@ public final class FixedInventory {
 		return result;
 	}
 
+	/**
+	 * Checks whether this object is valid for use as a bill of materials.
+	 *
+	 * This ensures that no two stacks in this object have the same item type.
+	 */
+	public boolean isValidBillOfMaterials() {
+		for (FixedItemStack stack1 : itemStacks) {
+			boolean found = false;
+			for (FixedItemStack stack2 : itemStacks) {
+				if (!found) {
+					if (stack1 == stack2) {
+						found = true;
+					}
+				} else {
+					if (stack1.getItemType() == stack2.getItemType()) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
 }

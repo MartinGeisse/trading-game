@@ -15,7 +15,7 @@ public final class CreateRedPixelAction extends PlayerAction {
 	}
 
 	@Override
-	public void finish() {
+	public void onFinish() {
 		getPlayer().getInventory().add(ItemType.RED_PIXEL);
 	}
 
