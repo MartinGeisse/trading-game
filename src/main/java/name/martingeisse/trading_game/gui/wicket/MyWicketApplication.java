@@ -14,8 +14,11 @@ import com.google.inject.util.Types;
 import name.martingeisse.trading_game.gui.MainPage;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import org.apache.wicket.Page;
+import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IExceptionMapper;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.IProvider;
 
@@ -172,6 +175,11 @@ public class MyWicketApplication extends WebApplication {
 				return new MyExceptionMapper();
 			}
 		};
+	}
+
+	@Override
+	public Session newSession(Request request, Response response) {
+		return new MyWicketSession(request);
 	}
 
 }

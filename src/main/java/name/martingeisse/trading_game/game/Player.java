@@ -17,10 +17,24 @@ import java.util.Queue;
  */
 public final class Player {
 
+	private final String id;
 	private final Inventory inventory = new Inventory();
 	private final List<PlayerAction> pendingActions = new ArrayList<>();
 	private PlayerActionProgress actionProgress;
 	private FixedInventory actionItems;
+
+	public Player(String id) {
+		this.id = id;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
 
 	/**
 	 * Getter method.
