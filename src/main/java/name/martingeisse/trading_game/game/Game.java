@@ -4,10 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  *
@@ -26,6 +23,10 @@ public final class Game {
 				tick();
 			}
 		}, 0, 100);
+	}
+
+	public Collection<Player> getPlayers() {
+		return players.values();
 	}
 
 	public Player getPlayer(String knownPlayerId) {

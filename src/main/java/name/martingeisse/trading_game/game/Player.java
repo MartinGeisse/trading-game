@@ -18,6 +18,7 @@ import java.util.Queue;
 public final class Player {
 
 	private final String id;
+	private String name;
 	private final Inventory inventory = new Inventory();
 	private final List<PlayerAction> pendingActions = new ArrayList<>();
 	private PlayerActionProgress actionProgress;
@@ -25,6 +26,7 @@ public final class Player {
 
 	public Player(String id) {
 		this.id = id;
+		this.name = "Player " + id;
 	}
 
 	/**
@@ -34,6 +36,27 @@ public final class Player {
 	 */
 	public String getId() {
 		return id;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Setter method.
+	 *
+	 * @param name the name
+	 */
+	public void setName(String name) {
+		if (name == null) {
+			throw new IllegalArgumentException("name cannot be null");
+		}
+		this.name = name;
 	}
 
 	/**

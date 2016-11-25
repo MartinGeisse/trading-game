@@ -21,6 +21,7 @@ import name.martingeisse.wicket.helpers.InlineProgressBar;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -93,14 +94,8 @@ public class MainPage extends AbstractPage {
 			}
 		});
 
-	}
+		add(new BookmarkablePageLink<>("playerListLink", PlayerListPage.class));
 
-	public Game getGame() {
-		return MyWicketApplication.get().getDependency(Game.class);
-	}
-
-	public Player getPlayer() {
-		return MyWicketSession.get().getPlayer();
 	}
 
 }

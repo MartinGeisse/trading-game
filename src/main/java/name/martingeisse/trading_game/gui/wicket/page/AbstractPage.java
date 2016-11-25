@@ -1,11 +1,15 @@
 /**
  * Copyright (c) 2010 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
 package name.martingeisse.trading_game.gui.wicket.page;
 
+import name.martingeisse.trading_game.game.Game;
+import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.gui.wicket.MyWicketApplication;
+import name.martingeisse.trading_game.gui.wicket.MyWicketSession;
 import org.apache.wicket.ajax.WicketAjaxJQueryResourceReference;
 import org.apache.wicket.ajax.WicketEventJQueryResourceReference;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -62,7 +66,7 @@ public class AbstractPage extends WebPage {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void markJavascriptAlreadyRendered(IHeaderResponse response, ResourceReference reference) {
 		JavaScriptHeaderItem jQueryHeaderItem = JavaScriptHeaderItem.forReference(reference);
@@ -70,5 +74,13 @@ public class AbstractPage extends WebPage {
 			response.markRendered(renderToken);
 		}
 	}
-	
+
+	public Game getGame() {
+		return MyWicketApplication.get().getDependency(Game.class);
+	}
+
+	public Player getPlayer() {
+		return MyWicketSession.get().getPlayer();
+	}
+
 }
