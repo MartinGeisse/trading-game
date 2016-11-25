@@ -11,16 +11,14 @@ import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.CraftingAction;
 import name.martingeisse.trading_game.game.action.CreateRedPixelAction;
 import name.martingeisse.trading_game.game.action.PlayerAction;
-import name.martingeisse.trading_game.game.action.PlayerActionProgress;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.gui.wicket.MyWicketSession;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
+import name.martingeisse.wicket.helpers.InlineProgressBar;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
-import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
@@ -64,16 +62,8 @@ public class MainPage extends AbstractPage {
 				setVisible(getDefaultModelObject() != null);
 			}
 		});
-		add(new WebComponent("currentActionProgressBar") {
-			@Override
-			protected void onComponentTag(ComponentTag tag) {
-				super.onComponentTag(tag);
-				PlayerActionProgress actionProgress = getPlayer().getActionProgress();
-				if (actionProgress != null) {
-					tag.put("style", "width: " + actionProgress.getProgressPoints() * 100 / actionProgress.getAction().getRequiredProgressPoints() + "%");
-				}
-			}
-		});
+		add(new InlineProgressBar("currentActionProgressBar", new PropertyModel<>(this, "player.actionProgress.progressPoints"))
+				.setTotalAmountModel(new PropertyModel<>(this, "player.actionProgress.action.requiredProgressPoints")));
 		add(new Link<Void>("cancelCurrentActionLink") {
 			@Override
 			public void onClick() {
