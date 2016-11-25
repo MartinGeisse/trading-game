@@ -40,6 +40,8 @@ public class MainPage extends AbstractPage {
 	public MainPage() {
 		add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
 
+		add(new Label("playerID", new PropertyModel<>(this, "player.id")));
+
 		add(new Link<Void>("createRedPixelLink") {
 			@Override
 			public void onClick() {
@@ -59,7 +61,7 @@ public class MainPage extends AbstractPage {
 			@Override
 			protected void onConfigure() {
 				super.onConfigure();
-				MainPage.this.setVisible(getDefaultModelObject() != null);
+				setVisible(getDefaultModelObject() != null);
 			}
 		});
 		add(new WebComponent("currentActionProgressBar") {
