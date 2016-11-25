@@ -8,15 +8,14 @@ import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  *
  */
 public final class Player {
 
+	private final Game game;
 	private final String id;
 	private String name;
 	private final Inventory inventory = new Inventory();
@@ -24,7 +23,8 @@ public final class Player {
 	private PlayerActionProgress actionProgress;
 	private FixedInventory actionItems;
 
-	public Player(String id) {
+	public Player(Game game, String id) {
+		this.game = game;
 		this.id = id;
 		this.name = "Player " + id;
 	}
@@ -52,9 +52,12 @@ public final class Player {
 	 *
 	 * @param name the name
 	 */
-	public void setName(String name) {
+	public void setName(String name) throws NameAlreadyUsedException {
 		if (name == null) {
 			throw new IllegalArgumentException("name cannot be null");
+		}
+		if (!game.isRenamePossible(this, name)) {
+			throw new NameAlreadyUsedException();
 		}
 		this.name = name;
 	}

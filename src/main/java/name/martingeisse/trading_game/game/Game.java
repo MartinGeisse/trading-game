@@ -36,7 +36,7 @@ public final class Game {
 			do {
 				id = generatePlayerId();
 			} while (players.get(id) != null);
-			player = new Player(id);
+			player = new Player(this, id);
 			players.put(id, player);
 		}
 		return player;
@@ -53,6 +53,18 @@ public final class Game {
 		for (Player player : players.values()) {
 			player.tick();
 		}
+	}
+
+	/**
+	 * Checks if another player has the specified new name.
+	 */
+	boolean isRenamePossible(Player player, String newName) {
+		for (Player otherPlayer : players.values()) {
+			if (otherPlayer != player && otherPlayer.getName().equals(newName)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }
