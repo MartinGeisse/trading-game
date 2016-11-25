@@ -1,0 +1,34 @@
+
+Idee:
+- nur Wicket + JS-databining
+- Wicket + Knockout
+- Knockout + eigenes Serverseitiges KO-Unterstützungs-Framework
+- Knockout + 3rdparty server framework speziell dafür
+- reduzierter eigener Build von KO / eigenes JS framework + eigenes Serverseitiges framework
+
+Dazu ist zu klären:
+- inwiefern hilft Wicket bei JS-Databinding? Gibt es Möglichkeiten, Wicket-Komponenten mit den nötigen Features
+	auszustatten, um Änderungen an den Server zu melden? Ja, das kann Wicket von Haus aus!
+	Das ist im Grunde die weiterentwicklung der Wicket-AJAX-Komponenten
+- inwiefern kann Knockout mit Wicket zusammen?
+- inwiefern kann Knockout mit dem Server binden? Hilft KO überhaupt noch bei so was?
+- Inwiefern hilft Wicket, wenn man vor allem eine JS-Anwendung mit Clientseitigem Databinding hat?
+	-> Vermutung: Es hilft, und zwar für alles außer dem Databinding. Also vor allem mit dem Umgang mit Markup.
+	Allerdings ist unklar, inwiefern Wicket ohne seine Serverseitige Logik noch sinnvoll ist.
+	-> ABER:
+		Wenn ich ohne Wicket ein Serverseitiges Framework bauen würde, welches mit dem JS auf der Clientseite
+		arbeiten würde, würde fast so etwas wie Wicket herauskommen! Außer, der Server macht gar nichts mit UI.
+		Im Prinzip ist das, was Wicket macht, auch für die Kombination mit Client-Side-Databinding sinnvoll, nur müsste
+		man eben für jede Standardkomponente eine Variante für Clientseitiges Databinding bauen:
+		 	- um mit clientseitigen Änderungen umzugehen
+		 	- um Serverseitige Änderungen per Websockets zu pushen
+		 	- wo beides nicht nötig ist, tun es auch die Wicket-Standardkomponenten. Wenn alles ideal ohne Reload
+		 		geupdated werden soll, wird das aber selten vorkommen.
+
+Demnach wäre der Ansatz:
+- Wicket: ja
+- Knockout: klären, welchen Vorteil das im Wicket-Kontext bringt (geklärt: keinen!)
+- Ansonsten Wicket-AJAX plus Wicket-Atmosphere plus Komponentenbibliothek, notfalls selbst geschrieben
+- ggf. Sepcial-Tags <wicket:foo> mit vererbten / gewrappten Models um die Logik zu vereinfachen
+	(Das von Wicket beworbene "preview im Browser" ist eh für die Füße)
+

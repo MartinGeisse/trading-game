@@ -39,6 +39,7 @@ public class MainPage extends AbstractPage {
 	public MainPage() {
 		add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
 
+		add(new Label("playerName", new PropertyModel<>(this, "player.name")));
 		add(new Label("playerID", new PropertyModel<>(this, "player.id")));
 
 		add(new Link<Void>("createRedPixelLink") {
@@ -95,6 +96,7 @@ public class MainPage extends AbstractPage {
 		});
 
 		add(new BookmarkablePageLink<>("playerListLink", PlayerListPage.class));
+		add(new BookmarkablePageLink<>("renamePlayerLink", RenamePlayerPage.class));
 
 	}
 
