@@ -6,8 +6,9 @@ import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
 import name.martingeisse.trading_game.game.action.CraftingAction;
 import name.martingeisse.trading_game.game.action.CreateRedPixelAction;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
-
-import java.util.List;
+import name.martingeisse.trading_game.game.crafting.FixedCraftingRecipe;
+import name.martingeisse.trading_game.game.item.FixedInventory;
+import name.martingeisse.trading_game.game.item.ItemType;
 
 /**
  * This object defines how the game works on a game-logic level. It is injected into all parts that need such static
@@ -16,6 +17,7 @@ import java.util.List;
 @Singleton
 public final class GameDefinition {
 
+	private final CraftingRecipe redPixelAssemblyCraftingRecipe;
 	private final ImmutableList<CraftingRecipe> craftingRecipes;
 	private final ImmutableList<ContextFreeActionDefinition> contextFreeActionDefinitions;
 
@@ -23,7 +25,8 @@ public final class GameDefinition {
 	 *
 	 */
 	public GameDefinition() {
-		craftingRecipes = ImmutableList.copyOf(CraftingRecipe.values());
+		redPixelAssemblyCraftingRecipe = new FixedCraftingRecipe(60, FixedInventory.from(ItemType.RED_PIXEL, 5), ItemType.RED_PIXEL_ASSEMBLY); // TODO 300
+		craftingRecipes = ImmutableList.of(redPixelAssemblyCraftingRecipe);
 		contextFreeActionDefinitions = ImmutableList.of(
 			new ContextFreeActionDefinition("Create red pixel", CreateRedPixelAction::new),
 			new ContextFreeActionDefinition("Create red pixel assembly", p -> new CraftingAction(p, getRedPixelAssemblyCraftingRecipe()))
@@ -41,7 +44,7 @@ public final class GameDefinition {
 
 	// TODO remove
 	public CraftingRecipe getRedPixelAssemblyCraftingRecipe() {
-		return CraftingRecipe.RED_PIXEL_ASSEMBLY;
+		return redPixelAssemblyCraftingRecipe;
 	}
 
 	/**

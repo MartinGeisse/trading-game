@@ -4,7 +4,6 @@ import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.item.FixedItemStack;
-import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 
 /**
@@ -55,7 +54,7 @@ public class CraftingAction extends PlayerAction {
 				return "craft " + stack.getSize() + ' ' + stack.getItemType() + 's';
 			}
 		} else {
-			return recipe.name();
+			return recipe.toString();
 		}
 	}
 
