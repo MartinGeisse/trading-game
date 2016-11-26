@@ -8,8 +8,6 @@ package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
-import name.martingeisse.trading_game.game.action.CraftingAction;
-import name.martingeisse.trading_game.game.action.CreateRedPixelAction;
 import name.martingeisse.trading_game.game.action.PlayerAction;
 import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.gui.item.ItemIcons;

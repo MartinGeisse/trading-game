@@ -5,10 +5,37 @@ package name.martingeisse.trading_game.game.item;
  *
  * Each item stack refers to its item type.
  */
-public enum ItemType {
+public final class ItemType {
 
-	RED_PIXEL,
+	private final String name;
+	private final String icon;
 
-	RED_PIXEL_ASSEMBLY;
+	public ItemType(String name, String icon) {
+		this.name = name;
+		this.icon = icon;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the icon
+	 */
+	public String getIcon() {
+		return icon;
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
 
 }

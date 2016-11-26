@@ -13,6 +13,8 @@ import java.util.List;
  */
 public final class FixedInventory {
 
+	public static final FixedInventory EMPTY = new FixedInventory(ImmutableList.of());
+
 	private final ImmutableList<FixedItemStack> itemStacks;
 
 	public FixedInventory(ImmutableList<FixedItemStack> itemStacks) {

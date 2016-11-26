@@ -20,7 +20,7 @@ public final class ItemIcons {
 	 * @return
 	 */
 	public static ResourceReference get(ItemType itemType) {
-		return new PackageResourceReference(ItemIcons.class, itemType.name().toLowerCase() + ".png");
+		return new PackageResourceReference(ItemIcons.class, itemType.getIcon());
 	}
 
 }
