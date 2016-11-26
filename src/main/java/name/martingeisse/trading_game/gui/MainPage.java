@@ -7,6 +7,7 @@
 package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
 import name.martingeisse.trading_game.game.action.CraftingAction;
 import name.martingeisse.trading_game.game.action.CreateRedPixelAction;
 import name.martingeisse.trading_game.game.action.PlayerAction;
@@ -38,18 +39,18 @@ public class MainPage extends AbstractPage {
 		add(new Label("playerName", new PropertyModel<>(this, "player.name")));
 		add(new Label("playerID", new PropertyModel<>(this, "player.id")));
 
-		add(new Link<Void>("createRedPixelLink") {
+		add(new ListView<ContextFreeActionDefinition>("contextFreeActionDefinitions", gameDefinitionModel("contextFreeActionDefinitions")) {
 			@Override
-			public void onClick() {
-				Player player = getPlayer();
-				player.scheduleAction(new CreateRedPixelAction(player));
-			}
-		});
-		add(new Link<Void>("createRedPixelAssemblyLink") {
-			@Override
-			public void onClick() {
-				Player player = getPlayer();
-				player.scheduleAction(new CraftingAction(player, getGameDefinition().getRedPixelAssemblyCraftingRecipe()));
+			protected void populateItem(ListItem<ContextFreeActionDefinition> item) {
+				Link<?> link = new Link<Void>("link") {
+					@Override
+					public void onClick() {
+						Player player = getPlayer();
+						player.scheduleAction(item.getModelObject().getFactory().apply(player));
+					}
+				};
+				link.add(new Label("name", item.getModelObject().getName()));
+				item.add(link);
 			}
 		});
 

@@ -18,7 +18,9 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.PriorityHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
@@ -76,15 +78,28 @@ public class AbstractPage extends WebPage {
 		}
 	}
 
-	public Game getGame() {
+	public final Game getGame() {
 		return MyWicketApplication.get().getDependency(Game.class);
 	}
 
-	public GameDefinition getGameDefinition() {
+	public final GameDefinition getGameDefinition() {
 		return MyWicketApplication.get().getDependency(GameDefinition.class);
 	}
 
-	public Player getPlayer() {
+	public final IModel<GameDefinition> gameDefinitionModel() {
+		return new AbstractReadOnlyModel<GameDefinition>() {
+			@Override
+			public GameDefinition getObject() {
+				return getGameDefinition();
+			}
+		};
+	}
+
+	public final <T> IModel<T> gameDefinitionModel(String propertyPath) {
+		return new PropertyModel<T>(gameDefinitionModel(), propertyPath);
+	}
+
+	public final Player getPlayer() {
 		return MyWicketSession.get().getPlayer();
 	}
 
