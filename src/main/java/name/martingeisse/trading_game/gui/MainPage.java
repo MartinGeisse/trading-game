@@ -6,16 +6,12 @@
 
 package name.martingeisse.trading_game.gui;
 
-import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.CraftingAction;
 import name.martingeisse.trading_game.game.action.CreateRedPixelAction;
 import name.martingeisse.trading_game.game.action.PlayerAction;
-import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
-import name.martingeisse.trading_game.gui.wicket.MyWicketApplication;
-import name.martingeisse.trading_game.gui.wicket.MyWicketSession;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import name.martingeisse.wicket.helpers.InlineProgressBar;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
@@ -53,7 +49,7 @@ public class MainPage extends AbstractPage {
 			@Override
 			public void onClick() {
 				Player player = getPlayer();
-				player.scheduleAction(new CraftingAction(player, CraftingRecipe.RED_PIXEL_ASSEMBLY));
+				player.scheduleAction(new CraftingAction(player, getGameDefinition().getRedPixelAssemblyCraftingRecipe()));
 			}
 		});
 

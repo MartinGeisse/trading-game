@@ -8,6 +8,7 @@ package name.martingeisse.trading_game.gui.wicket.page;
 
 import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.definition.GameDefinition;
 import name.martingeisse.trading_game.gui.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.gui.wicket.MyWicketSession;
 import org.apache.wicket.ajax.WicketAjaxJQueryResourceReference;
@@ -77,6 +78,10 @@ public class AbstractPage extends WebPage {
 
 	public Game getGame() {
 		return MyWicketApplication.get().getDependency(Game.class);
+	}
+
+	public GameDefinition getGameDefinition() {
+		return MyWicketApplication.get().getDependency(GameDefinition.class);
 	}
 
 	public Player getPlayer() {
