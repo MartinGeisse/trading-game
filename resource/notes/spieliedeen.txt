@@ -1,0 +1,48 @@
+
+
+Places (new entity)
+- können entdeckt und weitergegeben werden; places führen zu anderen places
+	- erschließung
+	- mining
+	- später evtl. miete
+- places sind ein neuer aspekt und man kann sie ignorieren, wenn man nur bei Produktion bleibt
+	- am besten sind getrennte place/player inventories erst sichtbar, wenn man places "freispielt"
+		-> wieder kein genereller "locked content", sondern nur reduziertes UI für anfänger
+- keine Karte, sondern nur Knoten und Kanten
+- verarbeitung von abegebautem erz ist ein eigener crafting-zweig
+
+Transport (kommt mit Places)
+- Items liegen an einem Ort
+- Produktion findet an einem Ort statt
+- Transport ist eingeschränkt (Limit fürs Inventory -- mit Places muss zwischen Place-Inv und Player-Inv getrennt werden)
+- Transport von Passagieren (spieltechnisch wie ein Item, woraus man nichts craften kann? -> nein, Passagiere haben
+	einen gewünschten Zielort, sie wollen nicht einfach irgendwohin wo Passagiere benötigt werden! Das kann man
+	Spieltechnisch so unterscheiden, dass Je Zielort ein anderer ItemType benutzt wird)
+
+Gefährliche Places
+- noch zu vieles unklar
+- player zu party zusammenschließen (nur einer steuert)
+- bewaffnung muss gecraftet werden (evtl von anderen spielern)
+- bei niederlage: inventory weg, ausrüstung weg
+
+Eve hat "Blueprint Copies" mit einem Limit, wie oft das benutzt werden kann
+-> ganz nett zum Handeln
+
+Manufacturing Sites
+- diese können auch mit Upgrades "personalisiert" werden
+- Idee wäre erstmal, dass diese wie die Workbench funktionieren, nur dass sie autonom arbeiten
+	- das ist der wesentliche Unterschied, denn die Workbench wird mit derselben Spielerzeit benutzt, in der man
+		auch sonstige Aktionen ausführt
+- das macht am meisten sinn, wenn sie lange dauernde crafting recipes bearbeiten (1h+), sonst klickt man sich blöd
+	- aber das ist das Problem des Spielers
+	- außerdem macht es langfristig sinn, dass man eine Aktion Nx in die Queue legen kann, ohne auch Nx zu klicken
+	- Einfache Lösung: "amount"-Feld in der Queue
+
+Science Papers
+- Idee: "Zwischenprodukte" bei der "Herstellung" von Blueprints
+- damit weiterer Produktionszweig
+- können wie gehabt gehandelt werden
+
+Reverse Engineering
+- Idee: Items -> Blueprint dafür. Dabei wird das Item zerstört
+- Kann auch Teil-Blueprints (Science Papers) liefern
