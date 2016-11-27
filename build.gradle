@@ -54,13 +54,13 @@ dependencies {
 	compile 'com.google.inject.extensions:guice-multibindings:4.0'
 
 	// Wicket
-	compile('org.apache.wicket:wicket-core:7.1.0') {
+	compile('org.apache.wicket:wicket-core:7.5.0') {
 		exclude group: 'org.apache.wicket', module: 'wicket'
 	}
-	compile('org.apache.wicket:wicket-extensions:7.1.0') {
+	compile('org.apache.wicket:wicket-extensions:7.5.0') {
 		exclude group: 'org.apache.wicket', module: 'wicket'
 	}
-	compile('org.wicketstuff:wicketstuff-stateless:7.1.0') {
+	compile('org.wicketstuff:wicketstuff-stateless:7.5.0') {
 		exclude group: 'org.apache.wicket', module: 'wicket'
 	}
 
