@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.game.action;
 
 import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 
 import java.util.function.Function;
 
@@ -16,6 +17,11 @@ public final class ContextFreeActionDefinition {
 	public ContextFreeActionDefinition(String name, Function<Player, PlayerAction> factory) {
 		this.name = name;
 		this.factory = factory;
+	}
+
+	public ContextFreeActionDefinition(CraftingRecipe recipe) {
+		this.name = CraftingAction.getDefaultText(recipe);
+		this.factory = player -> new CraftingAction(player, recipe);
 	}
 
 	/**
