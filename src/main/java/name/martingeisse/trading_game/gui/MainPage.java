@@ -16,7 +16,10 @@ import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import name.martingeisse.wicket.helpers.InlineProgressBar;
 import name.martingeisse.wicket.helpers.InvisibleWebComponent;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -35,7 +38,6 @@ public class MainPage extends AbstractPage {
 	 * Constructor
 	 */
 	public MainPage() {
-		add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
 
 		add(new Label("playerName", new PropertyModel<>(this, "player.name")));
 		add(new Label("playerID", new PropertyModel<>(this, "player.id")));
@@ -43,11 +45,14 @@ public class MainPage extends AbstractPage {
 		add(new ListView<ContextFreeActionDefinition>("contextFreeActionDefinitions", gameDefinitionModel("contextFreeActionDefinitions")) {
 			@Override
 			protected void populateItem(ListItem<ContextFreeActionDefinition> item) {
-				Link<?> link = new Link<Void>("link") {
+				AjaxLink<?> link = new AjaxLink<Void>("link") {
 					@Override
-					public void onClick() {
+					public void onClick(AjaxRequestTarget target) {
 						Player player = getPlayer();
 						player.scheduleAction(item.getModelObject().getFactory().apply(player));
+						target.add(MainPage.this.get("currentActionContainer"));
+						target.add(MainPage.this.get("pendingActionsContainer"));
+						target.add(MainPage.this.get("inventoryContainer"));
 					}
 				};
 				link.add(new Label("name", item.getModelObject().getName()));
@@ -67,36 +72,46 @@ public class MainPage extends AbstractPage {
 			}
 		});
 
-		add(new Label("currentAction", new PropertyModel<>(this, "player.actionProgress.action")) {
+		WebMarkupContainer currentActionContainer = new WebMarkupContainer("currentActionContainer");
+		add(currentActionContainer);
+		currentActionContainer.add(new Label("currentAction", new PropertyModel<>(this, "player.actionProgress.action")) {
 			@Override
 			protected void onConfigure() {
 				super.onConfigure();
 				setVisible(getDefaultModelObject() != null);
 			}
 		});
-		add(new InlineProgressBar("currentActionProgressBar", new PropertyModel<>(this, "player.actionProgress.progressPoints"))
+		currentActionContainer.queue(new InlineProgressBar("currentActionProgressBar", new PropertyModel<>(this, "player.actionProgress.progressPoints"))
 				.setTotalAmountModel(new PropertyModel<>(this, "player.actionProgress.action.requiredProgressPoints")));
-		add(new Link<Void>("cancelCurrentActionLink") {
+		currentActionContainer.queue(new AjaxLink<Void>("cancelCurrentActionLink") {
 			@Override
-			public void onClick() {
+			public void onClick(AjaxRequestTarget target) {
 				getPlayer().cancelCurrentAction();
+				target.add(MainPage.this.get("currentActionContainer"));
 			}
 		});
+		currentActionContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
 
-		add(new ListView<PlayerAction>("pendingActions", new PropertyModel<>(this, "player.pendingActions")) {
+		WebMarkupContainer pendingActionsContainer = new WebMarkupContainer("pendingActionsContainer");
+		add(pendingActionsContainer);
+		pendingActionsContainer.add(new ListView<PlayerAction>("pendingActions", new PropertyModel<>(this, "player.pendingActions")) {
 			@Override
 			protected void populateItem(ListItem<PlayerAction> item) {
 				item.add(new Label("text", item.getModelObject().toString()));
-				item.add(new Link<Void>("cancelLink") {
+				item.add(new AjaxLink<Void>("cancelLink") {
 					@Override
-					public void onClick() {
+					public void onClick(AjaxRequestTarget target) {
 						getPlayer().cancelPendingAction(item.getIndex());
+						target.add(MainPage.this.get("pendingActionsContainer"));
 					}
 				});
 			}
 		});
+		pendingActionsContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
 
-		add(new ListView<ItemStack>("itemStacks", getPlayer().getInventory().getItemStacks()) {
+		WebMarkupContainer inventoryContainer = new WebMarkupContainer("inventoryContainer");
+		add(inventoryContainer);
+		inventoryContainer.add(new ListView<ItemStack>("itemStacks", getPlayer().getInventory().getItemStacks()) {
 			@Override
 			protected void populateItem(ListItem<ItemStack> item) {
 				item.add(new Label("size", "" + item.getModelObject().getSize()));
@@ -104,6 +119,7 @@ public class MainPage extends AbstractPage {
 				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
 			}
 		});
+		inventoryContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
 
 		add(new BookmarkablePageLink<>("playerListLink", PlayerListPage.class));
 		add(new BookmarkablePageLink<>("renamePlayerLink", RenamePlayerPage.class));

@@ -20,7 +20,7 @@
 					</ul>
 				</wicket:enclosure>
 			</div>
-			<div>
+			<div wicket:id="currentActionContainer">
 				Current action:
                 <wicket:enclosure child="currentAction">
 					<span wicket:id="currentAction"></span>
@@ -30,7 +30,7 @@
 			</div>
 			<div>
 				<div>Pending actions:</div>
-				<ul>
+				<ul wicket:id="pendingActionsContainer">
 					<li wicket:id="pendingActions">
 						<span wicket:id="text" />
 						<a wicket:id="cancelLink" class="glyphicon glyphicon-remove"></a>
@@ -39,7 +39,7 @@
 			</div>
 			<hr />
 			<h2>Inventory</h2>
-			<ul>
+			<ul wicket:id="inventoryContainer">
 				<li wicket:id="itemStacks">
 					<span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon">
 				</li>
