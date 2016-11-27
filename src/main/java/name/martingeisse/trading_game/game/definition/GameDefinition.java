@@ -35,10 +35,14 @@ public final class GameDefinition {
 		ItemType pixelHammerItemType = new ItemType("pixel hammer", "no_icon.png");
 		ItemType pixelPickaxeItemType = new ItemType("pixel pickaxe", "no_icon.png");
 
+		ItemType logItemType = new ItemType("log", "no_icon.png");
+
 		CraftingRecipe redPixelCraftingRecipe = new FixedCraftingRecipe(100, FixedInventory.EMPTY, redPixelItemType);
 		CraftingRecipe redPixelAssemblyCraftingRecipe = new FixedCraftingRecipe(300, FixedInventory.from(redPixelItemType, 5), redPixelAssemblyItemType);
 		CraftingRecipe redPixelLineCraftingRecipe = new FixedCraftingRecipe(300, FixedInventory.from(redPixelItemType, 10), redPixelLineItemType);
 		CraftingRecipe redPixelGlueCraftingRecipe = new FixedCraftingRecipe(50, FixedInventory.from(redPixelItemType, 5), redPixelGlueItemType);
+
+		CraftingRecipe fellTreeRecipe = new FixedCraftingRecipe(1000, FixedInventory.from(pixelAxeItemType, 1), FixedInventory.from(pixelAxeItemType, 1, logItemType, 3));
 
 		FixedInventory pixelToolBillOfMaterials = new FixedInventory(ImmutableList.of(
 			new FixedItemStack(redPixelLineItemType, 3),
@@ -60,7 +64,9 @@ public final class GameDefinition {
 			new ContextFreeActionDefinition(pixelAxeCraftingRecipe),
 			new ContextFreeActionDefinition(pixelHoeCraftingRecipe),
 			new ContextFreeActionDefinition(pixelHammerCraftingRecipe),
-			new ContextFreeActionDefinition(pixelPickaxeCraftingRecipe)
+			new ContextFreeActionDefinition(pixelPickaxeCraftingRecipe),
+
+			new ContextFreeActionDefinition("Fell a tree", fellTreeRecipe)
 		);
 
 	}

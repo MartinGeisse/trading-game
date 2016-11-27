@@ -12,6 +12,9 @@ import java.util.*;
 @Singleton
 public final class Game {
 
+	private static final int TICK_TIME_DELAY = 100;
+	private static final int TICK_MULTIPLIER = 20;
+
 	private final Map<String, Player> players;
 
 	@Inject
@@ -20,9 +23,11 @@ public final class Game {
 		new Timer(true).schedule(new TimerTask() {
 			@Override
 			public void run() {
-				tick();
+				for (int i=0; i<TICK_MULTIPLIER; i++) {
+					tick();
+				}
 			}
-		}, 0, 100);
+		}, 0, TICK_TIME_DELAY);
 	}
 
 	public Collection<Player> getPlayers() {

@@ -12,6 +12,13 @@
 			<h2>Actions</h2>
 			<div wicket:id="contextFreeActionDefinitions">
 				<a wicket:id="link"><span wicket:id="name"></span></a>
+				<wicket:enclosure child="billOfMaterials">
+					<ul>
+						<li wicket:id="billOfMaterials">
+							needs: <span wicket:id="amount"></span> <span wicket:id="name"></span>
+						</li>
+					</ul>
+				</wicket:enclosure>
 			</div>
 			<div>
 				Current action:

@@ -12,10 +12,16 @@ import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 public class CraftingAction extends PlayerAction {
 
 	private final CraftingRecipe recipe;
+	private final String customName;
 
 	public CraftingAction(Player player, CraftingRecipe recipe) {
+		this(player, recipe, null);
+	}
+
+	public CraftingAction(Player player, CraftingRecipe recipe, String customName) {
 		super(player, recipe.getRequiredProgressPoints());
 		this.recipe = recipe;
+		this.customName = customName;
 	}
 
 	@Override
@@ -41,7 +47,7 @@ public class CraftingAction extends PlayerAction {
 
 	@Override
 	public String toString() {
-		return getDefaultText(recipe);
+		return (customName == null ? getDefaultText(recipe) : customName);
 	}
 
 	public static String getDefaultText(CraftingRecipe recipe) {

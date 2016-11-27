@@ -9,10 +9,13 @@ package name.martingeisse.trading_game.gui;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
 import name.martingeisse.trading_game.game.action.PlayerAction;
+import name.martingeisse.trading_game.game.item.FixedInventory;
+import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import name.martingeisse.wicket.helpers.InlineProgressBar;
+import name.martingeisse.wicket.helpers.InvisibleWebComponent;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
@@ -49,6 +52,18 @@ public class MainPage extends AbstractPage {
 				};
 				link.add(new Label("name", item.getModelObject().getName()));
 				item.add(link);
+				FixedInventory billOfMaterials = item.getModelObject().getBillOfMaterials();
+				if (billOfMaterials == null || billOfMaterials.getItemStacks().isEmpty()) {
+					item.add(new InvisibleWebComponent("billOfMaterials"));
+				} else {
+					item.add(new ListView<FixedItemStack>("billOfMaterials", billOfMaterials.getItemStacks()) {
+						@Override
+						protected void populateItem(ListItem<FixedItemStack> item) {
+							item.add(new Label("amount", item.getModelObject().getSize()));
+							item.add(new Label("name", item.getModelObject().getItemType().getName()));
+						}
+					});
+				}
 			}
 		});
 
