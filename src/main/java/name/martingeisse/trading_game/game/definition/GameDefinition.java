@@ -16,14 +16,6 @@ import name.martingeisse.trading_game.game.item.ItemType;
 @Singleton
 public final class GameDefinition {
 
-	private final ItemType redPixelItemType;
-	private final ItemType redPixelAssemblyItemType;
-	private final ImmutableList<ItemType> itemTypes;
-
-	private final CraftingRecipe redPixelCraftingRecipe;
-	private final CraftingRecipe redPixelAssemblyCraftingRecipe;
-	private final ImmutableList<CraftingRecipe> craftingRecipes;
-
 	private final ImmutableList<ContextFreeActionDefinition> contextFreeActionDefinitions;
 
 	/**
@@ -31,42 +23,17 @@ public final class GameDefinition {
 	 */
 	public GameDefinition() {
 
-		redPixelItemType = new ItemType("red pixel", "red_pixel.png");
-		redPixelAssemblyItemType = new ItemType("red pixel assembly", "red_pixel_assembly.png");
-		itemTypes = ImmutableList.of(redPixelItemType, redPixelAssemblyItemType);
+		ItemType redPixelItemType = new ItemType("red pixel", "red_pixel.png");
+		ItemType redPixelAssemblyItemType = new ItemType("red pixel assembly", "red_pixel_assembly.png");
 
-		redPixelCraftingRecipe = new FixedCraftingRecipe(100, FixedInventory.EMPTY, redPixelItemType);
-		redPixelAssemblyCraftingRecipe = new FixedCraftingRecipe(60, FixedInventory.from(redPixelItemType, 5), redPixelAssemblyItemType); // TODO 300
-		craftingRecipes = ImmutableList.of(redPixelAssemblyCraftingRecipe);
+		CraftingRecipe redPixelCraftingRecipe = new FixedCraftingRecipe(100, FixedInventory.EMPTY, redPixelItemType);
+		CraftingRecipe redPixelAssemblyCraftingRecipe = new FixedCraftingRecipe(60, FixedInventory.from(redPixelItemType, 5), redPixelAssemblyItemType); // TODO 300
 
 		contextFreeActionDefinitions = ImmutableList.of(
 			new ContextFreeActionDefinition("Create red pixel", p -> new CraftingAction(p, redPixelCraftingRecipe)),
 			new ContextFreeActionDefinition("Create red pixel assembly", p -> new CraftingAction(p, redPixelAssemblyCraftingRecipe))
 		);
 
-	}
-
-	/**
-	 * Getter method.
-	 *
-	 * @return the itemTypes
-	 */
-	public ImmutableList<ItemType> getItemTypes() {
-		return itemTypes;
-	}
-
-	/**
-	 * Getter method.
-	 *
-	 * @return the craftingRecipes
-	 */
-	public ImmutableList<CraftingRecipe> getCraftingRecipes() {
-		return craftingRecipes;
-	}
-
-	// TODO remove
-	public CraftingRecipe getRedPixelAssemblyCraftingRecipe() {
-		return redPixelAssemblyCraftingRecipe;
 	}
 
 	/**
