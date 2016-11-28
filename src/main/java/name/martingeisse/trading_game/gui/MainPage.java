@@ -6,6 +6,7 @@
 
 package name.martingeisse.trading_game.gui;
 
+import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
 import name.martingeisse.trading_game.game.action.PlayerAction;
@@ -16,6 +17,7 @@ import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import name.martingeisse.wicket.helpers.InlineProgressBar;
 import name.martingeisse.wicket.helpers.InvisibleWebComponent;
+import name.martingeisse.wicket.helpers.ProgressBarClientProgressBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -26,6 +28,7 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
 
@@ -81,8 +84,17 @@ public class MainPage extends AbstractPage {
 				setVisible(getDefaultModelObject() != null);
 			}
 		});
-		currentActionContainer.queue(new InlineProgressBar("currentActionProgressBar", new PropertyModel<>(this, "player.actionProgress.progressPoints"))
-				.setTotalAmountModel(new PropertyModel<>(this, "player.actionProgress.action.requiredProgressPoints")));
+		IModel<Integer> currentActionProgressModel = new PropertyModel<>(this, "player.actionProgress.progressPoints");
+		InlineProgressBar currentActionProgressBar = new InlineProgressBar("currentActionProgressBar", currentActionProgressModel);
+		currentActionProgressBar.setTotalAmountModel(new PropertyModel<>(this, "player.actionProgress.action.requiredProgressPoints"));
+		currentActionProgressBar.add(new ProgressBarClientProgressBehavior() {
+			@Override
+			protected int getRemainingSeconds() {
+				int remainingProgressPoints = getPlayer().getActionProgress().getAction().getRequiredProgressPoints() - currentActionProgressModel.getObject();
+				return remainingProgressPoints / Game.getTicksPerSecond();
+			}
+		});
+		currentActionContainer.queue(currentActionProgressBar);
 		currentActionContainer.queue(new AjaxLink<Void>("cancelCurrentActionLink") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {

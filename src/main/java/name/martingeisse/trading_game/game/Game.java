@@ -30,6 +30,10 @@ public final class Game {
 		}, 0, TICK_TIME_DELAY);
 	}
 
+	public static int getTicksPerSecond() {
+		return 1000 * TICK_MULTIPLIER / TICK_TIME_DELAY;
+	}
+
 	public Collection<Player> getPlayers() {
 		return players.values();
 	}
