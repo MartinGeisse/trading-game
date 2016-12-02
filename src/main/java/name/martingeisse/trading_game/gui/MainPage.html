@@ -18,14 +18,22 @@
 				<tr>
 					<th>Action</th>
 					<th>Bill of Materials</th>
+					<th>Yield</th>
 				</tr>
 				<tr wicket:id="contextFreeActionDefinitions">
 					<td>
 						<a wicket:id="link"><span wicket:id="name"></span></a> <a wicket:id="multiLink" class="glyphicon glyphicon-plus-sign"></a>
 					</td>
-					<td>
+					<td style="font-size: smaller">
 						<wicket:enclosure child="billOfMaterials">
 							<div wicket:id="billOfMaterials">
+								<span wicket:id="amount"></span> <span wicket:id="name"></span>
+							</div>
+						</wicket:enclosure>
+					</td>
+					<td style="font-size: smaller">
+						<wicket:enclosure child="yield">
+							<div wicket:id="yield">
 								<span wicket:id="amount"></span> <span wicket:id="name"></span>
 							</div>
 						</wicket:enclosure>

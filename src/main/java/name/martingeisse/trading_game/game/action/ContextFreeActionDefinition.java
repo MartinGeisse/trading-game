@@ -20,29 +20,34 @@ public final class ContextFreeActionDefinition {
 	private final String name;
 	private final Function<Player, PlayerAction> factory;
 	private final FixedInventory billOfMaterials;
+	private final FixedInventory yield;
 
 	public ContextFreeActionDefinition(String name, Function<Player, PlayerAction> factory) {
 		this.name = name;
 		this.factory = factory;
 		this.billOfMaterials = null;
+		this.yield = null;
 	}
 
-	public ContextFreeActionDefinition(String name, Function<Player, PlayerAction> factory, FixedInventory billOfMaterials) {
+	public ContextFreeActionDefinition(String name, Function<Player, PlayerAction> factory, FixedInventory billOfMaterials, FixedInventory yield) {
 		this.name = name;
 		this.factory = factory;
 		this.billOfMaterials = billOfMaterials;
+		this.yield = yield;
 	}
 
 	public ContextFreeActionDefinition(CraftingRecipe recipe) {
 		this.name = CraftingAction.getDefaultText(recipe);
 		this.factory = player -> new CraftingAction(player, recipe);
 		this.billOfMaterials = recipe.getBillOfMaterials();
+		this.yield = recipe.getYield();
 	}
 
 	public ContextFreeActionDefinition(String name, CraftingRecipe recipe) {
 		this.name = name;
 		this.factory = player -> new CraftingAction(player, recipe, name);
 		this.billOfMaterials = recipe.getBillOfMaterials();
+		this.yield = recipe.getYield();
 	}
 
 	/**
@@ -70,6 +75,15 @@ public final class ContextFreeActionDefinition {
 	 */
 	public FixedInventory getBillOfMaterials() {
 		return billOfMaterials;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the yield
+	 */
+	public FixedInventory getYield() {
+		return yield;
 	}
 
 }

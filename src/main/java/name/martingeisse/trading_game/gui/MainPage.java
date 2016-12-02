@@ -91,6 +91,19 @@ public class MainPage extends AbstractPage {
 						}
 					});
 				}
+
+				FixedInventory yield = item.getModelObject().getYield();
+				if (yield == null || yield.getItemStacks().isEmpty()) {
+					item.add(new InvisibleWebComponent("yield"));
+				} else {
+					item.add(new ListView<FixedItemStack>("yield", yield.getItemStacks()) {
+						@Override
+						protected void populateItem(ListItem<FixedItemStack> item) {
+							item.add(new Label("amount", item.getModelObject().getSize()));
+							item.add(new Label("name", item.getModelObject().getItemType().getName()));
+						}
+					});
+				}
 			}
 
 			private void schedule(int repetitions, ContextFreeActionDefinition actionDefinition, AjaxRequestTarget target) {
