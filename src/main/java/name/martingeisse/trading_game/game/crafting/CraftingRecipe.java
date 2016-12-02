@@ -24,8 +24,8 @@ public interface CraftingRecipe {
 	/**
 	 * Getter method.
 	 *
-	 * @return the products
+	 * @return the yield
 	 */
-	public FixedInventory getProducts();
+	public FixedInventory getYield();
 
 }

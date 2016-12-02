@@ -42,7 +42,7 @@ public class CraftingAction extends PlayerAction {
 	@Override
 	public void onFinish() {
 		getPlayer().consumeActionItems();
-		getPlayer().getInventory().add(recipe.getProducts());
+		getPlayer().getInventory().add(recipe.getYield());
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class CraftingAction extends PlayerAction {
 	}
 
 	public static String getDefaultText(CraftingRecipe recipe) {
-		FixedInventory products = recipe.getProducts();
+		FixedInventory products = recipe.getYield();
 		if (products.getItemStacks().size() == 1) {
 			FixedItemStack stack = products.getItemStacks().get(0);
 			if (stack.getSize() == 1) {

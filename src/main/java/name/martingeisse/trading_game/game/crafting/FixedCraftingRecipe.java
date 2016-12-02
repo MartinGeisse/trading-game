@@ -10,19 +10,19 @@ public final class FixedCraftingRecipe implements CraftingRecipe {
 
 	private final int requiredProgressPoints;
 	private final FixedInventory billOfMaterials;
-	private final FixedInventory products;
+	private final FixedInventory yield;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param requiredProgressPoints
 	 * @param billOfMaterials
-	 * @param products
+	 * @param yield
 	 */
-	public FixedCraftingRecipe(int requiredProgressPoints, FixedInventory billOfMaterials, FixedInventory products) {
+	public FixedCraftingRecipe(int requiredProgressPoints, FixedInventory billOfMaterials, FixedInventory yield) {
 		this.requiredProgressPoints = requiredProgressPoints;
 		this.billOfMaterials = billOfMaterials;
-		this.products = products;
+		this.yield = yield;
 	}
 
 	/**
@@ -30,12 +30,12 @@ public final class FixedCraftingRecipe implements CraftingRecipe {
 	 *
 	 * @param requiredProgressPoints
 	 * @param billOfMaterials
-	 * @param product
+	 * @param yield
 	 */
-	public FixedCraftingRecipe(int requiredProgressPoints, FixedInventory billOfMaterials, ItemType product) {
+	public FixedCraftingRecipe(int requiredProgressPoints, FixedInventory billOfMaterials, ItemType yield) {
 		this.requiredProgressPoints = requiredProgressPoints;
 		this.billOfMaterials = billOfMaterials;
-		this.products = FixedInventory.from(product, 1);
+		this.yield = FixedInventory.from(yield, 1);
 	}
 
 	/**
@@ -59,10 +59,11 @@ public final class FixedCraftingRecipe implements CraftingRecipe {
 	/**
 	 * Getter method.
 	 *
-	 * @return the products
+	 * @return the yield
 	 */
-	public FixedInventory getProducts() {
-		return products;
+	@Override
+	public FixedInventory getYield() {
+		return yield;
 	}
 
 }
