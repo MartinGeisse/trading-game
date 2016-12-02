@@ -19,10 +19,11 @@
 					<th>Action</th>
 					<th>Bill of Materials</th>
 					<th>Yield</th>
+					<th></th>
 				</tr>
 				<tr wicket:id="contextFreeActionDefinitions">
 					<td>
-						<a wicket:id="link"><span wicket:id="name"></span></a> <a wicket:id="multiLink" class="glyphicon glyphicon-plus-sign"></a>
+						<a wicket:id="link"><span wicket:id="name"></span></a>
 					</td>
 					<td style="font-size: smaller">
 						<wicket:enclosure child="billOfMaterials">
@@ -37,6 +38,9 @@
 								<span wicket:id="amount"></span> <span wicket:id="name"></span>
 							</div>
 						</wicket:enclosure>
+					</td>
+					<td>
+						<a wicket:id="multiLink" class="glyphicon glyphicon-plus-sign"></a>
 					</td>
 				</tr>
 			</table>
