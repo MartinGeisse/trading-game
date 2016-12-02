@@ -11,6 +11,7 @@ import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
 import name.martingeisse.trading_game.gui.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.gui.wicket.MyWicketSession;
+import org.apache.wicket.ajax.WicketAjaxDebugJQueryResourceReference;
 import org.apache.wicket.ajax.WicketAjaxJQueryResourceReference;
 import org.apache.wicket.ajax.WicketEventJQueryResourceReference;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -62,10 +63,7 @@ public class AbstractPage extends WebPage {
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
 		response.render(new PriorityHeaderItem(CssHeaderItem.forReference(new CssResourceReference(AbstractPage.class, "common.css"))));
-//		response.render(new PriorityHeaderItem(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(AbstractPage.class, "common.js"))));
-//		markJavascriptAlreadyRendered(response, JQueryResourceReference.get());
-//		markJavascriptAlreadyRendered(response, WicketAjaxJQueryResourceReference.get());
-//		markJavascriptAlreadyRendered(response, WicketEventJQueryResourceReference.get());
+		response.render(new PriorityHeaderItem(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(AbstractPage.class, "bootstrap.js"))));
 	}
 
 	/**
