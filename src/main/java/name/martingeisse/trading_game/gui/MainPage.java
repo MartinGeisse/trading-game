@@ -46,20 +46,40 @@ public class MainPage extends AbstractPage {
 		add(new Label("playerID", new PropertyModel<>(this, "player.id")));
 
 		add(new ListView<ContextFreeActionDefinition>("contextFreeActionDefinitions", gameDefinitionModel("contextFreeActionDefinitions")) {
+
 			@Override
 			protected void populateItem(ListItem<ContextFreeActionDefinition> item) {
 				AjaxLink<?> link = new AjaxLink<Void>("link") {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						Player player = getPlayer();
-						player.scheduleAction(item.getModelObject().getFactory().apply(player));
-						target.add(MainPage.this.get("currentActionContainer"));
-						target.add(MainPage.this.get("pendingActionsContainer"));
-						target.add(MainPage.this.get("inventoryContainer"));
+						schedule(item.getModelObject(), target);
 					}
 				};
 				link.add(new Label("name", item.getModelObject().getName()));
 				item.add(link);
+				item.add(new PromptAjaxLink<Void>("multiLink") {
+
+					@Override
+					protected String getPrompt() {
+						return item.getModelObject().getName() + " how many times?";
+					}
+
+					@Override
+					protected void onClick(AjaxRequestTarget target, String promptInput) {
+						int times;
+						try {
+							times = Integer.parseInt(promptInput);
+						} catch (NumberFormatException e) {
+							target.appendJavaScript("invalid input");
+							return;
+						}
+						for (int i=0; i<times; i++) {
+							schedule(item.getModelObject(), target);
+						}
+					}
+
+				});
+
 				FixedInventory billOfMaterials = item.getModelObject().getBillOfMaterials();
 				if (billOfMaterials == null || billOfMaterials.getItemStacks().isEmpty()) {
 					item.add(new InvisibleWebComponent("billOfMaterials"));
@@ -73,6 +93,15 @@ public class MainPage extends AbstractPage {
 					});
 				}
 			}
+
+			private void schedule(ContextFreeActionDefinition actionDefinition, AjaxRequestTarget target) {
+				Player player = getPlayer();
+				player.scheduleAction(actionDefinition.getFactory().apply(player));
+				target.add(MainPage.this.get("currentActionContainer"));
+				target.add(MainPage.this.get("pendingActionsContainer"));
+				target.add(MainPage.this.get("inventoryContainer"));
+			}
+
 		});
 
 		WebMarkupContainer currentActionContainer = new WebMarkupContainer("currentActionContainer");
