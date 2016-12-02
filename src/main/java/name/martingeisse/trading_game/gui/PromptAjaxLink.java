@@ -24,6 +24,7 @@ public abstract class PromptAjaxLink<T> extends AjaxLink<T> {
 
 	@Override
 	protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+		// TODO only works once, after that it takes the first input again and ignores the second one
 		AjaxCallListener listener = new AjaxCallListener();
 		listener.onInit("attrs.promptInput = prompt('" + JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(getPrompt()) + "');");
 		listener.onInit("if (!attrs.ep) attrs.ep = [];");

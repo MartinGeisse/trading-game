@@ -1,35 +1,49 @@
 <html>
-	<head>
-		<style type="text/css">
-		</style>
-	</head>
 	<body>
-		<div class="container">
+		<div class="col-xs-12 col-sm-6 col-md-4">
 			<h1>Trading Game</h1>
-			<div>
-				Player: <span wicket:id="playerName"></span> (ID: <span wicket:id="playerID"></span>)
-			</div>
+			<div>Player: <span wicket:id="playerName"></span> (ID: <span wicket:id="playerID"></span>)</div>
+			<div><a wicket:id="playerListLink">List of players</a></div>
+			<div><a wicket:id="renamePlayerLink">Rename player</a></div>
+			<h2>Inventory</h2>
+			<ul wicket:id="inventoryContainer">
+				<li wicket:id="itemStacks">
+					<span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon">
+				</li>
+			</ul>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-4">
 			<h2>Actions</h2>
-			<div wicket:id="contextFreeActionDefinitions">
-				<a wicket:id="link"><span wicket:id="name"></span></a> <a wicket:id="multiLink" class="glyphicon glyphicon-plus-sign"></a>
-				<wicket:enclosure child="billOfMaterials">
-					<ul>
-						<li wicket:id="billOfMaterials">
-							needs: <span wicket:id="amount"></span> <span wicket:id="name"></span>
-						</li>
-					</ul>
-				</wicket:enclosure>
-			</div>
-			<div wicket:id="currentActionContainer">
-				Current action:
-                <wicket:enclosure child="currentAction">
+			<table class="table table-striped">
+				<tr>
+					<th>Action</th>
+					<th>Bill of Materials</th>
+				</tr>
+				<tr wicket:id="contextFreeActionDefinitions">
+					<td>
+						<a wicket:id="link"><span wicket:id="name"></span></a> <a wicket:id="multiLink" class="glyphicon glyphicon-plus-sign"></a>
+					</td>
+					<td>
+						<wicket:enclosure child="billOfMaterials">
+							<div wicket:id="billOfMaterials">
+								<span wicket:id="amount"></span> <span wicket:id="name"></span>
+							</div>
+						</wicket:enclosure>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-4">
+			<h2>Current action</h2>
+			<div wicket:id="currentActionContainer" style="height: 50px;">
+				<wicket:enclosure child="currentAction">
 					<span wicket:id="currentAction"></span>
 					<span wicket:id="currentActionProgressBar" style="width: 200px"></span>
 					<a wicket:id="cancelCurrentActionLink" class="glyphicon glyphicon-remove"></a>
-                </wicket:enclosure>
+				</wicket:enclosure>
 			</div>
+			<h2>Pending actions</h2>
 			<div>
-				<div>Pending actions:</div>
 				<ul wicket:id="pendingActionsContainer">
 					<li wicket:id="pendingActions">
 						<span wicket:id="text" />
@@ -37,16 +51,6 @@
 					</li>
 				</ul>
 			</div>
-			<hr />
-			<h2>Inventory</h2>
-			<ul wicket:id="inventoryContainer">
-				<li wicket:id="itemStacks">
-					<span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon">
-				</li>
-			</ul>
-			<h2>Links</h2>
-			<div><a wicket:id="playerListLink">List of players</a></div>
-			<div><a wicket:id="renamePlayerLink">Rename player</a></div>
 		</div>
 	</body>
 </html>
