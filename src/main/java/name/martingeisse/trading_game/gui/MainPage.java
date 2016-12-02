@@ -8,6 +8,7 @@ package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
 import name.martingeisse.trading_game.game.action.PlayerAction;
 import name.martingeisse.trading_game.game.item.FixedInventory;
@@ -52,7 +53,7 @@ public class MainPage extends AbstractPage {
 				AjaxLink<?> link = new AjaxLink<Void>("link") {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						schedule(item.getModelObject(), target);
+						schedule(1, item.getModelObject(), target);
 					}
 				};
 				link.add(new Label("name", item.getModelObject().getName()));
@@ -73,9 +74,7 @@ public class MainPage extends AbstractPage {
 							target.appendJavaScript("invalid input");
 							return;
 						}
-						for (int i=0; i<times; i++) {
-							schedule(item.getModelObject(), target);
-						}
+						schedule(times, item.getModelObject(), target);
 					}
 
 				});
@@ -94,9 +93,9 @@ public class MainPage extends AbstractPage {
 				}
 			}
 
-			private void schedule(ContextFreeActionDefinition actionDefinition, AjaxRequestTarget target) {
+			private void schedule(int repetitions, ContextFreeActionDefinition actionDefinition, AjaxRequestTarget target) {
 				Player player = getPlayer();
-				player.scheduleAction(actionDefinition.getFactory().apply(player));
+				player.scheduleAction(repetitions, actionDefinition.getFactory().apply(player));
 				target.add(MainPage.this.get("currentActionContainer"));
 				target.add(MainPage.this.get("pendingActionsContainer"));
 				target.add(MainPage.this.get("inventoryContainer"));
@@ -135,9 +134,9 @@ public class MainPage extends AbstractPage {
 
 		WebMarkupContainer pendingActionsContainer = new WebMarkupContainer("pendingActionsContainer");
 		add(pendingActionsContainer);
-		pendingActionsContainer.add(new ListView<PlayerAction>("pendingActions", new PropertyModel<>(this, "player.pendingActions")) {
+		pendingActionsContainer.add(new ListView<ActionQueue.Entry>("pendingActions", new PropertyModel<>(this, "player.pendingActions")) {
 			@Override
-			protected void populateItem(ListItem<PlayerAction> item) {
+			protected void populateItem(ListItem<ActionQueue.Entry> item) {
 				item.add(new Label("text", item.getModelObject().toString()));
 				item.add(new AjaxLink<Void>("cancelLink") {
 					@Override

@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game;
 
+import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.PlayerAction;
 import name.martingeisse.trading_game.game.action.PlayerActionProgress;
 import name.martingeisse.trading_game.game.item.FixedInventory;
@@ -19,7 +20,7 @@ public final class Player {
 	private final String id;
 	private String name;
 	private final Inventory inventory = new Inventory();
-	private final List<PlayerAction> pendingActions = new ArrayList<>();
+	private final ActionQueue pendingActions = new ActionQueue();
 	private PlayerActionProgress actionProgress;
 	private FixedInventory actionItems;
 
@@ -76,7 +77,7 @@ public final class Player {
 	 *
 	 * @return the pendingActions
 	 */
-	public List<PlayerAction> getPendingActions() {
+	public ActionQueue getPendingActions() {
 		return pendingActions;
 	}
 
@@ -95,7 +96,17 @@ public final class Player {
 	 * @param action the action to schedule
 	 */
 	public void scheduleAction(PlayerAction action) {
-		pendingActions.add(action);
+		pendingActions.enqueue(action);
+	}
+
+	/**
+	 * Schedules an action to be performed after all currently pending actions.
+	 *
+	 * @param repetitions how often the action shall be repeated
+	 * @param action      the action to schedule
+	 */
+	public void scheduleAction(int repetitions, PlayerAction action) {
+		pendingActions.enqueue(repetitions, action);
 	}
 
 	/**
@@ -119,7 +130,7 @@ public final class Player {
 
 	/**
 	 * Reserves items from the inventory for an action.
-	 *
+	 * <p>
 	 * The BOM must be valid according to {@link FixedInventory#isValidBillOfMaterials()}.
 	 *
 	 * @throws NotEnoughItemsException if the player doesn't have the required items
@@ -169,7 +180,7 @@ public final class Player {
 	 */
 	void tick() {
 		while (actionProgress == null && !pendingActions.isEmpty()) {
-			PlayerAction action = pendingActions.remove(0);
+			PlayerAction action = pendingActions.dequeue();
 			if (action.onStart()) {
 				actionProgress = new PlayerActionProgress(action);
 			}
