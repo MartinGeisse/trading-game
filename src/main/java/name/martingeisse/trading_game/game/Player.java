@@ -204,6 +204,7 @@ public final class Player {
 				actionProgress = null;
 			}
 		}
+		skills.tick();
 	}
 
 }

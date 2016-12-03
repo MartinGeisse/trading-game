@@ -101,7 +101,7 @@ public final class GameDefinition {
 
 			@Override
 			public String getName() {
-				return "be cool";
+				return "being cool";
 			}
 
 			@Override
@@ -120,6 +120,15 @@ public final class GameDefinition {
 	 */
 	public ImmutableList<ContextFreeActionDefinition> getContextFreeActionDefinitions() {
 		return contextFreeActionDefinitions;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the skills
+	 */
+	public ImmutableList<Skill> getSkills() {
+		return skills;
 	}
 
 }

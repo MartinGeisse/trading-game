@@ -14,6 +14,7 @@ import name.martingeisse.trading_game.game.action.PlayerAction;
 import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.ItemStack;
+import name.martingeisse.trading_game.game.skill.Skill;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import name.martingeisse.wicket.helpers.InlineProgressBar;
@@ -32,6 +33,8 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
+
+import java.util.*;
 
 /**
  * This is the main page for controlling the game.
@@ -177,6 +180,75 @@ public class MainPage extends AbstractPage {
 		add(new BookmarkablePageLink<>("playerListLink", PlayerListPage.class));
 		add(new BookmarkablePageLink<>("renamePlayerLink", RenamePlayerPage.class));
 
+		WebMarkupContainer skillsContainer = new WebMarkupContainer("skillsContainer");
+		skillsContainer.add(new ListView<Skill>("acquiredSkills", new PropertyModel<>(this, "playerSkills")) {
+			@Override
+			protected void populateItem(ListItem<Skill> item) {
+				item.add(new Label("name", item.getModelObject().getName()));
+			}
+		});
+		skillsContainer.add(new Label("skillCurrentlyBeingLearned", new PropertyModel<>(this, "player.skills.skillCurrentlyBeingLearned.name")) {
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+				setVisible(getDefaultModelObject() != null);
+			}
+		});
+		IModel<Integer> skillCurrentlyBeingLearnedProgressModel = new PropertyModel<>(this, "player.skills.learningPoints");
+		InlineProgressBar skillCurrentlyBeingLearnedProgressBar = new InlineProgressBar("skillCurrentlyBeingLearnedProgressBar", skillCurrentlyBeingLearnedProgressModel);
+		skillCurrentlyBeingLearnedProgressBar.setTotalAmountModel(new PropertyModel<>(this, "player.skills.skillCurrentlyBeingLearned.requiredLearningPoints"));
+		skillCurrentlyBeingLearnedProgressBar.add(new ProgressBarClientProgressBehavior() {
+			@Override
+			protected int getRemainingSeconds() {
+				int remainingLearningPoints = getPlayer().getSkills().getSkillCurrentlyBeingLearned().getRequiredLearningPoints() - getPlayer().getSkills().getLearningPoints();
+				return remainingLearningPoints / Game.getTicksPerSecond();
+			}
+		});
+		skillsContainer.queue(skillCurrentlyBeingLearnedProgressBar);
+		skillsContainer.queue(new AjaxLink<Void>("cancelSkillCurrentlyBeingLearnedLink") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				getPlayer().getSkills().cancelSkillCurrentlyBeingLearned();
+				target.add(MainPage.this.get("skillsContainer"));
+			}
+		});
+		skillsContainer.add(new ListView<Skill>("skillLearningQueue", new PropertyModel<>(this, "player.skills.learningQueue")) {
+			@Override
+			protected void populateItem(ListItem<Skill> item) {
+				item.add(new Label("name", item.getModelObject().getName()));
+			}
+		});
+		skillsContainer.add(new ListView<Skill>("skillsAvailableForLearning", new PropertyModel<>(this, "skillsAvailableForLearning")) {
+			@Override
+			protected void populateItem(ListItem<Skill> item) {
+				Link<?> link = new Link<Void>("link") {
+					@Override
+					public void onClick() {
+						getPlayer().getSkills().enqueueForLearning(item.getModelObject());
+					}
+				};
+				link.add(new Label("name", item.getModelObject().getName()));
+				item.add(link);
+			}
+		});
+		add(skillsContainer);
+		skillsContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
+
+	}
+
+	public final List<Skill> getPlayerSkills() {
+		List<Skill> skills = new ArrayList<>(getPlayer().getSkills().getSkills());
+		Collections.sort(skills, (x, y) -> x.getName().compareTo(y.getName()));
+		return skills;
+	}
+
+	public final List<Skill> getSkillsAvailableForLearning() {
+		List<Skill> skills = new ArrayList<>(getGameDefinition().getSkills());
+		skills.removeAll(getPlayer().getSkills().getSkills());
+		skills.remove(getPlayer().getSkills().getSkillCurrentlyBeingLearned());
+		skills.removeAll(getPlayer().getSkills().getLearningQueue());
+		Collections.sort(skills, (x, y) -> x.getName().compareTo(y.getName()));
+		return skills;
 	}
 
 }

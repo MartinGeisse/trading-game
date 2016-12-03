@@ -11,6 +11,20 @@
 					<span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon">
 				</li>
 			</ul>
+			<h2>Skills</h2>
+			<div wicket:id="skillsContainer">
+				<h3>acquired</h3>
+				<div wicket:id="acquiredSkills"><span wicket:id="name"></span></div>
+				<h3>learning</h3>
+				<wicket:enclosure child="skillCurrentlyBeingLearned">
+					<span wicket:id="skillCurrentlyBeingLearned"></span>
+					<span wicket:id="skillCurrentlyBeingLearnedProgressBar" style="width: 200px"></span>
+					<a wicket:id="cancelSkillCurrentlyBeingLearnedLink" class="glyphicon glyphicon-remove"></a>
+				</wicket:enclosure>
+				<div wicket:id="skillLearningQueue"><span wicket:id="name"></span></div>
+				<h3>available for learning</h3>
+				<div wicket:id="skillsAvailableForLearning"><a wicket:id="link"><span wicket:id="name"></span></a></div>
+			</div>
 		</div>
 		<div class="col-xs-12 col-sm-6 col-md-4">
 			<h2>Actions</h2>
