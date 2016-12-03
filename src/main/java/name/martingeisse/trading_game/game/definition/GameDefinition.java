@@ -78,7 +78,7 @@ public final class GameDefinition {
 			new ContextFreeActionDefinition("Go mining", player -> new ToolUsageAction(player, 1000, FixedInventory.from(pixelPickaxeItemType, 1)) {
 
 				@Override
-				public void onFinish() {
+				public void onFinishToolUsage() {
 					int r = new Random().nextInt(100);
 					if (r < 40) {
 						getPlayer().getInventory().add(ironOreItemType);

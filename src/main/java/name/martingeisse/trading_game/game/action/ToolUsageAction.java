@@ -10,7 +10,7 @@ import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
  * <p>
  * This class does NOT support subclasses which reserve additional action items! Do not try this, or items will be lost.
  */
-public class ToolUsageAction extends PlayerAction {
+public abstract class ToolUsageAction extends PlayerAction {
 
 	private final FixedInventory tools;
 
@@ -29,23 +29,35 @@ public class ToolUsageAction extends PlayerAction {
 	}
 
 	@Override
-	public boolean onStart() {
+	public final boolean onStart() {
 		try {
 			getPlayer().reserveActionItems(tools);
+			onStartToolUsage();
 			return true;
 		} catch (NotEnoughItemsException e) {
 			return false;
 		}
 	}
 
-	@Override
-	public void onCancel() {
-		getPlayer().putBackActionItems();
+	protected void onStartToolUsage() {
 	}
 
 	@Override
-	public void onFinish() {
+	public final void onCancel() {
 		getPlayer().putBackActionItems();
+		onCancelToolUsage();
 	}
+
+	protected void onCancelToolUsage() {
+	}
+
+	@Override
+	public final void onFinish() {
+		getPlayer().putBackActionItems();
+		onFinishToolUsage();
+	}
+
+	protected abstract void onFinishToolUsage();
+
 
 }
