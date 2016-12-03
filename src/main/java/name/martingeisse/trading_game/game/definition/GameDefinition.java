@@ -3,13 +3,19 @@ package name.martingeisse.trading_game.game.definition;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Singleton;
 import jdk.nashorn.internal.ir.annotations.Immutable;
+import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
 import name.martingeisse.trading_game.game.action.CraftingAction;
+import name.martingeisse.trading_game.game.action.PlayerAction;
+import name.martingeisse.trading_game.game.action.ToolUsageAction;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.crafting.FixedCraftingRecipe;
 import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.ItemType;
+
+import java.util.Random;
+import java.util.function.Function;
 
 /**
  * This object defines how the game works on a game-logic level. It is injected into all parts that need such static
@@ -36,6 +42,8 @@ public final class GameDefinition {
 		ItemType pixelPickaxeItemType = new ItemType("pixel pickaxe", "no_icon.png");
 
 		ItemType logItemType = new ItemType("log", "no_icon.png");
+		ItemType ironOreItemType = new ItemType("iron ore", "no_icon.png");
+		ItemType aluminumOreItemType = new ItemType("aluminum ore", "no_icon.png");
 
 		CraftingRecipe redPixelCraftingRecipe = new FixedCraftingRecipe(100, FixedInventory.EMPTY, redPixelItemType);
 		CraftingRecipe redPixelAssemblyCraftingRecipe = new FixedCraftingRecipe(300, FixedInventory.from(redPixelItemType, 5), redPixelAssemblyItemType);
@@ -66,7 +74,25 @@ public final class GameDefinition {
 			new ContextFreeActionDefinition(pixelHammerCraftingRecipe),
 			new ContextFreeActionDefinition(pixelPickaxeCraftingRecipe),
 
-			new ContextFreeActionDefinition("Fell a tree", fellTreeRecipe)
+			new ContextFreeActionDefinition("Fell a tree", fellTreeRecipe),
+			new ContextFreeActionDefinition("Go mining", player -> new ToolUsageAction(player, 1000, FixedInventory.from(pixelPickaxeItemType, 1)) {
+
+				@Override
+				public void onFinish() {
+					int r = new Random().nextInt(100);
+					if (r < 40) {
+						getPlayer().getInventory().add(ironOreItemType);
+					} else if (r < 80) {
+						getPlayer().getInventory().add(aluminumOreItemType);
+					}
+				}
+
+				@Override
+				public String toString() {
+					return "Go mining";
+				}
+
+			})
 		);
 
 	}

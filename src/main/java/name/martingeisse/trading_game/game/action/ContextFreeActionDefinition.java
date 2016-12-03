@@ -86,4 +86,9 @@ public final class ContextFreeActionDefinition {
 		return yield;
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
+
 }
