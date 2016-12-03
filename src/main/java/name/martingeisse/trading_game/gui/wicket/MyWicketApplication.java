@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2015 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -11,17 +11,24 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
+import name.martingeisse.trading_game.game.GlobalGameLock;
 import name.martingeisse.trading_game.gui.MainPage;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
+import org.apache.wicket.core.request.handler.BufferedResponseRequestHandler;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IExceptionMapper;
+import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.IProvider;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 /**
@@ -38,6 +45,7 @@ public class MyWicketApplication extends WebApplication {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param injector the Guice injector
 	 */
 	@Inject
@@ -63,23 +71,24 @@ public class MyWicketApplication extends WebApplication {
 	 */
 	public <T> Set<T> getDependencies(final Class<T> type) {
 		@SuppressWarnings("unchecked")
-		TypeLiteral<Set<T>> typeLiteral = (TypeLiteral<Set<T>>)TypeLiteral.get(Types.setOf(type));
+		TypeLiteral<Set<T>> typeLiteral = (TypeLiteral<Set<T>>) TypeLiteral.get(Types.setOf(type));
 		return injector.getInstance(Key.get(typeLiteral));
 	}
 
 	/**
 	 * Getter method for the injector.
+	 *
 	 * @return the injector
 	 */
 	public Injector getInjector() {
 		return injector;
 	}
-	
+
 	/**
 	 * @return the application
 	 */
 	public static MyWicketApplication get() {
-		return (MyWicketApplication)WebApplication.get();
+		return (MyWicketApplication) WebApplication.get();
 	}
 
 	/* (non-Javadoc)
@@ -142,7 +151,7 @@ public class MyWicketApplication extends WebApplication {
 
 		// mount Bootstrap fonts
 		{
-			final String[] bootstrapFontFiles = new String[] {
+			final String[] bootstrapFontFiles = new String[]{
 				"glyphicons-halflings-regular.eot",
 				"glyphicons-halflings-regular.woff",
 				"glyphicons-halflings-regular.woff2",
@@ -153,6 +162,30 @@ public class MyWicketApplication extends WebApplication {
 				mountResource("/fonts/" + fontFile, new PackageResourceReference(AbstractPage.class, fontFile));
 			}
 		}
+
+		// acquire the global lock for the Game object during all requests except a few whitelisted ones that don't
+		// need that object. In particular, both rendering requests and listener requests need the lock.
+		// TODO render-buffer requests probably don't!
+		getRequestCycleListeners().add(new AbstractRequestCycleListener() {
+
+			@Override
+			public void onRequestHandlerResolved(RequestCycle cycle, IRequestHandler handler) {
+				if (handler instanceof BufferedResponseRequestHandler) {
+					// this just renders the actions from a buffered response, so the Game object isn't involved
+					return;
+				}
+				if (handler instanceof ResourceReferenceRequestHandler) {
+					// TODO should limit this to package resources because other resources might use the Game object
+					return;
+				}
+				GlobalGameLock.onBeginRequest((HttpServletRequest) cycle.getRequest().getContainerRequest());
+			}
+
+			@Override
+			public void onDetach(RequestCycle cycle) {
+				GlobalGameLock.onFinishRequest((HttpServletRequest) cycle.getRequest().getContainerRequest());
+			}
+		});
 
 	}
 

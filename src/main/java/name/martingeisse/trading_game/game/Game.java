@@ -24,7 +24,13 @@ public final class Game {
 			@Override
 			public void run() {
 				for (int i=0; i<TICK_MULTIPLIER; i++) {
-					tick();
+					// TODO may drop ticks on high load depending on how the Timer class handles it
+					GlobalGameLock.lock();
+					try {
+						tick();
+					} finally {
+						GlobalGameLock.unlock();
+					}
 				}
 			}
 		}, 0, TICK_TIME_DELAY);
@@ -58,7 +64,7 @@ public final class Game {
 	/**
 	 * Called once every 100 msec to advance the game logic.
 	 */
-	private synchronized void tick() {
+	private void tick() {
 		for (Player player : players.values()) {
 			player.tick();
 		}
