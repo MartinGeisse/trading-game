@@ -46,3 +46,10 @@ Science Papers
 Reverse Engineering
 - Idee: Items -> Blueprint dafür. Dabei wird das Item zerstört
 - Kann auch Teil-Blueprints (Science Papers) liefern
+
+
+* Von Spielern designedte Items
+* Von Spielern designedte Maschinen
+* Kampf als Zusatzelement, wo nicht die Spieler selbst angegriffen werden, sondern nur Ferngesteuerte Kampfschiffe
+	- in diesem gefährlichen Gebiet dann auch ferngesteuerte Miner / Prod. Anlagen etc. die angegriffen werden können
+

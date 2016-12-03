@@ -13,6 +13,7 @@ import name.martingeisse.trading_game.game.crafting.FixedCraftingRecipe;
 import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.ItemType;
+import name.martingeisse.trading_game.game.skill.Skill;
 
 import java.util.Random;
 import java.util.function.Function;
@@ -25,6 +26,7 @@ import java.util.function.Function;
 public final class GameDefinition {
 
 	private final ImmutableList<ContextFreeActionDefinition> contextFreeActionDefinitions;
+	private final ImmutableList<Skill> skills;
 
 	/**
 	 *
@@ -94,6 +96,20 @@ public final class GameDefinition {
 
 			})
 		);
+
+		skills = ImmutableList.of(new Skill() {
+
+			@Override
+			public String getName() {
+				return "be cool";
+			}
+
+			@Override
+			public int getRequiredLearningPoints() {
+				return 10_000;
+			}
+
+		});
 
 	}
 

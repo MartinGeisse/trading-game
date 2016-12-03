@@ -7,6 +7,7 @@ import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
+import name.martingeisse.trading_game.game.skill.PlayerSkills;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +24,13 @@ public final class Player {
 	private final ActionQueue pendingActions = new ActionQueue();
 	private PlayerActionProgress actionProgress;
 	private FixedInventory actionItems;
+	private final PlayerSkills skills;
 
 	public Player(Game game, String id) {
 		this.game = game;
 		this.id = id;
 		this.name = "Player " + id;
+		this.skills = new PlayerSkills();
 	}
 
 	/**
@@ -173,6 +176,15 @@ public final class Player {
 			throw new IllegalStateException("no action items");
 		}
 		actionItems = null;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the skills
+	 */
+	public PlayerSkills getSkills() {
+		return skills;
 	}
 
 	/**
