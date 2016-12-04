@@ -1,0 +1,92 @@
+
+Szenario entwerfen: Mittelalter? Gegenwart? SciFi?
+- gefühlt wäre "nahe Zukunft - SciFi" interessant
+
+Welche Szenarien gibt es?
+- Mittelalter
+	- Wenn es beim Mittelalter bleibt und nicht in die Gegenwart und weiter geht, dann ist es zu "langweilig" wegen
+		zu wenigen Möglichkeiten. Wenn doch, dann Ungleichgewicht (s.u.)
+	-> NEIN
+- komplette Menschheitsgeschichte
+	- macht das Zusammenspiel zwischen ungleich entwickelten Spielern kompliziert -> ein weit entwickelter Spieler
+		kann einen Anfänger immens "pushen", das bringt das Spiel aus dem Gleichgewicht
+	-> NEIN
+- Fantasy
+	- hat ähnliche pro/con wie reine SciFi
+	- ist aber IMHO weniger ansprechend. Vor allem sind die meisten Fantasy-Spiele weniger auf Kooperation als auf
+		"Superhelden" ausgelegt, von daher müsste man das anders aufziehen. Statt den "Firmen" wie in Eve Online gibt
+		es dann Gilden, Geheimbünde, etc. Das passt aber wieder mehr mit Kampf zusammen, wo auch mal ein Herrscher
+		gestürzt wird. Das wäre ehr für ein Echtzeit-Spiel gut.
+	- Anders formuliert: Da eine Fantasy-Welt eh vollkommen willkürlich ist, ist es für die Spieler sehr schwer zu
+		erkennen, welche Möglichkeiten sie haben. Das macht Ideenlos und dadurch das Spiel langweilig.
+	-> NEIN
+- nahe Vergangenheit (fiktiv) bis SciFi
+	- noch etwas mehr Möglichkeiten als "nahe Zukunft"
+	- aber auch wieder eine gewisse erwartete Realitätstreue, die einschränkt
+	- Außerdem ist ein zu großer Zeitraum auch wieder doof, weil die Spieler sich zu weit auseinanderentwickeln
+	-> NEIN
+
+- SciFi
+	- am einfachsten an Eve Online kopierbar
+	- ggf. etwas langweilig, was die möglichen Items angeht, weil es alles Phantasie ist
+- Gegenwart (bis nahe Zukunft)
+	- Realitätstreue ist anstrengend und schränkt ein
+	- ohne "Gegenwart bis nahe Zukunft" wird das langweilig
+- nahe Zukunft bis SciFi
+	- nahe Zukunft = muss nicht mehr die Gegenwart wiederspiegeln
+
+Fragen also:
+- soll die Gegenwart noch mit dabei sein, oder lieber Start in der Zukunft?
+- wenn Start in der Zukunft: nahe oder ferne Zukunft?
+- wenn Start nicht in der fernen Zukunft: soll die mit dabei sein?
+- Erde, Sonnensystem oder Universum?
+
+Antworten:
+- wenn Gegenwart oder nahe Vergangenheit, dann auf jeden Fall fiktiv! Keiner will sich mit Quatsch aus der echten
+	Welt rumschlagen.
+- Aus voriger Überlegung bleibt nur noch: Nahe Zukunft oder SciFi, und dann jeweils "in sich" und nicht über eine
+	lange Zeitspanne. Die lange Zeitspanne kann höchstens den allgemeinen Spielverlauf betreffen (global), aber nicht
+	die Entwicklung einzelner Spieler.
+- Die Nahe Zukunft lässt Raum für Entwicklung, aber dann spielt sich das Spiel noch mehr auf der Erde ab. In der SciFi
+	kann man sich davon lösen.
+- Die SciFi erfordert ein besonderes Konzept von Orten - auf einer Landkarte kann man überall etwas bauen, im Weltraum
+	erst mal nicht. Das ist aber technisch auch einfacher umzusetzen als eine Landkarte. Bei letzterer hinkt man immer
+	hinter den Wünschen hinterher -- selbst bei einer 3d-Landkarte.
+- Wegen der technischen Umsetzung und der UI wäre der Weltraum zweidimensional.
+
+Entscheidung:
+Das Spiel spielt in der SciFi und wird mit einer 2d-Weltraumkarte gebaut.
+
+---------------------------------------------------------------------------------------------------------------------
+Details über die Karte:
+- hat die Karte "Felder"?
+	- wofür? Planeten, Asteroidenfelder, Raumstationen, Schiffe können alle ohne Felder auskommen.
+	- nur die u.g. "Wand" hätte Felder, aber das kann dann ja dazu kommen wenn es die Gibt.
+- Es gilt ein Mindestabstand zwischen Einrichtungen. Das kann aber ein kleiner Abstand sein, z.B. 1km
+- Entfernungen sind dann wie in Eve Online realistisch.
+- UI wie in Google Maps. Durch die nicht vorhandenen Felder wird es sogar recht einfach, das zu bauen.
+
+---------------------------------------------------------------------------------------------------------------------
+
+Davon abhängig:
+- Plan entwerfen, was Orte sind und wie sie funktionieren
+	- s.o.
+- Items, Skills, GUI Style
+	- vgl. Eve Online (so, dass es noch als nicht geklaut durchgeht)
+
+Idee: SciFi erlaubt "die Wand" -> 2d-Raum ist nach einer Seite hin begrenzt durch eine unendliche Wand, in die man
+	"reingraben" kann. Darin kann sich dann auch -- in Raumschiff-Größe -- eine Art 2d-Mining-Subgame entwickeln.
+
+---------------------------------------------------------------------------------------------------------------------
+
+Frage: Wie funktionieren Actions und Manufacturing in diesem Setting?
+- Beim Lernen ist das einfach: Wie bei Eve Online!
+- Wo kann Manufacturing betrieben werden?
+- Falls "im Schiff": Muss dafür die Bewegung unterbrochen werden?
+	- Frage ist: Ist das cool, wenn man die Bewegung dafür unterbrechen muss? Also macht das Spiel dann mehr Spaß? Bei
+		EO nein, weil es ja auch ein Echtzeit-RPG ist. Das kann bei mir anders sein. Bei EO findet scheinbar das
+		Manufacturing immer in einer Station statt, und das ggf. auch ohne die Anwesenheit des Spielers.
+
+Frage: Ist die Karte für ein MVP nötig? Gefühlt ja, aber das sollte geklärt werden!
+
+

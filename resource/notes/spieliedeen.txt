@@ -27,6 +27,8 @@ Gefährliche Places
 
 Eve hat "Blueprint Copies" mit einem Limit, wie oft das benutzt werden kann
 -> ganz nett zum Handeln
+-> Copies haben immer limitierte Runs; es gibt ein Maximum, wie hoch man das Limit beim kopieren stellen kann.
+-> Kopien können vermutlich nicht mehr kopiert werden; evtl. können sie gesplittet werden.
 
 Manufacturing Sites
 - diese können auch mit Upgrades "personalisiert" werden
@@ -53,3 +55,16 @@ Reverse Engineering
 * Kampf als Zusatzelement, wo nicht die Spieler selbst angegriffen werden, sondern nur Ferngesteuerte Kampfschiffe
 	- in diesem gefährlichen Gebiet dann auch ferngesteuerte Miner / Prod. Anlagen etc. die angegriffen werden können
 
+* Blueprints mit "Efficiency": Weniger verbrauchte Materialien; weniger Zeit. Sind bei EO zwei verschiedene
+	Properties des Blueprints.
+
+Skills -- Achtung: Bei Eve muss man soweit ich weiß nur den Skill 1x kaufen und kann ihn dann auf jedem Level lernen.
+
+UI: EO hat im Manufacturing Window einen "buy all" button, der die nötigen Items zum Bauen lokal einkauft. Öffnet Dialog:
+Anzahl der Manufaturing Runs einstellbar; einzelne Input Item amounts änderbar; System, wo man einkauft änderbar.
+
+Research != Skills. Skills lernt man über Zeit und behält sie. Research erzeugt und verbessert Blueprints.
+
+* EO hat Factions. Noch unklar, was man daraus machen kann.
+
+* Jump Gates wie bei EO. Schiffe sollten nicht von sich aus in der Lage sein, die Riesen-Entfernungen zu fliegen.
