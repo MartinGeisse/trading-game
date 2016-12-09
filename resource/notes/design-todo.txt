@@ -79,6 +79,9 @@ Idee: SciFi erlaubt "die Wand" -> 2d-Raum ist nach einer Seite hin begrenzt durc
 
 ---------------------------------------------------------------------------------------------------------------------
 
+Frage: Ist die Karte für ein MVP nötig? Gefühlt ja, aber das sollte geklärt werden!
+-> ja!
+
 Frage: Wie funktionieren Actions und Manufacturing in diesem Setting?
 - Beim Lernen ist das einfach: Wie bei Eve Online!
 - Wo kann Manufacturing betrieben werden?
@@ -86,7 +89,6 @@ Frage: Wie funktionieren Actions und Manufacturing in diesem Setting?
 	- Frage ist: Ist das cool, wenn man die Bewegung dafür unterbrechen muss? Also macht das Spiel dann mehr Spaß? Bei
 		EO nein, weil es ja auch ein Echtzeit-RPG ist. Das kann bei mir anders sein. Bei EO findet scheinbar das
 		Manufacturing immer in einer Station statt, und das ggf. auch ohne die Anwesenheit des Spielers.
-
-Frage: Ist die Karte für ein MVP nötig? Gefühlt ja, aber das sollte geklärt werden!
+	- das ist beim Mining auch so! Also ist unterbrechen okay (später mit skills ohne Unterbrechen und fern-Manufacturing)
 
 

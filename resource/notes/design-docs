@@ -1,0 +1,30 @@
+
+Main Screen:
+	- variante 1: left bar - map - right bar
+	- variante 2: left bar - map
+	- variante 3: map - right bar
+	->
+	Keine Bars in v-Richtung (Wenig Platz in Widescreen-Monitoren), bzw. allerhöchstens schmale Balken
+		- Schmale Balken conflicten mit dem Apple-TopBar, Apple-Dock, Windows-BottomBar, evtl. andere in Windows (hat aber normal keine TopBar), dito Linux
+			-> soll heißen: Das ist weniger übersichtlich, wenn Bars gestackt sind
+		- Idee: abgehobene TopBar / BottomBar: Das Karten-View geht bis zum Rand und die Bars liegen ein Stück weiter innen, vgl. Icons bei Google Maps
+
+Styling: grau-blau, aber erst mal keine neue Schriftart (die von EO ist sau schwer zu lesen). Tab Panels als oft genutztes Element.
+
+Java-long für Koordinaten (in Metern)
+
+Crafting (genauer: ActiveCraftingAction) weiter als Action. Passive Crafting (ohne Beisein des Spielers) ist dann keine Spieler-Action.
+MovementAction zur Bewegung des Spielerschiffs. Active Crafting ist möglich, wenn der Spieler nah genug an der jeweiligen Station ist (max. N Meter).
+Die ActiveCraftingAction bezieht sich auf die Station (Action enthält eine Referenz auf die Station als Property) und kann über diese angelegt werden.
+GUI: Ein globales Menü für Actions ("context free") ist nicht nötig, da es wenige bis keine context free actions gibt und diese z.B. über das Spielerschiff ausgewählt
+	werden können.
+GUI: Wenn man eine ActiveCraftingAction über das Menü enqueuen will und laut Queue dann nicht dort ist, wird man gefragt, ob vorher eine Movement Action enqueued werden
+	soll (ist dann Voraussetzung für das enqueue der crafting action). Trotzdem wird vor Start der Action nochmal geprüft und ggf. ein Fehler dem Spieler geloggt.
+GUI: Kein oder ein Objekt auf der Karte ist selected. Wenn eines selected ist, erscheint im right-bar die Properties und mögliche Aktionen (z.B. hinfliegen; bei
+	Stationen: Manufacturing (ggf. mit Frage: dazu muss man aber vorher hinfliegen, soll das passieren?)
+	UNKLAR: wie arbeitet das mit der action queue zusammen? Sinnvoll wäre es, dass "hinfliegen" die AQ ersetzt, zumindest wenn sie nur 1 element enthält, ansonsten
+		Nachfrage ob ersetzen. Aber wie enqueued man dann?
+Action Stacks sind vermutlich doch nicht so sinnvoll. Eher ist es sinnvoll, dass bei Manufacturing / Mining Actions ein Stack angelegt wird. Bei Movement ist das ja
+	sinnlos. Also evtl. Subklasse RepeatableAction. Demnach muss auch nicht bei jeder Action beim enqueue die Anzahl wählbar sein.
+
+
