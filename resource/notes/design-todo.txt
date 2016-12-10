@@ -77,6 +77,9 @@ Davon abhängig:
 Idee: SciFi erlaubt "die Wand" -> 2d-Raum ist nach einer Seite hin begrenzt durch eine unendliche Wand, in die man
 	"reingraben" kann. Darin kann sich dann auch -- in Raumschiff-Größe -- eine Art 2d-Mining-Subgame entwickeln.
 
+Frage: Ist die Karte für ein MVP nötig? Gefühlt ja, aber das sollte geklärt werden!
+-> ja! Das Spiel ist nicht dasselbe ohne Karte!
+
 ---------------------------------------------------------------------------------------------------------------------
 
 Frage: Wie funktionieren Actions und Manufacturing in diesem Setting?
@@ -87,6 +90,18 @@ Frage: Wie funktionieren Actions und Manufacturing in diesem Setting?
 		EO nein, weil es ja auch ein Echtzeit-RPG ist. Das kann bei mir anders sein. Bei EO findet scheinbar das
 		Manufacturing immer in einer Station statt, und das ggf. auch ohne die Anwesenheit des Spielers.
 
-Frage: Ist die Karte für ein MVP nötig? Gefühlt ja, aber das sollte geklärt werden!
+Manufacturing während des Fluges ist ein Riesenvorteil für den Spieler und demnach sollte es von High-End-Ausrüstung
+abhängig sein. Das betrifft z.B. Bergbau-Trägerschiffe mit Verhüttungsanlage an Bord. Normale Spieler sollten das
+nicht können; so wird es erst zum Vorteil für High-End-Schiffe.
 
+Andererseits hat Manufacturing an der Station in Anwesenheit des Spielers mehrere Nachteile:
+- Es gibt eine Unterscheidung zwischen Manufaturing Sites "mit Anwesenheit" und "autonom". Das ist Mist.
+- (doch kein Nachteil) -> der Spieler kann so lange nichts anderes machen. Das ist aber okay, beim Bergbau ist das
+	auch nicht anders.
+-->
+Demnach ist es wohl am sinnvollsten, die Unterscheidung von Ausrüstung und Skills des Spielers abhängig zu machen,
+der Dinge herstellen will! Die Manufacturing Sites sind dieselben, aber der Spieler kann anfangs nur 1 Item gleichzeitig
+und nur in Anwesenheit herstellen. Das wird dann später zur autonomen Herstellung und/oder mehreren autonomen
+Manufacturing-Prozessen verbessert.
 
+* Idee: Neben Asteroiden auch noch andere "Rohstoffquellen" mit exotischen Rohstoffen (SciFi machts möglich)
