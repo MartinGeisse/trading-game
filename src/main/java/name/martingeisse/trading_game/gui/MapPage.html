@@ -6,11 +6,12 @@
             position: fixed;
             top: 0px;
             left: 0px;
-            right: 0px;
+            right: 200px;
             bottom: 0px;
             background-color: black;
             color: white;
             cursor: move;
+            overflow: hidden;
         }
 
         .map-surface {
@@ -32,6 +33,14 @@
         .map-object > div {
             margin-top: -50%;
             margin-left: -50%;
+        }
+
+        .right-sidebar {
+            position: fixed;
+            top: 0px;
+            right: 0px;
+            bottom: 0px;
+            width: 200px;
         }
 
     </style>
@@ -106,8 +115,16 @@
                 lastDragY = e.clientY;
             });
 
-            $('.map-container').on('mouseup', function (e) {
+            $('.map-container').on('mouseup mouseleave', function (e) {
                 dragging = false;
+            });
+
+            $('.map-container').on('mouseenter', function (e) {
+                if (e.buttons & 1) {
+                    dragging = true;
+                    lastDragX = e.clientX;
+                    lastDragY = e.clientY;
+                }
             });
 
             $('.map-container').on('mousemove', function(e) {
@@ -126,18 +143,23 @@
                 }
             });
 
+            $('.map-container').on('click', '.map-object', function(e) {
+                onSelectMapObject($(this).text());
+            });
+
         });
     </script>
 </wicket:head>
 <body>
     <div class="map-container" tabindex="0">
         <div class="map-surface">
-            <div class="map">
+            <div class="map" wicket:id="map">
                 <div wicket:id="mapObjects" class="map-object"><div wicket:id="text"></div></div>
             </div>
         </div>
     </div>
-    <div style="position: fixed; bottom: 0px; left: 0px;" id="pos">
+    <div class="right-sidebar" wicket:id="rightSidebar">
+        <div wicket:id="test"></div>
     </div>
 </body>
 </html>
