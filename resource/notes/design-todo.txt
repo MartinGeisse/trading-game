@@ -82,6 +82,9 @@ Frage: Ist die Karte für ein MVP nötig? Gefühlt ja, aber das sollte geklärt 
 
 ---------------------------------------------------------------------------------------------------------------------
 
+Frage: Ist die Karte für ein MVP nötig? Gefühlt ja, aber das sollte geklärt werden!
+-> ja!
+
 Frage: Wie funktionieren Actions und Manufacturing in diesem Setting?
 - Beim Lernen ist das einfach: Wie bei Eve Online!
 - Wo kann Manufacturing betrieben werden?
@@ -89,6 +92,7 @@ Frage: Wie funktionieren Actions und Manufacturing in diesem Setting?
 	- Frage ist: Ist das cool, wenn man die Bewegung dafür unterbrechen muss? Also macht das Spiel dann mehr Spaß? Bei
 		EO nein, weil es ja auch ein Echtzeit-RPG ist. Das kann bei mir anders sein. Bei EO findet scheinbar das
 		Manufacturing immer in einer Station statt, und das ggf. auch ohne die Anwesenheit des Spielers.
+	- das ist beim Mining auch so! Also ist unterbrechen okay (später mit skills ohne Unterbrechen und fern-Manufacturing)
 
 Manufacturing während des Fluges ist ein Riesenvorteil für den Spieler und demnach sollte es von High-End-Ausrüstung
 abhängig sein. Das betrifft z.B. Bergbau-Trägerschiffe mit Verhüttungsanlage an Bord. Normale Spieler sollten das
