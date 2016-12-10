@@ -28,11 +28,17 @@
             left: 0px;
             font-weight: bold;
             cursor: default;
+
+            background-color: green;
         }
 
-        .map-object > div {
+        .map-object > .visual {
             margin-top: -50%;
             margin-left: -50%;
+        }
+
+        .map-object > .objectIdentifier {
+            display: none;
         }
 
         .right-sidebar {
@@ -144,7 +150,7 @@
             });
 
             $('.map-container').on('click', '.map-object', function(e) {
-                onSelectMapObject($(this).text());
+                onSelectMapObject($(this, '.objectIdentifier').text());
             });
 
         });
@@ -154,7 +160,10 @@
     <div class="map-container" tabindex="0">
         <div class="map-surface">
             <div class="map" wicket:id="map">
-                <div wicket:id="mapObjects" class="map-object"><div wicket:id="text"></div></div>
+                <div wicket:id="mapObjects" class="map-object">
+                    <div class="visual"></div>
+                    <div class="objectIdentifier" wicket:id="objectIdentifier"></div>
+                </div>
             </div>
         </div>
     </div>

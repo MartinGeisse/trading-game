@@ -1,6 +1,10 @@
 package name.martingeisse.trading_game.gui;
 
+import name.martingeisse.trading_game.game.generate.StarNaming;
+import name.martingeisse.trading_game.game.generate.StarPlacement;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -32,9 +36,11 @@ public class MapPage extends AbstractPage {
 	public MapPage() {
 
 		// test data TODO remove
-		Random random = new Random();
-		for (int i=0; i<100; i++) {
-			mapObjects.add(new MapObject(random.nextLong() % 1000, random.nextLong() % 1000));
+		for (Pair<Long, Long> starPosition : StarPlacement.compute(100, 200, 2, 3000)) {
+			long x = starPosition.getLeft();
+			long y = starPosition.getRight();
+			String name = StarNaming.compute();
+			mapObjects.add(new MapObject(x, y, name));
 		}
 
 		// map
@@ -44,8 +50,10 @@ public class MapPage extends AbstractPage {
 			@Override
 			protected void populateItem(ListItem<MapObject> item) {
 				MapObject mapObject = item.getModelObject();
-				item.add(new AttributeModifier("style", "transform: translate(" + mapObject.getX() + "px, " + mapObject.getY() + "px);"));
-				item.add(new Label("text", "" + mapObject.getX() + "," + mapObject.getY()));
+				// Note: currently only square objects are supported since percentage-based negative y-margins use the
+				// *width* (not height) as their calculation basis!
+				item.add(new AttributeModifier("style", "transform: translate(" + mapObject.getX() + "px, " + mapObject.getY() + "px); width: 10px; height: 10px;"));
+				item.add(new Label("objectIdentifier", "" + item.getIndex()));
 			}
 		});
 		map.add(new AbstractDefaultAjaxBehavior() {
@@ -53,13 +61,16 @@ public class MapPage extends AbstractPage {
 			@Override
 			public void renderHead(Component component, IHeaderResponse response) {
 				super.renderHead(component, response);
-				String script = "onSelectMapObject = " + getCallbackFunction(CallbackParameter.explicit("testText"));
+				String script = "onSelectMapObject = " + getCallbackFunction(CallbackParameter.explicit("objectIdentifier"));
 				response.render(JavaScriptHeaderItem.forScript(script, null));
 			}
 
 			@Override
 			protected void respond(AjaxRequestTarget target) {
-				testText = getRequest().getRequestParameters().getParameterValue("testText").toString();
+				String objectIdentifier = getRequest().getRequestParameters().getParameterValue("objectIdentifier").toString().trim();
+				int index = Integer.parseInt(objectIdentifier);
+				MapObject mapObject = mapObjects.get(index);
+				testText = mapObject.getName() + " at " + mapObject.getX() + ", " + mapObject.getY();
 				target.add(MapPage.this.get("rightSidebar"));
 			}
 
@@ -92,10 +103,12 @@ public class MapPage extends AbstractPage {
 
 		private final long x;
 		private final long y;
+		private final String name;
 
-		public MapObject(long x, long y) {
+		public MapObject(long x, long y, String name) {
 			this.x = x;
 			this.y = y;
+			this.name = name;
 		}
 
 		/**
@@ -114,6 +127,15 @@ public class MapPage extends AbstractPage {
 		 */
 		public long getY() {
 			return y;
+		}
+
+		/**
+		 * Getter method.
+		 *
+		 * @return the name
+		 */
+		public String getName() {
+			return name;
 		}
 
 	}
