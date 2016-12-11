@@ -1,0 +1,1 @@
+povray +L$POVINCLUDE +W1000 +H1000 p1.pov
