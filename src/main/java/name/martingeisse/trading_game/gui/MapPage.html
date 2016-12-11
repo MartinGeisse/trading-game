@@ -28,12 +28,19 @@
             left: 0px;
             font-weight: bold;
             cursor: default;
-
-            background-color: green;
         }
 
         .map-object > .visual {
+            position: absolute;
+            display: inline-block;
             margin-top: -50%;
+            margin-left: -40%;
+            background-color: green;
+        }
+
+        .map-object > .name {
+            display: inline-block;
+            margin-top: 10px;
             margin-left: -50%;
         }
 
@@ -150,7 +157,7 @@
             });
 
             $('.map-container').on('click', '.map-object', function(e) {
-                onSelectMapObject($(this, '.objectIdentifier').text());
+                onSelectMapObject($('.objectIdentifier', this).text());
             });
 
         });
@@ -161,8 +168,9 @@
         <div class="map-surface">
             <div class="map" wicket:id="map">
                 <div wicket:id="mapObjects" class="map-object">
-                    <div class="visual"></div>
+                    <div class="visual" wicket:id="visual"></div>
                     <div class="objectIdentifier" wicket:id="objectIdentifier"></div>
+                    <div class="name" wicket:id="name"></div>
                 </div>
             </div>
         </div>

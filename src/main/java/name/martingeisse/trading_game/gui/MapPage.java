@@ -10,9 +10,11 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.PriorityHeaderItem;
+import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -50,10 +52,23 @@ public class MapPage extends AbstractPage {
 			@Override
 			protected void populateItem(ListItem<MapObject> item) {
 				MapObject mapObject = item.getModelObject();
+
+				// place the object on the map
+				item.add(new AttributeModifier("style", "transform: translate(" + mapObject.getX() + "px, " + mapObject.getY() + "px)"));
+
+				// fill the object contents
 				// Note: currently only square objects are supported since percentage-based negative y-margins use the
 				// *width* (not height) as their calculation basis!
-				item.add(new AttributeModifier("style", "transform: translate(" + mapObject.getX() + "px, " + mapObject.getY() + "px); width: 10px; height: 10px;"));
+				item.add(new WebComponent("visual") {
+					@Override
+					protected void onComponentTag(ComponentTag tag) {
+						super.onComponentTag(tag);
+						tag.put("style", "width: 10px; height: 10px;");
+					}
+				});
 				item.add(new Label("objectIdentifier", "" + item.getIndex()));
+				item.add(new Label("name", mapObject.getName()));
+
 			}
 		});
 		map.add(new AbstractDefaultAjaxBehavior() {
