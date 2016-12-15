@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * TODO add reference to PlayerShip; move inventory to PlayerShip (action queue stays here)
  */
 public final class Player {
 

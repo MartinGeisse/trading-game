@@ -5,7 +5,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * This class holds an application-wide lock to synchronize access to the {@link Game}.
+ * This class holds an application-wide lock to synchronize access to the {@link Game}. This is preferred over a
+ * synchronized-block because it supports try-lock operations with and without timeout, while a synchronized-block
+ * only supports locking without timeout.
  */
 public final class GlobalGameLock {
 

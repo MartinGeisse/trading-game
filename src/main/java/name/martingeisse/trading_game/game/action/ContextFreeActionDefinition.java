@@ -14,6 +14,8 @@ import java.util.function.Function;
  * in the UI. In the far future, this may be turned into a more general "precondition" mechanism that has a
  * predicate function and selects a UI panel for explain itself (or introduce a separate mapper for that, so the
  * game logic isn't tied to the UI).
+ *
+ * TODO remove. In the future, all actions are selected from a context.
  */
 public final class ContextFreeActionDefinition {
 

@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.game;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.game.space.Space;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.*;
@@ -16,6 +17,7 @@ public final class Game {
 	private static final int TICK_MULTIPLIER = 20;
 
 	private final Map<String, Player> players;
+	private final Space space = new Space();
 
 	@Inject
 	public Game() {
@@ -44,6 +46,15 @@ public final class Game {
 		return players.values();
 	}
 
+	/**
+	 * Getter method.
+	 *
+	 * @return the space
+	 */
+	public Space getSpace() {
+		return space;
+	}
+
 	public Player getPlayer(String knownPlayerId) {
 		Player player = players.get(knownPlayerId);
 		if (player == null) {
@@ -68,6 +79,7 @@ public final class Game {
 		for (Player player : players.values()) {
 			player.tick();
 		}
+		space.tick();
 	}
 
 	/**

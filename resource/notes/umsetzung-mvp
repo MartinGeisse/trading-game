@@ -40,18 +40,18 @@ NICHT:
 
 Milestones:
 - Code-Umbau
-	- SpaceObject-Klassenhierarchie
+	+ SpaceObject-Klassenhierarchie
 	- PlayerShip mit step() callback
 	- Ship hält Inventory
 	- Player verweist auf Ship und manipuliert dieses
-	- auflistung, welche Entscheidungen im Code so nicht mehr tragbar sind
+	+ auflistung, welche Entscheidungen im Code so nicht mehr tragbar sind
 - Movement
 	- Liste von SpaceObjects in GUI sichtbar
 	- Action-Menü an den SpaceObjects
 	- keine ContextFreeActionFactories
 	- MovementAction -> Position ändert sich über die Zeit
 	- bestimmte Aktionen sind nur möglich, wenn man in der Nähe ist
-	- nicht mehr tragbarer Code wurde entfernt, umgebaut oder als "kompliziert" gelistet
+	- nicht mehr tragbarer Code (aktuell per TODO markiert) wurde entfernt, umgebaut oder als "kompliziert" gelistet
 - Spielinhalt
 	- Schiffe können Upgrades haben
 	- verschiedene Erzsorten in den Asteroiden

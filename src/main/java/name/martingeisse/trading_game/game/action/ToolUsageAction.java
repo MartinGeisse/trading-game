@@ -9,6 +9,9 @@ import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
  * listed as expected output since the output usually varies.
  * <p>
  * This class does NOT support subclasses which reserve additional action items! Do not try this, or items will be lost.
+ *
+ * TODO remove. In the future, there won't be tools but machines; those are required to be installed at manufacturing
+ * sites instead of being present in the player's inventory.
  */
 public abstract class ToolUsageAction extends PlayerAction {
 
