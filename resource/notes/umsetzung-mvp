@@ -51,6 +51,9 @@ Milestones:
 			Spieler, der an einer Station angedockt ist, nur eine Action ausführen (Ship oder Station) und
 			demzufolge nur einen Satz von ActionItems gleichzeitig haben. Die Ship/Station Unterscheidung ist nur
 			dafür wichtig, wo die Items bei Abbruch wieder hingelegt werden -- aber dasselbe gilt auch bei Erfolg.
+		-> Weiteres Argument ist, falls mal zwei Spieler auf dasselbe "Lager" (z.B. innerhalb einer Station) zugreifen
+			und daraus Sachen craften, dann haben sie getrennte ActionItems. Ebenso bei 2 Maschinen, die auf dasselbe
+			Lager zugreifen.
 		-> Fazit: ActionItems weiter beim Spieler
 	- Player verweist auf Ship und manipuliert dieses
 	+ auflistung, welche Entscheidungen im Code so nicht mehr tragbar sind
