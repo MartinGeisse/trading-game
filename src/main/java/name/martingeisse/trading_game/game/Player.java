@@ -8,6 +8,7 @@ import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 import name.martingeisse.trading_game.game.skill.PlayerSkills;
+import name.martingeisse.trading_game.game.space.PlayerShip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public final class Player {
 
 	private final Game game;
 	private final String id;
+	private final PlayerShip ship;
 	private String name;
 	private final Inventory inventory = new Inventory();
 	private final ActionQueue pendingActions = new ActionQueue();
@@ -26,9 +28,10 @@ public final class Player {
 	private FixedInventory actionItems;
 	private final PlayerSkills skills;
 
-	public Player(Game game, String id) {
+	public Player(Game game, String id, PlayerShip ship) {
 		this.game = game;
 		this.id = id;
+		this.ship = ship;
 		this.name = "Player " + id;
 		this.skills = new PlayerSkills();
 	}
@@ -40,6 +43,15 @@ public final class Player {
 	 */
 	public String getId() {
 		return id;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the ship
+	 */
+	public PlayerShip getShip() {
+		return ship;
 	}
 
 	/**

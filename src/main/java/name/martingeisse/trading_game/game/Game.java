@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.game;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.game.space.PlayerShip;
 import name.martingeisse.trading_game.game.space.Space;
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -62,7 +63,9 @@ public final class Game {
 			do {
 				id = generatePlayerId();
 			} while (players.get(id) != null);
-			player = new Player(this, id);
+			PlayerShip ship = new PlayerShip();
+			space.getSpaceObjects().add(ship);
+			player = new Player(this, id, ship);
 			players.put(id, player);
 		}
 		return player;
