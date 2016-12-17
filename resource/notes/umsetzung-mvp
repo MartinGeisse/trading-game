@@ -43,6 +43,15 @@ Milestones:
 	+ SpaceObject-Klassenhierarchie
 	- PlayerShip mit step() callback
 	- Ship hält Inventory
+		-> was ist mit ActionItems (temp. inventory für laufende Action)? Im Ship oder im Player?
+		-> überlegung: Die Trennung (Aktionen = Spieler, Inventory = Ship) wird gemacht, weil der Spieler auch
+			z.B. Manufacturing in einer Raumstation betreiben könnte. Dann gilt ein anderes Inventory, aber es
+			konukurriert mit Ship-Actions.
+		-> Es klingt sinnvoll, die ActionItems dort abzulegen, wo die Actions ausgeführt werden. Z.B. kann ein
+			Spieler, der an einer Station angedockt ist, nur eine Action ausführen (Ship oder Station) und
+			demzufolge nur einen Satz von ActionItems gleichzeitig haben. Die Ship/Station Unterscheidung ist nur
+			dafür wichtig, wo die Items bei Abbruch wieder hingelegt werden -- aber dasselbe gilt auch bei Erfolg.
+		-> Fazit: ActionItems weiter beim Spieler
 	- Player verweist auf Ship und manipuliert dieses
 	+ auflistung, welche Entscheidungen im Code so nicht mehr tragbar sind
 - Movement

@@ -22,7 +22,6 @@ public final class Player {
 	private final String id;
 	private final PlayerShip ship;
 	private String name;
-	private final Inventory inventory = new Inventory();
 	private final ActionQueue pendingActions = new ActionQueue();
 	private PlayerActionProgress actionProgress;
 	private FixedInventory actionItems;
@@ -84,7 +83,7 @@ public final class Player {
 	 * @return the inventory
 	 */
 	public Inventory getInventory() {
-		return inventory;
+		return ship.getInventory();
 	}
 
 	/**
@@ -155,13 +154,13 @@ public final class Player {
 			throw new IllegalStateException("action items already set");
 		}
 		for (FixedItemStack stack : billOfMaterials.getItemStacks()) {
-			if (inventory.count(stack.getItemType()) < stack.getSize()) {
+			if (getInventory().count(stack.getItemType()) < stack.getSize()) {
 				throw new NotEnoughItemsException();
 			}
 		}
 		for (FixedItemStack stack : billOfMaterials.getItemStacks()) {
 			try {
-				inventory.remove(stack.getItemType(), stack.getSize());
+				getInventory().remove(stack.getItemType(), stack.getSize());
 			} catch (NotEnoughItemsException e) {
 				throw new RuntimeException("could not remove items for action -- inventory is not inconsistent");
 			}
@@ -176,7 +175,7 @@ public final class Player {
 		if (actionItems == null) {
 			throw new IllegalStateException("no action items");
 		}
-		inventory.add(actionItems);
+		getInventory().add(actionItems);
 		actionItems = null;
 	}
 
