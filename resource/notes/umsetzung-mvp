@@ -96,3 +96,5 @@ Umsetzungs-Überlegungen (betr. alle Milestones)
 	zumindest wenn man nicht extrem weit rauszoomt. Hier wäre es sinnvoll, dass die gerenderte Map nicht einfach aus
 	Quadraten besteht, sondern aus Rechtecken mit Größen- und Positionsangabe -- dann kann man diese Fälle
 	verallgemeinern.
+- Klasse ActionLoop (kapselt action queue, action items, action progress). Geht erst, wenn die Actions ihr
+	Ziel-Inventory kennen.
