@@ -5,8 +5,29 @@ package name.martingeisse.trading_game.game.space;
  */
 public abstract class SpaceObject {
 
+	public static final String DEFAULT_NAME = "unnamed";
+
+	private String name = DEFAULT_NAME;
 	private long x;
 	private long y;
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Setter method.
+	 *
+	 * @param name the name
+	 */
+	public void setName(String name) {
+		this.name = (name == null ? DEFAULT_NAME : name);
+	}
 
 	/**
 	 * Getter method.

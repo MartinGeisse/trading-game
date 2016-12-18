@@ -1,6 +1,8 @@
 package name.martingeisse.trading_game.game.space;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -8,14 +10,14 @@ import java.util.Set;
  */
 public final class Space {
 
-	private final Set<SpaceObject> spaceObjects = new HashSet<>();
+	private final List<SpaceObject> spaceObjects = new ArrayList<>();
 
 	/**
 	 * Getter method.
 	 *
 	 * @return the spaceObjects
 	 */
-	public Set<SpaceObject> getSpaceObjects() {
+	public List<SpaceObject> getSpaceObjects() {
 		return spaceObjects;
 	}
 

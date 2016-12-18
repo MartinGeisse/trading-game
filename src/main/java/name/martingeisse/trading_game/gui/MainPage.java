@@ -15,6 +15,7 @@ import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.game.skill.Skill;
+import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import name.martingeisse.wicket.helpers.InlineProgressBar;
@@ -233,6 +234,17 @@ public class MainPage extends AbstractPage {
 		});
 		add(skillsContainer);
 		skillsContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
+
+		WebMarkupContainer spaceObjectsContainer = new WebMarkupContainer("spaceObjectsContainer");
+		add(spaceObjectsContainer);
+		spaceObjectsContainer.add(new ListView<SpaceObject>("spaceObjects", new PropertyModel<>(this, "game.space.spaceObjects")) {
+			@Override
+			protected void populateItem(ListItem<SpaceObject> item) {
+				item.add(new Label("name", new PropertyModel<>(item.getModel(), "name")));
+				item.add(new Label("x", new PropertyModel<>(item.getModel(), "x")));
+				item.add(new Label("y", new PropertyModel<>(item.getModel(), "y")));
+			}
+		});
 
 	}
 

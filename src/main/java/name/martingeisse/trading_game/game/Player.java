@@ -9,6 +9,7 @@ import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 import name.martingeisse.trading_game.game.skill.PlayerSkills;
 import name.martingeisse.trading_game.game.space.PlayerShip;
+import name.martingeisse.trading_game.game.space.SpaceObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public final class Player {
 		this.ship = ship;
 		this.name = "Player " + id;
 		this.skills = new PlayerSkills();
+		setShipName();
 	}
 
 	/**
@@ -74,7 +76,19 @@ public final class Player {
 		if (!game.isRenamePossible(this, name)) {
 			throw new NameAlreadyUsedException();
 		}
+		String oldName = this.name;
 		this.name = name;
+		if (ship.getName().equals(generateName(oldName))) {
+			setShipName();
+		}
+	}
+
+	private void setShipName() {
+		ship.setName(generateName(name));
+	}
+
+	private static String generateName(String playerName) {
+		return playerName + "'s ship";
 	}
 
 	/**
