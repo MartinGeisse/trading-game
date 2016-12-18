@@ -81,8 +81,13 @@
 			<div wicket:id="spaceObjectsContainer">
 				<ul>
 					<li wicket:id="spaceObjects">
-						<span wicket:id="name"></span> at (<span wicket:id="x"></span>, <span wicket:id="y"></span>)
-					</li>
+						<div><span wicket:id="name"></span> at (<span wicket:id="x"></span>, <span wicket:id="y"></span>)</div>
+                        <ul>
+                            <li wicket:id="actions">
+                                <a wicket:id="link"><span wicket:id="name"></span></a>
+                            </li>
+                        </ul>
+                    </li>
 				</ul>
 			</div>
 		</div>

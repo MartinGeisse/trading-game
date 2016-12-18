@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
 
@@ -239,10 +240,33 @@ public class MainPage extends AbstractPage {
 		add(spaceObjectsContainer);
 		spaceObjectsContainer.add(new ListView<SpaceObject>("spaceObjects", new PropertyModel<>(this, "game.space.spaceObjects")) {
 			@Override
-			protected void populateItem(ListItem<SpaceObject> item) {
-				item.add(new Label("name", new PropertyModel<>(item.getModel(), "name")));
-				item.add(new Label("x", new PropertyModel<>(item.getModel(), "x")));
-				item.add(new Label("y", new PropertyModel<>(item.getModel(), "y")));
+			protected void populateItem(ListItem<SpaceObject> spaceObjectItem) {
+				spaceObjectItem.add(new Label("name", new PropertyModel<>(spaceObjectItem.getModel(), "name")));
+				spaceObjectItem.add(new Label("x", new PropertyModel<>(spaceObjectItem.getModel(), "x")));
+				spaceObjectItem.add(new Label("y", new PropertyModel<>(spaceObjectItem.getModel(), "y")));
+				IModel<List<PlayerAction>> objectActionsModel = new LoadableDetachableModel<List<PlayerAction>>() {
+					@Override
+					protected List<PlayerAction> load() {
+						return spaceObjectItem.getModelObject().getActionsFor(getPlayer());
+					}
+				};
+				spaceObjectItem.add(new ListView<PlayerAction>("actions", objectActionsModel) {
+					@Override
+					protected void populateItem(ListItem<PlayerAction> actionItem) {
+						AjaxLink<?> link = new AjaxLink<Void>("link") {
+							@Override
+							public void onClick(AjaxRequestTarget target) {
+								Player player = getPlayer();
+								player.scheduleAction(actionItem.getModelObject());
+								target.add(MainPage.this.get("currentActionContainer"));
+								target.add(MainPage.this.get("pendingActionsContainer"));
+								target.add(MainPage.this.get("inventoryContainer"));
+							}
+						};
+						link.add(new Label("name", actionItem.getModelObject().toString()));
+						actionItem.add(link);
+					}
+				});
 			}
 		});
 

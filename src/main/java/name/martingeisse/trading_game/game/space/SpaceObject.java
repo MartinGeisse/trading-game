@@ -1,5 +1,13 @@
 package name.martingeisse.trading_game.game.space;
 
+import com.google.common.collect.ImmutableList;
+import jdk.nashorn.internal.ir.annotations.Immutable;
+import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.action.MoveToPositionAction;
+import name.martingeisse.trading_game.game.action.PlayerAction;
+
+import java.util.List;
+
 /**
  *
  */
@@ -69,6 +77,21 @@ public abstract class SpaceObject {
 	 * Advances game logic.
 	 */
 	public void tick() {
+	}
+
+	/**
+	 *
+	 */
+	public ImmutableList<PlayerAction> getActionsFor(Player player) {
+		return ImmutableList.of(getMoveToPositionActionFor(player));
+	}
+
+	/**
+	 * @param player
+	 * @return
+	 */
+	public final PlayerAction getMoveToPositionActionFor(Player player) {
+		return new MoveToPositionAction(player, x, y);
 	}
 
 }

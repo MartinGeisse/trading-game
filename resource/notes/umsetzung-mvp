@@ -57,11 +57,15 @@ Milestones:
 	- Action-Menü an den SpaceObjects
 	- keine ContextFreeActionFactories
 	- MovementAction -> Position ändert sich über die Zeit
+		- Erfordert neues Konzept von Actions:
+			- Seiteneffekte auch bevor die Action abgeschlossen ist -> tick()-Methode in Action
 	- bestimmte Aktionen sind nur möglich, wenn man in der Nähe ist
 	- nicht mehr tragbarer Code (aktuell per TODO markiert) wurde entfernt, umgebaut oder als "kompliziert" gelistet
 - Spielinhalt
 	- Schiffe können Upgrades haben
 	- verschiedene Erzsorten in den Asteroiden
+		- Erfordert Möglichkeit, Action "unendlich lang" auszuführen -> Integer.MAX_VALUE als repeat-Wert -> wird
+			dann auch nicht runtergezählt
 	- Upgrades müssen als Actions mit Zeit gebaut werden, brauchen verschiedene Erze und sind gleich im Schiff verbaut
 		- schneller fliegen
 		- schneller Erz abbauen
