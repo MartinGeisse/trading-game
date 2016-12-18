@@ -59,6 +59,9 @@ Milestones:
 	- MovementAction -> Position ändert sich über die Zeit
 		- Erfordert neues Konzept von Actions:
 			- Seiteneffekte auch bevor die Action abgeschlossen ist -> tick()-Methode in Action
+			- Actions ohne benennbaren progress, aber mit benennbarer Restzeit
+				- Restzeit ist auch für Progress-Actions sinnvoll
+				- Trotzdem ist für diese auch Progress sinnvoll, also nicht rein auf Restzeit gehen
 	- bestimmte Aktionen sind nur möglich, wenn man in der Nähe ist
 	- nicht mehr tragbarer Code (aktuell per TODO markiert) wurde entfernt, umgebaut oder als "kompliziert" gelistet
 - Spielinhalt
