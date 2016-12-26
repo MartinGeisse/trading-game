@@ -27,6 +27,7 @@ import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.IProvider;
 
 import javax.servlet.http.HttpServletRequest;
@@ -168,7 +169,6 @@ public class MyWicketApplication extends WebApplication {
 
 		// acquire the global lock for the Game object during all requests except a few whitelisted ones that don't
 		// need that object. In particular, both rendering requests and listener requests need the lock.
-		// TODO render-buffer requests probably don't!
 		getRequestCycleListeners().add(new AbstractRequestCycleListener() {
 
 			@Override
@@ -178,8 +178,10 @@ public class MyWicketApplication extends WebApplication {
 					return;
 				}
 				if (handler instanceof ResourceReferenceRequestHandler) {
-					// TODO should limit this to package resources because other resources might use the Game object
-					return;
+					ResourceReference reference = ((ResourceReferenceRequestHandler) handler).getResourceReference();
+					if (reference instanceof PackageResourceReference) {
+						return;
+					}
 				}
 				GlobalGameLock.onBeginRequest((HttpServletRequest) cycle.getRequest().getContainerRequest());
 			}

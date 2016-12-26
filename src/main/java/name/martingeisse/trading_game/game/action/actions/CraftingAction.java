@@ -8,8 +8,6 @@ import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 
 /**
  * An action backed by a {@link CraftingRecipe}.
- *
- * TODO implement
  */
 public final class CraftingAction extends FixedEffortAction {
 

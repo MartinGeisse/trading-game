@@ -8,7 +8,7 @@ import name.martingeisse.trading_game.game.skill.PlayerSkills;
 import name.martingeisse.trading_game.game.space.PlayerShip;
 
 /**
- * TODO add reference to PlayerShip; move inventory to PlayerShip (action queue stays here)
+ *
  */
 public final class Player {
 
