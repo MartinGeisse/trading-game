@@ -104,4 +104,25 @@ public class Inventory {
 		return this;
 	}
 
+	/**
+	 * Removes items of multiple types, assuming that the argument is a valid bill of materials according to
+	 * {@link FixedInventory#isValidBillOfMaterials()}. Does not remove anything if any items are missing.
+	 *
+	 * @throws NotEnoughItemsException if the player doesn't have the required items
+	 */
+	public void removeBillOfMaterials(FixedInventory billOfMaterials) throws NotEnoughItemsException {
+		for (FixedItemStack stack : billOfMaterials.getItemStacks()) {
+			if (count(stack.getItemType()) < stack.getSize()) {
+				throw new NotEnoughItemsException();
+			}
+		}
+		for (FixedItemStack stack : billOfMaterials.getItemStacks()) {
+			try {
+				remove(stack.getItemType(), stack.getSize());
+			} catch (NotEnoughItemsException e) {
+				throw new RuntimeException("could not remove items for action -- inventory is now inconsistent");
+			}
+		}
+	}
+
 }

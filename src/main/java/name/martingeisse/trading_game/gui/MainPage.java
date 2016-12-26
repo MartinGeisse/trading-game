@@ -8,9 +8,9 @@ package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
-import name.martingeisse.trading_game.game.action.PlayerAction;
 import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.ItemStack;
@@ -36,7 +36,9 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This is the main page for controlling the game.
@@ -123,21 +125,21 @@ public class MainPage extends AbstractPage {
 
 		WebMarkupContainer currentActionContainer = new WebMarkupContainer("currentActionContainer");
 		add(currentActionContainer);
-		currentActionContainer.add(new Label("currentAction", new PropertyModel<>(this, "player.actionProgress.action")) {
+		currentActionContainer.add(new Label("currentAction", new PropertyModel<>(this, "player.actionExecution.name")) {
 			@Override
 			protected void onConfigure() {
 				super.onConfigure();
 				setVisible(getDefaultModelObject() != null);
 			}
 		});
-		IModel<Integer> currentActionProgressModel = new PropertyModel<>(this, "player.actionProgress.progressPoints");
+		IModel<Integer> currentActionProgressModel = new PropertyModel<>(this, "player.actionExecution.progress.currentProgressPoints");
 		InlineProgressBar currentActionProgressBar = new InlineProgressBar("currentActionProgressBar", currentActionProgressModel);
-		currentActionProgressBar.setTotalAmountModel(new PropertyModel<>(this, "player.actionProgress.action.requiredProgressPoints"));
+		currentActionProgressBar.setTotalAmountModel(new PropertyModel<>(this, "player.actionExecution.progress.requiredProgressPoints"));
 		currentActionProgressBar.add(new ProgressBarClientProgressBehavior() {
 			@Override
 			protected int getRemainingSeconds() {
-				int remainingProgressPoints = getPlayer().getActionProgress().getAction().getRequiredProgressPoints() - currentActionProgressModel.getObject();
-				return remainingProgressPoints / Game.getTicksPerSecond();
+				Integer remainingTime = getPlayer().getActionExecution().getRemainingTime();
+				return (remainingTime == null ? 0 : remainingTime);
 			}
 		});
 		currentActionContainer.queue(currentActionProgressBar);
@@ -244,15 +246,15 @@ public class MainPage extends AbstractPage {
 				spaceObjectItem.add(new Label("name", new PropertyModel<>(spaceObjectItem.getModel(), "name")));
 				spaceObjectItem.add(new Label("x", new PropertyModel<>(spaceObjectItem.getModel(), "x")));
 				spaceObjectItem.add(new Label("y", new PropertyModel<>(spaceObjectItem.getModel(), "y")));
-				IModel<List<PlayerAction>> objectActionsModel = new LoadableDetachableModel<List<PlayerAction>>() {
+				IModel<List<Action>> objectActionsModel = new LoadableDetachableModel<List<Action>>() {
 					@Override
-					protected List<PlayerAction> load() {
+					protected List<Action> load() {
 						return spaceObjectItem.getModelObject().getActionsFor(getPlayer());
 					}
 				};
-				spaceObjectItem.add(new ListView<PlayerAction>("actions", objectActionsModel) {
+				spaceObjectItem.add(new ListView<Action>("actions", objectActionsModel) {
 					@Override
-					protected void populateItem(ListItem<PlayerAction> actionItem) {
+					protected void populateItem(ListItem<Action> actionItem) {
 						AjaxLink<?> link = new AjaxLink<Void>("link") {
 							@Override
 							public void onClick(AjaxRequestTarget target) {

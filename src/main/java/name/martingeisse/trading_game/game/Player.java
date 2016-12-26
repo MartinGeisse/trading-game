@@ -1,18 +1,11 @@
 package name.martingeisse.trading_game.game;
 
+import name.martingeisse.trading_game.game.action.Action;
+import name.martingeisse.trading_game.game.action.ActionExecution;
 import name.martingeisse.trading_game.game.action.ActionQueue;
-import name.martingeisse.trading_game.game.action.PlayerAction;
-import name.martingeisse.trading_game.game.action.PlayerActionProgress;
-import name.martingeisse.trading_game.game.item.FixedInventory;
-import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.Inventory;
-import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 import name.martingeisse.trading_game.game.skill.PlayerSkills;
 import name.martingeisse.trading_game.game.space.PlayerShip;
-import name.martingeisse.trading_game.game.space.SpaceObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * TODO add reference to PlayerShip; move inventory to PlayerShip (action queue stays here)
@@ -24,8 +17,7 @@ public final class Player {
 	private final PlayerShip ship;
 	private String name;
 	private final ActionQueue pendingActions = new ActionQueue();
-	private PlayerActionProgress actionProgress;
-	private FixedInventory actionItems;
+	private ActionExecution actionExecution;
 	private final PlayerSkills skills;
 
 	public Player(Game game, String id, PlayerShip ship) {
@@ -112,10 +104,10 @@ public final class Player {
 	/**
 	 * Getter method.
 	 *
-	 * @return the actionProgress
+	 * @return the actionExecution
 	 */
-	public PlayerActionProgress getActionProgress() {
-		return actionProgress;
+	public ActionExecution getActionExecution() {
+		return actionExecution;
 	}
 
 	/**
@@ -123,7 +115,7 @@ public final class Player {
 	 *
 	 * @param action the action to schedule
 	 */
-	public void scheduleAction(PlayerAction action) {
+	public void scheduleAction(Action action) {
 		pendingActions.enqueue(action);
 	}
 
@@ -133,7 +125,7 @@ public final class Player {
 	 * @param repetitions how often the action shall be repeated
 	 * @param action      the action to schedule
 	 */
-	public void scheduleAction(int repetitions, PlayerAction action) {
+	public void scheduleAction(int repetitions, Action action) {
 		pendingActions.enqueue(repetitions, action);
 	}
 
@@ -141,8 +133,8 @@ public final class Player {
 	 * Cancels the currently executed action (if any).
 	 */
 	public void cancelCurrentAction() {
-		actionProgress.getAction().onCancel();
-		actionProgress = null;
+		actionExecution.cancel();
+		actionExecution = null;
 	}
 
 	/**
@@ -154,53 +146,6 @@ public final class Player {
 		if (index >= 0 && index < pendingActions.size()) {
 			pendingActions.remove(index);
 		}
-	}
-
-	/**
-	 * Reserves items from the inventory for an action.
-	 * <p>
-	 * The BOM must be valid according to {@link FixedInventory#isValidBillOfMaterials()}.
-	 *
-	 * @throws NotEnoughItemsException if the player doesn't have the required items
-	 */
-	public void reserveActionItems(FixedInventory billOfMaterials) throws NotEnoughItemsException {
-		if (actionItems != null) {
-			throw new IllegalStateException("action items already set");
-		}
-		for (FixedItemStack stack : billOfMaterials.getItemStacks()) {
-			if (getInventory().count(stack.getItemType()) < stack.getSize()) {
-				throw new NotEnoughItemsException();
-			}
-		}
-		for (FixedItemStack stack : billOfMaterials.getItemStacks()) {
-			try {
-				getInventory().remove(stack.getItemType(), stack.getSize());
-			} catch (NotEnoughItemsException e) {
-				throw new RuntimeException("could not remove items for action -- inventory is not inconsistent");
-			}
-		}
-		this.actionItems = billOfMaterials;
-	}
-
-	/**
-	 * Puts the current action items back into the inventory.
-	 */
-	public void putBackActionItems() {
-		if (actionItems == null) {
-			throw new IllegalStateException("no action items");
-		}
-		getInventory().add(actionItems);
-		actionItems = null;
-	}
-
-	/**
-	 * Consumes the action items.
-	 */
-	public void consumeActionItems() {
-		if (actionItems == null) {
-			throw new IllegalStateException("no action items");
-		}
-		actionItems = null;
 	}
 
 	/**
@@ -216,17 +161,14 @@ public final class Player {
 	 * Advances game logic.
 	 */
 	void tick() {
-		while (actionProgress == null && !pendingActions.isEmpty()) {
-			PlayerAction action = pendingActions.dequeue();
-			if (action.onStart()) {
-				actionProgress = new PlayerActionProgress(action);
-			}
+		while (actionExecution == null && !pendingActions.isEmpty()) {
+			actionExecution = pendingActions.dequeue().startExecution();
 		}
-		if (actionProgress != null) {
-			actionProgress.advance(1);
-			if (actionProgress.isFinishable()) {
-				actionProgress.finish();
-				actionProgress = null;
+		if (actionExecution != null) {
+			actionExecution.tick();
+			if (actionExecution.isFinishable()) {
+				actionExecution.finish();
+				actionExecution = null;
 			}
 		}
 		skills.tick();

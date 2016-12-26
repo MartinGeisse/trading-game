@@ -1,24 +1,23 @@
 package name.martingeisse.trading_game.game.action;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  */
 public final class ActionQueue extends ArrayList<ActionQueue.Entry> {
 
-	public void enqueue(PlayerAction action) {
+	public void enqueue(Action action) {
 		enqueue(1, action);
 	}
 
-	public void enqueue(int repetitions, PlayerAction action) {
+	public void enqueue(int repetitions, Action action) {
 		if (repetitions > 0) {
 			add(new Entry(repetitions, action));
 		}
 	}
 
-	public PlayerAction dequeue() {
+	public Action dequeue() {
 		if (isEmpty()) {
 			return null;
 		}
@@ -34,9 +33,9 @@ public final class ActionQueue extends ArrayList<ActionQueue.Entry> {
 	public static final class Entry {
 
 		private int repetitions;
-		private final PlayerAction action;
+		private final Action action;
 
-		public Entry(int repetitions, PlayerAction action) {
+		public Entry(int repetitions, Action action) {
 			this.repetitions = repetitions;
 			this.action = action;
 		}
@@ -64,7 +63,7 @@ public final class ActionQueue extends ArrayList<ActionQueue.Entry> {
 		 *
 		 * @return the action
 		 */
-		public PlayerAction getAction() {
+		public Action getAction() {
 			return action;
 		}
 

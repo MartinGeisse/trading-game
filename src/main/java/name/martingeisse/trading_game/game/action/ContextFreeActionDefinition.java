@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.game.action;
 
 import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.action.actions.CraftingAction;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.item.FixedInventory;
 
@@ -20,18 +21,18 @@ import java.util.function.Function;
 public final class ContextFreeActionDefinition {
 
 	private final String name;
-	private final Function<Player, PlayerAction> factory;
+	private final Function<Player, Action> factory;
 	private final FixedInventory billOfMaterials;
 	private final FixedInventory yield;
 
-	public ContextFreeActionDefinition(String name, Function<Player, PlayerAction> factory) {
+	public ContextFreeActionDefinition(String name, Function<Player, Action> factory) {
 		this.name = name;
 		this.factory = factory;
 		this.billOfMaterials = null;
 		this.yield = null;
 	}
 
-	public ContextFreeActionDefinition(String name, Function<Player, PlayerAction> factory, FixedInventory billOfMaterials, FixedInventory yield) {
+	public ContextFreeActionDefinition(String name, Function<Player, Action> factory, FixedInventory billOfMaterials, FixedInventory yield) {
 		this.name = name;
 		this.factory = factory;
 		this.billOfMaterials = billOfMaterials;
@@ -66,7 +67,7 @@ public final class ContextFreeActionDefinition {
 	 *
 	 * @return the factory
 	 */
-	public Function<Player, PlayerAction> getFactory() {
+	public Function<Player, Action> getFactory() {
 		return factory;
 	}
 
