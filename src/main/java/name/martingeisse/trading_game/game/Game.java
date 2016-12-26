@@ -2,9 +2,14 @@ package name.martingeisse.trading_game.game;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.game.generate.StarNaming;
+import name.martingeisse.trading_game.game.generate.StarPlacement;
+import name.martingeisse.trading_game.game.space.Asteroid;
 import name.martingeisse.trading_game.game.space.PlayerShip;
 import name.martingeisse.trading_game.game.space.Space;
+import name.martingeisse.trading_game.gui.MapPage;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -15,13 +20,23 @@ import java.util.*;
 public final class Game {
 
 	private static final int TICK_TIME_DELAY = 100;
-	private static final int TICK_MULTIPLIER = 20;
+	private static final int TICK_MULTIPLIER = 1;
 
 	private final Map<String, Player> players;
 	private final Space space = new Space();
 
 	@Inject
 	public Game() {
+
+		// TODO generate once and persist
+		for (Pair<Long, Long> starPosition : StarPlacement.compute(1000, 2000, 2, 30000)) {
+			Asteroid asteroid = new Asteroid();
+			asteroid.setX(starPosition.getLeft());
+			asteroid.setY(starPosition.getRight());
+			asteroid.setName(StarNaming.compute());
+			space.getSpaceObjects().add(asteroid);
+		}
+
 		this.players = new HashMap<>();
 		new Timer(true).schedule(new TimerTask() {
 			@Override

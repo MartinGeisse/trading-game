@@ -88,7 +88,7 @@ public abstract class SpaceObject {
 	 * @return
 	 */
 	public final Action getMoveToPositionActionFor(Player player) {
-		return new MoveToPositionAction(player.getShip(), x, y);
+		return new MoveToPositionAction(player.getShip(), x, y, player::getShipMovementSpeed);
 	}
 
 }

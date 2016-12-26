@@ -174,4 +174,8 @@ public final class Player {
 		skills.tick();
 	}
 
+	public long getShipMovementSpeed() {
+		return 10; // TODO
+	}
+
 }

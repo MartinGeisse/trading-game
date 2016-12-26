@@ -51,6 +51,8 @@ public class MainPage extends AbstractPage {
 	public MainPage() {
 
 		add(new Label("playerName", new PropertyModel<>(this, "player.name")));
+		add(new Label("playerX", new PropertyModel<>(this, "player.ship.x")));
+		add(new Label("playerY", new PropertyModel<>(this, "player.ship.y")));
 		add(new Label("playerID", new PropertyModel<>(this, "player.id")));
 
 		add(new ListView<ContextFreeActionDefinition>("contextFreeActionDefinitions", gameDefinitionModel("contextFreeActionDefinitions")) {

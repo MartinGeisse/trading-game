@@ -54,8 +54,8 @@ NICHT:
 Milestones:
 - Movement
 	- keine ContextFreeActionFactories
-	- MovementAction -> Position ändert sich über die Zeit
 	- Restzeit an Actions anzeigen
+	- Progress nur anzeigen, wenn sinnvoll (nicht bei movement)
 	- bestimmte Aktionen sind nur möglich, wenn man in der Nähe ist
 	- nicht mehr tragbarer Code (aktuell per TODO markiert) wurde entfernt, umgebaut oder als "kompliziert" gelistet
 - Spielinhalt
