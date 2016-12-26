@@ -135,7 +135,13 @@ public class MainPage extends AbstractPage {
 			}
 		});
 		IModel<Integer> currentActionProgressModel = new PropertyModel<>(this, "player.actionExecution.progress.currentProgressPoints");
-		InlineProgressBar currentActionProgressBar = new InlineProgressBar("currentActionProgressBar", currentActionProgressModel);
+		InlineProgressBar currentActionProgressBar = new InlineProgressBar("currentActionProgressBar", currentActionProgressModel) {
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+				setVisible(getPlayer().getActionExecution().getProgress() != null);
+			}
+		};
 		currentActionProgressBar.setTotalAmountModel(new PropertyModel<>(this, "player.actionExecution.progress.requiredProgressPoints"));
 		currentActionProgressBar.add(new ProgressBarClientProgressBehavior() {
 			@Override
