@@ -31,6 +31,7 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
@@ -158,6 +159,22 @@ public class MainPage extends AbstractPage {
 				target.add(MainPage.this.get("currentActionContainer"));
 			}
 		});
+		currentActionContainer.add(new Label("remainingTime", new AbstractReadOnlyModel<String>() {
+			@Override
+			public String getObject() {
+				Integer remainingTime = getPlayer().getActionExecution().getRemainingTime();
+				if (remainingTime == null) {
+					return "N/A";
+				}
+				if (remainingTime < 60) {
+					return remainingTime + "s";
+				} else if (remainingTime < 3600) {
+					return String.format("%dm %2ds", remainingTime / 60, remainingTime % 60);
+				} else {
+					return String.format("%dh %2dm %2ds", remainingTime / 3600, remainingTime / 60 % 60, remainingTime % 60);
+				}
+			}
+		}));
 		currentActionContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
 
 		WebMarkupContainer pendingActionsContainer = new WebMarkupContainer("pendingActionsContainer");

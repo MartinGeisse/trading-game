@@ -64,9 +64,14 @@
 			<h2>Current action</h2>
 			<div wicket:id="currentActionContainer" style="height: 50px;">
 				<wicket:enclosure child="currentAction">
-					<span wicket:id="currentAction"></span>
-					<span wicket:id="currentActionProgressBar" style="width: 200px"></span>
-					<a wicket:id="cancelCurrentActionLink" class="glyphicon glyphicon-remove"></a>
+					<div>
+						<span wicket:id="currentAction"></span>
+						<span wicket:id="currentActionProgressBar" style="width: 200px"></span>
+						<a wicket:id="cancelCurrentActionLink" class="glyphicon glyphicon-remove"></a>
+					</div>
+					<div>
+						Remaining time: <span wicket:id="remainingTime"></span>
+					</div>
 				</wicket:enclosure>
 			</div>
 			<h2>Pending actions</h2>

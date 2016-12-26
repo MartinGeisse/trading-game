@@ -54,9 +54,9 @@ NICHT:
 Milestones:
 - Movement
 	- keine ContextFreeActionFactories
-	- Restzeit an Actions anzeigen
 	- bestimmte Aktionen sind nur möglich, wenn man in der Nähe ist
 	- nicht mehr tragbarer Code (aktuell per TODO markiert) wurde entfernt, umgebaut oder als "kompliziert" gelistet
+	- ticks vs. seconds klären
 - Spielinhalt
 	- Schiffe können Upgrades haben
 	- verschiedene Erzsorten in den Asteroiden
