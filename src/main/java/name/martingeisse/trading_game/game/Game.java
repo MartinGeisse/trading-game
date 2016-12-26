@@ -19,7 +19,7 @@ import java.util.*;
 @Singleton
 public final class Game {
 
-	private static final int TICK_TIME_DELAY = 100;
+	// debugging switch to speed up the game
 	private static final int TICK_MULTIPLIER = 1;
 
 	private final Map<String, Player> players;
@@ -51,11 +51,7 @@ public final class Game {
 					}
 				}
 			}
-		}, 0, TICK_TIME_DELAY);
-	}
-
-	public static int getTicksPerSecond() {
-		return 1000 * TICK_MULTIPLIER / TICK_TIME_DELAY;
+		}, 0, 1000);
 	}
 
 	public Collection<Player> getPlayers() {
@@ -91,7 +87,7 @@ public final class Game {
 	}
 
 	/**
-	 * Called once every 100 msec to advance the game logic.
+	 * Called once every second to advance the game logic.
 	 */
 	private void tick() {
 		for (Player player : players.values()) {

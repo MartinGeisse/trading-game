@@ -21,7 +21,7 @@ public interface ActionExecution {
 	public Integer getRemainingTime();
 
 	/**
-	 * Advances game logic.
+	 * Called once every second to advance game logic.
 	 */
 	public void tick();
 

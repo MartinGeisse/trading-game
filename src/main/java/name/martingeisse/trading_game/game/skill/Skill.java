@@ -28,6 +28,6 @@ public interface Skill {
 
 	public String getName();
 
-	public int getRequiredLearningPoints();
+	public int getRequiredSecondsForLearning();
 
 }

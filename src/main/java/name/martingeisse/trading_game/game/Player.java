@@ -158,7 +158,7 @@ public final class Player {
 	}
 
 	/**
-	 * Advances game logic.
+	 * Called once every second to advance game logic.
 	 */
 	void tick() {
 		while (actionExecution == null && !pendingActions.isEmpty()) {

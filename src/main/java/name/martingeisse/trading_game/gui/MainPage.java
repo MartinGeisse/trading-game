@@ -165,13 +165,12 @@ public class MainPage extends AbstractPage {
 				Integer remainingTime = getPlayer().getActionExecution().getRemainingTime();
 				if (remainingTime == null) {
 					return "N/A";
-				}
-				if (remainingTime < 60) {
+				} else if (remainingTime < 60) {
 					return remainingTime + "s";
 				} else if (remainingTime < 3600) {
-					return String.format("%dm %2ds", remainingTime / 60, remainingTime % 60);
+					return String.format("%dm %02ds", remainingTime / 60, remainingTime % 60);
 				} else {
-					return String.format("%dh %2dm %2ds", remainingTime / 3600, remainingTime / 60 % 60, remainingTime % 60);
+					return String.format("%dh %02dm %02ds", remainingTime / 3600, remainingTime / 60 % 60, remainingTime % 60);
 				}
 			}
 		}));
@@ -229,8 +228,7 @@ public class MainPage extends AbstractPage {
 		skillCurrentlyBeingLearnedProgressBar.add(new ProgressBarClientProgressBehavior() {
 			@Override
 			protected int getRemainingSeconds() {
-				int remainingLearningPoints = getPlayer().getSkills().getSkillCurrentlyBeingLearned().getRequiredLearningPoints() - getPlayer().getSkills().getLearningPoints();
-				return remainingLearningPoints / Game.getTicksPerSecond();
+				return getPlayer().getSkills().getSkillCurrentlyBeingLearned().getRequiredSecondsForLearning() - getPlayer().getSkills().getSecondsLearned();
 			}
 		});
 		skillsContainer.queue(skillCurrentlyBeingLearnedProgressBar);

@@ -15,15 +15,15 @@ public abstract class FixedEffortAction implements Action {
 	public abstract int getTotalRequiredProgressPoints();
 
 	/**
-	 * @return the number of progress points obtained per game step (default is 1)
+	 * @return the number of progress points obtained per second (default is 1; may be modified by upgrades)
 	 */
-	public int getProgressPointsPerStep() {
+	public int getProgressPointsPerSecond() {
 		return 1;
 	}
 
 	@Override
 	public final Integer getTotalTime() {
-		return getTotalRequiredProgressPoints() / getProgressPointsPerStep();
+		return getTotalRequiredProgressPoints() / getProgressPointsPerSecond();
 	}
 
 	// narrow down return type
@@ -48,12 +48,12 @@ public abstract class FixedEffortAction implements Action {
 
 		@Override
 		public final Integer getRemainingTime() {
-			return getRemainingProgressPoints() / getProgressPointsPerStep();
+			return getRemainingProgressPoints() / getProgressPointsPerSecond();
 		}
 
 		@Override
 		public void tick() {
-			currentProgressPoints += getProgressPointsPerStep();
+			currentProgressPoints += getProgressPointsPerSecond();
 		}
 
 		@Override

@@ -77,7 +77,7 @@ public final class GameDefinition {
 			}
 
 			@Override
-			public int getRequiredLearningPoints() {
+			public int getRequiredSecondsForLearning() {
 				return 10_000;
 			}
 

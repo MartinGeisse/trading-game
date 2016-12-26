@@ -13,7 +13,7 @@ public final class PlayerSkills {
 
 	private Set<Skill> skills = new HashSet<>();
 	private Skill skillCurrentlyBeingLearned = null;
-	private int learningPoints = 0;
+	private int secondsLearned = 0;
 	private List<Skill> learningQueue = new ArrayList<>();
 
 	/**
@@ -37,10 +37,10 @@ public final class PlayerSkills {
 	/**
 	 * Getter method.
 	 *
-	 * @return the learningPoints
+	 * @return the secondsLearned
 	 */
-	public int getLearningPoints() {
-		return learningPoints;
+	public int getSecondsLearned() {
+		return secondsLearned;
 	}
 
 	/**
@@ -52,18 +52,21 @@ public final class PlayerSkills {
 		return learningQueue;
 	}
 
+	/**
+	 * Called once every second to advance game logic.
+	 */
 	public void tick() {
 		if (skillCurrentlyBeingLearned != null) {
-			learningPoints++;
-			if (learningPoints >= skillCurrentlyBeingLearned.getRequiredLearningPoints()) {
+			secondsLearned++;
+			if (secondsLearned >= skillCurrentlyBeingLearned.getRequiredSecondsForLearning()) {
 				skills.add(skillCurrentlyBeingLearned);
 				skillCurrentlyBeingLearned = null;
-				learningPoints = 0;
+				secondsLearned = 0;
 			}
 		}
 		if (skillCurrentlyBeingLearned == null && !learningQueue.isEmpty()) {
 			skillCurrentlyBeingLearned = learningQueue.remove(0);
-			learningPoints = 0;
+			secondsLearned = 0;
 		}
 	}
 
@@ -94,7 +97,7 @@ public final class PlayerSkills {
 		// TODO skill points should not be lost. When canceling, the skill points for that skill should be kept and
 		// be used when re-starting learning that skill.
 		skillCurrentlyBeingLearned = null;
-		learningPoints = 0;
+		secondsLearned = 0;
 	}
 
 	public void cancelSkillFromLearningQueue(int index) {

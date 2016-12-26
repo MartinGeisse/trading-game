@@ -22,7 +22,7 @@ public final class Space {
 	}
 
 	/**
-	 * Advances game logic.
+	 * Called once every second to advance game logic.
 	 */
 	public void tick() {
 		for (SpaceObject spaceObject : spaceObjects) {
