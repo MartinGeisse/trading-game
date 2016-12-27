@@ -1,8 +1,5 @@
 package name.martingeisse.trading_game.game.action.actions;
 
-import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.action.ActionExecution;
-import name.martingeisse.trading_game.game.action.ProgressSnapshot;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 
 import java.util.function.Supplier;
@@ -10,7 +7,7 @@ import java.util.function.Supplier;
 /**
  *
  */
-public final class MoveToPositionAction implements Action {
+public final class MoveToPositionAction extends ContinuousAction {
 
 	private final SpaceObject spaceObject;
 	private final long x;
@@ -28,68 +25,38 @@ public final class MoveToPositionAction implements Action {
 	}
 
 	@Override
-	public Integer getTotalTime() {
-		return null;
+	protected Integer getRemainingTime() {
+		double dx = x - spaceObject.getX();
+		double dy = y - spaceObject.getY();
+		double norm = Math.sqrt(dx * dx + dy * dy);
+		double time = norm / speedProvider.get();
+		return (time > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) time);
 	}
 
 	@Override
-	public ActionExecution startExecution() {
-		return new ActionExecution() {
+	public boolean isFinishable() {
+		return spaceObject.getX() == x && spaceObject.getY() == y;
+	}
 
-			@Override
-			public String getName() {
-				return "move " + spaceObject.getName() + " to " + x + ", " + y;
-			}
-
-			@Override
-			public ProgressSnapshot getProgress() {
-				return null;
-			}
-
-			@Override
-			public Integer getRemainingTime() {
-				double dx = x - spaceObject.getX();
-				double dy = y - spaceObject.getY();
-				double norm = Math.sqrt(dx * dx + dy * dy);
-				double time = norm / speedProvider.get();
-				return (time > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)time);
-			}
-
-			@Override
-			public void tick() {
-				double dx = x - spaceObject.getX();
-				double dy = y - spaceObject.getY();
-				double norm = Math.sqrt(dx * dx + dy * dy);
-				double speed = speedProvider.get();
-				if (norm <= speed) {
-					spaceObject.setX(x);
-					spaceObject.setY(y);
-				} else {
-					double factor = speed / norm;
-					spaceObject.setX(spaceObject.getX() + Math.round(dx * factor));
-					spaceObject.setY(spaceObject.getY() + Math.round(dy * factor));
-				}
-			}
-
-			@Override
-			public void cancel() {
-			}
-
-			@Override
-			public boolean isFinishable() {
-				return spaceObject.getX() == x && spaceObject.getY() == y;
-			}
-
-			@Override
-			public void finish() {
-			}
-
-		};
+	@Override
+	public void tick() {
+		double dx = x - spaceObject.getX();
+		double dy = y - spaceObject.getY();
+		double norm = Math.sqrt(dx * dx + dy * dy);
+		double speed = speedProvider.get();
+		if (norm <= speed) {
+			spaceObject.setX(x);
+			spaceObject.setY(y);
+		} else {
+			double factor = speed / norm;
+			spaceObject.setX(spaceObject.getX() + Math.round(dx * factor));
+			spaceObject.setY(spaceObject.getY() + Math.round(dy * factor));
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "move to " + x + ", " + y;
+		return "move " + spaceObject.getName() + " to " + x + ", " + y;
 	}
 
 }
