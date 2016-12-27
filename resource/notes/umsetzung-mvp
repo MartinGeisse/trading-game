@@ -53,9 +53,19 @@ NICHT:
 
 Milestones:
 - Movement
+	- Mining-Action
+		- movement action wird implizit eingefügt, ist dann aber eine explizite Action
+		- sinnvoll ist: einfügen wenn die mining action *ausgeführt* werden soll -- dann sind vor der Ausführung
+			beide als eine Action in der Queue und können zusammen cancelled werden.
+		- wenn die mining action cancelled wird, dann wird auch das movement cancelled
+		- TODO: was wenn das movement cancelled wird? ist das möglich? soll dann auch das mining cancelled werden?
 	- keine ContextFreeActionFactories
 	- bestimmte Aktionen sind nur möglich, wenn man in der Nähe ist
+	- Action Stacks wieder rausnehmen. Als allgemeines Konzept sind die so nicht gut. Eher ist bei den entsprechenden
+		Actions (Mining, Manufacturing) ein amount-Feld sinnvoll. Default bei Mining ist "unendlich" (z.B. bis
+		Frachtraum voll); default bei Manufacturing ist 1.
 - Spielinhalt
+	- limitierter Frachtraum
 	- Schiffe können Upgrades haben
 	- verschiedene Erzsorten in den Asteroiden
 		- Erfordert Möglichkeit, Action "unendlich lang" auszuführen -> Integer.MAX_VALUE als repeat-Wert -> wird
@@ -71,7 +81,8 @@ Milestones:
 	- aktionen der Space Objects über Map auswählbar
 	- ...
 - Datenbank
-
+- Feinschliff
+	- Restzeit bei Mining anhand von Restbestand und Frachtraum ermitteln
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
