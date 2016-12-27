@@ -2,8 +2,10 @@ package name.martingeisse.trading_game.game;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.game.definition.GameDefinition;
 import name.martingeisse.trading_game.game.generate.StarNaming;
 import name.martingeisse.trading_game.game.generate.StarPlacement;
+import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.space.Asteroid;
 import name.martingeisse.trading_game.game.space.PlayerShip;
 import name.martingeisse.trading_game.game.space.Space;
@@ -22,19 +24,24 @@ public final class Game {
 	// debugging switch to speed up the game
 	private static final int TICK_MULTIPLIER = 1;
 
+	private final GameDefinition gameDefinition;
 	private final Map<String, Player> players;
 	private final Space space = new Space();
 
 	@Inject
-	public Game() {
+	public Game(GameDefinition gameDefinition) {
+		this.gameDefinition = gameDefinition;
 
 		// TODO generate once and persist
-		for (Pair<Long, Long> starPosition : StarPlacement.compute(1000, 2000, 2, 30000)) {
-			Asteroid asteroid = new Asteroid();
-			asteroid.setX(starPosition.getLeft());
-			asteroid.setY(starPosition.getRight());
-			asteroid.setName(StarNaming.compute());
-			space.getSpaceObjects().add(asteroid);
+		{
+			FixedInventory asteroidYieldPerTick = FixedInventory.from(gameDefinition.getRedPixelItemType(), 5);
+			for (Pair<Long, Long> starPosition : StarPlacement.compute(1000, 2000, 2, 30000)) {
+				Asteroid asteroid = new Asteroid(asteroidYieldPerTick);
+				asteroid.setX(starPosition.getLeft());
+				asteroid.setY(starPosition.getRight());
+				asteroid.setName(StarNaming.compute());
+				space.getSpaceObjects().add(asteroid);
+			}
 		}
 
 		this.players = new HashMap<>();

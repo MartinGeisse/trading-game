@@ -19,6 +19,7 @@ public final class GameDefinition {
 
 	private final ImmutableList<ContextFreeActionDefinition> contextFreeActionDefinitions;
 	private final ImmutableList<Skill> skills;
+	private final ItemType redPixelItemType;
 
 	/**
 	 *
@@ -55,7 +56,7 @@ public final class GameDefinition {
 		CraftingRecipe pixelHammerCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelHammerItemType);
 		CraftingRecipe pixelPickaxeCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelPickaxeItemType);
 
-		contextFreeActionDefinitions = ImmutableList.of(
+		this.contextFreeActionDefinitions = ImmutableList.of(
 			new ContextFreeActionDefinition(redPixelCraftingRecipe),
 			new ContextFreeActionDefinition(redPixelAssemblyCraftingRecipe),
 			new ContextFreeActionDefinition(redPixelLineCraftingRecipe),
@@ -69,7 +70,7 @@ public final class GameDefinition {
 			new ContextFreeActionDefinition("Fell a tree", fellTreeRecipe)
 		);
 
-		skills = ImmutableList.of(new Skill() {
+		this.skills = ImmutableList.of(new Skill() {
 
 			@Override
 			public String getName() {
@@ -83,6 +84,7 @@ public final class GameDefinition {
 
 		});
 
+		this.redPixelItemType = redPixelItemType;
 	}
 
 	/**
@@ -101,6 +103,15 @@ public final class GameDefinition {
 	 */
 	public ImmutableList<Skill> getSkills() {
 		return skills;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the redPixelItemType
+	 */
+	public ItemType getRedPixelItemType() {
+		return redPixelItemType;
 	}
 
 }
