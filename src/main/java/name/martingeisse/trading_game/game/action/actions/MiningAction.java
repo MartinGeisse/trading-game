@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.action.actions;
 
+import name.martingeisse.trading_game.game.definition.GameConstants;
 import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.space.Asteroid;
@@ -11,7 +12,7 @@ public final class MiningAction extends ContinuousAction {
 
 	private final Asteroid asteroid;
 	private final Inventory inventory;
-	private final long minedAmount = 1000; // in the future, this will be modified by upgrades and skills
+	private final long miningSpeed = GameConstants.BASE_MINING_SPEED; // in the future, this will be modified by upgrades and skills
 
 	public MiningAction(Asteroid asteroid, Inventory inventory) {
 		this.asteroid = asteroid;
@@ -22,7 +23,7 @@ public final class MiningAction extends ContinuousAction {
 	protected final Integer getRemainingTime() {
 		// TODO check remaining cargo space in the player's ship
 		// TODO yield capacity vs. time -> not the same, otherwise upgrades cannot improve mining speed
-		return (int)(asteroid.getYieldCapacity() / minedAmount);
+		return (int)(asteroid.getYieldCapacity() / miningSpeed);
 	}
 
 	@Override
@@ -33,7 +34,7 @@ public final class MiningAction extends ContinuousAction {
 
 	@Override
 	public final void tick() {
-		FixedInventory determinedYield = asteroid.obtainYield(minedAmount);
+		FixedInventory determinedYield = asteroid.obtainYield(miningSpeed);
 		if (determinedYield != null) {
 			// TODO reduced by what is left as well as inventory space; put back the rest
 			FixedInventory actualYield = determinedYield;

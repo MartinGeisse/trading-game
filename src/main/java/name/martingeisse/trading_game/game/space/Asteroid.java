@@ -20,15 +20,15 @@ public final class Asteroid extends SpaceObject {
 		this.yieldCapacity = yieldCapacity;
 	}
 
-	public FixedInventory obtainYield(long amount) {
+	public FixedInventory obtainYield(long minedRockAmount) {
 		if (yieldCapacity == 0) {
 			return null;
 		}
-		if (yieldCapacity < amount) {
-			amount = yieldCapacity;
+		if (yieldCapacity < minedRockAmount) {
+			minedRockAmount = yieldCapacity;
 		}
-		yieldCapacity -= amount;
-		return yieldInfo.determineBaseYield(amount);
+		yieldCapacity -= minedRockAmount;
+		return yieldInfo.determineYield(minedRockAmount);
 	}
 
 	@Override

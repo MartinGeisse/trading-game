@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.game;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.game.definition.GameConstants;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
 import name.martingeisse.trading_game.game.generate.StarNaming;
 import name.martingeisse.trading_game.game.generate.StarPlacement;
@@ -9,7 +10,6 @@ import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.space.Asteroid;
 import name.martingeisse.trading_game.game.space.PlayerShip;
 import name.martingeisse.trading_game.game.space.Space;
-import name.martingeisse.trading_game.gui.MapPage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -34,10 +34,11 @@ public final class Game {
 
 		// TODO generate once and persist
 		{
+			long yieldCapacity = 6 * GameConstants.BASE_MINING_SPEED;
+			double oreDensity = 0.01;
 			FixedInventory asteroidYieldPerTick = FixedInventory.from(gameDefinition.getRedPixelItemType(), 5);
 			for (Pair<Long, Long> starPosition : StarPlacement.compute(1000, 2000, 2, 30000)) {
-				long yieldCapacity = 6000;
-				Asteroid asteroid = new Asteroid(amount -> asteroidYieldPerTick.scale(amount * 0.01), yieldCapacity);
+				Asteroid asteroid = new Asteroid(amount -> asteroidYieldPerTick.scale(amount * oreDensity), yieldCapacity);
 				asteroid.setX(starPosition.getLeft());
 				asteroid.setY(starPosition.getRight());
 				asteroid.setName(StarNaming.compute());
@@ -49,7 +50,7 @@ public final class Game {
 		new Timer(true).schedule(new TimerTask() {
 			@Override
 			public void run() {
-				for (int i=0; i<TICK_MULTIPLIER; i++) {
+				for (int i = 0; i < TICK_MULTIPLIER; i++) {
 					// TODO may drop ticks on high load depending on how the Timer class handles it
 					GlobalGameLock.lock();
 					try {
