@@ -36,8 +36,8 @@ public final class Game {
 		{
 			FixedInventory asteroidYieldPerTick = FixedInventory.from(gameDefinition.getRedPixelItemType(), 5);
 			for (Pair<Long, Long> starPosition : StarPlacement.compute(1000, 2000, 2, 30000)) {
-				long yieldCapacity = 6;
-				Asteroid asteroid = new Asteroid(() -> asteroidYieldPerTick, yieldCapacity);
+				long yieldCapacity = 6000;
+				Asteroid asteroid = new Asteroid(amount -> asteroidYieldPerTick.scale(amount * 0.01), yieldCapacity);
 				asteroid.setX(starPosition.getLeft());
 				asteroid.setY(starPosition.getRight());
 				asteroid.setName(StarNaming.compute());

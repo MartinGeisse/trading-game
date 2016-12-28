@@ -83,7 +83,7 @@ public final class FixedInventory {
 
 	/**
 	 * Checks whether this object is valid for use as a bill of materials.
-	 *
+	 * <p>
 	 * This ensures that no two stacks in this object have the same item type.
 	 */
 	public boolean isValidBillOfMaterials() {
@@ -102,6 +102,14 @@ public final class FixedInventory {
 			}
 		}
 		return true;
+	}
+
+	public FixedInventory scale(double factor) {
+		List<FixedItemStack> newStacks = new ArrayList<>();
+		for (FixedItemStack oldStack : itemStacks) {
+			newStacks.add(oldStack.scale(factor));
+		}
+		return new FixedInventory(ImmutableList.copyOf(newStacks));
 	}
 
 }

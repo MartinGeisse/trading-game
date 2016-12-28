@@ -35,4 +35,8 @@ public final class FixedItemStack {
 		return size;
 	}
 
+	public FixedItemStack scale(double factor) {
+		return new FixedItemStack(itemType, (int)(size * factor));
+	}
+
 }
