@@ -19,19 +19,25 @@ public final class MiningAction extends ContinuousAction {
 
 	@Override
 	protected final Integer getRemainingTime() {
-		return null; // TODO check remaining ores in the asteroid; remaining cargo space in the player's ship
+		// TODO check remaining cargo space in the player's ship
+		// TODO yield capacity vs. time -> not the same, otherwise upgrades cannot improve mining speed
+		return (int)asteroid.getYieldCapacity();
 	}
 
 	@Override
 	public final boolean isFinishable() {
-		return false; // TODO check remaining ores in the asteroid; remaining cargo space in the player's ship
+		// TODO check remaining cargo space in the player's ship
+		return asteroid.getYieldCapacity() == 0;
 	}
 
 	@Override
 	public final void tick() {
-		FixedInventory determinedYield = asteroid.determineYieldForTick();
-		FixedInventory actualYield = determinedYield; // reduced by what is left as well as inventory space
-		inventory.add(actualYield);
+		FixedInventory determinedYield = asteroid.obtainYieldForTick();
+		if (determinedYield != null) {
+			// TODO reduced by what is left as well as inventory space; put back the rest
+			FixedInventory actualYield = determinedYield;
+			inventory.add(actualYield);
+		}
 	}
 
 	@Override
