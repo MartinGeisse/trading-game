@@ -5,7 +5,7 @@ package name.martingeisse.trading_game.game.action;
  *
  * An action object is passive unless executed: Creating and discarding it doesn't have any effects on the game.
  *
- * Actions crested for a specific player or manufacturing site should only be used in that context.
+ * Actions created for a specific player or manufacturing site should only be used in that context.
  */
 public interface Action {
 
