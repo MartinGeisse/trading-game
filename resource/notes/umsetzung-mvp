@@ -59,8 +59,8 @@ Milestones:
 			beide als eine Action in der Queue und können zusammen cancelled werden.
 		- wenn die mining action cancelled wird, dann wird auch das movement cancelled
 		- TODO: was wenn das movement cancelled wird? ist das möglich? soll dann auch das mining cancelled werden?
-	- keine ContextFreeActionFactories
-	- bestimmte Aktionen sind nur möglich, wenn man in der Nähe ist
+			-> Ansatz 1: Nein, diese Action wird ganz anders dargestellt (kleiner, nur "moving there...") und ohne cancel-button.
+				Also so, dass sie gar nicht so richtig wie eine eigene Action aussieht.
 	- Action Stacks wieder rausnehmen. Als allgemeines Konzept sind die so nicht gut. Eher ist bei den entsprechenden
 		Actions (Mining, Manufacturing) ein amount-Feld sinnvoll. Default bei Mining ist "unendlich" (z.B. bis
 		Frachtraum voll); default bei Manufacturing ist 1.
@@ -68,8 +68,6 @@ Milestones:
 	- limitierter Frachtraum
 	- Schiffe können Upgrades haben
 	- verschiedene Erzsorten in den Asteroiden
-		- Erfordert Möglichkeit, Action "unendlich lang" auszuführen -> Integer.MAX_VALUE als repeat-Wert -> wird
-			dann auch nicht runtergezählt
 	- Upgrades müssen als Actions mit Zeit gebaut werden, brauchen verschiedene Erze und sind gleich im Schiff verbaut
 		- schneller fliegen
 		- schneller Erz abbauen
@@ -83,6 +81,7 @@ Milestones:
 - Datenbank
 - Feinschliff
 	- Restzeit bei Mining anhand von Restbestand und Frachtraum ermitteln
+	- keine ContextFreeActionFactories
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
