@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.game.action.actions;
 
 import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.item.FixedItemStack;
@@ -23,6 +24,11 @@ public final class CraftingAction extends FixedEffortAction {
 		this.player = player;
 		this.recipe = recipe;
 		this.customName = customName;
+	}
+
+	@Override
+	public Action getPrerequisite() {
+		return null;
 	}
 
 	@Override

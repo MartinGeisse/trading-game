@@ -17,17 +17,21 @@ public final class ActionQueue extends ArrayList<ActionQueue.Entry> {
 		}
 	}
 
-	public Action dequeue() {
+	public ActionExecution startNext() {
 		if (isEmpty()) {
 			return null;
 		}
 		Entry entry = get(0);
+		Action prerequisite = entry.getAction().getPrerequisite();
+		if (prerequisite != null) {
+			return new PrerequisiteActionExecutionDecorator(prerequisite.startExecution());
+		}
 		if (entry.getRepetitions() == 1) {
 			remove(0);
 		} else {
 			entry.setRepetitions(entry.getRepetitions() - 1);
 		}
-		return entry.getAction();
+		return entry.getAction().startExecution();
 	}
 
 	public static final class Entry {

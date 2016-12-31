@@ -8,7 +8,7 @@ import name.martingeisse.trading_game.game.action.actions.MoveToPositionAction;
 /**
  *
  */
-public abstract class SpaceObject {
+public abstract class SpaceObject implements PositionProvider {
 
 	public static final String DEFAULT_NAME = "unnamed";
 
@@ -39,6 +39,7 @@ public abstract class SpaceObject {
 	 *
 	 * @return the x
 	 */
+	@Override
 	public long getX() {
 		return x;
 	}
@@ -57,6 +58,7 @@ public abstract class SpaceObject {
 	 *
 	 * @return the y
 	 */
+	@Override
 	public long getY() {
 		return y;
 	}

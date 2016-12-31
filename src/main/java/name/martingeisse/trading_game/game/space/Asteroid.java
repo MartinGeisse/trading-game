@@ -33,7 +33,7 @@ public final class Asteroid extends SpaceObject {
 
 	@Override
 	public ImmutableList<Action> getActionsFor(Player player) {
-		return ImmutableList.of(getMoveToPositionActionFor(player), new MiningAction(this, player.getInventory()));
+		return ImmutableList.of(getMoveToPositionActionFor(player), new MiningAction(this, player));
 	}
 
 	/**

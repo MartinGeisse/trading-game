@@ -21,6 +21,17 @@ public interface ActionExecution {
 	public Integer getRemainingTime();
 
 	/**
+	 * @return whether this is the execution of a prerequisite action. Such actions may be presented in the UI in
+	 * a different way.
+	 *
+	 * Also, cancelling a prerequisite action is possible but pointless since the original action cannot be performed
+	 * then, and would just start the prerequisite ation again. The UI may hide the cancel button for this reason.
+	 */
+	default public boolean isPrerequisite() {
+		return false;
+	}
+
+	/**
 	 * Called once every second to advance game logic.
 	 */
 	public void tick();

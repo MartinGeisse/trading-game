@@ -15,11 +15,19 @@ public interface Action {
 	public Integer getTotalTime();
 
 	/**
+	 * @return the prerequisite action, if any, or null if none
+	 */
+	public Action getPrerequisite();
+
+	/**
 	 * Starts the execution of this action.
 	 *
 	 * The execution must be finished or cancelled; you cannot just discard it. For example, manufacturing actions
 	 * remove the input items from an inventory when the action execution is started. These items will be lost when
 	 * the action is discarded without being properly cancelled.
+	 *
+	 * Returns null if this action cannot be started. This may happen for various reasons; one is that this action
+	 * has a prerequisite that must be finished before starting this action.
 	 */
 	public ActionExecution startExecution();
 

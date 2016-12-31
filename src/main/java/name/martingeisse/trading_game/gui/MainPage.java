@@ -51,10 +51,16 @@ public class MainPage extends AbstractPage {
 	 */
 	public MainPage() {
 
-		add(new Label("playerName", new PropertyModel<>(this, "player.name")));
-		add(new Label("playerX", new PropertyModel<>(this, "player.ship.x")));
-		add(new Label("playerY", new PropertyModel<>(this, "player.ship.y")));
-		add(new Label("playerID", new PropertyModel<>(this, "player.id")));
+		WebMarkupContainer playerContainer = new WebMarkupContainer("playerContainer");
+		playerContainer.setOutputMarkupId(true);
+		playerContainer.add(new Label("playerName", new PropertyModel<>(this, "player.name")));
+		playerContainer.add(new Label("playerX", new PropertyModel<>(this, "player.ship.x")));
+		playerContainer.add(new Label("playerY", new PropertyModel<>(this, "player.ship.y")));
+		playerContainer.add(new Label("playerID", new PropertyModel<>(this, "player.id")));
+		playerContainer.add(new BookmarkablePageLink<>("playerListLink", PlayerListPage.class));
+		playerContainer.add(new BookmarkablePageLink<>("renamePlayerLink", RenamePlayerPage.class));
+		playerContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
+		add(playerContainer);
 
 		add(new ListView<ContextFreeActionDefinition>("contextFreeActionDefinitions", gameDefinitionModel("contextFreeActionDefinitions")) {
 
@@ -204,9 +210,6 @@ public class MainPage extends AbstractPage {
 			}
 		});
 		inventoryContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
-
-		add(new BookmarkablePageLink<>("playerListLink", PlayerListPage.class));
-		add(new BookmarkablePageLink<>("renamePlayerLink", RenamePlayerPage.class));
 
 		WebMarkupContainer skillsContainer = new WebMarkupContainer("skillsContainer");
 		skillsContainer.add(new ListView<Skill>("acquiredSkills", new PropertyModel<>(this, "playerSkills")) {

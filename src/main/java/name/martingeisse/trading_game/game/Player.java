@@ -162,7 +162,7 @@ public final class Player {
 	 */
 	void tick() {
 		while (actionExecution == null && !pendingActions.isEmpty()) {
-			actionExecution = pendingActions.dequeue().startExecution();
+			actionExecution = pendingActions.startNext();
 		}
 		if (actionExecution != null) {
 			actionExecution.tick();
