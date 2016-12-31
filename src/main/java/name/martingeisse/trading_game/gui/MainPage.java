@@ -6,10 +6,8 @@
 
 package name.martingeisse.trading_game.gui;
 
-import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
 import name.martingeisse.trading_game.game.item.FixedInventory;
 import name.martingeisse.trading_game.game.item.FixedItemStack;
@@ -69,31 +67,15 @@ public class MainPage extends AbstractPage {
 				AjaxLink<?> link = new AjaxLink<Void>("link") {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						schedule(1, item.getModelObject(), target);
+						Player player = getPlayer();
+						player.scheduleAction(item.getModelObject().getFactory().apply(player));
+						target.add(MainPage.this.get("currentActionContainer"));
+						target.add(MainPage.this.get("pendingActionsContainer"));
+						target.add(MainPage.this.get("inventoryContainer"));
 					}
 				};
 				link.add(new Label("name", item.getModelObject().getName()));
 				item.add(link);
-				item.add(new PromptAjaxLink<Void>("multiLink") {
-
-					@Override
-					protected String getPrompt() {
-						return item.getModelObject().getName() + " how many times?";
-					}
-
-					@Override
-					protected void onClick(AjaxRequestTarget target, String promptInput) {
-						int times;
-						try {
-							times = Integer.parseInt(promptInput);
-						} catch (NumberFormatException e) {
-							target.appendJavaScript("invalid input");
-							return;
-						}
-						schedule(times, item.getModelObject(), target);
-					}
-
-				});
 
 				FixedInventory billOfMaterials = item.getModelObject().getBillOfMaterials();
 				if (billOfMaterials == null || billOfMaterials.getItemStacks().isEmpty()) {
@@ -120,14 +102,6 @@ public class MainPage extends AbstractPage {
 						}
 					});
 				}
-			}
-
-			private void schedule(int repetitions, ContextFreeActionDefinition actionDefinition, AjaxRequestTarget target) {
-				Player player = getPlayer();
-				player.scheduleAction(repetitions, actionDefinition.getFactory().apply(player));
-				target.add(MainPage.this.get("currentActionContainer"));
-				target.add(MainPage.this.get("pendingActionsContainer"));
-				target.add(MainPage.this.get("inventoryContainer"));
 			}
 
 		});
@@ -184,9 +158,9 @@ public class MainPage extends AbstractPage {
 
 		WebMarkupContainer pendingActionsContainer = new WebMarkupContainer("pendingActionsContainer");
 		add(pendingActionsContainer);
-		pendingActionsContainer.add(new ListView<ActionQueue.Entry>("pendingActions", new PropertyModel<>(this, "player.pendingActions")) {
+		pendingActionsContainer.add(new ListView<Action>("pendingActions", new PropertyModel<>(this, "player.pendingActions")) {
 			@Override
-			protected void populateItem(ListItem<ActionQueue.Entry> item) {
+			protected void populateItem(ListItem<Action> item) {
 				item.add(new Label("text", item.getModelObject().toString()));
 				item.add(new AjaxLink<Void>("cancelLink") {
 					@Override

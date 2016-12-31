@@ -116,17 +116,7 @@ public final class Player {
 	 * @param action the action to schedule
 	 */
 	public void scheduleAction(Action action) {
-		pendingActions.enqueue(action);
-	}
-
-	/**
-	 * Schedules an action to be performed after all currently pending actions.
-	 *
-	 * @param repetitions how often the action shall be repeated
-	 * @param action      the action to schedule
-	 */
-	public void scheduleAction(int repetitions, Action action) {
-		pendingActions.enqueue(repetitions, action);
+		pendingActions.add(action);
 	}
 
 	/**

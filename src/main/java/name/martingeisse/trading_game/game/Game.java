@@ -37,7 +37,7 @@ public final class Game {
 			long yieldCapacity = 6 * GameConstants.BASE_MINING_SPEED;
 			double oreDensity = 0.01;
 			FixedInventory asteroidYieldPerTick = FixedInventory.from(gameDefinition.getRedPixelItemType(), 5);
-			for (Pair<Long, Long> starPosition : StarPlacement.compute(1000, 2000, 2, 30000)) {
+			for (Pair<Long, Long> starPosition : StarPlacement.compute(100, 200, 2, 3000)) {
 				Asteroid asteroid = new Asteroid(amount -> asteroidYieldPerTick.scale(amount * oreDensity), yieldCapacity);
 				asteroid.setX(starPosition.getLeft());
 				asteroid.setY(starPosition.getRight());

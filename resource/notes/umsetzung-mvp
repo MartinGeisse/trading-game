@@ -52,10 +52,6 @@ NICHT:
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Milestones:
-- Movement
-	- Action Stacks wieder rausnehmen. Als allgemeines Konzept sind die so nicht gut. Eher ist bei den entsprechenden
-		Actions (Mining, Manufacturing) ein amount-Feld sinnvoll. Default bei Mining ist "unendlich" (z.B. bis
-		Frachtraum voll); default bei Manufacturing ist 1.
 - Spielinhalt
 	- limitierter Frachtraum
 	- Schiffe können Upgrades haben
