@@ -53,34 +53,6 @@ NICHT:
 
 Milestones:
 - Movement
-	- Mining-Action
-		- movement action wird implizit eingefügt, ist dann aber eine explizite Action
-		- sinnvoll ist: einfügen wenn die mining action *ausgeführt* werden soll -- dann sind vor der Ausführung
-			beide als eine Action in der Queue und können zusammen cancelled werden.
-		- wenn die mining action cancelled wird, dann wird auch das movement cancelled
-		- TODO: was wenn das movement cancelled wird? ist das möglich? soll dann auch das mining cancelled werden?
-			-> Ansatz 1: Nein, diese Action wird ganz anders dargestellt (kleiner, nur "moving there...") und ohne cancel-button.
-				Also so, dass sie gar nicht so richtig wie eine eigene Action aussieht.
-	    ----
-	    Hier wirds kompliziert mit Action vs. ActionExecution. Idee: Die Trennung wird aufgehoben. Stattdessen gibt es
-	    nur noch Actions, und diese haben einen Zustand (state), der bei "not started" anfängt. Entsprechend gibt es
-	    Methoden start(), suspend(), resume(), cancel(), finish(). Ohne start() ist die Aktion passiv und kann jederzeit
-	    weggeworfen werden. suspend(), resume() pausieren nur und beenden nicht. cancel(), finish() beenden und danach
-	    geht nichts mehr. Hauptidee ist, dass suspended actions in der action queue stehen können.
-	    --
-        So richtig schön ist das auch nicht. Die prerequisites sind halt keine actions wie die anderen. Andererseits ist
-        suspend auch sonst schön, z.B. wenn man manuell etwas wichtiges nach vorne ziehen will -- wobei hier aufgepasst
-        werden muss, dass die action items dann imemr noch lagerfläche brauchen! (BTW: Eine Action sollte, wenn
-        prerequisites vorhanden, nicht started werden, bis diese abgeschlossen sind; dann werden z.B. die action
-        items nicht unnötig früh reserviert). Non-Lösung wäre, dass action items bei resume zurückkommen. Das macht
-        bei Crafting überhaupt keinen Sinn! Gerade bei Manufacturing wäre die einzig "richtige" lösung, dass das
-        Teilprodukt als solches als Item zurückkommt und Platz für die action items belegt.
-		---
-		Fürs Erste ist wohl die jetzige Lösung am besten: Nur eine Execution, und bei Abbruch gehen die Action Items
-		zurück. Allerdings muss ein force-cancel dazu, wenn die Action nicht mehr umgesetzt werden kann. Dann kann
-		Mining, Manufacturing etc. bei Entfernung einfach ein force-cancel machen und die prerequisites werden *VOR*
-		dem start() ausgeführt. Details können in späteren Versionen kommen, wenn Asteroiden und POSes überhaupt
-		bewegt werden können.
 	- Action Stacks wieder rausnehmen. Als allgemeines Konzept sind die so nicht gut. Eher ist bei den entsprechenden
 		Actions (Mining, Manufacturing) ein amount-Feld sinnvoll. Default bei Mining ist "unendlich" (z.B. bis
 		Frachtraum voll); default bei Manufacturing ist 1.
@@ -102,6 +74,7 @@ Milestones:
 - Feinschliff
 	- Restzeit bei Mining anhand von Restbestand und Frachtraum ermitteln
 	- keine ContextFreeActionFactories
+	- prerequisite actions farblich hervorgehoben und nicht cancellable
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
