@@ -32,6 +32,15 @@ public final class ItemStack {
 	}
 
 	/**
+	 * Calculates the total mass of this stack.
+	 *
+	 * @return the mass
+	 */
+	public int getMass() {
+		return size * itemType.getMass();
+	}
+
+	/**
 	 * Setter method.
 	 *
 	 * @param size the size

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.actions.MiningAction;
+import name.martingeisse.trading_game.game.action.actions.MiningYield;
 import name.martingeisse.trading_game.game.definition.MiningYieldInfo;
 import name.martingeisse.trading_game.game.item.FixedInventory;
 
@@ -20,15 +21,46 @@ public final class Asteroid extends SpaceObject {
 		this.yieldCapacity = yieldCapacity;
 	}
 
-	public FixedInventory obtainYield(long minedRockAmount) {
-		if (yieldCapacity == 0) {
-			return null;
+	/**
+	 * Estimates the mass of the yield from the specified rock amount.
+	 */
+	public int estimateYieldMass(long minedRockAmount, boolean respectRemainingCapacity) {
+		if (respectRemainingCapacity) {
+			if (yieldCapacity == 0) {
+				return 0;
+			}
+			if (yieldCapacity < minedRockAmount) {
+				minedRockAmount = yieldCapacity;
+			}
 		}
-		if (yieldCapacity < minedRockAmount) {
+		FixedInventory yield = yieldInfo.determineYield(minedRockAmount);
+		return yield == null ? 0 : yield.getMass();
+	}
+
+	/**
+	 * Obtains mining yield from this asteroid for the specified amount of rock mined, constrained by the specified
+	 * amount of cargo space left.
+	 */
+	public MiningYield obtainYield(long minedRockAmount, int availableCargoMass) {
+		if (yieldCapacity == 0) {
+			return new MiningYield(null, true, false);
+		}
+		boolean depleted = (yieldCapacity < minedRockAmount);
+		if (depleted) {
 			minedRockAmount = yieldCapacity;
 		}
+		FixedInventory yield = yieldInfo.determineYield(minedRockAmount);
+		boolean cargoExhausted = availableCargoMass < yield.getMass();
+		if (cargoExhausted) {
+			long adjustedMinedRockAmount = minedRockAmount * availableCargoMass / yield.getMass();
+			if (adjustedMinedRockAmount < minedRockAmount) {
+				depleted = false;
+			}
+			yield = yield.reduceToMass(availableCargoMass);
+			minedRockAmount = adjustedMinedRockAmount;
+		}
 		yieldCapacity -= minedRockAmount;
-		return yieldInfo.determineYield(minedRockAmount);
+		return new MiningYield(yield, depleted, cargoExhausted);
 	}
 
 	@Override

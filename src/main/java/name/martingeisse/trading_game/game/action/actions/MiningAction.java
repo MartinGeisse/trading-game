@@ -17,6 +17,7 @@ public final class MiningAction extends ContinuousAction {
 	private final Asteroid asteroid;
 	private final Player player;
 	private final long miningSpeed = GameConstants.BASE_MINING_SPEED; // in the future, this will be modified by upgrades and skills
+	private boolean cannotContinue = false;
 
 	public MiningAction(Asteroid asteroid, Player player) {
 		this.asteroid = asteroid;
@@ -34,24 +35,47 @@ public final class MiningAction extends ContinuousAction {
 
 	@Override
 	protected final Integer getRemainingTime() {
-		// TODO check remaining cargo space in the player's ship
-		return (int)(asteroid.getYieldCapacity() / miningSpeed);
+
+		int remainingTimeForYieldCapacity;
+		{
+			long remainingYieldCapacity = (int)asteroid.getYieldCapacity();
+			remainingTimeForYieldCapacity = (int)(remainingYieldCapacity / miningSpeed);
+		}
+
+		int remainingTimeForCargo;
+		{
+			// We don't respect the remaining capacity here since, if the capacity is almost depleted, then the above
+			// "time for yield capacity" will reflect that. The "remaining time for cargo" will be pointless in that
+			// case (so just keep it large enough to be irrelevant in the .min() call below) since it is based on the
+			// assumption that mining can continue for some time, which is not the case if the capacity is depleted.
+			int estimatedYieldMass = asteroid.estimateYieldMass(miningSpeed, false);
+			int remainingCargoMass = getRemainingCargoMass();
+			remainingTimeForCargo = remainingCargoMass / estimatedYieldMass;
+			System.out.println("+ " + remainingCargoMass + " / " + estimatedYieldMass);
+		}
+
+		System.out.println("* " + remainingTimeForYieldCapacity + " / " + remainingTimeForCargo);
+		return Math.min(remainingTimeForYieldCapacity, remainingTimeForCargo);
 	}
 
 	@Override
 	public final boolean isFinishable() {
-		// TODO check remaining cargo space in the player's ship
-		return asteroid.getYieldCapacity() == 0;
+		return cannotContinue;
 	}
 
 	@Override
 	public final void tick() {
-		FixedInventory determinedYield = asteroid.obtainYield(miningSpeed);
-		if (determinedYield != null) {
-			// TODO reduced by what is left as well as inventory space; put back the rest
-			FixedInventory actualYield = determinedYield;
-			player.getShip().getInventory().add(actualYield);
+		MiningYield yield = asteroid.obtainYield(miningSpeed, getRemainingCargoMass());
+		if (yield.isDepleted() || yield.isCargoExhausted()) {
+			cannotContinue = true;
 		}
+		if (yield.getItems() != null) {
+			player.getInventory().add(yield.getItems());
+		}
+	}
+
+	private int getRemainingCargoMass() {
+		return player.getMaximumCargoMass() - player.getInventory().getMass();
 	}
 
 	@Override

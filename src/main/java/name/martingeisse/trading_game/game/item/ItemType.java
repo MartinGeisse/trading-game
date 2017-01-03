@@ -9,10 +9,12 @@ public final class ItemType {
 
 	private final String name;
 	private final String icon;
+	private final int mass;
 
-	public ItemType(String name, String icon) {
+	public ItemType(String name, String icon, int mass) {
 		this.name = name;
 		this.icon = icon;
+		this.mass = mass;
 	}
 
 	/**
@@ -31,6 +33,15 @@ public final class ItemType {
 	 */
 	public String getIcon() {
 		return icon;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the mass
+	 */
+	public int getMass() {
+		return mass;
 	}
 
 	@Override

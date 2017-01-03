@@ -168,4 +168,8 @@ public final class Player {
 		return 10; // TODO
 	}
 
+	public int getMaximumCargoMass() {
+		return 10_000;
+	}
+
 }

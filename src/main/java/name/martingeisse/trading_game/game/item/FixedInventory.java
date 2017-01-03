@@ -71,6 +71,19 @@ public final class FixedInventory {
 		return itemStacks;
 	}
 
+	/**
+	 * Calculates the total mass of this inventory.
+	 *
+	 * @return the mass
+	 */
+	public int getMass() {
+		int result = 0;
+		for (FixedItemStack itemStack : itemStacks) {
+			result += itemStack.getMass();
+		}
+		return result;
+	}
+
 	public int count(ItemType itemType) {
 		int result = 0;
 		for (FixedItemStack itemStack : itemStacks) {
@@ -110,6 +123,11 @@ public final class FixedInventory {
 			newStacks.add(oldStack.scale(factor));
 		}
 		return new FixedInventory(ImmutableList.copyOf(newStacks));
+	}
+
+	public FixedInventory reduceToMass(int mass) {
+
+
 	}
 
 }

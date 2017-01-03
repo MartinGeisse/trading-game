@@ -35,8 +35,17 @@ public final class FixedItemStack {
 		return size;
 	}
 
+	/**
+	 * Calculates the total mass of this stack.
+	 *
+	 * @return the mass
+	 */
+	public int getMass() {
+		return size * itemType.getMass();
+	}
+
 	public FixedItemStack scale(double factor) {
-		return new FixedItemStack(itemType, (int)(size * factor));
+		return new FixedItemStack(itemType, (int) (size * factor));
 	}
 
 }

@@ -26,17 +26,17 @@ public final class GameDefinition {
 	 */
 	public GameDefinition() {
 
-		ItemType redPixelItemType = new ItemType("red pixel", "red_pixel.png");
-		ItemType redPixelAssemblyItemType = new ItemType("red pixel assembly", "red_pixel_assembly.png");
-		ItemType redPixelLineItemType = new ItemType("red pixel line", "no_icon.png");
-		ItemType redPixelGlueItemType = new ItemType("red pixel glue", "no_icon.png");
+		ItemType redPixelItemType = new ItemType("red pixel", "red_pixel.png", 10);
+		ItemType redPixelAssemblyItemType = new ItemType("red pixel assembly", "red_pixel_assembly.png", 10);
+		ItemType redPixelLineItemType = new ItemType("red pixel line", "no_icon.png", 10);
+		ItemType redPixelGlueItemType = new ItemType("red pixel glue", "no_icon.png", 10);
 
-		ItemType pixelAxeItemType = new ItemType("pixel axe", "no_icon.png");
-		ItemType pixelHoeItemType = new ItemType("pixel hoe", "no_icon.png");
-		ItemType pixelHammerItemType = new ItemType("pixel hammer", "no_icon.png");
-		ItemType pixelPickaxeItemType = new ItemType("pixel pickaxe", "no_icon.png");
+		ItemType pixelAxeItemType = new ItemType("pixel axe", "no_icon.png", 10);
+		ItemType pixelHoeItemType = new ItemType("pixel hoe", "no_icon.png", 10);
+		ItemType pixelHammerItemType = new ItemType("pixel hammer", "no_icon.png", 10);
+		ItemType pixelPickaxeItemType = new ItemType("pixel pickaxe", "no_icon.png", 10);
 
-		ItemType logItemType = new ItemType("log", "no_icon.png");
+		ItemType logItemType = new ItemType("log", "no_icon.png", 10);
 
 		CraftingRecipe redPixelCraftingRecipe = new FixedCraftingRecipe(100, FixedInventory.EMPTY, redPixelItemType);
 		CraftingRecipe redPixelAssemblyCraftingRecipe = new FixedCraftingRecipe(300, FixedInventory.from(redPixelItemType, 5), redPixelAssemblyItemType);

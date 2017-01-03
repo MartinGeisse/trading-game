@@ -22,6 +22,19 @@ public class Inventory {
 		return itemStacks;
 	}
 
+	/**
+	 * Calculates the total mass of this inventory.
+	 *
+	 * @return the mass
+	 */
+	public int getMass() {
+		int result = 0;
+		for (ItemStack itemStack : itemStacks) {
+			result += itemStack.getMass();
+		}
+		return result;
+	}
+
 	public ItemStack find(ItemType itemType) {
 		for (ItemStack itemStack : itemStacks) {
 			if (itemStack.getItemType() == itemType) {

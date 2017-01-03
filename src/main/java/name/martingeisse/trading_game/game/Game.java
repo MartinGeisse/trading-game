@@ -34,7 +34,7 @@ public final class Game {
 
 		// TODO generate once and persist
 		{
-			long yieldCapacity = 6 * GameConstants.BASE_MINING_SPEED;
+			long yieldCapacity = 1000 * GameConstants.BASE_MINING_SPEED;
 			double oreDensity = 0.01;
 			FixedInventory asteroidYieldPerTick = FixedInventory.from(gameDefinition.getRedPixelItemType(), 5);
 			for (Pair<Long, Long> starPosition : StarPlacement.compute(100, 200, 2, 3000)) {
