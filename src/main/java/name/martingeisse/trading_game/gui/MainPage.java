@@ -193,33 +193,44 @@ public class MainPage extends AbstractPage {
 		spaceObjectsContainer.add(new ListView<SpaceObject>("spaceObjects", new PropertyModel<>(this, "game.space.spaceObjects")) {
 			@Override
 			protected void populateItem(ListItem<SpaceObject> spaceObjectItem) {
-				spaceObjectItem.add(new Label("name", new PropertyModel<>(spaceObjectItem.getModel(), "name")));
-				spaceObjectItem.add(new Label("x", new PropertyModel<>(spaceObjectItem.getModel(), "x")));
-				spaceObjectItem.add(new Label("y", new PropertyModel<>(spaceObjectItem.getModel(), "y")));
-				IModel<List<Action>> objectActionsModel = new LoadableDetachableModel<List<Action>>() {
+				AjaxLink<?> link = new AjaxLink<Void>("link") {
 					@Override
-					protected List<Action> load() {
-						return spaceObjectItem.getModelObject().getActionsFor(getPlayer());
+					public void onClick(AjaxRequestTarget target) {
+						// TODO select the object
+						target.add(MainPage.this.get("selectedSpaceObjectContainer"));
 					}
 				};
-				spaceObjectItem.add(new ListView<Action>("actions", objectActionsModel) {
-					@Override
-					protected void populateItem(ListItem<Action> actionItem) {
-						AjaxLink<?> link = new AjaxLink<Void>("link") {
-							@Override
-							public void onClick(AjaxRequestTarget target) {
-								Player player = getPlayer();
-								player.scheduleAction(actionItem.getModelObject());
-								target.add(MainPage.this.get("currentActionContainer"));
-								target.add(MainPage.this.get("pendingActionsContainer"));
-								target.add(MainPage.this.get("inventoryContainer"));
-							}
-						};
-						link.add(new Label("name", actionItem.getModelObject().toString()));
-						actionItem.add(link);
-					}
-				});
+				link.add(new Label("name", spaceObjectItem.getModelObject().getName()));
+				link.add(new Label("x", spaceObjectItem.getModelObject().getX()));
+				link.add(new Label("y", spaceObjectItem.getModelObject().getY()));
+				spaceObjectItem.add(link);
 			}
+		});
+
+		WebMarkupContainer selectedSpaceObjectContainer = new WebMarkupContainer("selectedSpaceObjectContainer");
+		selectedSpaceObjectContainer.setOutputMarkupId(true);
+		add(selectedSpaceObjectContainer);
+		selectedSpaceObjectContainer.add(new Label("name"));
+		selectedSpaceObjectContainer.add(new Label("type"));
+		selectedSpaceObjectContainer.add(new Label("location"));
+		selectedSpaceObjectContainer.add(new Label("distance"));
+		selectedSpaceObjectContainer.add(new ListView<Action>("actions") {
+			@Override
+			protected void populateItem(ListItem<Action> actionItem) {
+				AjaxLink<?> link = new AjaxLink<Void>("link") {
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						Player player = getPlayer();
+						player.scheduleAction(actionItem.getModelObject());
+						target.add(MainPage.this.get("currentActionContainer"));
+						target.add(MainPage.this.get("pendingActionsContainer"));
+						target.add(MainPage.this.get("inventoryContainer"));
+					}
+				};
+				link.add(new Label("name", actionItem.getModelObject().toString()));
+				actionItem.add(link);
+			}
+
 		});
 
 	}
