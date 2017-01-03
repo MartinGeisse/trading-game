@@ -1,0 +1,17 @@
+
+akutes Problem: UI benötigt eine ID, mit der die persistent objects abgerufen werden können. Die ID wäre (für Wicket) serializable, eine Java-Referenz nicht.
+
+Grundlegenderes Problem: Wie soll überhaupt mit persistence umgegangen werden? Kennen Objekte ihre DB-ID? Ist diese Änderbar? Wann und wie wird persistiert?
+
+In der Umsetzung stellen sich fragen wie: CQRS? ES?
+-> intuitiv würde ich sagen: CQRS ja (da es auch einige race conditions löst), ES nein da die Nachvollziehbarkeit wurscht ist, ebenso ist ein Replay
+    nach Code-Änderungen nicht geplant.
+
+Mit CQRS ja, ES nein stellt es sich wie folgt dar:
+- view models und commands sind getrennt. Beide benutzen aber "IDs" und diese müssen gleich sein. Nur so können diese von Wicket benutzt werden.
+- damit ist das Problem auf die Spielelogik eingegrenzt. Das UI ist nicht mehr betroffen.
+
+Davon abgesehen kann das akute Problem schon mit einem ersten Schritt in diese Richtung gelöst werden: SpaceObjects haben IDs sobald sie zu dem Space
+geadded werden. Diese wird durch einen package private setter gesetzt und kann nur einmal gesetzt werden. Über diese ID können die Space Objects
+auch wieder abgerufen werden.
+

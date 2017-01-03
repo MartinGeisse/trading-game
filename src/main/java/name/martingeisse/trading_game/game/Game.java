@@ -1,15 +1,15 @@
 package name.martingeisse.trading_game.game;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.definition.GameConstants;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
+import name.martingeisse.trading_game.game.generate.SpaceStationPlacement;
 import name.martingeisse.trading_game.game.generate.StarNaming;
 import name.martingeisse.trading_game.game.generate.StarPlacement;
 import name.martingeisse.trading_game.game.item.FixedInventory;
-import name.martingeisse.trading_game.game.space.Asteroid;
-import name.martingeisse.trading_game.game.space.PlayerShip;
-import name.martingeisse.trading_game.game.space.Space;
+import name.martingeisse.trading_game.game.space.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -42,7 +42,18 @@ public final class Game {
 				asteroid.setX(starPosition.getLeft());
 				asteroid.setY(starPosition.getRight());
 				asteroid.setName(StarNaming.compute());
-				space.getSpaceObjects().add(asteroid);
+				space.add(asteroid);
+			}
+		}
+		{
+			ImmutableList<SpaceObject> anchors = ImmutableList.copyOf(space.getSpaceObjects());
+			int numberOfSpaceStations = anchors.size() / 10 + 2;
+			for (Pair<Long, Long> spaceStationPosition : SpaceStationPlacement.compute(anchors, numberOfSpaceStations, 30, 60)) {
+				SpaceStation spaceStation = new SpaceStation();
+				spaceStation.setX(spaceStationPosition.getLeft());
+				spaceStation.setY(spaceStationPosition.getRight());
+				spaceStation.setName(StarNaming.compute());
+				space.add(spaceStation);
 			}
 		}
 
@@ -84,7 +95,7 @@ public final class Game {
 				id = generatePlayerId();
 			} while (players.get(id) != null);
 			PlayerShip ship = new PlayerShip();
-			space.getSpaceObjects().add(ship);
+			space.add(ship);
 			player = new Player(this, id, ship);
 			players.put(id, player);
 		}

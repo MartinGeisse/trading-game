@@ -10,6 +10,7 @@ import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.game.skill.Skill;
+import name.martingeisse.trading_game.game.space.GeometryUtil;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
@@ -39,6 +40,14 @@ import java.util.List;
  * This is the main page for controlling the game.
  */
 public class MainPage extends AbstractPage {
+
+	private long selectedSpaceObjectId = -1;
+	private final IModel<SpaceObject> selectedSpaceObjectModel = new LoadableDetachableModel<SpaceObject>() {
+		@Override
+		protected SpaceObject load() {
+			return getGame().getSpace().get(selectedSpaceObjectId);
+		}
+	};
 
 	/**
 	 * Constructor
@@ -196,7 +205,7 @@ public class MainPage extends AbstractPage {
 				AjaxLink<?> link = new AjaxLink<Void>("link") {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						// TODO select the object
+						selectedSpaceObjectId = spaceObjectItem.getModelObject().getId();
 						target.add(MainPage.this.get("selectedSpaceObjectContainer"));
 					}
 				};
@@ -210,11 +219,12 @@ public class MainPage extends AbstractPage {
 		WebMarkupContainer selectedSpaceObjectContainer = new WebMarkupContainer("selectedSpaceObjectContainer");
 		selectedSpaceObjectContainer.setOutputMarkupId(true);
 		add(selectedSpaceObjectContainer);
-		selectedSpaceObjectContainer.add(new Label("name"));
-		selectedSpaceObjectContainer.add(new Label("type"));
-		selectedSpaceObjectContainer.add(new Label("location"));
-		selectedSpaceObjectContainer.add(new Label("distance"));
-		selectedSpaceObjectContainer.add(new ListView<Action>("actions") {
+		selectedSpaceObjectContainer.add(new Label("name", new PropertyModel<>(selectedSpaceObjectModel, "name")));
+		selectedSpaceObjectContainer.add(new Label("type", new PropertyModel<>(selectedSpaceObjectModel, "class.simpleName")));
+		selectedSpaceObjectContainer.add(new Label("x", new PropertyModel<>(selectedSpaceObjectModel, "x")));
+		selectedSpaceObjectContainer.add(new Label("y", new PropertyModel<>(selectedSpaceObjectModel, "y")));
+		selectedSpaceObjectContainer.add(new Label("distance", new PropertyModel<>(this, "selectedSpaceObjectDistance")));
+		selectedSpaceObjectContainer.add(new ListView<Action>("actions", new PropertyModel<>(this, "selectedSpaceObjectActions")) {
 			@Override
 			protected void populateItem(ListItem<Action> actionItem) {
 				AjaxLink<?> link = new AjaxLink<Void>("link") {
@@ -248,6 +258,22 @@ public class MainPage extends AbstractPage {
 		skills.removeAll(getPlayer().getSkills().getLearningQueue());
 		Collections.sort(skills, (x, y) -> x.getName().compareTo(y.getName()));
 		return skills;
+	}
+
+	public Double getSelectedSpaceObjectDistance() {
+		if (selectedSpaceObjectModel.getObject() == null) {
+			return null;
+		} else {
+			return GeometryUtil.getDistance(getPlayer().getShip(), selectedSpaceObjectModel.getObject());
+		}
+	}
+
+	public List<Action> getSelectedSpaceObjectActions() {
+		if (selectedSpaceObjectModel.getObject() == null) {
+			return null;
+		} else {
+			return selectedSpaceObjectModel.getObject().getActionsFor(getPlayer());
+		}
 	}
 
 }

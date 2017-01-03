@@ -12,9 +12,35 @@ public abstract class SpaceObject implements PositionProvider {
 
 	public static final String DEFAULT_NAME = "unnamed";
 
+	private long id = -1;
 	private String name = DEFAULT_NAME;
 	private long x;
 	private long y;
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the id
+	 */
+	public long getId() {
+		return id;
+	}
+
+	/**
+	 * Setter method.
+	 *
+	 * @param id the id
+	 */
+	void setId(long id) {
+		if (id < 0) {
+			throw new IllegalArgumentException("id < 0");
+		}
+		if (this.id < 0) {
+			this.id = id;
+		} else {
+			throw new IllegalStateException("id has already been set");
+		}
+	}
 
 	/**
 	 * Getter method.
