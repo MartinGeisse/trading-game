@@ -1,7 +1,7 @@
 <html>
 	<body>
 		<div class="col-xs-12 col-sm-6 col-md-4">
-			<h2>Player</h2>
+			<h1>Trading Game</h1>
 			<div wicket:id="playerContainer">
 				<div>Player: <span wicket:id="playerName"></span> (ID: <span wicket:id="playerID"></span>)</div>
 				<div>Location: <span wicket:id="playerX"></span>, <span wicket:id="playerY"></span></div>
@@ -28,6 +28,37 @@
 				<h3>available for learning</h3>
 				<div wicket:id="skillsAvailableForLearning"><a wicket:id="link"><span wicket:id="name"></span></a></div>
 			</div>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-4">
+			<h2>Actions</h2>
+			<table class="table table-striped">
+				<tr>
+					<th>Action</th>
+					<th>Bill of Materials</th>
+					<th>Yield</th>
+				</tr>
+				<tr wicket:id="contextFreeActionDefinitions">
+					<td>
+						<a wicket:id="link"><span wicket:id="name"></span></a>
+					</td>
+					<td style="font-size: smaller">
+						<wicket:enclosure child="billOfMaterials">
+							<div wicket:id="billOfMaterials">
+								<span wicket:id="amount"></span> <span wicket:id="name"></span>
+							</div>
+						</wicket:enclosure>
+					</td>
+					<td style="font-size: smaller">
+						<wicket:enclosure child="yield">
+							<div wicket:id="yield">
+								<span wicket:id="amount"></span> <span wicket:id="name"></span>
+							</div>
+						</wicket:enclosure>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-4">
 			<h2>Current action</h2>
 			<div wicket:id="currentActionContainer" style="height: 50px;">
 				<wicket:enclosure child="currentAction">
@@ -50,24 +81,19 @@
 					</li>
 				</ul>
 			</div>
-		</div>
-		<div class="col-xs-12 col-sm-6 col-md-4">
 			<h2>Space Objects</h2>
 			<div wicket:id="spaceObjectsContainer">
 				<ul>
 					<li wicket:id="spaceObjects">
 						<div><span wicket:id="name"></span> at (<span wicket:id="x"></span>, <span wicket:id="y"></span>)</div>
-						<ul>
-							<li wicket:id="actions">
-								<a wicket:id="link"><span wicket:id="name"></span></a>
-							</li>
-						</ul>
-					</li>
+                        <ul>
+                            <li wicket:id="actions">
+                                <a wicket:id="link"><span wicket:id="name"></span></a>
+                            </li>
+                        </ul>
+                    </li>
 				</ul>
 			</div>
-		</div>
-		<div class="col-xs-12 col-sm-6 col-md-4">
-			<h2>Properties</h2>
 		</div>
 	</body>
 </html>

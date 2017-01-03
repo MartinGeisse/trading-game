@@ -8,12 +8,16 @@ package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
+import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
+import name.martingeisse.trading_game.game.item.FixedInventory;
+import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.game.skill.Skill;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import name.martingeisse.wicket.helpers.InlineProgressBar;
+import name.martingeisse.wicket.helpers.InvisibleWebComponent;
 import name.martingeisse.wicket.helpers.ProgressBarClientProgressBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
@@ -38,12 +42,12 @@ import java.util.List;
 /**
  * This is the main page for controlling the game.
  */
-public class MainPage extends AbstractPage {
+public class MainPageOld extends AbstractPage {
 
 	/**
 	 * Constructor
 	 */
-	public MainPage() {
+	public MainPageOld() {
 
 		WebMarkupContainer playerContainer = new WebMarkupContainer("playerContainer");
 		playerContainer.setOutputMarkupId(true);
@@ -55,6 +59,52 @@ public class MainPage extends AbstractPage {
 		playerContainer.add(new BookmarkablePageLink<>("renamePlayerLink", RenamePlayerPage.class));
 		playerContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
 		add(playerContainer);
+
+		add(new ListView<ContextFreeActionDefinition>("contextFreeActionDefinitions", gameDefinitionModel("contextFreeActionDefinitions")) {
+
+			@Override
+			protected void populateItem(ListItem<ContextFreeActionDefinition> item) {
+				AjaxLink<?> link = new AjaxLink<Void>("link") {
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						Player player = getPlayer();
+						player.scheduleAction(item.getModelObject().getFactory().apply(player));
+						target.add(MainPageOld.this.get("currentActionContainer"));
+						target.add(MainPageOld.this.get("pendingActionsContainer"));
+						target.add(MainPageOld.this.get("inventoryContainer"));
+					}
+				};
+				link.add(new Label("name", item.getModelObject().getName()));
+				item.add(link);
+
+				FixedInventory billOfMaterials = item.getModelObject().getBillOfMaterials();
+				if (billOfMaterials == null || billOfMaterials.getItemStacks().isEmpty()) {
+					item.add(new InvisibleWebComponent("billOfMaterials"));
+				} else {
+					item.add(new ListView<FixedItemStack>("billOfMaterials", billOfMaterials.getItemStacks()) {
+						@Override
+						protected void populateItem(ListItem<FixedItemStack> item) {
+							item.add(new Label("amount", item.getModelObject().getSize()));
+							item.add(new Label("name", item.getModelObject().getItemType().getName()));
+						}
+					});
+				}
+
+				FixedInventory yield = item.getModelObject().getYield();
+				if (yield == null || yield.getItemStacks().isEmpty()) {
+					item.add(new InvisibleWebComponent("yield"));
+				} else {
+					item.add(new ListView<FixedItemStack>("yield", yield.getItemStacks()) {
+						@Override
+						protected void populateItem(ListItem<FixedItemStack> item) {
+							item.add(new Label("amount", item.getModelObject().getSize()));
+							item.add(new Label("name", item.getModelObject().getItemType().getName()));
+						}
+					});
+				}
+			}
+
+		});
 
 		WebMarkupContainer currentActionContainer = new WebMarkupContainer("currentActionContainer");
 		add(currentActionContainer);
@@ -86,7 +136,7 @@ public class MainPage extends AbstractPage {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				getPlayer().cancelCurrentAction();
-				target.add(MainPage.this.get("currentActionContainer"));
+				target.add(MainPageOld.this.get("currentActionContainer"));
 			}
 		});
 		currentActionContainer.add(new Label("remainingTime", new AbstractReadOnlyModel<String>() {
@@ -116,7 +166,7 @@ public class MainPage extends AbstractPage {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						getPlayer().cancelPendingAction(item.getIndex());
-						target.add(MainPage.this.get("pendingActionsContainer"));
+						target.add(MainPageOld.this.get("pendingActionsContainer"));
 					}
 				});
 			}
@@ -163,7 +213,7 @@ public class MainPage extends AbstractPage {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				getPlayer().getSkills().cancelSkillCurrentlyBeingLearned();
-				target.add(MainPage.this.get("skillsContainer"));
+				target.add(MainPageOld.this.get("skillsContainer"));
 			}
 		});
 		skillsContainer.add(new ListView<Skill>("skillLearningQueue", new PropertyModel<>(this, "player.skills.learningQueue")) {
@@ -210,9 +260,9 @@ public class MainPage extends AbstractPage {
 							public void onClick(AjaxRequestTarget target) {
 								Player player = getPlayer();
 								player.scheduleAction(actionItem.getModelObject());
-								target.add(MainPage.this.get("currentActionContainer"));
-								target.add(MainPage.this.get("pendingActionsContainer"));
-								target.add(MainPage.this.get("inventoryContainer"));
+								target.add(MainPageOld.this.get("currentActionContainer"));
+								target.add(MainPageOld.this.get("pendingActionsContainer"));
+								target.add(MainPageOld.this.get("inventoryContainer"));
 							}
 						};
 						link.add(new Label("name", actionItem.getModelObject().toString()));

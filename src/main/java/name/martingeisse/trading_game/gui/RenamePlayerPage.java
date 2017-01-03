@@ -7,17 +7,9 @@
 package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
-import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import name.martingeisse.wicket.simpleform.SimpleFormPanel;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is the main page for controlling the game.

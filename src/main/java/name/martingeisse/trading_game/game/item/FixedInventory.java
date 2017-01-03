@@ -126,8 +126,7 @@ public final class FixedInventory {
 	}
 
 	public FixedInventory reduceToMass(int mass) {
-
-
+		return this; // TODO
 	}
 
 }
