@@ -48,12 +48,14 @@ public final class Game {
 		{
 			ImmutableList<SpaceObject> anchors = ImmutableList.copyOf(space.getSpaceObjects());
 			int numberOfSpaceStations = anchors.size() / 10 + 2;
+			int namingCounter = 1;
 			for (Pair<Long, Long> spaceStationPosition : SpaceStationPlacement.compute(anchors, numberOfSpaceStations, 30, 60)) {
 				SpaceStation spaceStation = new SpaceStation();
 				spaceStation.setX(spaceStationPosition.getLeft());
 				spaceStation.setY(spaceStationPosition.getRight());
-				spaceStation.setName(StarNaming.compute());
+				spaceStation.setName("space station " + namingCounter);
 				space.add(spaceStation);
+				namingCounter++;
 			}
 		}
 
