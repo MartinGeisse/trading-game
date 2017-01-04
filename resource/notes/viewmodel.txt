@@ -1,0 +1,9 @@
+
+Idee: Es gibt ein "GuiModel" (Viewmodel) welches zwischen Game und GUI vermittelt. Die GUI wird nicht aus dem GuiModel generiert; sie ist komplett custom-designed und damit flexibel. Stattdessen bietet das ViewModel alle nötigen Operationen (und ggf. auch "was geht") an, z.B. "gib mir alle items auf Station X und dazu alle Actions für Spieler Y"
+
+Dinge wie die load action sind nach wie vor Teil des "game" package. Nur getActionsForPlayer ist im GuiModel. Dafür package "guimodel". Dependency ist gui->guimodel, guimodel->game, gui->game.
+Wo nur die Spielobjekte gebraucht werden, ist es kein Problem, dass das GUI direkt aufs game zugreift, ansonsten müsstem an unnötig Wrapperklassen schreiben.
+
+Die Klassen aus dem Viewmodel würden auch weniger Wrapperklassen sein (sonst kommt man in die Situation, dass man ein gameobjekt hat und den wrapper braucht). Stattdessen sind es eher Hilfsklassen,
+Factories etc. (aber Objekte, keine statischen Methoden) welche die Gameobjekte verarbeiten können.
+
