@@ -20,6 +20,7 @@ public final class GameDefinition {
 	private final ImmutableList<ContextFreeActionDefinition> contextFreeActionDefinitions;
 	private final ImmutableList<Skill> skills;
 	private final ItemType redPixelItemType;
+	private final ItemType redPixelAssemblyItemType;
 
 	/**
 	 *
@@ -85,6 +86,7 @@ public final class GameDefinition {
 		});
 
 		this.redPixelItemType = redPixelItemType;
+		this.redPixelAssemblyItemType = redPixelAssemblyItemType;
 	}
 
 	/**
@@ -112,6 +114,15 @@ public final class GameDefinition {
 	 */
 	public ItemType getRedPixelItemType() {
 		return redPixelItemType;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the redPixelAssemblyItemType
+	 */
+	public ItemType getRedPixelAssemblyItemType() {
+		return redPixelAssemblyItemType;
 	}
 
 }

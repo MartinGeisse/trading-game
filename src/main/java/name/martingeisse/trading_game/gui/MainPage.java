@@ -12,6 +12,7 @@ import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.game.skill.Skill;
 import name.martingeisse.trading_game.game.space.GeometryUtil;
 import name.martingeisse.trading_game.game.space.SpaceObject;
+import name.martingeisse.trading_game.game.space.SpaceStation;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import name.martingeisse.wicket.helpers.InlineProgressBar;
@@ -218,6 +219,7 @@ public class MainPage extends AbstractPage {
 
 		WebMarkupContainer selectedSpaceObjectContainer = new WebMarkupContainer("selectedSpaceObjectContainer");
 		selectedSpaceObjectContainer.setOutputMarkupId(true);
+		selectedSpaceObjectContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
 		add(selectedSpaceObjectContainer);
 		selectedSpaceObjectContainer.add(new Label("name", new PropertyModel<>(selectedSpaceObjectModel, "name")));
 		selectedSpaceObjectContainer.add(new Label("type", new PropertyModel<>(selectedSpaceObjectModel, "class.simpleName")));
@@ -241,6 +243,14 @@ public class MainPage extends AbstractPage {
 				actionItem.add(link);
 			}
 
+		});
+		selectedSpaceObjectContainer.add(new ListView<ItemStack>("itemStacks", new PropertyModel<>(this, "selectedSpaceObjectItems")) {
+			@Override
+			protected void populateItem(ListItem<ItemStack> item) {
+				item.add(new Label("size", "" + item.getModelObject().getSize()));
+				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
+				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
+			}
 		});
 
 	}
@@ -273,6 +283,14 @@ public class MainPage extends AbstractPage {
 			return null;
 		} else {
 			return selectedSpaceObjectModel.getObject().getActionsFor(getPlayer());
+		}
+	}
+
+	public List<ItemStack> getSelectedSpaceObjectItems() {
+		if (selectedSpaceObjectModel.getObject() instanceof SpaceStation) {
+			return ((SpaceStation)selectedSpaceObjectModel.getObject()).getInventory().getItemStacks();
+		} else {
+			return null;
 		}
 	}
 

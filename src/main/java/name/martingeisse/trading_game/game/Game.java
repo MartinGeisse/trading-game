@@ -56,6 +56,11 @@ public final class Game {
 				spaceStation.setName("space station " + namingCounter);
 				space.add(spaceStation);
 				namingCounter++;
+
+				// TODO for testing
+				spaceStation.getInventory().add(gameDefinition.getRedPixelItemType(), 1000);
+				spaceStation.getInventory().add(gameDefinition.getRedPixelAssemblyItemType(), 1000);
+
 			}
 		}
 
