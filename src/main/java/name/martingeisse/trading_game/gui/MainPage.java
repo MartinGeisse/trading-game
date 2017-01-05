@@ -233,6 +233,8 @@ public class MainPage extends AbstractPage {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						Player player = getPlayer();
+						player.cancelCurrentAction();
+						player.cancelAllPendingActions();
 						player.scheduleAction(actionItem.getModelObject());
 						target.add(MainPage.this.get("currentActionContainer"));
 						target.add(MainPage.this.get("pendingActionsContainer"));

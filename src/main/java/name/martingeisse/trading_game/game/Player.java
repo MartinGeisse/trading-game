@@ -123,8 +123,10 @@ public final class Player {
 	 * Cancels the currently executed action (if any).
 	 */
 	public void cancelCurrentAction() {
-		actionExecution.cancel();
-		actionExecution = null;
+		if (actionExecution != null) {
+			actionExecution.cancel();
+			actionExecution = null;
+		}
 	}
 
 	/**
@@ -136,6 +138,13 @@ public final class Player {
 		if (index >= 0 && index < pendingActions.size()) {
 			pendingActions.remove(index);
 		}
+	}
+
+	/**
+	 * Cancels all pending actions (but not the current action).
+	 */
+	public void cancelAllPendingActions() {
+		pendingActions.clear();
 	}
 
 	/**
