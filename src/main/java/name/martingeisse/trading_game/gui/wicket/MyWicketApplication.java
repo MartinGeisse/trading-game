@@ -14,6 +14,7 @@ import com.google.inject.util.Types;
 import name.martingeisse.trading_game.game.GlobalGameLock;
 import name.martingeisse.trading_game.gui.MainPage;
 import name.martingeisse.trading_game.gui.MapPage;
+import name.martingeisse.trading_game.gui.OpenLayersPage;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
@@ -152,6 +153,7 @@ public class MyWicketApplication extends WebApplication {
 		// internal
 
 		mountPage("map", MapPage.class);
+		mountPage("ol", OpenLayersPage.class);
 
 		// mount Bootstrap fonts
 		{
