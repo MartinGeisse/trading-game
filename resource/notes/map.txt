@@ -1,0 +1,19 @@
+
+Idee: Scale factor 1 == pixel-to-pixel.
+
+Was ist mit translation 0?
+
+Wie funktioniert die Positionierung? top, translate, table?
+
+Google Maps macht es noch anders und benutzt Canvas für alles. Das werden auch Requests für "komische" Daten gesendet.
+
+
+Anregung: http://stackoverflow.com/questions/4070287/advice-for-creating-google-maps-like-interface
+-> Das UI könnte man mit OpenLayers bauen: http://openlayers.org -- da müsste man eine "flat projection" reinbekommen,
+aber dann würde man zumindest mit vielen Entwicklern zusammenarbeiten! Bilder per PNG oder SVG übertragen.
+- Nötige Features (check!):
+	+ flat (alternativ linear) projection
+	- nachladen von Daten
+	+ selecting
+Demo für Polyfills needed: https://openlayers.org/en/master/examples/reprojection-image.html
+
