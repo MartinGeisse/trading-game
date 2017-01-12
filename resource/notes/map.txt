@@ -17,3 +17,18 @@ aber dann würde man zumindest mit vielen Entwicklern zusammenarbeiten! Bilder p
 	+ selecting
 Demo für Polyfills needed: https://openlayers.org/en/master/examples/reprojection-image.html
 
+
+
+--------------------------------------------------------------------------------
+
+Map fields:
+- Layers (insbesondere für die eigentlichen Kartendaten wichtig; die Layer hat eine Source)
+- Overlays: vgl. Location-Marker bei Google Maps. Ist an Geokoordinaten gebunden. Interessant für Popup-Labels (z.B. Namen) und Popup Menus,
+	wobei das evtl über Selections besser geht. Aktuelles Ziel und aktuelle Route wären noch ein Beispiel.
+- Controls: Sind an Screen-Koordinaten gebunden, nicht an Geokoordinaten. Vor allem interessant, falls die sidebars nicht feste Sidebars sein sollen
+	und/oder nicht die volle Höhe ausfüllen und/oder margin haben sollen, wo die Karte sichtbar sein soll.
+- Interactions: Vor allem die normale Map-Steuerung (pan/zoom), aber auch um Selection zu enablen (passiert aber evtl. automatisch)
+
+View fields:
+- projection (!!!)
+- start x/y/zoom; min/max x/y/zoom
