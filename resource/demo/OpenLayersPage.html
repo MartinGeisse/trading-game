@@ -1,0 +1,29 @@
+<html>
+<wicket:head>
+    <script type="text/javascript">
+        $(function() {
+            new ol.Map({
+                target: 'map',
+                layers: [
+                    new ol.layer.Tile({
+                        source: new ol.source.XYZ({
+                            url: mapTileBaseUrl + '?x={x}&y={y}&z={z}',
+                            wrapX: false
+                        })
+                    })
+                ],
+                view: new ol.View({
+                    center: [0, 0],
+                    zoom: 2
+                }),
+                controls: ol.control.defaults({
+                    attribution: false
+                }),
+            });
+        });
+    </script>
+</wicket:head>
+<body>
+    <div id="map" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 0px; "></div>
+</body>
+</html>
