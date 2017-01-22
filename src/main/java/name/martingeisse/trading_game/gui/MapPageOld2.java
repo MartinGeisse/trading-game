@@ -3,7 +3,6 @@ package name.martingeisse.trading_game.gui;
 import name.martingeisse.trading_game.game.generate.StarNaming;
 import name.martingeisse.trading_game.game.generate.StarPlacement;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -24,18 +23,17 @@ import org.apache.wicket.resource.JQueryResourceReference;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  *
  */
-public class MapPage extends AbstractPage {
+public class MapPageOld2 extends AbstractPage {
 
 	private final List<MapObject> mapObjects = new ArrayList<>();
 
 	private String testText;
 
-	public MapPage() {
+	public MapPageOld2() {
 
 		// test data TODO remove
 		for (Pair<Long, Long> starPosition : StarPlacement.compute(100, 200, 2, 3000)) {
@@ -86,7 +84,7 @@ public class MapPage extends AbstractPage {
 				int index = Integer.parseInt(objectIdentifier);
 				MapObject mapObject = mapObjects.get(index);
 				testText = mapObject.getName() + " at " + mapObject.getX() + ", " + mapObject.getY();
-				target.add(MapPage.this.get("rightSidebar"));
+				target.add(MapPageOld2.this.get("rightSidebar"));
 			}
 
 		});

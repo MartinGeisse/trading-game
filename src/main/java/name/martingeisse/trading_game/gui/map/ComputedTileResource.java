@@ -1,3 +1,4 @@
+package name.martingeisse.trading_game.gui.map;
 
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.util.time.Duration;
