@@ -7,14 +7,21 @@
                 layers: [
                     new ol.layer.Tile({
                         source: new ol.source.XYZ({
+                            tileGrid: ol.tilegrid.createXYZ({
+                                extent: [-1000, -1000, 1000, 1000],
+                                origin: [0, 0]
+                            }),
                             url: mapTileBaseUrl + '?x={x}&y={y}&z={z}',
-                            wrapX: false
+                            wrapX: false,
+                            projection: 'flat'
                         })
                     })
                 ],
                 view: new ol.View({
+                    extent: [-1000, -1000, 1000, 1000],
                     center: [0, 0],
-                    zoom: 2
+                    zoom: 2,
+                    projection: 'flat'
                 }),
                 controls: ol.control.defaults({
                     attribution: false

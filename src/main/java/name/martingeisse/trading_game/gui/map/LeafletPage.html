@@ -1,0 +1,19 @@
+<html>
+<wicket:head>
+    <script type="text/javascript">
+        $(function() {
+            var mymap = L.map('map', {
+                crs: L.CRS.Simple
+            }).setView([0, 0], 10);
+            L.tileLayer(mapTileBaseUrl + '?x={x}&y={y}&z={z}', {
+                continuousWorld: true,
+                noWrap: true,
+                maxZoom: 18
+            }).addTo(mymap);
+        });
+    </script>
+</wicket:head>
+<body>
+    <div id="map" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 0px; "></div>
+</body>
+</html>
