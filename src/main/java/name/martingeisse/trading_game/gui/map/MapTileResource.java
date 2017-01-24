@@ -54,7 +54,7 @@ public class MapTileResource extends DynamicImageResource {
 		g.translate(-(double)(x << 8), -(double)(y << 8)); // translate to render the correct tile
 		g.scale(1 << z, 1 << z); // apply zoom
 
-		// scale to sidestep the fact that drawOval takes integer coordinates
+		// TODO remove
 		g.scale(0.01, 0.01);
 
 		// draw spce objects
@@ -63,7 +63,7 @@ public class MapTileResource extends DynamicImageResource {
 		for (SpaceObject spaceObject : spaceObjects) {
 			draw(spaceObject, g);
 			// shows coordinates:
-			// g.drawString("" + spaceObject.getX() + ", " + spaceObject.getY(), (int)spaceObject.getX() + 35, (int)spaceObject.getY());
+			g.drawString("" + spaceObject.getX() + ", " + spaceObject.getY(), (int)spaceObject.getX() + 35, (int)spaceObject.getY());
 		}
 
 	}

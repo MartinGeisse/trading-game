@@ -2,14 +2,17 @@
 <wicket:head>
     <script type="text/javascript">
         $(function() {
-            var mymap = L.map('map', {
+            var map = L.map('map', {
                 crs: L.CRS.Simple
             }).setView([0, 0], 10);
             L.tileLayer(mapTileBaseUrl + '?x={x}&y={y}&z={z}', {
                 continuousWorld: true,
                 noWrap: true,
                 maxZoom: 18
-            }).addTo(mymap);
+            }).addTo(map);
+            map.on('click', function(e) {
+                console.log(e.latlng);
+            });
         });
     </script>
 </wicket:head>

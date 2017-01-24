@@ -1,0 +1,9 @@
+
+What is the scale for Leaflet? "lat/lng" -> screen coordinates at different zoom levels? Scale for outermost zoom
+level is too small!
+
+When removing the scale command in the tile renderer, nothing is visible anymore.
+
+quadtree for static objects
+
+pass click event to server side

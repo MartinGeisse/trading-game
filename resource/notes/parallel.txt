@@ -1,0 +1,38 @@
+
+- read commands oder read model?
+	RC: werden mit WC gequeued
+	RM: werden von WC geupdated
+	->
+	langfristig wird nur RM funktionieren. Also gleich.
+- mehrere gleichzeitige write commands?
+	Ist sehr viel komplizierter. Erst mal nicht.
+
+Also: WC nimmt zentrales lock -> nur ein WC gleichzeitig. WC updated RM. RM ist immutable, d.h. ein reader bekommt entweder das alte oder das neue.
+
+Ein zentrales RM oder mehrere RMs? Unterschied wäre, dass mehrere RMs jeweils verlinkt sind, also kein zentrales Objekt, das bei jedem change ausgetauscht
+werden muss. Nachteil ist, dass ein reader einen inkonsistenten Zustand zwischen verschiedenen RMs bekommen kann.
+- RMs sind implizit timed. Das heißt, ein Client muss nicht jede Sekunde ein neues RM bekommen. Nur bei "echten" changes passiert das.
+- Echte Changes passieren seltener. Allerdings müsste ein Client bei jedem Change, auch unrelated, prüfen, ob sich etwas geändert hat.
+- Die alternative wäre, Snapshots zu erstellen. Dann müsste ein Snapshot immer auch einen Filter tragen, der angibt, welche changes related sind und welche nicht.
+- Snapshots haben den Nachteil, dass sie sich ansammeln. Das System müsste erkennen können, wann Snapshots veraltet sind.
+- In vielen Fällen sind Snapshots vermutlich nicht nötig, da Inkonsistenzen in kauf genommen werden können.
+- Snapshots passen super zu statischen Seiten, aber weniger zu sich selbst updatenden Seiten mit Websockets. Genauer: Bei letzterem landen verschiedene "Fragmente"
+	auf dem Client, die nicht denselbem Snapshot haben müssen, aber jedes für sich nach und nach sich zum neuesten Snapshot durcharbeiten müssen. Alternativ ist
+	die ganze Seite ein Fragment und muss sich durcharbeiten.
+- Einfache Variante: Nachdem der Websocket erstellt ist, wird geprüft, ob sich anhand des Filters inzwischen etwas geändert hat. Dann wird ggf. die Seite genau so
+	aktualisiert, wie wenn sich später etwas ändert.
+	- ohne weitere Logik bedeutet letzteres nämlich sowieso, dass die Seite sich per Websocket komplett updaten können muss. Das geht im Grunde einfach: Die Daten
+		kommen aus Wicket-Models, und per Websocket wird nur das neu rendern angestoßen. Genau das macht Wicket-Atmosphere ja auch. 
+	- Snapshots werden dafür benötigt, wenn beim Rendern (initial oder später) sich zwischendurch was ändert, was durch den Filter kommt
+	- Filter müssen gespeichert werden, solange der Websocket offen ist, und bei Änderungen geprüft werden
+		- Filter sollten also am Websocket (Atmosphere-Wasauchimmer) hängen. Gleichzeitig müssen sie aber zentral registriert sein, um bei Changes benachrichtigt
+			zu werden. Das Registrieren passiert beim initialen Rendern (genauer: beim Erstellen des Snapshots zum Rendern), so dass auch Changes während des
+			Renderns mitgenommen werden
+- Websockets sind leider immer noch nicht genug supported (Browser), um der einzige Mechanismus zu ein. Polling oder long-polling also erst mal als Basis festlegen.
+	- Short polling könnte sogar ausreichen, aber dafür müsste man an den Client weitergeben, wann in der Zukunft sich etwas ändern wird. Das geht bei Timern,
+		aber nicht bei Benutzereingaben. Timer an den Client weiterzugeben ist auch recht komplex; andererseits bekommt der Client ein Zeit-implizites Rendering,
+		woran er Rückschlüsse ziehen kann. Würde also gehen.
+	- Benutzereingaben gehen so nicht. Allerdings könnte man "selten" (z.B. alle 10 sekunden oder noch seltener) nach Updates anfragen; Es werden nur Events
+		gebraucht, die jetzt gerade sichtbar sind (z.B. Angebote nur, wenn die Angebotsseite offen ist); Zählerboppel sind zwar immer sichtbar, aber können seltener
+		geupdated werden. Außerdem kann man natürlich Updates immer mitsenden, wenn aus anderen Gründen ein Request gesendet wird (z.B. Map Panning, wobei
+		das nur in den HTTP-Headern gehen würde und bei einem CDN auch als Möglichkeit wegfällt). Bei Inaktivität können die Nachfrage-Requests auch seltener kommen.
