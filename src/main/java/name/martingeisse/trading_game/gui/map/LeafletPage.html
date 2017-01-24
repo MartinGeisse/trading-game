@@ -12,6 +12,7 @@
             }).addTo(map);
             map.on('click', function(e) {
                 console.log(e.latlng);
+                sendMapClickCommand(e.latlng.lng, e.latlng.lat); // TODO check lat/lng order
             });
         });
     </script>
