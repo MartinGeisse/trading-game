@@ -11,13 +11,13 @@
                 maxZoom: 18
             }).addTo(map);
             map.on('click', function(e) {
-                console.log(e.latlng);
+                console.log(e.latlng); // TODO remove
                 sendMapClickCommand(e.latlng.lng, e.latlng.lat); // TODO check lat/lng order
             });
         });
     </script>
 </wicket:head>
 <body>
-    <div id="map" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 0px; "></div>
+    <div id="map" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 0px; cursor: initial; "></div>
 </body>
 </html>

@@ -55,6 +55,15 @@ public class MapTileResource extends DynamicImageResource {
 			}
 		}
 
+		// draw tile grid TODO remove
+		Graphics2D g = image.createGraphics();
+		try {
+			g.setColor(Color.DARK_GRAY);
+			g.drawRect(0, 0, 256, 256);
+		} finally {
+			g.dispose();
+		}
+
 		//
 		// note: the sequence .scale(a) .translate(b) .drawAt(c) results in the coordinate (c + b) * a, so .scale()
 		// also scales the translation amount for a subsequent .translate()
