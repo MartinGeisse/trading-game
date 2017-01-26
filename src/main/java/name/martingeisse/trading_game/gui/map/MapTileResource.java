@@ -11,6 +11,8 @@ import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.util.time.Duration;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
@@ -29,7 +31,7 @@ public class MapTileResource extends DynamicImageResource {
 		int x = attributes.getParameters().get("x").toInt(0);
 		int y = attributes.getParameters().get("y").toInt(0);
 		int z = attributes.getParameters().get("z").toInt(0);
-		if (z < 5) {
+		if (z <= MapCoordinates.HEAT_MAP_ZOOM_THRESHOLD) {
 			BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_GRAY);
 			renderHeatMapTile(x, y, z, image);
 			return toImageData(image);
@@ -76,11 +78,17 @@ public class MapTileResource extends DynamicImageResource {
 		for (SpaceObject spaceObject : spaceObjects) {
 			// long lx = spaceObject.getX() - (tileX << shift); // TODO see above
 			// long ly = spaceObject.getY() - (tileY << shift); // TODO see above
-			long lx = (spaceObject.getX() << zoomLevel) / 1000 - (tileX << 8);
-			long ly = (spaceObject.getY() << zoomLevel) / 1000 - (tileY << 8);
-			if (lx >= 0 && lx < 256 && ly >= 0 && ly < 256) {
-				int x = (int)lx;
-				int y = (int)ly;
+
+			// double dx = (spaceObject.getX() << zoomLevel) / 1000 - (tileX << 8);
+			// double dy = (spaceObject.getY() << zoomLevel) / 1000 - (tileY << 8);
+
+			double zoomFactor = (1L << zoomLevel);
+			double dx = MapCoordinates.gamePositionToMap(spaceObject.getX()) * zoomFactor - (tileX << 8);
+			double dy = MapCoordinates.gamePositionToMap(spaceObject.getY()) * zoomFactor - (tileY << 8);
+
+			if (dx >= 0 && dx < 256 && dy >= 0 && dy < 256) {
+				int x = (int)dx;
+				int y = (int)dy;
 				int value = raster.getSample(x, y, 0);
 				raster.setSample(x, y, 0, value == 255 ? value : (value + 85));
 			}
@@ -104,7 +112,7 @@ public class MapTileResource extends DynamicImageResource {
 		g.scale(1 << z, 1 << z); // apply zoom
 
 		// TODO remove
-		g.scale(0.001, 0.001);
+		// g.scale(0.001, 0.001);
 
 		// draw space objects
 		g.setFont(g.getFont().deriveFont(30.0f));
@@ -118,32 +126,32 @@ public class MapTileResource extends DynamicImageResource {
 	}
 
 	private static void draw(SpaceObject spaceObject, Graphics2D g) {
-		int x = (int) spaceObject.getX();
-		int y = (int) spaceObject.getY();
+		double x = MapCoordinates.gamePositionToMap(spaceObject.getX());
+		double y = MapCoordinates.gamePositionToMap(spaceObject.getY());
 		if (spaceObject instanceof Asteroid) {
 			g.setColor(Color.GRAY);
-			drawCircle(g, x, y, 20);
+			drawCircle(g, x, y, MapCoordinates.gameDistanceToMap(2000));
 		} else if (spaceObject instanceof Planet) {
 			g.setColor(Color.GRAY);
-			drawCircle(g, x, y, 50);
+			drawCircle(g, x, y, MapCoordinates.gameDistanceToMap(5000));
 		} else if (spaceObject instanceof SpaceStation) {
 			g.setColor(Color.BLUE);
-			drawBox(g, x, y, 5);
+			drawBox(g, x, y, MapCoordinates.gameDistanceToMap(500));
 		} else {
 			g.setColor(Color.RED);
-			g.drawString("?", x - 5, y - 5);
+			g.drawString("?", (int)x - 5, (int)y - 5);
 		}
 		// drawCircle(g, (int)spaceObject.getX(), (int)spaceObject.getY(), 30); // TODO int/long
 	}
 
-	private static void drawCircle(Graphics2D g, int centerX, int centerY, int radius) {
-		int diameter = radius << 1;
-		g.fillOval(centerX - radius, centerY - radius, diameter, diameter);
+	private static void drawCircle(Graphics2D g, double centerX, double centerY, double radius) {
+		double diameter = 2 * radius;
+		g.fill(new Ellipse2D.Double(centerX - radius, centerY - radius, diameter, diameter));
 	}
 
-	private static void drawBox(Graphics2D g, int centerX, int centerY, int radius) {
-		int diameter = radius << 1;
-		g.fillRect(centerX - radius, centerY - radius, diameter, diameter);
+	private static void drawBox(Graphics2D g, double centerX, double centerY, double radius) {
+		double diameter = 2 * radius;
+		g.fill(new Rectangle2D.Double(centerX - radius, centerY - radius, diameter, diameter));
 	}
 
 }

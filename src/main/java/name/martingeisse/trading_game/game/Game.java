@@ -37,7 +37,7 @@ public final class Game {
 			long yieldCapacity = 1000 * GameConstants.BASE_MINING_SPEED;
 			double oreDensity = 0.01;
 			FixedInventory asteroidYieldPerTick = FixedInventory.from(gameDefinition.getRedPixelItemType(), 5);
-			for (Pair<Long, Long> starPosition : StarPlacement.compute(100, 200, 2, 3000)) {
+			for (Pair<Long, Long> starPosition : StarPlacement.compute(10000, 20000, 2, 300000)) {
 				Asteroid asteroid = new Asteroid(amount -> asteroidYieldPerTick.scale(amount * oreDensity), yieldCapacity);
 				asteroid.setX(starPosition.getLeft());
 				asteroid.setY(starPosition.getRight());
@@ -49,7 +49,7 @@ public final class Game {
 			ImmutableList<SpaceObject> anchors = ImmutableList.copyOf(space.getSpaceObjects());
 			int numberOfSpaceStations = anchors.size() / 10 + 2;
 			int namingCounter = 1;
-			for (Pair<Long, Long> spaceStationPosition : SpaceStationPlacement.compute(anchors, numberOfSpaceStations, 30, 60)) {
+			for (Pair<Long, Long> spaceStationPosition : SpaceStationPlacement.compute(anchors, numberOfSpaceStations, 3000, 6000)) {
 				SpaceStation spaceStation = new SpaceStation();
 				spaceStation.setX(spaceStationPosition.getLeft());
 				spaceStation.setY(spaceStationPosition.getRight());
@@ -63,6 +63,7 @@ public final class Game {
 
 			}
 		}
+		space.initializeStatic();
 
 		this.players = new HashMap<>();
 		new Timer(true).schedule(new TimerTask() {

@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 /**
  *
  */
-public abstract class Node {
+abstract class Node {
 
 	/**
 	 * Selects all space objects within the specified box and passes them to a consumer.
@@ -15,6 +15,16 @@ public abstract class Node {
 	 * @param box      the selecting box
 	 * @param consumer the consumer
 	 */
-	public abstract void select(Box box, Consumer<SpaceObject> consumer);
+	abstract void select(Box box, Consumer<SpaceObject> consumer);
+
+	/**
+	 * @return the number of static objects within this node
+	 */
+	abstract int getNumberOfStaticObjects();
+
+	/**
+	 *
+	 */
+	// abstract void generateHeatMap(long relativeTileX, long relativeTileY, long relativeZoom, int outputSizeShift, HeatMapWriter writer, long nodeStartX, long nodeStartY, long nodeRadius);
 
 }

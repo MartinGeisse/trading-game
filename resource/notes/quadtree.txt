@@ -1,0 +1,16 @@
+
+
+Der Quadtree wird vereinfacht, wenn folgende Regel gilt:
+
+    Das gesamte Universum ist auf zoom 0 genau 1 tile groß und belegt tile (0,0,0). Die Mitte des Universums ist
+    demnach bei latLng (128,128).
+
+Weitergedacht:
+- man kann das für den User anders aussehen lassen, indem minZoom > 0
+- "infinite" ist dann nicht mehr nötig, das macht auch das manuelle Testen einfacher
+- Zwischen Game-Koordinaten und Map-Koordinaten neben Zoom noch eine Verschiebung einbauen ist kein Problem.
+- Der Quadtree-Root-Node entspricht demnach genau dem Tile (0,0,0).
+
+Den Quadtree-Code bereite ich schon mal darauf vor, im Spiel muss das noch nachgezogen werden. Auch die strikte
+Trennung zwischen Game-Koordinaten und Map-Koordinaten sollte passieren, bevor der Quadtree integriert wird.
+

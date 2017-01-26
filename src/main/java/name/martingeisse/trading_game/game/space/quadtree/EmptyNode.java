@@ -9,12 +9,17 @@ import java.util.function.Consumer;
  * null instead of an instance of this class, then return the singleton instance when asked. This reduces the number
  * of places where explicit null handling is needed.
  */
-public final class EmptyNode extends Node {
+final class EmptyNode extends Node {
 
-	public static final EmptyNode INSTANCE = new EmptyNode();
+	static final EmptyNode INSTANCE = new EmptyNode();
 
 	@Override
-	public void select(Box box, Consumer<SpaceObject> consumer) {
+	void select(Box box, Consumer<SpaceObject> consumer) {
+	}
+
+	@Override
+	int getNumberOfStaticObjects() {
+		return 0;
 	}
 
 }

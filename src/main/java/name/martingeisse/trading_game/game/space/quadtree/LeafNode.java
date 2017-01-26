@@ -9,24 +9,34 @@ import java.util.function.Consumer;
 /**
  *
  */
-public final class LeafNode extends Node {
+final class LeafNode extends Node {
 
 	private final List<SpaceObject> spaceObjects = new ArrayList<>();
+	private int numberOfStaticObjects;
 
 	/**
 	 * Getter method.
 	 *
 	 * @return the spaceObjects
 	 */
-	public List<SpaceObject> getSpaceObjects() {
+	List<SpaceObject> getSpaceObjects() {
 		return spaceObjects;
 	}
 
+	void initializeStatic() {
+		numberOfStaticObjects = spaceObjects.size();
+	}
+
 	@Override
-	public void select(Box box, Consumer<SpaceObject> consumer) {
+	void select(Box box, Consumer<SpaceObject> consumer) {
 		for (SpaceObject spaceObject : spaceObjects) {
 			consumer.accept(spaceObject);
 		}
+	}
+
+	@Override
+	int getNumberOfStaticObjects() {
+		return numberOfStaticObjects;
 	}
 
 }
