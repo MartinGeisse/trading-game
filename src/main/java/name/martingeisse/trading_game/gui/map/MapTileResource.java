@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.gui.map;
 
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.Game;
+import name.martingeisse.trading_game.game.generate.PerlinNoise;
 import name.martingeisse.trading_game.game.space.Asteroid;
 import name.martingeisse.trading_game.game.space.Planet;
 import name.martingeisse.trading_game.game.space.SpaceObject;
@@ -21,6 +22,15 @@ import java.awt.image.WritableRaster;
  */
 public class MapTileResource extends DynamicImageResource {
 
+	private static final PerlinNoise[] noiseGenerators = new PerlinNoise[10];
+	static {
+		for (int i=0; i<noiseGenerators.length; i++) {
+			noiseGenerators[i] = new PerlinNoise(i);
+		}
+	}
+
+	private static final double NOISE_AMPLITUDE_DIVIDER = 4.0;
+
 	@Override
 	protected void configureResponse(ResourceResponse response, Attributes attributes) {
 		response.setCacheDuration(Duration.NONE);
@@ -33,7 +43,8 @@ public class MapTileResource extends DynamicImageResource {
 		int z = attributes.getParameters().get("z").toInt(0);
 		if (z <= MapCoordinates.HEAT_MAP_ZOOM_THRESHOLD) {
 			BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_GRAY);
-			renderHeatMapTile(x, y, z, image);
+			// renderHeatMapTile(x, y, z, image);
+			renderNoiseMapTile(x, y, z, image);
 			return toImageData(image);
 		} else {
 			BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
@@ -44,6 +55,26 @@ public class MapTileResource extends DynamicImageResource {
 				g.dispose();
 			}
 			return toImageData(image);
+		}
+	}
+
+	private void renderNoiseMapTile(int tileX, int tileY, int zoomLevel, BufferedImage image) {
+		double zoomFactor = Math.pow(0.5, zoomLevel);
+		PerlinNoise noise1 = new PerlinNoise(123456);
+		PerlinNoise noise2 = new PerlinNoise(6436264);
+		WritableRaster raster = image.getRaster();
+		for (int x=0; x<256; x++) {
+			for (int y=0; y<256; y++) {
+				double x2 = zoomFactor * (x + 256 * tileX) / 256.0;
+				double y2 = zoomFactor * (y + 256 * tileY) / 256.0;
+				double value = 0.0;
+				for (PerlinNoise noise : noiseGenerators) {
+					value += noise1.computeNoise(x2, y2);
+					x2 *= 2.0;
+					y2 *= 2.0;
+				}
+				raster.setSample(x, y, 0, (int)(((value / NOISE_AMPLITUDE_DIVIDER) + 1.0) * 128));
+			}
 		}
 	}
 

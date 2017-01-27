@@ -5,7 +5,7 @@ package name.martingeisse.trading_game.gui.map;
  */
 public final class MapCoordinates {
 
-	public static final int HEAT_MAP_ZOOM_THRESHOLD = 0;
+	public static final int HEAT_MAP_ZOOM_THRESHOLD = 50;
 	public static final double COORDINATE_SCALE = 1000;
 
 	public static double gamePositionToMap(long gamePosition) {
