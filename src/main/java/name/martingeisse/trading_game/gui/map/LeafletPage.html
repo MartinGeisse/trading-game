@@ -8,7 +8,8 @@
             L.tileLayer(mapTileBaseUrl + '?x={x}&y={y}&z={z}', {
                 continuousWorld: true,
                 noWrap: true,
-                maxZoom: 18
+                maxZoom: 18,
+                bounds: L.latLngBounds(L.latLng(0, 0), L.latLng(256, 256)),
             }).addTo(map);
             map.on('click', function(e) {
                 console.log(e.latlng); // TODO remove
