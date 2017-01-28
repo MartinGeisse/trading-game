@@ -114,8 +114,8 @@ public class MapTileResource extends DynamicImageResource {
 			// double dy = (spaceObject.getY() << zoomLevel) / 1000 - (tileY << 8);
 
 			double zoomFactor = (1L << zoomLevel);
-			double dx = MapCoordinates.gamePositionToMap(spaceObject.getX()) * zoomFactor - (tileX << 8);
-			double dy = MapCoordinates.gamePositionToMap(spaceObject.getY()) * zoomFactor - (tileY << 8);
+			double dx = MapCoordinates.gamePositionToMapX(spaceObject.getX()) * zoomFactor - (tileX << 8);
+			double dy = MapCoordinates.gamePositionToMapY(spaceObject.getY()) * zoomFactor - (tileY << 8);
 
 			if (dx >= 0 && dx < 256 && dy >= 0 && dy < 256) {
 				int x = (int)dx;
@@ -146,19 +146,19 @@ public class MapTileResource extends DynamicImageResource {
 		// g.scale(0.001, 0.001);
 
 		// draw space objects
-		g.setFont(g.getFont().deriveFont(30.0f));
+		g.setFont(g.getFont().deriveFont((float)(MapCoordinates.gameDistanceToMap(5000))));
 		ImmutableList<SpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Game.class).getSpace().getSpaceObjects();
 		for (SpaceObject spaceObject : spaceObjects) {
 			draw(spaceObject, g);
-			// shows coordinates:
-			g.drawString("" + spaceObject.getX() + ", " + spaceObject.getY(), (int) spaceObject.getX() + 35, (int) spaceObject.getY());
 		}
 
 	}
 
 	private static void draw(SpaceObject spaceObject, Graphics2D g) {
-		double x = MapCoordinates.gamePositionToMap(spaceObject.getX());
-		double y = MapCoordinates.gamePositionToMap(spaceObject.getY());
+		double x = MapCoordinates.gamePositionToMapX(spaceObject.getX());
+		double y = MapCoordinates.gamePositionToMapY(spaceObject.getY());
+		// shows coordinates:
+		g.drawString("" + spaceObject.getX() + ", " + spaceObject.getY(), (float)(x + MapCoordinates.gameDistanceToMap(5000)), (float)y);
 		if (spaceObject instanceof Asteroid) {
 			g.setColor(Color.GRAY);
 			drawCircle(g, x, y, MapCoordinates.gameDistanceToMap(2000));

@@ -2,8 +2,11 @@
 <wicket:head>
     <script type="text/javascript">
         $(function() {
+            L.CRS.SimpleNonInverted = L.extend({}, L.CRS.Simple, {
+                transformation: new L.Transformation(1, 0, 1, 0),
+            });
             var map = L.map('map', {
-                crs: L.CRS.Simple
+                crs: L.CRS.SimpleNonInverted
             }).setView([0, 0], 10);
             L.tileLayer(mapTileBaseUrl + '?x={x}&y={y}&z={z}', {
                 continuousWorld: true,
@@ -16,6 +19,7 @@
                 sendMapClickCommand(e.latlng.lng, e.latlng.lat); // TODO check lat/lng order
             });
         });
+
     </script>
 </wicket:head>
 <body>
