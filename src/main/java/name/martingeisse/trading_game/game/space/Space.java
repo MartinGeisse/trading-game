@@ -22,6 +22,7 @@ public final class Space {
 	private ImmutableList<SpaceObject> spaceObjectsImmutable = null;
 	private final Map<Long, SpaceObject> spaceObjectsById = new HashMap<>();
 	private long idCounter = 0;
+	private final List<SpaceObject> spaceObjectsThatSupportTick = new ArrayList<>();
 
 	private void checkStaticNotSealed() {
 		if (staticSpaceObjectsQuadtree != null) {

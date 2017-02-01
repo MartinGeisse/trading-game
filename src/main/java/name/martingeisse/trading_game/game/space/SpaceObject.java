@@ -99,9 +99,17 @@ public abstract class SpaceObject implements PositionProvider {
 	}
 
 	/**
+	 * Whether the tick() function is supported.
+	 */
+	public boolean supportsTick() {
+		return false;
+	}
+
+	/**
 	 * Called once every second to advance game logic.
 	 */
 	public void tick() {
+		throw new UnsupportedOperationException("tick() not supported");
 	}
 
 	/**
