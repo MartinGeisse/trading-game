@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.game.space.quadtree;
 
 import name.martingeisse.trading_game.game.space.SpaceObject;
+import name.martingeisse.trading_game.game.space.StaticSpaceObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.function.Consumer;
  */
 final class LeafNode extends Node {
 
-	private final List<SpaceObject> spaceObjects = new ArrayList<>();
+	private final List<StaticSpaceObject> spaceObjects = new ArrayList<>();
 	private int numberOfStaticObjects;
 
 	/**
@@ -19,7 +20,7 @@ final class LeafNode extends Node {
 	 *
 	 * @return the spaceObjects
 	 */
-	List<SpaceObject> getSpaceObjects() {
+	List<StaticSpaceObject> getSpaceObjects() {
 		return spaceObjects;
 	}
 
@@ -28,7 +29,7 @@ final class LeafNode extends Node {
 	}
 
 	@Override
-	void select(Box box, Consumer<SpaceObject> consumer) {
+	void select(Box box, Consumer<StaticSpaceObject> consumer) {
 		for (SpaceObject spaceObject : spaceObjects) {
 			consumer.accept(spaceObject);
 		}

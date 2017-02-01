@@ -3,10 +3,7 @@ package name.martingeisse.trading_game.gui.map;
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.generate.PerlinNoise;
-import name.martingeisse.trading_game.game.space.Asteroid;
-import name.martingeisse.trading_game.game.space.Planet;
-import name.martingeisse.trading_game.game.space.SpaceObject;
-import name.martingeisse.trading_game.game.space.SpaceStation;
+import name.martingeisse.trading_game.game.space.*;
 import name.martingeisse.trading_game.gui.wicket.MyWicketApplication;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.util.time.Duration;
@@ -105,7 +102,7 @@ public class MapTileResource extends DynamicImageResource {
 		// add space objects to the heat map
 		int shift = zoomLevel + 8; // TODO wrong, should be (8 - shiftLevel), but hits the same problem: pixels != latLng != gameCoords
 									// -- must be solved first
-		ImmutableList<SpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Game.class).getSpace().getSpaceObjects();
+		ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Game.class).getSpace().getStaticSpaceObjects();
 		for (SpaceObject spaceObject : spaceObjects) {
 			// long lx = spaceObject.getX() - (tileX << shift); // TODO see above
 			// long ly = spaceObject.getY() - (tileY << shift); // TODO see above
@@ -147,7 +144,7 @@ public class MapTileResource extends DynamicImageResource {
 
 		// draw space objects
 		g.setFont(g.getFont().deriveFont((float)(MapCoordinates.gameDistanceToMap(5000))));
-		ImmutableList<SpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Game.class).getSpace().getSpaceObjects();
+		ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Game.class).getSpace().getStaticSpaceObjects();
 		for (SpaceObject spaceObject : spaceObjects) {
 			draw(spaceObject, g);
 		}

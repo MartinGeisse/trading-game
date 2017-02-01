@@ -11,7 +11,7 @@ import name.martingeisse.trading_game.game.item.FixedInventory;
 /**
  *
  */
-public final class Asteroid extends SpaceObject {
+public final class Asteroid extends StaticSpaceObject {
 
 	private final MiningYieldInfo yieldInfo;
 	private long yieldCapacity;

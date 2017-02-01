@@ -5,7 +5,7 @@ import name.martingeisse.trading_game.game.item.Inventory;
 /**
  *
  */
-public final class SpaceStation extends SpaceObject {
+public final class SpaceStation extends DynamicSpaceObject {
 
 	private final Inventory inventory = new Inventory();
 
