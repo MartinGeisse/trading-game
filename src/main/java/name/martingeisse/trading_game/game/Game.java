@@ -46,7 +46,7 @@ public final class Game {
 			}
 		}
 		{
-			ImmutableList<SpaceObject> anchors = ImmutableList.copyOf(space.getSpaceObjects());
+			ImmutableList<StaticSpaceObject> anchors = ImmutableList.copyOf(space.getStaticSpaceObjects());
 			int numberOfSpaceStations = anchors.size() / 10 + 2;
 			int namingCounter = 1;
 			for (Pair<Long, Long> spaceStationPosition : SpaceStationPlacement.compute(anchors, numberOfSpaceStations, 3000, 6000)) {
@@ -63,7 +63,7 @@ public final class Game {
 
 			}
 		}
-		space.initializeStatic();
+		space.sealStatic();
 
 		this.players = new HashMap<>();
 		new Timer(true).schedule(new TimerTask() {

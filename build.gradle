@@ -35,8 +35,7 @@ dependencies {
 
 	// web server
 	compile 'javax.servlet:javax.servlet-api:3.1.0'
-	compile 'org.eclipse.jetty:jetty-server:9.3.9.v20160517'
-	compile 'org.eclipse.jetty:jetty-servlet:9.3.9.v20160517'
+	compile 'org.eclipse.jetty.aggregate:jetty-all:9.3.9.v20160517'
 
 	// common helper libraries
 	compile 'org.apache.commons:commons-lang3:3.0'
@@ -54,15 +53,11 @@ dependencies {
 	compile 'com.google.inject.extensions:guice-multibindings:4.0'
 
 	// Wicket
-	compile('org.apache.wicket:wicket-core:7.5.0') {
-		exclude group: 'org.apache.wicket', module: 'wicket'
-	}
-	compile('org.apache.wicket:wicket-extensions:7.5.0') {
-		exclude group: 'org.apache.wicket', module: 'wicket'
-	}
-	compile('org.wicketstuff:wicketstuff-stateless:7.5.0') {
-		exclude group: 'org.apache.wicket', module: 'wicket'
-	}
+	compile 'org.apache.wicket:wicket-core:7.6.0'
+	compile 'org.apache.wicket:wicket-extensions:7.6.0'
+	compile 'org.wicketstuff:wicketstuff-stateless:7.6.0'
+	// imported into src/ and patched: compile 'org.apache.wicket:wicket-native-websocket-jetty9:7.6.0'
+	compile 'org.apache.wicket:wicket-native-websocket-core:7.6.0'
 
 	// JSON
 	compile 'com.google.code.gson:gson:2.3'
@@ -75,4 +70,7 @@ dependencies {
 	compile 'org.apache.httpcomponents:httpmime:4.3.3'
 	compile 'org.apache.httpcomponents:httpclient:4.3.3'
 
+}
+configurations {
+    all*.exclude group: 'org.apache.wicket', module: 'wicket'
 }
