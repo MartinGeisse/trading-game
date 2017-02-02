@@ -3,6 +3,7 @@ package name.martingeisse.trading_game.gui.map;
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.generate.PerlinNoise;
+import name.martingeisse.trading_game.game.generate.SpectrumNoise;
 import name.martingeisse.trading_game.game.space.Asteroid;
 import name.martingeisse.trading_game.game.space.Planet;
 import name.martingeisse.trading_game.game.space.SpaceObject;
@@ -22,14 +23,9 @@ import java.awt.image.WritableRaster;
  */
 public class MapTileResource extends DynamicImageResource {
 
-	private static final PerlinNoise[] noiseGenerators = new PerlinNoise[10];
-	static {
-		for (int i=0; i<noiseGenerators.length; i++) {
-			noiseGenerators[i] = new PerlinNoise(i);
-		}
-	}
+	private static final boolean DRAW_GRID = false;
 
-	private static final double NOISE_AMPLITUDE_DIVIDER = 4.0;
+	private final SpectrumNoise noise = new SpectrumNoise(4, 2.0);
 
 	@Override
 	protected void configureResponse(ResourceResponse response, Attributes attributes) {
@@ -43,8 +39,8 @@ public class MapTileResource extends DynamicImageResource {
 		int z = attributes.getParameters().get("z").toInt(0);
 		if (z <= MapCoordinates.HEAT_MAP_ZOOM_THRESHOLD) {
 			BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_GRAY);
-			// renderHeatMapTile(x, y, z, image);
-			renderNoiseMapTile(x, y, z, image);
+			renderHeatMapTile(x, y, z, image);
+			// renderNoiseMapTile(x, y, z, image);
 			return toImageData(image);
 		} else {
 			BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
@@ -60,20 +56,13 @@ public class MapTileResource extends DynamicImageResource {
 
 	private void renderNoiseMapTile(int tileX, int tileY, int zoomLevel, BufferedImage image) {
 		double zoomFactor = Math.pow(0.5, zoomLevel);
-		PerlinNoise noise1 = new PerlinNoise(123456);
-		PerlinNoise noise2 = new PerlinNoise(6436264);
 		WritableRaster raster = image.getRaster();
 		for (int x=0; x<256; x++) {
 			for (int y=0; y<256; y++) {
 				double x2 = zoomFactor * (x + 256 * tileX) / 256.0;
 				double y2 = zoomFactor * (y + 256 * tileY) / 256.0;
-				double value = 0.0;
-				for (PerlinNoise noise : noiseGenerators) {
-					value += noise1.computeNoise(x2, y2);
-					x2 *= 2.0;
-					y2 *= 2.0;
-				}
-				raster.setSample(x, y, 0, (int)(((value / NOISE_AMPLITUDE_DIVIDER) + 1.0) * 128));
+				double value = noise.get(x2, y2);
+				raster.setSample(x, y, 0, 128 + (int)(value * 128));
 			}
 		}
 	}
@@ -88,13 +77,15 @@ public class MapTileResource extends DynamicImageResource {
 			}
 		}
 
-		// draw tile grid TODO remove
-		Graphics2D g = image.createGraphics();
-		try {
-			g.setColor(Color.DARK_GRAY);
-			g.drawRect(0, 0, 256, 256);
-		} finally {
-			g.dispose();
+		// draw tile grid
+		if (DRAW_GRID) {
+			Graphics2D g = image.createGraphics();
+			try {
+				g.setColor(Color.DARK_GRAY);
+				g.drawRect(0, 0, 256, 256);
+			} finally {
+				g.dispose();
+			}
 		}
 
 		//
@@ -134,9 +125,11 @@ public class MapTileResource extends DynamicImageResource {
 		g.fillRect(0, 0, 256, 256);
 
 		// draw tile grid
-		g.setColor(Color.DARK_GRAY);
-		g.drawRect(0, 0, 256, 256);
-		g.drawString("" + x + ", " + y + ", " + z, 5, 15);
+		if (DRAW_GRID) {
+			g.setColor(Color.DARK_GRAY);
+			g.drawRect(0, 0, 256, 256);
+			g.drawString("" + x + ", " + y + ", " + z, 5, 15);
+		}
 
 		// setup tile coordinates
 		g.translate(-(double) (x << 8), -(double) (y << 8)); // translate to render the correct tile
@@ -158,7 +151,7 @@ public class MapTileResource extends DynamicImageResource {
 		double x = MapCoordinates.gamePositionToMapX(spaceObject.getX());
 		double y = MapCoordinates.gamePositionToMapY(spaceObject.getY());
 		// shows coordinates:
-		g.drawString("" + spaceObject.getX() + ", " + spaceObject.getY(), (float)(x + MapCoordinates.gameDistanceToMap(5000)), (float)y);
+		// g.drawString("" + spaceObject.getX() + ", " + spaceObject.getY(), (float)(x + MapCoordinates.gameDistanceToMap(5000)), (float)y);
 		if (spaceObject instanceof Asteroid) {
 			g.setColor(Color.GRAY);
 			drawCircle(g, x, y, MapCoordinates.gameDistanceToMap(2000));

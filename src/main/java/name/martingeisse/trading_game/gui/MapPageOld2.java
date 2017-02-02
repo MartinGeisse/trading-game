@@ -35,14 +35,6 @@ public class MapPageOld2 extends AbstractPage {
 
 	public MapPageOld2() {
 
-		// test data TODO remove
-		for (Pair<Long, Long> starPosition : StarPlacement.compute(100, 200, 2, 3000)) {
-			long x = starPosition.getLeft();
-			long y = starPosition.getRight();
-			String name = StarNaming.compute();
-			mapObjects.add(new MapObject(x, y, name));
-		}
-
 		// map
 		WebMarkupContainer map = new WebMarkupContainer("map");
 		add(map);

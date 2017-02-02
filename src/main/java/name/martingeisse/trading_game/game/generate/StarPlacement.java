@@ -16,13 +16,17 @@ public final class StarPlacement implements Iterable<Pair<Long, Long>> {
 
 	private final List<Pair<Long, Long>> stars = new ArrayList<>();
 
-	private StarPlacement(long minimumDistance, long maximumDistance, int breadth, long galaxyRadius) {
+	public StarPlacement() {
+
+		final SpectrumNoise noise = new SpectrumNoise(3, 2.0);
+		long breadth = 3;
+		long galaxyRadius = 6000000;
+
 		Pair<Long, Long> seed = Pair.of(0L, 0L);
 		stars.add(seed);
 		List<Pair<Long, Long>> processingList = new ArrayList<>();
 		processingList.add(seed);
 		Random random = new Random();
-		double deltaDistance = maximumDistance - minimumDistance;
 		while (!processingList.isEmpty()) {
 			Pair<Long, Long> star = processingList.remove(random.nextInt(processingList.size()));
 			if (star == null) {
@@ -31,12 +35,14 @@ public final class StarPlacement implements Iterable<Pair<Long, Long>> {
 			if (!starsCloserThan(seed, star, galaxyRadius)) {
 				continue;
 			}
+			long x = star.getLeft(), y = star.getRight();
+			long minimumDistance = 200000 + (long)(noise.getClamped(((double)x) / ((double)galaxyRadius), ((double)y) / ((double)galaxyRadius)) * 170000);
 			breadthLoop: for (int i=0; i<breadth; i++) {
 				double angle = 2 * Math.PI * random.nextDouble();
-				double distance = minimumDistance + deltaDistance * random.nextDouble();
+				double distance = minimumDistance * (1.0 + 0.5 * random.nextDouble());
 				long dx = (long)(distance * Math.cos(angle));
 				long dy = (long)(distance * Math.sin(angle));
-				Pair<Long, Long> neighbor = Pair.of(star.getLeft() + dx, star.getRight() + dy);
+				Pair<Long, Long> neighbor = Pair.of(x + dx, y + dy);
 				for (Pair<Long, Long> potentialBlocker : stars) {
 					if (starsCloserThan(neighbor, potentialBlocker, minimumDistance)) {
 						continue breadthLoop;
@@ -61,13 +67,6 @@ public final class StarPlacement implements Iterable<Pair<Long, Long>> {
 	@Override
 	public Iterator<Pair<Long, Long>> iterator() {
 		return stars.iterator();
-	}
-
-	/**
-	 *
-	 */
-	public static Iterable<Pair<Long, Long>> compute(long minimumDistance, long maximumDistance, int breadth, long galaxyRadius) {
-		return new StarPlacement(minimumDistance, maximumDistance, breadth, galaxyRadius);
 	}
 
 }
