@@ -11,12 +11,13 @@ import com.google.inject.Provider;
 import org.apache.wicket.protocol.http.IWebApplicationFactory;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WicketFilter;
+import org.apache.wicket.protocol.ws.jetty9_patched.Jetty9WebSocketFilter;
 
 /**
  * Extends the regular Wicket filter to create the application object using
  * Guice's binding for {@link WebApplication}.
  */
-public class MyWicketFilter extends WicketFilter {
+public class MyWicketFilter extends Jetty9WebSocketFilter {
 
     private final Provider<WebApplication> applicationProvider;
 
