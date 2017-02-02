@@ -6,12 +6,13 @@
                 transformation: new L.Transformation(1, 0, 1, 0),
             });
             var map = L.map('map', {
-                crs: L.CRS.SimpleNonInverted
+                crs: L.CRS.SimpleNonInverted,
+                maxZoom: 4
             }).setView([0, 0], 10);
             L.tileLayer(mapTileBaseUrl + '?x={x}&y={y}&z={z}', {
                 continuousWorld: true,
                 noWrap: true,
-                maxZoom: 18,
+                maxZoom: 3,
                 bounds: L.latLngBounds(L.latLng(0, 0), L.latLng(256, 256)),
             }).addTo(map);
             map.on('click', function(e) {
