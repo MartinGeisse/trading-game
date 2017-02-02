@@ -3,7 +3,6 @@ package name.martingeisse.trading_game.game.space;
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.space.quadtree.Quadtree;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,10 +29,13 @@ public final class Space {
 		}
 	}
 
-	private void assignId(SpaceObject spaceObject) {
+	private void addInternal(SpaceObject spaceObject) {
 		spaceObject.setId(idCounter);
 		spaceObjectsById.put(idCounter, spaceObject);
 		idCounter++;
+		if (spaceObject.supportsTick()) {
+			spaceObjectsThatSupportTick.add(spaceObject);
+		}
 	}
 
 	/**
@@ -41,7 +43,7 @@ public final class Space {
 	 */
 	public void add(StaticSpaceObject spaceObject) {
 		checkStaticNotSealed();
-		assignId(spaceObject);
+		addInternal(spaceObject);
 		staticSpaceObjects.add(spaceObject);
 		staticSpaceObjectsImmutable = null;
 	}
@@ -59,7 +61,7 @@ public final class Space {
 	 * Adds an object to this space.
 	 */
 	public void add(DynamicSpaceObject spaceObject) {
-		assignId(spaceObject);
+		addInternal(spaceObject);
 		dynamicSpaceObjects.add(spaceObject);
 		dynamicSpaceObjectsImmutable = null;
 	}
@@ -115,10 +117,7 @@ public final class Space {
 	 * Called once every second to advance game logic.
 	 */
 	public void tick() {
-		for (SpaceObject spaceObject : staticSpaceObjects) {
-			spaceObject.tick();
-		}
-		for (SpaceObject spaceObject : dynamicSpaceObjects) {
+		for (SpaceObject spaceObject : spaceObjectsThatSupportTick) {
 			spaceObject.tick();
 		}
 	}
