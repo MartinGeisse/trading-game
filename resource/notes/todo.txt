@@ -1,9 +1,9 @@
 
-What is the scale for Leaflet? "lat/lng" -> screen coordinates at different zoom levels? Scale for outermost zoom
-level is too small!
-
-When removing the scale command in the tile renderer, nothing is visible anymore.
+click (for now handle static/dynamic space objects the same):
+- pass click event to server side
+- position hit/miss for SpaceObject
+- click(SpaceObject) for map page
+- add side bar to map page
+- show object details in side bar
 
 quadtree for static objects
-
-pass click event to server side
