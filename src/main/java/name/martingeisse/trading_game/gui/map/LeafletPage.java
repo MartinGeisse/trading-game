@@ -8,6 +8,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -36,6 +37,7 @@ public class LeafletPage extends AbstractPage {
 							CallbackParameter.resolved("command", "'click'"),
 							CallbackParameter.explicit("x"),
 							CallbackParameter.explicit("y"),
+							CallbackParameter.explicit("z"),
 						};
 						builder.append("sendMapClickCommand = ").append(getCallbackFunction(parameters)).append(';');
 					}
@@ -46,15 +48,21 @@ public class LeafletPage extends AbstractPage {
 
 			@Override
 			protected void respond(AjaxRequestTarget target) {
-				String command = target.getPageParameters().get("command").toString();
+				IRequestParameters parameters = getRequest().getQueryParameters();
+				String command = parameters.getParameterValue("command").toString();
 				if (command == null) {
 					return;
 				}
 				switch (command) {
 					case "click": {
-						int x = target.getPageParameters().get("x").toInt();
-						int y = target.getPageParameters().get("y").toInt();
-						System.out.println("clicked at " + x + ", " + y);
+						double px = parameters.getParameterValue("x").toDouble();
+						double py = parameters.getParameterValue("y").toDouble();
+						int pz = parameters.getParameterValue("z").toInt();
+						long x = MapCoordinates.mapPositionToGameX(px);
+						long y = MapCoordinates.mapPositionToGameY(py);
+						long radius = MapCoordinates.mapDistanceToGame(4) >> pz;
+						System.out.println("clicked at " + x + ", " + y + ", radius " + radius);
+						System.out.println("-> " + getGame().getSpace().get(x, y, radius));
 						break;
 					}
 				}

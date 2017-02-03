@@ -112,6 +112,35 @@ public final class Space {
 		return spaceObjectsById.get(id);
 	}
 
+	/**
+	 * Finds a space object by position and matching radius. If multiple objects match then the nearest one is returned.
+	 * Returns null if no object lies within the radius.
+	 */
+	public SpaceObject get(long x, long y, long radius) {
+		SpaceObject matchingObject = null;
+		long matchingSquaredDistance = Long.MAX_VALUE;
+		long squaredRadius = radius * radius;
+		for (SpaceObject spaceObject : spaceObjectsById.values()) {
+			long dx = spaceObject.getX() - x;
+			if (dx > radius || dx < -radius) {
+				continue;
+			}
+			long dy = spaceObject.getY() - y;
+			if (dy > radius || dy < -radius) {
+				continue;
+			}
+			long squaredDistance = dx * dx + dy * dy;
+			if (squaredDistance > squaredRadius) {
+				continue;
+			}
+			if (squaredDistance > matchingSquaredDistance) {
+				continue;
+			}
+			matchingSquaredDistance = squaredDistance;
+			matchingObject = spaceObject;
+		}
+		return matchingObject;
+	}
 
 	/**
 	 * Called once every second to advance game logic.

@@ -16,8 +16,8 @@
                 bounds: L.latLngBounds(L.latLng(0, 0), L.latLng(256, 256)),
             }).addTo(map);
             map.on('click', function(e) {
-                console.log(e.latlng); // TODO remove
-                sendMapClickCommand(e.latlng.lng, e.latlng.lat); // TODO check lat/lng order
+                console.log(map);
+                sendMapClickCommand(e.latlng.lng, e.latlng.lat, map.getZoom()); // TODO check lat/lng order
             });
         });
 
