@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.gui.map;
 
+import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.gui.leaflet.Leaflet;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import org.apache.wicket.Component;
@@ -35,9 +36,9 @@ public class LeafletPage extends AbstractPage {
 					{
 						CallbackParameter[] parameters = {
 							CallbackParameter.resolved("command", "'click'"),
-							CallbackParameter.explicit("x"),
-							CallbackParameter.explicit("y"),
-							CallbackParameter.explicit("z"),
+							CallbackParameter.explicit("latitude"),
+							CallbackParameter.explicit("longitude"),
+							CallbackParameter.explicit("zoom"),
 						};
 						builder.append("sendMapClickCommand = ").append(getCallbackFunction(parameters)).append(';');
 					}
@@ -55,14 +56,20 @@ public class LeafletPage extends AbstractPage {
 				}
 				switch (command) {
 					case "click": {
-						double px = parameters.getParameterValue("x").toDouble();
-						double py = parameters.getParameterValue("y").toDouble();
-						int pz = parameters.getParameterValue("z").toInt();
-						long x = MapCoordinates.mapPositionToGameX(px);
-						long y = MapCoordinates.mapPositionToGameY(py);
-						long radius = MapCoordinates.mapDistanceToGame(4) >> pz;
-						System.out.println("clicked at " + x + ", " + y + ", radius " + radius);
-						System.out.println("-> " + getGame().getSpace().get(x, y, radius));
+						double clickLatitude = parameters.getParameterValue("latitude").toDouble();
+						double clickLongitude = parameters.getParameterValue("longitude").toDouble();
+						int zoom = parameters.getParameterValue("zoom").toInt();
+						long clickX = MapCoordinates.convertLongitudeToX(clickLongitude);
+						long clickY = MapCoordinates.convertLatitudeToY(clickLatitude);
+						long radius = 5000 + (MapCoordinates.convertMapDistanceToGameDistance(10) >> zoom); // 5000 = object radius, plus 10 pixels extra
+						SpaceObject spaceObject = getGame().getSpace().get(clickX, clickY, radius);
+						System.out.println("-> " + spaceObject);
+						if (spaceObject != null) {
+							double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
+							double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
+							double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
+							target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorRadius + ");");
+						}
 						break;
 					}
 				}

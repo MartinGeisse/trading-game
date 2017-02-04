@@ -106,8 +106,8 @@ public class MapTileResource extends DynamicImageResource {
 			// double dy = (spaceObject.getY() << zoomLevel) / 1000 - (tileY << 8);
 
 			double zoomFactor = (1L << zoomLevel);
-			double dx = MapCoordinates.gamePositionToMapX(spaceObject.getX()) * zoomFactor - (tileX << 8);
-			double dy = MapCoordinates.gamePositionToMapY(spaceObject.getY()) * zoomFactor - (tileY << 8);
+			double dx = MapCoordinates.convertXToLongitude(spaceObject.getX()) * zoomFactor - (tileX << 8);
+			double dy = MapCoordinates.convertYToLatitude(spaceObject.getY()) * zoomFactor - (tileY << 8);
 
 			if (dx >= 0 && dx < 256 && dy >= 0 && dy < 256) {
 				int x = (int)dx;
@@ -136,11 +136,8 @@ public class MapTileResource extends DynamicImageResource {
 		g.translate(-(double) (x << 8), -(double) (y << 8)); // translate to render the correct tile
 		g.scale(1 << z, 1 << z); // apply zoom
 
-		// TODO remove
-		// g.scale(0.001, 0.001);
-
 		// draw space objects
-		g.setFont(g.getFont().deriveFont((float)(MapCoordinates.gameDistanceToMap(5000))));
+		g.setFont(g.getFont().deriveFont((float)(MapCoordinates.convertGameDistanceToMapDistance(5000))));
 		ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Game.class).getSpace().getStaticSpaceObjects();
 		for (SpaceObject spaceObject : spaceObjects) {
 			draw(spaceObject, g);
@@ -149,19 +146,19 @@ public class MapTileResource extends DynamicImageResource {
 	}
 
 	private static void draw(SpaceObject spaceObject, Graphics2D g) {
-		double x = MapCoordinates.gamePositionToMapX(spaceObject.getX());
-		double y = MapCoordinates.gamePositionToMapY(spaceObject.getY());
+		double x = MapCoordinates.convertXToLongitude(spaceObject.getX());
+		double y = MapCoordinates.convertYToLatitude(spaceObject.getY());
 		// shows coordinates:
-		// g.drawString("" + spaceObject.getX() + ", " + spaceObject.getY(), (float)(x + MapCoordinates.gameDistanceToMap(5000)), (float)y);
+		// g.drawString("" + spaceObject.getX() + ", " + spaceObject.getY(), (float)(x + MapCoordinates.convertGameDistanceToMapDistance(5000)), (float)y);
 		if (spaceObject instanceof Asteroid) {
 			g.setColor(Color.GRAY);
-			drawCircle(g, x, y, MapCoordinates.gameDistanceToMap(2000));
+			drawCircle(g, x, y, MapCoordinates.convertGameDistanceToMapDistance(2000));
 		} else if (spaceObject instanceof Planet) {
 			g.setColor(Color.GRAY);
-			drawCircle(g, x, y, MapCoordinates.gameDistanceToMap(5000));
+			drawCircle(g, x, y, MapCoordinates.convertGameDistanceToMapDistance(5000));
 		} else if (spaceObject instanceof SpaceStation) {
 			g.setColor(Color.BLUE);
-			drawBox(g, x, y, MapCoordinates.gameDistanceToMap(500));
+			drawBox(g, x, y, MapCoordinates.convertGameDistanceToMapDistance(500));
 		} else {
 			g.setColor(Color.RED);
 			g.drawString("?", (int)x - 5, (int)y - 5);

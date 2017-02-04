@@ -1,25 +1,37 @@
 <html>
 <wicket:head>
     <script type="text/javascript">
+
+        spaceObjectSelectionIndicator = null;
+        leafletMap = null;
+
         $(function() {
             L.CRS.SimpleNonInverted = L.extend({}, L.CRS.Simple, {
                 transformation: new L.Transformation(1, 0, 1, 0),
             });
-            var map = L.map('map', {
+            leafletMap = L.map('map', {
                 crs: L.CRS.SimpleNonInverted,
-                maxZoom: 4
+                // maxZoom: 4
             }).setView([0, 0], 10);
             L.tileLayer(mapTileBaseUrl + '?x={x}&y={y}&z={z}', {
                 continuousWorld: true,
                 noWrap: true,
-                maxZoom: 3,
+                // maxZoom: 3,
                 bounds: L.latLngBounds(L.latLng(0, 0), L.latLng(256, 256)),
-            }).addTo(map);
-            map.on('click', function(e) {
-                console.log(map);
-                sendMapClickCommand(e.latlng.lng, e.latlng.lat, map.getZoom()); // TODO check lat/lng order
+            }).addTo(leafletMap);
+            leafletMap.on('click', function(e) {
+                sendMapClickCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom()); // TODO check lat/lng order
             });
         });
+
+        changeSpaceObjectSelectionIndicator = function(lat, lng, radius) {
+            if (spaceObjectSelectionIndicator != null) {
+                spaceObjectSelectionIndicator.remove();
+            }
+            spaceObjectSelectionIndicator = L.circle(L.latLng(lat, lng), {radius: radius});
+            spaceObjectSelectionIndicator.addTo(leafletMap);
+            // console.log(lat + ", " + lng);
+        };
 
     </script>
 </wicket:head>
