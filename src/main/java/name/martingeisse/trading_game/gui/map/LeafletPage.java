@@ -1,7 +1,9 @@
 package name.martingeisse.trading_game.gui.map;
 
 import name.martingeisse.trading_game.game.space.SpaceObject;
+import name.martingeisse.trading_game.gui.leaflet.D3;
 import name.martingeisse.trading_game.gui.leaflet.Leaflet;
+import name.martingeisse.trading_game.gui.leaflet.LeafletD3SvgOverlay;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -82,6 +84,9 @@ public class LeafletPage extends AbstractPage {
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
 		Leaflet.renderHead(response);
+		D3.renderHead(response);
+		LeafletD3SvgOverlay.renderHead(response);
+
 		ResourceReference mapTileReference = new SharedResourceReference("MapTile");
 		// ResourceReference mapTileReference = new SharedResourceReference("ComputedTile");
 		response.render(JavaScriptHeaderItem.forScript("mapTileBaseUrl = '" + getAbsoluteUrlFor(mapTileReference) + "';", null));

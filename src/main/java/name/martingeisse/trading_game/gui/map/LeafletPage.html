@@ -22,6 +22,22 @@
             leafletMap.on('click', function(e) {
                 sendMapClickCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom()); // TODO check lat/lng order
             });
+
+            // SVG test
+            L.d3SvgOverlay(function(selection, projection) {
+                var originPoint = projection.latLngToLayerPoint(L.latLng(0, 0));
+                var latLngUnitPoint = projection.latLngToLayerPoint(L.latLng(1, 1));
+                var latLngUnit = latLngUnitPoint.x - originPoint.x;
+                console.log(latLngUnit);
+                var updateSelection = selection.selectAll('circle').data([1]);
+                updateSelection.enter()
+                    .append('circle')
+                    .attr("cx", function(d) { return originPoint.x + 128 * latLngUnit; })
+                    .attr("cy", function(d) { return originPoint.y + 128 * latLngUnit; })
+                    .attr("r", function(d) { return 128 * latLngUnit; })
+                    .attr("style", "stroke:#ff0000; fill: #0000ff");
+            }).addTo(leafletMap);
+
         });
 
         changeSpaceObjectSelectionIndicator = function(lat, lng, radius) {
