@@ -1,5 +1,7 @@
 package name.martingeisse.trading_game.gui.map;
 
+import name.martingeisse.trading_game.game.space.DynamicSpaceObject;
+import name.martingeisse.trading_game.game.space.PlayerShip;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.gui.leaflet.D3;
 import name.martingeisse.trading_game.gui.leaflet.Leaflet;
@@ -83,13 +85,25 @@ public class LeafletPage extends AbstractPage {
 	@Override
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
+
+		// include JS libraries
 		Leaflet.renderHead(response);
 		D3.renderHead(response);
 		LeafletD3SvgOverlay.renderHead(response);
 
-		ResourceReference mapTileReference = new SharedResourceReference("MapTile");
-		// ResourceReference mapTileReference = new SharedResourceReference("ComputedTile");
-		response.render(JavaScriptHeaderItem.forScript("mapTileBaseUrl = '" + getAbsoluteUrlFor(mapTileReference) + "';", null));
+		// render initialization script
+		StringBuilder builder = new StringBuilder();
+		builder.append("mapTileBaseUrl = '").append(getAbsoluteUrlFor(new SharedResourceReference("MapTile"))).append("';\n");
+		builder.append("dynamicSpaceObjectsData = [\n");
+		for (DynamicSpaceObject spaceObject : getGame().getSpace().getDynamicSpaceObjects()) {
+			builder.append("\t{x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
+			builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
+			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(5000));
+			builder.append(", c: '").append(spaceObject instanceof PlayerShip ? "#00ffff" : "#0000ff").append("'},");
+		}
+		builder.append("];\n");
+		response.render(JavaScriptHeaderItem.forScript(builder.toString(), null));
+
 	}
 
 	private String getAbsoluteUrlFor(ResourceReference reference) {
