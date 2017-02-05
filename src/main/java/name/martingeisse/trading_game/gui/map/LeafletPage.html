@@ -4,8 +4,15 @@
 
         spaceObjectSelectionIndicator = null;
         leafletMap = null;
+        dynamicSpaceObjectsData = [
+            {x: 0, y: 0, r: 50},
+            {x: 128, y: 0, r: 30},
+        ];
 
         $(function() {
+
+            var dynamicSpaceObjectsOverlay;
+
             L.CRS.SimpleNonInverted = L.extend({}, L.CRS.Simple, {
                 transformation: new L.Transformation(1, 0, 1, 0),
             });
@@ -24,19 +31,45 @@
             });
 
             // SVG test
-            L.d3SvgOverlay(function(selection, projection) {
-                var originPoint = projection.latLngToLayerPoint(L.latLng(0, 0));
-                var latLngUnitPoint = projection.latLngToLayerPoint(L.latLng(1, 1));
-                var latLngUnit = latLngUnitPoint.x - originPoint.x;
-                console.log(latLngUnit);
-                var updateSelection = selection.selectAll('circle').data([1]);
-                updateSelection.enter()
-                    .append('circle')
-                    .attr("cx", function(d) { return originPoint.x + 128 * latLngUnit; })
-                    .attr("cy", function(d) { return originPoint.y + 128 * latLngUnit; })
-                    .attr("r", function(d) { return 128 * latLngUnit; })
-                    .attr("style", "stroke:#ff0000; fill: #0000ff");
-            }).addTo(leafletMap);
+            dynamicSpaceObjectsOverlay = L.d3SvgOverlay(function(selection, projection) {
+
+                function createSpaceObjectsParent(selection, projection) {
+
+                    // create our own main 'g' element as the sole child of D3SvgOverlay's main 'g' element, if missing
+                    // selection.selectAll('g').data([1]).enter().append('g');
+                    selection.selectAll('g').data([1]).enter().append('g');
+
+                    // select that element
+                    var spaceObjectsParentSelection = selection.select('g');
+
+                    // configure the transformation
+                    var originPoint = projection.latLngToLayerPoint(L.latLng(0, 0));
+                    var latLngUnitPoint = projection.latLngToLayerPoint(L.latLng(1, 1));
+                    var latLngUnit = latLngUnitPoint.x - originPoint.x;
+                    spaceObjectsParentSelection.attr('transform', 'translate(' + originPoint.x + ',' + originPoint.y + ') scale(' + latLngUnit + ')');
+
+                    return spaceObjectsParentSelection;
+                }
+
+                var spaceObjectsParentSelection = createSpaceObjectsParent(selection, projection);
+                var updateSelection = spaceObjectsParentSelection.selectAll('*').data(dynamicSpaceObjectsData);
+                updateSelection.enter().append('circle').attr("style", "stroke:#ff0000; fill: #0000ff")
+                    .merge(updateSelection)
+                    .attr("cx", function(d) {return d.x;})
+                    .attr("cy", function(d) {return d.y;})
+                    .attr("r", function(d) {return d.r;});
+
+            });
+            dynamicSpaceObjectsOverlay.addTo(leafletMap);
+            redrawDynamicSpaceObjects = function() {
+                dynamicSpaceObjectsOverlay.draw();
+            };
+
+            // TODO test, remove
+            setInterval(function() {
+                dynamicSpaceObjectsData[0].x++;
+                redrawDynamicSpaceObjects();
+            }, 100);
 
         });
 
