@@ -17,7 +17,7 @@ import org.apache.wicket.protocol.ws.WebSocketSettings;
 import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
 import org.apache.wicket.protocol.ws.api.WebSocketBehavior;
 import org.apache.wicket.protocol.ws.api.WebSocketRequestHandler;
-import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
+import org.apache.wicket.protocol.ws.api.message.*;
 import org.apache.wicket.protocol.ws.api.registry.IWebSocketConnectionRegistry;
 
 import java.util.ArrayList;
@@ -42,12 +42,26 @@ public class WebsocketsPage extends AbstractPage {
 	public WebsocketsPage() {
 
 		add(new WebSocketBehavior() {
+
+			@Override
+			protected void onConnect(ConnectedMessage message) {
+			}
+
+			@Override
+			protected void onClose(ClosedMessage message) {
+			}
+
+			@Override
+			protected void onAbort(AbortedMessage message) {
+			}
+
 			@Override
 			protected void onPush(WebSocketRequestHandler handler, IWebSocketPushMessage message) {
 				if (message == newChatMessagePushMessage) {
 					handler.add(WebsocketsPage.this.get("messagesContainer"));
 				}
 			}
+
 		});
 
 		WebMarkupContainer messagesContainer = new WebMarkupContainer("messagesContainer");

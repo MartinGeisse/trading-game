@@ -1,11 +1,14 @@
 package name.martingeisse.trading_game.gui.map;
 
+import name.martingeisse.trading_game.game.GameListener;
 import name.martingeisse.trading_game.game.space.DynamicSpaceObject;
 import name.martingeisse.trading_game.game.space.PlayerShip;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.gui.leaflet.D3;
 import name.martingeisse.trading_game.gui.leaflet.Leaflet;
 import name.martingeisse.trading_game.gui.leaflet.LeafletD3SvgOverlay;
+import name.martingeisse.trading_game.gui.websockets.GameListenerWebSocketBehavior;
+import name.martingeisse.trading_game.gui.websockets.PushMessageSender;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -13,6 +16,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.protocol.ws.api.WebSocketRequestHandler;
+import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -24,8 +29,12 @@ import org.apache.wicket.request.resource.SharedResourceReference;
  */
 public class LeafletPage extends AbstractPage {
 
+	private static final IWebSocketPushMessage dynamicObjectsChangedPushMessage = new IWebSocketPushMessage() {
+	};
+
 	public LeafletPage(PageParameters parameters) {
 		super(parameters);
+
 		add(new AbstractDefaultAjaxBehavior() {
 
 			@Override
@@ -80,6 +89,23 @@ public class LeafletPage extends AbstractPage {
 			}
 
 		});
+
+		add(new GameListenerWebSocketBehavior() {
+
+			@Override
+			protected GameListener createListener(PushMessageSender pushMessageSender) {
+				return new PushGameListener(pushMessageSender);
+			}
+
+			@Override
+			protected void onPush(WebSocketRequestHandler handler, IWebSocketPushMessage message) {
+				if (message == dynamicObjectsChangedPushMessage) {
+					// TODO use handler.add(), handler.appendJavascript() to update the client side
+				}
+			}
+
+		});
+
 	}
 
 	@Override
@@ -108,6 +134,23 @@ public class LeafletPage extends AbstractPage {
 
 	private String getAbsoluteUrlFor(ResourceReference reference) {
 		return getRequestCycle().getUrlRenderer().renderFullUrl(Url.parse(urlFor(reference, null)));
+	}
+
+	/**
+	 * This object listens to game events and generates push messages whenever the page is interested.
+	 */
+	private static class PushGameListener implements GameListener {
+
+		private final PushMessageSender sender;
+
+		public PushGameListener(PushMessageSender sender) {
+			this.sender = sender;
+		}
+
+		@Override
+		public void onDynamicSpaceObjectsChanged() {
+			sender.send(dynamicObjectsChangedPushMessage);
+		}
 	}
 
 }
