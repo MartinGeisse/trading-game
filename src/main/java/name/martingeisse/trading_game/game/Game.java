@@ -27,6 +27,7 @@ public final class Game {
 	private final GameDefinition gameDefinition;
 	private final Map<String, Player> players;
 	private final Space space = new Space();
+	private final GameListenerSet listeners = new GameListenerSet();
 
 	@Inject
 	public Game(GameDefinition gameDefinition) {
@@ -122,6 +123,7 @@ public final class Game {
 			player.tick();
 		}
 		space.tick();
+		listeners.onDynamicSpaceObjectsChanged();
 	}
 
 	/**
@@ -134,6 +136,15 @@ public final class Game {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the listeners
+	 */
+	public GameListenerSet getListeners() {
+		return listeners;
 	}
 
 }

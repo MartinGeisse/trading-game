@@ -14,6 +14,7 @@ import com.google.inject.util.Types;
 import name.martingeisse.trading_game.game.GlobalGameLock;
 import name.martingeisse.trading_game.gui.MainPage;
 import name.martingeisse.trading_game.gui.MapPageOld2;
+import name.martingeisse.trading_game.gui.WebsocketsPage;
 import name.martingeisse.trading_game.gui.map.ComputedTileResource;
 import name.martingeisse.trading_game.gui.map.LeafletPage;
 import name.martingeisse.trading_game.gui.map.MapTileResource;
@@ -23,6 +24,7 @@ import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.core.request.handler.BufferedResponseRequestHandler;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.ws.WebSocketSettings;
 import org.apache.wicket.request.IExceptionMapper;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Request;
@@ -158,6 +160,7 @@ public class MyWicketApplication extends WebApplication {
 		mountPage("map", MapPageOld2.class);
 		mountPage("ol", OpenLayersPage.class);
 		mountPage("leaflet", LeafletPage.class);
+		mountPage("websockets", WebsocketsPage.class);
 
 		getSharedResources().add("MapTile", new MapTileResource());
 		getSharedResources().add("ComputedTile", new ComputedTileResource());
@@ -200,6 +203,9 @@ public class MyWicketApplication extends WebApplication {
 				GlobalGameLock.onFinishRequest((HttpServletRequest) cycle.getRequest().getContainerRequest());
 			}
 		});
+
+		// TODO workaround for WICKET-6262, may be removed in the future
+		WebSocketSettings.Holder.get(this).setFilterPrefix("/.");
 
 	}
 

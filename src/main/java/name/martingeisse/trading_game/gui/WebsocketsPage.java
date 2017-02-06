@@ -1,4 +1,6 @@
+package name.martingeisse.trading_game.gui;
 
+import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -24,7 +26,7 @@ import java.util.List;
 /**
  *
  */
-public class HomePage extends AbstractApplicationPage {
+public class WebsocketsPage extends AbstractPage {
 
 	private static final IWebSocketPushMessage newChatMessagePushMessage = new IWebSocketPushMessage() {
 	};
@@ -37,17 +39,13 @@ public class HomePage extends AbstractApplicationPage {
 	/**
 	 * Constructor.
 	 */
-	public HomePage() {
-
-		// TODO workaround for WICKET-6262, may be removed in the future
-		WebSocketSettings.Holder.get(getApplication()).setFilterPrefix("/.");
-
+	public WebsocketsPage() {
 
 		add(new WebSocketBehavior() {
 			@Override
 			protected void onPush(WebSocketRequestHandler handler, IWebSocketPushMessage message) {
 				if (message == newChatMessagePushMessage) {
-					handler.add(HomePage.this.get("messagesContainer"));
+					handler.add(WebsocketsPage.this.get("messagesContainer"));
 				}
 			}
 		});
