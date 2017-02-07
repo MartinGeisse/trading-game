@@ -100,7 +100,10 @@ public class LeafletPage extends AbstractPage {
 			@Override
 			protected void onPush(WebSocketRequestHandler handler, IWebSocketPushMessage message) {
 				if (message == dynamicObjectsChangedPushMessage) {
-					// TODO use handler.add(), handler.appendJavascript() to update the client side
+					StringBuilder builder = new StringBuilder();
+					buildDynamicSpaceObjectsData(builder);
+					builder.append("redrawDynamicSpaceObjects();");
+					handler.appendJavaScript(builder.toString());
 				}
 			}
 
@@ -120,6 +123,12 @@ public class LeafletPage extends AbstractPage {
 		// render initialization script
 		StringBuilder builder = new StringBuilder();
 		builder.append("mapTileBaseUrl = '").append(getAbsoluteUrlFor(new SharedResourceReference("MapTile"))).append("';\n");
+		buildDynamicSpaceObjectsData(builder);
+		response.render(JavaScriptHeaderItem.forScript(builder.toString(), null));
+
+	}
+
+	private void buildDynamicSpaceObjectsData(StringBuilder builder) {
 		builder.append("dynamicSpaceObjectsData = [\n");
 		for (DynamicSpaceObject spaceObject : getGame().getSpace().getDynamicSpaceObjects()) {
 			builder.append("\t{x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
@@ -128,8 +137,6 @@ public class LeafletPage extends AbstractPage {
 			builder.append(", c: '").append(spaceObject instanceof PlayerShip ? "#00ffff" : "#0000ff").append("'},");
 		}
 		builder.append("];\n");
-		response.render(JavaScriptHeaderItem.forScript(builder.toString(), null));
-
 	}
 
 	private String getAbsoluteUrlFor(ResourceReference reference) {
