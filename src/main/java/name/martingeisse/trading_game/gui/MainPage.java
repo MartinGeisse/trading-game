@@ -63,7 +63,7 @@ public class MainPage extends AbstractPage {
 		playerContainer.add(new Label("playerID", new PropertyModel<>(this, "player.id")));
 		playerContainer.add(new BookmarkablePageLink<>("playerListLink", PlayerListPage.class));
 		playerContainer.add(new BookmarkablePageLink<>("renamePlayerLink", RenamePlayerPage.class));
-		playerContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
+		playerContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
 		add(playerContainer);
 
 		WebMarkupContainer currentActionContainer = new WebMarkupContainer("currentActionContainer");
@@ -114,7 +114,7 @@ public class MainPage extends AbstractPage {
 				}
 			}
 		}));
-		currentActionContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
+		currentActionContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
 
 		WebMarkupContainer pendingActionsContainer = new WebMarkupContainer("pendingActionsContainer");
 		add(pendingActionsContainer);
@@ -131,7 +131,7 @@ public class MainPage extends AbstractPage {
 				});
 			}
 		});
-		pendingActionsContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
+		pendingActionsContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
 
 		WebMarkupContainer inventoryContainer = new WebMarkupContainer("inventoryContainer");
 		add(inventoryContainer);
@@ -143,7 +143,7 @@ public class MainPage extends AbstractPage {
 				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
 			}
 		});
-		inventoryContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
+		inventoryContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
 
 		WebMarkupContainer skillsContainer = new WebMarkupContainer("skillsContainer");
 		skillsContainer.add(new ListView<Skill>("acquiredSkills", new PropertyModel<>(this, "playerSkills")) {
@@ -196,7 +196,7 @@ public class MainPage extends AbstractPage {
 			}
 		});
 		add(skillsContainer);
-		skillsContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
+		skillsContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
 
 		WebMarkupContainer spaceObjectsContainer = new WebMarkupContainer("spaceObjectsContainer");
 		add(spaceObjectsContainer);
@@ -219,7 +219,7 @@ public class MainPage extends AbstractPage {
 
 		WebMarkupContainer selectedSpaceObjectContainer = new WebMarkupContainer("selectedSpaceObjectContainer");
 		selectedSpaceObjectContainer.setOutputMarkupId(true);
-		selectedSpaceObjectContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
+		selectedSpaceObjectContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
 		add(selectedSpaceObjectContainer);
 		selectedSpaceObjectContainer.add(new Label("name", new PropertyModel<>(selectedSpaceObjectModel, "name")));
 		selectedSpaceObjectContainer.add(new Label("type", new PropertyModel<>(selectedSpaceObjectModel, "class.simpleName")));

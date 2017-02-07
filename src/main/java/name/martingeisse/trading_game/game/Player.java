@@ -174,7 +174,7 @@ public final class Player {
 	}
 
 	public long getShipMovementSpeed() {
-		return 10; // TODO
+		return 1000; // TODO
 	}
 
 	public int getMaximumCargoMass() {
