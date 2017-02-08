@@ -16,6 +16,9 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.ws.api.WebSocketRequestHandler;
 import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
 import org.apache.wicket.request.IRequestParameters;
@@ -32,8 +35,15 @@ public class LeafletPage extends AbstractPage {
 	private static final IWebSocketPushMessage dynamicObjectsChangedPushMessage = new IWebSocketPushMessage() {
 	};
 
+	private long selectedSpaceObjectId = -1;
+
 	public LeafletPage(PageParameters parameters) {
 		super(parameters);
+
+		WebMarkupContainer sidebar = new WebMarkupContainer("sidebar");
+		sidebar.setOutputMarkupId(true);
+		add(sidebar);
+		sidebar.add(new Label("name", new PropertyModel<>(this, "selectedSpaceObject.name")));
 
 		add(new AbstractDefaultAjaxBehavior() {
 
@@ -78,11 +88,15 @@ public class LeafletPage extends AbstractPage {
 						SpaceObject spaceObject = getGame().getSpace().get(clickX, clickY, radius);
 						System.out.println("-> " + spaceObject);
 						if (spaceObject != null) {
+							selectedSpaceObjectId = spaceObject.getId();
 							double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
 							double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
 							double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
 							target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorRadius + ");");
+						} else {
+							selectedSpaceObjectId = -1;
 						}
+						target.add(sidebar);
 						break;
 					}
 				}
@@ -158,6 +172,19 @@ public class LeafletPage extends AbstractPage {
 		public void onDynamicSpaceObjectsChanged() {
 			sender.send(dynamicObjectsChangedPushMessage);
 		}
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the selectedSpaceObjectId
+	 */
+	public long getSelectedSpaceObjectId() {
+		return selectedSpaceObjectId;
+	}
+
+	public SpaceObject getSelectedSpaceObject() {
+		return getGame().getSpace().get(selectedSpaceObjectId);
 	}
 
 }
