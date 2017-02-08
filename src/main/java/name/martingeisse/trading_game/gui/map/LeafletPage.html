@@ -7,11 +7,12 @@
 
         $(function() {
 
-            var dynamicSpaceObjectsOverlay;
-
+            // use a simple coordinate system with a linear projection
             L.CRS.SimpleNonInverted = L.extend({}, L.CRS.Simple, {
                 transformation: new L.Transformation(1, 0, 1, 0),
             });
+
+            // create a map with the tile layer coming from our server
             leafletMap = L.map('map', {
                 crs: L.CRS.SimpleNonInverted,
                 // maxZoom: 4
@@ -22,12 +23,9 @@
                 // maxZoom: 3,
                 bounds: L.latLngBounds(L.latLng(0, 0), L.latLng(256, 256)),
             }).addTo(leafletMap);
-            leafletMap.on('click', function(e) {
-                sendMapClickCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom());
-            });
 
-            // SVG test
-            dynamicSpaceObjectsOverlay = L.d3SvgOverlay(function(selection, projection) {
+            // show dynamic space objects in an SVG overlay
+            var dynamicSpaceObjectsOverlay = L.d3SvgOverlay(function(selection, projection) {
 
                 function createSpaceObjectsParent(selection, projection) {
 
@@ -61,6 +59,16 @@
             redrawDynamicSpaceObjects = function() {
                 dynamicSpaceObjectsOverlay.draw();
             };
+
+            // clicking selects an object. Finding the object is done on the server.
+            leafletMap.on('click', function(e) {
+                sendMapClickCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom());
+            });
+
+            // right-clicking (long-press on mobile) opens a context menu, but again we must first search for the object
+            leafletMap.on('click', function(e) {
+                sendMapMenuCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom());
+            });
 
         });
 

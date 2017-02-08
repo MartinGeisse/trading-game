@@ -55,7 +55,7 @@ public class LeafletPage extends AbstractPage {
 				{
 					StringBuilder builder = new StringBuilder();
 
-					// clicking on the map
+					// left-clicking on the map
 					{
 						CallbackParameter[] parameters = {
 							CallbackParameter.resolved("command", "'click'"),
@@ -64,6 +64,17 @@ public class LeafletPage extends AbstractPage {
 							CallbackParameter.explicit("zoom"),
 						};
 						builder.append("sendMapClickCommand = ").append(getCallbackFunction(parameters)).append(';');
+					}
+
+					// right-clicking (long-pressing on mobile) on the map
+					{
+						CallbackParameter[] parameters = {
+							CallbackParameter.resolved("command", "'menu'"),
+							CallbackParameter.explicit("latitude"),
+							CallbackParameter.explicit("longitude"),
+							CallbackParameter.explicit("zoom"),
+						};
+						builder.append("sendMapMenuCommand = ").append(getCallbackFunction(parameters)).append(';');
 					}
 
 					response.render(JavaScriptHeaderItem.forScript(builder, null));
@@ -78,7 +89,8 @@ public class LeafletPage extends AbstractPage {
 					return;
 				}
 				switch (command) {
-					case "click": {
+					case "click":
+					case "menu": {
 						double clickLatitude = parameters.getParameterValue("latitude").toDouble();
 						double clickLongitude = parameters.getParameterValue("longitude").toDouble();
 						int zoom = parameters.getParameterValue("zoom").toInt();
@@ -97,6 +109,9 @@ public class LeafletPage extends AbstractPage {
 							selectedSpaceObjectId = -1;
 						}
 						target.add(sidebar);
+						if (command.equals("menu")) {
+							// TODO open the context menu
+						}
 						break;
 					}
 				}
