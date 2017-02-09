@@ -16,7 +16,7 @@ import org.apache.wicket.protocol.ws.api.message.ConnectedMessage;
  */
 public abstract class GameListenerWebSocketBehavior extends WebSocketBehavior {
 
-	private GameListener listener = null;
+	private transient GameListener listener = null;
 
 	@Override
 	protected void onConnect(ConnectedMessage message) {

@@ -70,9 +70,6 @@ public class LeafletPage extends AbstractPage {
 						player.cancelCurrentAction();
 						player.cancelAllPendingActions();
 						player.scheduleAction(actionItem.getModelObject());
-						target.add(LeafletPage.this.get("currentActionContainer"));
-						target.add(LeafletPage.this.get("pendingActionsContainer"));
-						target.add(LeafletPage.this.get("inventoryContainer"));
 					}
 				};
 				link.add(new Label("name", actionItem.getModelObject().toString()));
