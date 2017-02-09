@@ -1,9 +1,12 @@
 package name.martingeisse.trading_game.gui.map;
 
 import name.martingeisse.trading_game.game.GameListener;
-import name.martingeisse.trading_game.game.space.DynamicSpaceObject;
-import name.martingeisse.trading_game.game.space.PlayerShip;
-import name.martingeisse.trading_game.game.space.SpaceObject;
+import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.action.Action;
+import name.martingeisse.trading_game.game.item.ItemStack;
+import name.martingeisse.trading_game.game.space.*;
+import name.martingeisse.trading_game.gui.MainPage;
+import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.leaflet.D3;
 import name.martingeisse.trading_game.gui.leaflet.Leaflet;
 import name.martingeisse.trading_game.gui.leaflet.LeafletD3SvgOverlay;
@@ -14,10 +17,15 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.ws.api.WebSocketRequestHandler;
 import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
@@ -26,6 +34,8 @@ import org.apache.wicket.request.Url;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.SharedResourceReference;
+
+import java.util.List;
 
 /**
  *
@@ -40,10 +50,44 @@ public class LeafletPage extends AbstractPage {
 	public LeafletPage(PageParameters parameters) {
 		super(parameters);
 
+		IModel<SpaceObject> selectedSpaceObjectModel = new PropertyModel<>(this, "selectedSpaceObject");
+
 		WebMarkupContainer sidebar = new WebMarkupContainer("sidebar");
 		sidebar.setOutputMarkupId(true);
 		add(sidebar);
 		sidebar.add(new Label("name", new PropertyModel<>(this, "selectedSpaceObject.name")));
+		sidebar.add(new Label("type", new PropertyModel<>(this, "selectedSpaceObject.class.simpleName")));
+		sidebar.add(new Label("x", new PropertyModel<>(this, "selectedSpaceObject.x")));
+		sidebar.add(new Label("y", new PropertyModel<>(this, "selectedSpaceObject.y")));
+		sidebar.add(new Label("distance", new PropertyModel<>(this, "selectedSpaceObjectDistance")));
+		sidebar.add(new ListView<Action>("actions", new PropertyModel<>(this, "selectedSpaceObjectActions")) {
+			@Override
+			protected void populateItem(ListItem<Action> actionItem) {
+				AjaxLink<?> link = new AjaxLink<Void>("link") {
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						Player player = getPlayer();
+						player.cancelCurrentAction();
+						player.cancelAllPendingActions();
+						player.scheduleAction(actionItem.getModelObject());
+						target.add(LeafletPage.this.get("currentActionContainer"));
+						target.add(LeafletPage.this.get("pendingActionsContainer"));
+						target.add(LeafletPage.this.get("inventoryContainer"));
+					}
+				};
+				link.add(new Label("name", actionItem.getModelObject().toString()));
+				actionItem.add(link);
+			}
+
+		});
+		sidebar.add(new ListView<ItemStack>("itemStacks", new PropertyModel<>(this, "selectedSpaceObjectItems")) {
+			@Override
+			protected void populateItem(ListItem<ItemStack> item) {
+				item.add(new Label("size", "" + item.getModelObject().getSize()));
+				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
+				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
+			}
+		});
 
 		add(new AbstractDefaultAjaxBehavior() {
 
@@ -200,6 +244,33 @@ public class LeafletPage extends AbstractPage {
 
 	public SpaceObject getSelectedSpaceObject() {
 		return getGame().getSpace().get(selectedSpaceObjectId);
+	}
+
+	public Double getSelectedSpaceObjectDistance() {
+		SpaceObject selectedSpaceObject = getSelectedSpaceObject();
+		if (selectedSpaceObject == null) {
+			return null;
+		} else {
+			return GeometryUtil.getDistance(getPlayer().getShip(), selectedSpaceObject);
+		}
+	}
+
+	public List<Action> getSelectedSpaceObjectActions() {
+		SpaceObject selectedSpaceObject = getSelectedSpaceObject();
+		if (selectedSpaceObject == null) {
+			return null;
+		} else {
+			return selectedSpaceObject.getActionsFor(getPlayer());
+		}
+	}
+
+	public List<ItemStack> getSelectedSpaceObjectItems() {
+		SpaceObject selectedSpaceObject = getSelectedSpaceObject();
+		if (selectedSpaceObject instanceof SpaceStation) {
+			return ((SpaceStation)selectedSpaceObject).getInventory().getItemStacks();
+		} else {
+			return null;
+		}
 	}
 
 }

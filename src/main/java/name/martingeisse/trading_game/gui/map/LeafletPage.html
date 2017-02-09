@@ -66,7 +66,7 @@
             });
 
             // right-clicking (long-press on mobile) opens a context menu, but again we must first search for the object
-            leafletMap.on('click', function(e) {
+            leafletMap.on('contextmenu', function(e) {
                 sendMapMenuCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom());
             });
 
@@ -86,7 +86,19 @@
 <body>
     <div id="map" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 400px; cursor: initial; "></div>
     <div id="sidebar" wicket:id="sidebar" style="position: fixed; width: 400px; top: 0px; bottom: 0px; right: 0px; cursor: initial; ">
-        <div wicket:id="name"></div>
+        <h2>Properties</h2>
+        <div>Name: <span wicket:id="name"></span></div>
+        <div>Type: <span wicket:id="type"></span></div>
+        <div>Location: <span wicket:id="x"></span>, <span wicket:id="y"></span></div>
+        <div>Distance: <span wicket:id="distance"></span></div>
+        <h2>Actions</h2>
+        <div wicket:id="actions">
+            <a wicket:id="link"><span wicket:id="name"></span></a>
+        </div>
+        <h2>Items</h2>
+        <li wicket:id="itemStacks">
+            <span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon">
+        </li>
     </div>
 </body>
 </html>
