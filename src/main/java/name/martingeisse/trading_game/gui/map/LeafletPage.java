@@ -137,6 +137,15 @@ public class LeafletPage extends AbstractPage {
 						builder.append("sendMapMenuCommand = ").append(getCallbackFunction(parameters)).append(';');
 					}
 
+					// directly selecting the player's ship
+					{
+						CallbackParameter[] parameters = {
+							CallbackParameter.resolved("command", "'selectOwnShip'"),
+							CallbackParameter.explicit("zoom"),
+						};
+						builder.append("sendSelectOwnShipCommand = ").append(getCallbackFunction(parameters)).append(';');
+					}
+
 					response.render(JavaScriptHeaderItem.forScript(builder, null));
 				}
 			}
@@ -149,6 +158,7 @@ public class LeafletPage extends AbstractPage {
 					return;
 				}
 				switch (command) {
+
 					case "click":
 					case "menu": {
 						double clickLatitude = parameters.getParameterValue("latitude").toDouble();
@@ -172,6 +182,19 @@ public class LeafletPage extends AbstractPage {
 						if (command.equals("menu")) {
 							// TODO open the context menu
 						}
+						break;
+					}
+
+					case "selectOwnShip": {
+						int zoom = parameters.getParameterValue("zoom").toInt();
+						SpaceObject spaceObject = getPlayer().getShip();
+						System.out.println("-> " + spaceObject);
+						selectedSpaceObjectId = spaceObject.getId();
+						double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
+						double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
+						double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
+						target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorRadius + ");");
+						target.add(sidebar);
 						break;
 					}
 				}
@@ -222,7 +245,7 @@ public class LeafletPage extends AbstractPage {
 		for (DynamicSpaceObject spaceObject : getGame().getSpace().getDynamicSpaceObjects()) {
 			builder.append("\t{x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
 			builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
-			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(5000));
+			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(500));
 			builder.append(", c: '").append(spaceObject instanceof PlayerShip ? "#00ffff" : "#0000ff").append("'},");
 		}
 		builder.append("];\n");

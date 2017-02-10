@@ -70,22 +70,30 @@
                 sendMapMenuCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom());
             });
 
+            changeSpaceObjectSelectionIndicator = function(lat, lng, radius) {
+                if (spaceObjectSelectionIndicator != null) {
+                    spaceObjectSelectionIndicator.remove();
+                }
+                spaceObjectSelectionIndicator = L.circle(L.latLng(lat, lng), {radius: radius});
+                spaceObjectSelectionIndicator.addTo(leafletMap);
+                // console.log(lat + ", " + lng);
+            };
+
+            $(document).on('click', '#selectOwnShipLink', function() {
+                sendSelectOwnShipCommand(leafletMap.getZoom()); // TODO currently needs the zoom level to size the indicator, but that's the wrong approach anyway
+            });
+            $(document).on('click', '#centerSelectedObjectLink', function() {
+                if (spaceObjectSelectionIndicator != null) {
+                    leafletMap.flyTo(spaceObjectSelectionIndicator.getLatLng());
+                }
+            });
+
         });
-
-        changeSpaceObjectSelectionIndicator = function(lat, lng, radius) {
-            if (spaceObjectSelectionIndicator != null) {
-                spaceObjectSelectionIndicator.remove();
-            }
-            spaceObjectSelectionIndicator = L.circle(L.latLng(lat, lng), {radius: radius});
-            spaceObjectSelectionIndicator.addTo(leafletMap);
-            // console.log(lat + ", " + lng);
-        };
-
     </script>
 </wicket:head>
 <body>
     <div id="map" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 400px; cursor: initial; "></div>
-    <div id="sidebar" wicket:id="sidebar" style="position: fixed; width: 400px; top: 0px; bottom: 0px; right: 0px; cursor: initial; ">
+    <div id="sidebar" wicket:id="sidebar" style="position: fixed; width: 400px; top: 0px; bottom: 0px; right: 0px; ">
         <h2>Properties</h2>
         <div>Name: <span wicket:id="name"></span></div>
         <div>Type: <span wicket:id="type"></span></div>
@@ -106,6 +114,10 @@
             <li wicket:id="itemStacks">
                 <span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon">
             </li>
+        </div>
+        <div style="position: absolute; left: 0px; right: 0px; bottom: 0px; height: 100px; ">
+            <div><a href="#" id="selectOwnShipLink">select own ship</a></div>
+            <div><a href="#" id="centerSelectedObjectLink">center selected object</a></div>
         </div>
     </div>
 </body>
