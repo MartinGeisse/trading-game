@@ -35,6 +35,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.SharedResourceReference;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -43,6 +44,12 @@ import java.util.List;
 public class LeafletPage extends AbstractPage {
 
 	private static final IWebSocketPushMessage dynamicObjectsChangedPushMessage = new IWebSocketPushMessage() {
+	};
+
+	private static final Comparator<SpaceObject> playerShipsLowPriorityComparator = (a, b) -> {
+		boolean a2 = (a instanceof PlayerShip);
+		boolean b2 = (b instanceof PlayerShip);
+		return a2 ? (b2 ? 0 : -1) : (b2 ? 1 : 0);
 	};
 
 	private long selectedSpaceObjectId = -1;
@@ -77,7 +84,19 @@ public class LeafletPage extends AbstractPage {
 			}
 
 		});
-		sidebar.add(new ListView<ItemStack>("itemStacks", new PropertyModel<>(this, "selectedSpaceObjectItems")) {
+		WebMarkupContainer remoteItemsContainer = new WebMarkupContainer("remoteItemsContainer");
+		sidebar.add(remoteItemsContainer);
+		remoteItemsContainer.add(new ListView<ItemStack>("itemStacks", new PropertyModel<>(this, "remoteItems")) {
+			@Override
+			protected void populateItem(ListItem<ItemStack> item) {
+				item.add(new Label("size", "" + item.getModelObject().getSize()));
+				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
+				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
+			}
+		});
+		WebMarkupContainer localItemsContainer = new WebMarkupContainer("localItemsContainer");
+		sidebar.add(localItemsContainer);
+		localItemsContainer.add(new ListView<ItemStack>("itemStacks", new PropertyModel<>(this, "localItems")) {
 			@Override
 			protected void populateItem(ListItem<ItemStack> item) {
 				item.add(new Label("size", "" + item.getModelObject().getSize()));
@@ -138,7 +157,7 @@ public class LeafletPage extends AbstractPage {
 						long clickX = MapCoordinates.convertLongitudeToX(clickLongitude);
 						long clickY = MapCoordinates.convertLatitudeToY(clickLatitude);
 						long radius = 5000 + (MapCoordinates.convertMapDistanceToGameDistance(10) >> zoom); // 5000 = object radius, plus 10 pixels extra
-						SpaceObject spaceObject = getGame().getSpace().get(clickX, clickY, radius);
+						SpaceObject spaceObject = getGame().getSpace().get(clickX, clickY, radius, playerShipsLowPriorityComparator);
 						System.out.println("-> " + spaceObject);
 						if (spaceObject != null) {
 							selectedSpaceObjectId = spaceObject.getId();
@@ -221,6 +240,9 @@ public class LeafletPage extends AbstractPage {
 		private final PushMessageSender sender;
 
 		public PushGameListener(PushMessageSender sender) {
+			if (sender == null) {
+				throw new IllegalArgumentException("sender is null");
+			}
 			this.sender = sender;
 		}
 
@@ -261,10 +283,20 @@ public class LeafletPage extends AbstractPage {
 		}
 	}
 
-	public List<ItemStack> getSelectedSpaceObjectItems() {
+	public List<ItemStack> getRemoteItems() {
 		SpaceObject selectedSpaceObject = getSelectedSpaceObject();
 		if (selectedSpaceObject instanceof SpaceStation) {
 			return ((SpaceStation)selectedSpaceObject).getInventory().getItemStacks();
+		} else {
+			return null;
+		}
+	}
+
+	public List<ItemStack> getLocalItems() {
+		SpaceObject selectedSpaceObject = getSelectedSpaceObject();
+		Player player = getPlayer();
+		if (selectedSpaceObject instanceof SpaceStation || selectedSpaceObject == player.getShip()) {
+			return player.getInventory().getItemStacks();
 		} else {
 			return null;
 		}

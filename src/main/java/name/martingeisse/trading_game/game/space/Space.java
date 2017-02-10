@@ -3,10 +3,7 @@ package name.martingeisse.trading_game.game.space;
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.space.quadtree.Quadtree;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Keeps track of all the game's {@link SpaceObject}s.
@@ -116,7 +113,7 @@ public final class Space {
 	 * Finds a space object by position and matching radius. If multiple objects match then the nearest one is returned.
 	 * Returns null if no object lies within the radius.
 	 */
-	public SpaceObject get(long x, long y, long radius) {
+	public SpaceObject get(long x, long y, long radius, Comparator<SpaceObject> priorityComparator) {
 		SpaceObject matchingObject = null;
 		long matchingSquaredDistance = Long.MAX_VALUE;
 		long squaredRadius = radius * radius;
@@ -133,11 +130,19 @@ public final class Space {
 			if (squaredDistance > squaredRadius) {
 				continue;
 			}
-			if (squaredDistance > matchingSquaredDistance) {
-				continue;
+			int priorityOrder = priorityComparator.compare(spaceObject, matchingObject);
+			boolean replaceMatching;
+			if (priorityOrder > 0) {
+				replaceMatching = true;
+			} else if (priorityOrder < 0) {
+				replaceMatching = false;
+			} else {
+				replaceMatching = squaredDistance < matchingSquaredDistance;
 			}
-			matchingSquaredDistance = squaredDistance;
-			matchingObject = spaceObject;
+			if (replaceMatching) {
+				matchingSquaredDistance = squaredDistance;
+				matchingObject = spaceObject;
+			}
 		}
 		return matchingObject;
 	}
