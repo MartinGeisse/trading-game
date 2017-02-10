@@ -92,6 +92,12 @@ public class LeafletPage extends AbstractPage {
 				item.add(new Label("size", "" + item.getModelObject().getSize()));
 				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
 				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
+				item.add(new AjaxLink<Void>("loadLink") {
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						// TODO
+					}
+				});
 			}
 		});
 		WebMarkupContainer localItemsContainer = new WebMarkupContainer("localItemsContainer");
@@ -102,6 +108,12 @@ public class LeafletPage extends AbstractPage {
 				item.add(new Label("size", "" + item.getModelObject().getSize()));
 				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
 				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
+				item.add(new AjaxLink<Void>("unloadLink") {
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						// TODO
+					}
+				});
 			}
 		});
 
