@@ -3,6 +3,8 @@ package name.martingeisse.trading_game.gui.map;
 import name.martingeisse.trading_game.game.GameListener;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
+import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
+import name.martingeisse.trading_game.game.item.FixedItemStack;
 import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.game.space.*;
 import name.martingeisse.trading_game.gui.MainPage;
@@ -95,7 +97,12 @@ public class LeafletPage extends AbstractPage {
 				item.add(new AjaxLink<Void>("loadLink") {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						// TODO
+						Player player = getPlayer();
+						SpaceStation spaceStation = (SpaceStation)getSelectedSpaceObject();
+						FixedItemStack itemsToLoad = new FixedItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
+						player.cancelCurrentAction();
+						player.cancelAllPendingActions();
+						player.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.LOAD, itemsToLoad, item.getIndex()));
 					}
 				});
 			}
@@ -111,7 +118,12 @@ public class LeafletPage extends AbstractPage {
 				item.add(new AjaxLink<Void>("unloadLink") {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						// TODO
+						Player player = getPlayer();
+						SpaceStation spaceStation = (SpaceStation)getSelectedSpaceObject();
+						FixedItemStack itemsToLoad = new FixedItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
+						player.cancelCurrentAction();
+						player.cancelAllPendingActions();
+						player.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, item.getIndex()));
 					}
 				});
 			}
