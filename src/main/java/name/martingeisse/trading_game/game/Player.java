@@ -41,6 +41,15 @@ public final class Player {
 	/**
 	 * Getter method.
 	 *
+	 * @return the game
+	 */
+	public Game getGame() {
+		return game;
+	}
+
+	/**
+	 * Getter method.
+	 *
 	 * @return the ship
 	 */
 	public PlayerShip getShip() {

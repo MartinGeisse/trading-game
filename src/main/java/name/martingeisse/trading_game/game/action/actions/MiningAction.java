@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.action.actions;
 
+import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.definition.GameConstants;
@@ -71,6 +72,7 @@ public final class MiningAction extends ContinuousAction {
 		}
 		if (yield.getItems() != null) {
 			player.getInventory().add(yield.getItems());
+			player.getGame().getListeners().onSpaceObjectPropertiesChanged(player.getShip());
 		}
 	}
 

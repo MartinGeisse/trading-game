@@ -48,6 +48,20 @@ public class LeafletPage extends AbstractPage {
 	private static final IWebSocketPushMessage dynamicObjectsChangedPushMessage = new IWebSocketPushMessage() {
 	};
 
+	static class SpaceObjectPropertiesChangedPushMessage implements IWebSocketPushMessage {
+
+		private final SpaceObject spaceObject;
+
+		public SpaceObjectPropertiesChangedPushMessage(SpaceObject spaceObject) {
+			this.spaceObject = spaceObject;
+		}
+
+		public SpaceObject getSpaceObject() {
+			return spaceObject;
+		}
+
+	};
+
 	private static final Comparator<SpaceObject> playerShipsLowPriorityComparator = (a, b) -> {
 		boolean a2 = (a instanceof PlayerShip);
 		boolean b2 = (b instanceof PlayerShip);
@@ -86,7 +100,13 @@ public class LeafletPage extends AbstractPage {
 			}
 
 		});
-		WebMarkupContainer remoteItemsContainer = new WebMarkupContainer("remoteItemsContainer");
+		WebMarkupContainer remoteItemsContainer = new WebMarkupContainer("remoteItemsContainer") {
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+				setVisible(getRemoteItems() != null);
+			}
+		};
 		sidebar.add(remoteItemsContainer);
 		remoteItemsContainer.add(new ListView<ItemStack>("itemStacks", new PropertyModel<>(this, "remoteItems")) {
 			@Override
@@ -107,7 +127,13 @@ public class LeafletPage extends AbstractPage {
 				});
 			}
 		});
-		WebMarkupContainer localItemsContainer = new WebMarkupContainer("localItemsContainer");
+		WebMarkupContainer localItemsContainer = new WebMarkupContainer("localItemsContainer") {
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+				setVisible(getLocalItems() != null);
+			}
+		};
 		sidebar.add(localItemsContainer);
 		localItemsContainer.add(new ListView<ItemStack>("itemStacks", new PropertyModel<>(this, "localItems")) {
 			@Override
@@ -240,6 +266,11 @@ public class LeafletPage extends AbstractPage {
 					buildDynamicSpaceObjectsData(builder);
 					builder.append("redrawDynamicSpaceObjects();");
 					handler.appendJavaScript(builder.toString());
+				} else if (message instanceof SpaceObjectPropertiesChangedPushMessage) {
+					SpaceObjectPropertiesChangedPushMessage typedMessage = (SpaceObjectPropertiesChangedPushMessage)message;
+					if (typedMessage.getSpaceObject() == getPlayer().getShip() || typedMessage.getSpaceObject() == getSelectedSpaceObject()) {
+						handler.add(sidebar);
+					}
 				}
 			}
 
@@ -297,6 +328,12 @@ public class LeafletPage extends AbstractPage {
 		public void onDynamicSpaceObjectsChanged() {
 			sender.send(dynamicObjectsChangedPushMessage);
 		}
+
+		@Override
+		public void onSpaceObjectPropertiesChanged(SpaceObject spaceObject) {
+			sender.send(new SpaceObjectPropertiesChangedPushMessage(spaceObject));
+		}
+
 	}
 
 	/**
