@@ -1,0 +1,12 @@
+
+Dialog button order:
+- detect platform and use platform order (Windows: OK, Cancel; all others: Cancel, OK)
+	- Windows: UA contains the substring "Windows NT"
+	- alle außer Windows haben einheitlich OK rechts
+- make OK button the call-to-action (bright colors)
+- make cancel a link or smaller button
+- default action (enter) is OK
+- only use for two-button dialogs; for 3+, do not use OK or cancel but use descriptive labels
+
+
+
