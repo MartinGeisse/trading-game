@@ -14,11 +14,9 @@ import com.google.inject.util.Types;
 import name.martingeisse.trading_game.game.GlobalGameLock;
 import name.martingeisse.trading_game.gui.MainPage;
 import name.martingeisse.trading_game.gui.MapPageOld2;
-import name.martingeisse.trading_game.gui.WebsocketsPage;
 import name.martingeisse.trading_game.gui.map.ComputedTileResource;
 import name.martingeisse.trading_game.gui.map.LeafletPage;
 import name.martingeisse.trading_game.gui.map.MapTileResource;
-import name.martingeisse.trading_game.gui.map.OpenLayersPage;
 import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
@@ -158,9 +156,7 @@ public class MyWicketApplication extends WebApplication {
 		// internal
 
 		mountPage("map", MapPageOld2.class);
-		mountPage("ol", OpenLayersPage.class);
 		mountPage("leaflet", LeafletPage.class);
-		mountPage("websockets", WebsocketsPage.class);
 
 		getSharedResources().add("MapTile", new MapTileResource());
 		getSharedResources().add("ComputedTile", new ComputedTileResource());
