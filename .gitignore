@@ -5,5 +5,5 @@
 /logs
 /*.log
 /test.html
-/resource/compass/.sass-cache
+/resource/stylesheet/.sass-cache
 .DS_Store
