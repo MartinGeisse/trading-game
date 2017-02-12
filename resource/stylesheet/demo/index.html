@@ -1,15 +1,128 @@
 <html>
+<head>
+    <link rel="stylesheet" href="../../../src/main/java/name/martingeisse/trading_game/gui/wicket/page/common.css">
+</head>
 <body>
-        <div class="container">
-            <div class="modal-dialog">
-                <h1>Hello World</h1>
-                <p>This dialog shows a nice greeting. Do you want to respond?</p>
-                <div class="dialog-buttons">
-                    <button class="btn btn-default">
-                        
-                    </button>
-                </div>
+    <div class="container">
+
+        <div class="dialog panel panel-primary">
+            <h1>Hello World</h1>
+            <p>This dialog shows a nice greeting. Do you want to respond?</p>
+            <div class="dialog-buttons">
+                <button class="btn btn-xs btn-default">Cancel</button>
+                <button class="btn btn-primary">OK</button>
             </div>
         </div>
+
+        <br /><br /><br /><br />
+
+        <ul class="list-group">
+            <li class="list-group-item">
+                <div class="item-type">Iron ore</div>
+                <div class="item-property">
+                    <div class="property-name">Amount</div>
+                    <div class="property-value">56</div>
+                </div>
+                <div class="item-property">
+                    <div class="property-name">Weight</div>
+                    <div class="property-value">56.0 kg (1.0 kg / unit)</div>
+                </div>
+            </li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Morbi leo risus</li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+        </ul>
+
+        <br /><br /><br /><br />
+
+        <table class="table table-striped">
+            <tr class="table-headline">
+                <th>Item</th>
+                <th>Amount</th>
+                <th>Unit Weight</th>
+                <th>Total Weight</th>
+                <!-- no action column. use right-click / context menu for actions -->
+                <!-- double-click or rightclick/details to open a details window that also shows action buttons -->
+            </tr>
+            <tr>
+                <td>Iron Ore</td>
+                <td>56</td>
+                <td>1.0</td>
+                <td>56.0</td>
+            </tr>
+            <tr>
+                <td>Copper Ore</td>
+                <td>20</td>
+                <td>1.2</td>
+                <td>24.0</td>
+            </tr>
+            <tr>
+                <td>Duranium Ore</td>
+                <td>1</td>
+                <td>4.9</td>
+                <td>4.9</td>
+            </tr>
+        </table>
+
+        <br /><br /><br /><br />
+
+        <div class="panel panel-default" style="padding: 5px">
+
+            <!-- subsection-independent stuff -->
+            <h3>Iron Ore</h3>
+
+            <!-- subsections. note: EO uses a tab panel here. For more deeply structured section trees, left menu (upper level) + tabs (lower level) are used. -->
+            <!-- EO also uses collapsible sections (maybe accordion) to make clean up the individual sections -->
+            <!-- EO ises an (i) icon to show help text for items. -->
+
+            <!-- subsection: properties -->
+            <h4>Properties</h4>
+            <!-- EO shows "attributes" (properties) as name(luft-justified), value(right-justified) -->
+            <!-- EO uses lots of icons instead of text to compress things visually, or icon/text combinations -->
+            <ul class="list-group properties">
+                <li class="list-group-item">
+                    <div class="name">Amount</div>
+                    <div class="value">56</div>
+                    <div style="clear: both;"></div> 
+                </li>
+                <li class="list-group-item">
+                    <div class="name">Unit Weight</div>
+                    <div class="value">1.0</div>
+                    <div style="clear: both;"></div> 
+                </li>
+                <li class="list-group-item">
+                    <div class="name">Total Weight</div>
+                    <div class="value">56.0</div>
+                    <div style="clear: both;"></div> 
+                </li>
+            </ul>
+
+            <!-- subsection: market data -->
+            <h4>Market Data</h4>
+            <h5>Buyers</h5>
+            No results.
+            <h5>Sellers</h5>
+            <table class="table table-striped">
+                <tr class="table-headline">
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Location</th>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>1,240,000</td>
+                    <td>Space Station R56-99-A</td>
+                </tr>
+                <tr>
+                    <td>109</td>
+                    <td>1,500,000</td>
+                    <td>Space Station B50</td>
+                </tr>
+            </table>
+
+        </div>
+
+    </div>
 </body>
 </html>

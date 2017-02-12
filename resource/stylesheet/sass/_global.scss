@@ -1,0 +1,25 @@
+
+.dialog {
+    position: relative;
+}
+
+.dialog-buttons {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    .button {
+        margin-left: 10px;
+    }
+}
+
+table.table tr.table-headline {
+    background-color: #144;
+}
+
+.properties .name {
+    float: left;
+}
+
+.properties .value {
+    float: right;
+}
