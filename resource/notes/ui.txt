@@ -1,4 +1,17 @@
 
+Mobile-first, Responsive, blablabla:
+- Folgendes sind zwei unabhängige Fragen:
+	- sollen sich Dialoge etc. als neue Seite präsentieren?
+		Phone: fast klar, denn ein fast-fullscreen-dialog hat keine nennenswerten Vorteile (neben dem Rand ist eh nix mehr erkennbar)
+			und ist technisch sehr aufwändig
+		Pad: unklar
+		Desktop: unklar
+	- soll der Wechsel auf eine neue UI-Seite als Browser-Navigation zu einer neuen URL realisiert werden?
+		- aktuelle Vermutung: eher nein, denn dann muss die Websockets-Verbindung jeweils neu aufgebaut werden.
+			Aber ob das schlimm ist, ist noch unklar.
+
+
+
 Dialog button order:
 - detect platform and use platform order (Windows: OK, Cancel; all others: Cancel, OK)
 	- Windows: UA contains the substring "Windows NT"
