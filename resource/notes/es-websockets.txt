@@ -1,0 +1,88 @@
+
+Mögliche Ziele:
+
+1. Den aktuellen Stand als (in Bezug auf Push) statische Seite rendern, wobei möglicherweise ein inkonsistenter Stand gerendert wird.
+	-> Einfach, und man muss einfach nur von allen benötigten Projectors den aktuellsten Stand holen und rendern.
+
+2. Einen möglichst aktuellen, konsistenten Stand rendern. Wenn ein Projector einen aktuelleren Stand hätte, aber ein anderer nicht, dann
+	darf der aktuellere Stand nicht benutzt werden. Dafür müssen Projectors mindestens so lange einen alten Stand liefern können,
+	wie dieser ggf. noch gerade gerendert wird. Sicherheitshalber müssen Seiten also sagen, wenn sie noch am Rendern sind, oder aber
+	in der Lage sein, bei nicht-mehr-vorhandensein aller Projector-Stände das Rendern mit einem aktuelleren Stand neu zu starten.
+
+3. Wie 2., nur dass der aktuellste konsistente Stand gerendert werden muss, nicht nur ein "möglichst aktueller". Hat strengere Anforderungen
+	an die Synchronisierung.
+
+4. Wie 1., und Updates werden gepusht. Durch die Updates ist die Inkonsistenz vielleicht nicht egal, aber weniger schlimm (für ein Spiel reicht es).
+	Allerdings muss es dazu möglich sein, dass Updates verarbeitet werden, obwohl die verschiedenen Projectors der Seite auf unterschiedlichen
+	Ständen sind.
+
+5. Wie 2., und konsistente Updates werden gepusht. Ein "wie 3. mit Updates" ist unnötig, da die Updates den Rückstand aufholen. Hat strengere Anforderungen
+	an die verfügbaren Stände der Projectors. Dafür muss die Seite immer nur mit einem einzigen, konsistenten Stand klarkommen, und der Benutzer
+	sieht immer nur konsistente Daten.
+
+Für das Spiel ist 4 oder 5 nötig. Zumindest für Teile der Seite, und dann kann man es auch gleich für alles nehmen.
+
+Wie ist der genaue Ablauf? Wie kommen denn die Wicket-Komponenten an die Projections? Über ein Model. Dieses Model zieht einen möglichst aktuellen
+Stand aus der Prerender-DB. Außerdem registriert sie *gleichzeitig* einen Listener, un Neuerungen an der Projection mitzubekommen. Das Model
+kann das nicht alleine machen, zumindest nicht als reines Model. (Müsste eine Art PushModel sein und entsprechend mit der Component zusammenarbeiten).
+->
+Wenn man das so macht -- egal wie genau -- dann werden Änderungen, die mehrere Projections betreffen, leicht mehrere Push-Request-Cycles auslösen!
+Hier wäre es möglich, kurz zu warten und Änderungen zu sammeln. Die Alternative wäre es, immer einen konsistenten Stand zu pushen (also 5.) -- zumindest der
+Fall, dass mehrere Projectors betroffen sind, wäre ja inkonsistent, wenn nur ein Teil davon gepusht wird.
+
+2. (und damit auch 3. und 5.) benötigt Angaben darüber, welche Daten die Seite braucht, *bevor* sie sie braucht. Das ist im Grund eine Auflistung von
+Projectors, die abgefragt werden -- ein onBeforeRender() aller Push-Models wäre sowas, reicht aber nur aus, wenn man alte Stände aus den Projectors
+abrufen kann. Falls man das nicht kann, muss in der Projector-Struktur hinterlegt werden, welche Kombinationen von Projectors als Konsistente Stände
+benötigt werden.
+->
+Für das Spiel klingt es wesentlich einfacher, die verschiedenen Projectors unabhängig zu betrachten, und Pushes zu sammeln, bevor sie gesendet werden.
+
+Der Plan wäre demnach:
+- immer nur den aktuellsten Stand je Projector speichern
+- Derived Projectors müssen mit Inkonsistenzen zwischen verschiedenen Projectors klarkommen
+- Seiten werden evtl. inkonsistent gerendert
+- verschiedene Komponenten, die an verschiedenen Projectors hängen, rennen unabhängig voneinander auf den aktuellsten Stand zu (eventual consistency)
+- Änderungen an allen Projectors werden per Websockets gepusht
+- dabei werden zeitlich nah liegende Änderungen per Guckloch-Verfahren zusammen gesendet
+
+
+----------------------------------------------------------------------------------------------------
+
+Mal andersrum gedacht: Wie schwer wäre es denn, immer nur konsistente Stände zur Verfügung zu stellen?
+- jeder Projector müsste auf jeden Event reagieren
+	Wenn alte Versionen der Projections abrufbar sein sollen:
+		- dazu müssten Projectors, wenn sie einen Event ignorieren, einfach nur den entsprechenden "bis"-Index hochzählen
+		- dazu müssten Projections einen "bis"-Index haben, also nicht für eine Version, sondern eine Versions-Range gültig sein
+	Wenn nicht:
+		- dann müssten Projectors, wenn ein Event egal ist, die alte Projection als neue Projection übernehmen können
+		- das geht ganz einfach, wenn man annimmt, dass nach Ablauf aller Projectors immer die aktuelle Projection in der DB steht --
+			dann müsste in diesem Fall nämlich gar nichts getan werden, da die gültigen Versionen nur die aktuelle Version enthalten
+			und deshalb gar nicht in der DB gespeichert werden
+		- allerdings ist es dann extrem schwer, einen konsistenten Zustand in der DB einzufangen, da sich ständig etwas Ändert
+	-->
+	"Keine alten Projections abrufbar" => "abgerufene Stände sind grundsätzlich inkonsistent" (Konsistenz nur zufällig); entspricht der Art
+	und Weise, wie klassisch DBs benutzt werden.
+-->
+- alte Projection-Stände werden zumindest eine Zeit lang gespeichert
+- jeder Projector müsste auf jeden Event reagieren
+- Projections haben von-bis Gültigkeit
+- Projectors, die einen Event für eine bestimmte Projection ignorieren, erweitern nur deren Gültigkeit
+- das kann auch so passieren, dass nach Ablauf des Projectors (und hochzählen des Gültigkeits-Index dieses Projectors) keine neuere Version der
+	Projection in der DB steht. Falls sich doch etwas ändert, steht eine neue Version zusätzlich zur alten Version in der DB.
+- Das heißt, eine Projection braucht so gesehen nur eine Gültigkeit "von"; das "bis" ist "alles bis zur nächsthöheren von-Gültigkeit"!
+- Wenn alle Projectors einen Event verarbeitet haben, dann muss zur Info von Clients ein globaler Konsistenzzähler weitergezählt werden (entpricht
+	dem größten Index in der History, für den alle Projectors gelaufen sind)
+- Einen konsistenten Stand bekommt man wie folgt:
+	- Globalen Konsistenzindex holen. Dieser gibt den Stand an, den man bekommt
+		- Hier wird nach einem globalen Index gegangen, weil ein lokaler Konsistenzindex Vorbereitungen braucht
+		- Ein lokaler KI gibt an, ob alle Projectors eines definierten Projector-Sets bis mindestens zu diesem Index gelaufen sind
+	- Für alle benötigten Projections wird die Projection-Version mit dem größten von-Index kleiner-gleich dem KI geladen
+	- aus diesen Projections wird die Seite gerendert
+
+
+
+
+
+
+
+
