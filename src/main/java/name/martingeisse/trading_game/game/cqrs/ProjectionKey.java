@@ -9,7 +9,14 @@ import name.martingeisse.trading_game.game.Game;
  * TODO woher wird klar, wann die Projektion aktualisiert werden muss? Bei ES wäre das nach einem definierten
  * Verfahren: Der Projector bzw. einfacher der ProjectionKey gibt alle relevanten Events per Filter an, und man
  * sieht sofort, welche betroffen sind. Bei nicht-ES ist die Änderung (der Event) implizit und man müsste sich per
- * Listener in die jeweiligen Objekte hängen, aber das ist auch schnell sehr komplex.
+ * Listener in die jeweiligen Objekte hängen, aber das ist auch schnell sehr komplex. Oder man arbeitet mit allgemeinen
+ * Change-Events, die schnell ein "schlechtes ES" werden.
+ *
+ * Auf die schnelle gäbe es nur die Alternative, ohne ES und ohne Read Model zu arbeiten und stattdessen "klassisch"
+ * mit nur einem DB-Zustand zu arbeiten, der verändert wird und gleichzeitig als Read Model dient. Dann passiert
+ * zumindest die synchronisierung durch den DB-Server. Das hätte den Vorteil, dass es erst mal einfach zu coden ist,
+ * auch wenn es langfristig zu langesam ist und dann ersetzt werden müsste (nach aktueller Erkenntnis vermutlich durch
+ * ein ES-System).
  */
 public interface ProjectionKey<T> {
 
