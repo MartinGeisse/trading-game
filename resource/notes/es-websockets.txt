@@ -79,10 +79,64 @@ Mal andersrum gedacht: Wie schwer wäre es denn, immer nur konsistente Stände z
 	- Für alle benötigten Projections wird die Projection-Version mit dem größten von-Index kleiner-gleich dem KI geladen
 	- aus diesen Projections wird die Seite gerendert
 
+------------------------------------------------------------------------
 
+Neue Überlegung:
+- Hohe Concurrency bei Reads bekomme ich von Read Models. Diese dürfen inkonsistent sein.
+- Concurrency zwischen Reads und Writes bekomme ich auch durch Read Models (CQRS!)
+- Hohe Concurrency bei Writes bekomme ich
+	(1) durch das queueing von Commands, ggf. in Kombination mit asynchroner Web-Request-Verarbeitung (damit nicht mit einem queued command
+		auch ein Thread schläft)
+	(2) Batch-Verarbeitung dieser Commands
+	(3) Paralleler Verarbeitung dieser Commands in mehreren Threads durch eine geeignete interne synchro-Logik der Spielelogik (nicht
+		nach außen sichtbar)
+- Die Weitergabe von Änderungen an Projectors ist noch ungeklärt, s.u.
 
+Was wäre denn *ohne* ES?
+- Dann könnten die internen Datenstrukturen nicht mehr direkt benutzt werden. Bei ES kann man Events abrufen und direkt verarbeiten, ohne
+	ES kollidiert das mit der internen synchro-Logik. --> Ohne ES müssen ALLE Reads über Read Models laufen!
+		-> es ist eh sinnvoll, dass alle Reads über RM laufen, s.u.
+- Bei POST-Redirect-GET müsste nach dem enqueue des Commands auf ein Update aller Read Models gewartet werden, damit das Ergebnis
+	sichtbar wird. Nicht so bei Websockets! Es muss gar nicht gewartet werden, sondern man sieht das, was im Server passiert, auch direkt
+	in der GUI: Das Command wurde enqueued, und bei Update der Read Models werden die Änderungen per Websockets gepusht.
+- Nachteil: Anders als bei ES kann die Änderung wirklich erst bei Update des Read Models sichtbar werden. ES könnte die neuen Events
+	benutzen, um trotz eines veralteten Read Models die neuen Daten anzuzeigen.
+		-> es ist eh sinnvoll, dass alle Reads über RM laufen, siehe:
+- Allerdings: Von einem anderen Standpunkt aus bedeutet das: Weil das RM nicht rechtzeitig updated wurde, wird es im GUI-Thread on-the-fly
+	updated, um richtige Daten anzuzeigen, und das Ergebnis danach weggeworfen. Da könnte auch der GUI-Thread das normale Update triggern,
+	priorisieren und darauf warten. Das Priorisieren könnte sogar vorab passieren, wenn schon im Command (oder gleichzeitig) bekannt gegeben
+	wird, welche Read Models benötigt werden. Das wäre auch weniger duplicate code. Diese Lösung wäre übrigens unabhängig von der Frage
+	"ES oder nicht" sinnvoll -- auch bei ES bringt eine on-the-fly-update-Logik weniger, als das normale Update der RMs zu triggern.
 
+Nach dieser Überlegung ist der Ansatz: CQRS ohne ES; Gekapselte Spielelogik, die nach außen Threadsicher ist, auf nur einer Maschine;
+	alle Reads laufen über Read Models; Das Rendering der RMs und die GUI können auf viele Maschinen verteilt sein. Zusammen mit einem
+	Command wird auch bekanntgegeben, welche Read Models priorisiert updated werden sollen. RM-Updates werden über Websockets gepusht.
 
+Nachteile:
+- Inkrementelles Rendern der RMs wird komplizierter bis unmöglich, da der Renderer in erster Linie den neuen Stand sieht
+	- hier könnten Änderungen mitgegeben werden; das wäre ein "punktuelles ES als Optimierung"
+	-> Im Hinterkopf: Man kann später immer noch auf komplettes ES umsteigen, wenn sich dadurch mehr optimieren lässt
 
+Wie würde dann eine Seite vorgehen, die einen initialen Stand rendert und Updates per Websockets pusht?
+- verschiedene Components benutzen verschiedene RMs und sind damit ggf. inkonsistent
+- im Prinzip könnte sich die Seite erst als Listener registrieren und danach den aktuellen Stand abrufen. Dann müssen die Registrierung
+	und das Abrufen nicht atomar passieren. Schlimmstenfalls bekommt die Seite dann ein Update auf den Stand, den sie schon hat
+		-> Inkrementelles Rendern muss hiermit klarkommen, sofern es benutzt wird!
+- Während des initialen Renderings müssen updates zurückgehalten werden und erst danach gepusht werden. Das müsste die Thread-Synchro
+	von Wicket schon tun, aber es sollte so passieren, dass kein Thread schläft
+- Während eines Update-Renderings müssen weitere Updates zurückgehalten werden, bis das Rendering fertig ist
 
+Wesentliches Problem:
+- Bei der Verarbeitung eines Commands werden die Spieledaten geändert und es müssen RMs updated werden. Wie wird erkannt, welche RMs das
+	sind? Die Command-Verarbeitung sollte es nicht tun, sonst wird diese von den RMs abhängig, welche wiederum vom GUI abhängig sind.
+	- Also muss die Command-Verarbeitung an die Listener weitergeben, welche Daten sich geändert haben
+	- Das sind entweder "viele" Methoden (wächst mit den Datenstrukturen) oder "viele" Event-Klassen, welche die Änderung beschreiben
+	- Damit kommt ein Aufwand ins Spiel, der an ES herankommt, aber ohne die Vorteile
+- Bei ES gibt es dieses Problem auch, aber die Lösung ist offensichtlich: RMs werden von Projectors erzeugt, und diese geben an, welche
+	Events für sie wichtig sind (per Filter). Also kann die Benachrichtigung der Filter von einer generischen Automatik passieren.
+- Auf die schnelle gäbe es nur die Alternative, ohne ES und ohne Read Model zu arbeiten und stattdessen "klassisch"
+	mit nur einem DB-Zustand zu arbeiten, der verändert wird und gleichzeitig als Read Model dient. Dann passiert
+	zumindest die synchronisierung durch den DB-Server. Das hätte den Vorteil, dass es erst mal einfach zu coden ist,
+	auch wenn es langfristig zu langesam ist und dann ersetzt werden müsste (nach aktueller Erkenntnis vermutlich durch
+	ein ES-System).
 
