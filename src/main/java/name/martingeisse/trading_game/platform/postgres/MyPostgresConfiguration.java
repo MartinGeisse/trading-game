@@ -4,6 +4,7 @@ import com.querydsl.sql.Configuration;
 import com.querydsl.sql.PostgreSQLTemplates;
 import com.querydsl.sql.SQLTemplates;
 import com.querydsl.sql.types.EnumByNameType;
+import name.martingeisse.trading_game.game.repository.SpaceObjectType;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -35,7 +36,7 @@ public final class MyPostgresConfiguration {
 	static {
 
 		ENUM_CLASS_TO_TYPE_NAME = new HashMap<>();
-		// ENUM_CLASS_TO_TYPE_NAME.put(MyEnumClass.class, "\"trading_game\".\"MyEnumType\"");
+		ENUM_CLASS_TO_TYPE_NAME.put(SpaceObjectType.class, "\"game\".\"SpaceObjectType\"");
 
 		TEMPLATES = PostgreSQLTemplates.builder().quote().printSchema().build();
 		for (Class enumClass : ENUM_CLASS_TO_TYPE_NAME.keySet()) {

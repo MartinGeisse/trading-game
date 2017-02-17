@@ -1,15 +1,15 @@
 package name.martingeisse.trading_game.postgres_entities;
 
-import com.querydsl.core.types.Path;
+import static com.querydsl.core.types.PathMetadataFactory.*;
+
+import com.querydsl.core.types.dsl.*;
+
 import com.querydsl.core.types.PathMetadata;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.sql.ColumnMetadata;
-
 import javax.annotation.Generated;
-import java.sql.Types;
+import com.querydsl.core.types.Path;
 
-import static com.querydsl.core.types.PathMetadataFactory.forVariable;
+import com.querydsl.sql.ColumnMetadata;
+import java.sql.Types;
 
 
 
@@ -17,7 +17,7 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 /**
  * QSpaceObjectBaseData is a Querydsl query type for SpaceObjectBaseData
  */
-@Generated("MyMetaDataSerializer")
+@Generated("name.martingeisse.trading_game.platform.postgres.codegen.MyMetaDataSerializer")
 @SuppressWarnings("all")
 public class QSpaceObjectBaseData extends com.querydsl.sql.RelationalPathBase<SpaceObjectBaseData> {
 
@@ -29,7 +29,7 @@ public class QSpaceObjectBaseData extends com.querydsl.sql.RelationalPathBase<Sp
 
     public final StringPath name = createString("name");
 
-    public final StringPath type = createString("type");
+    public final EnumPath<name.martingeisse.trading_game.game.repository.SpaceObjectType> type = createEnum("type", name.martingeisse.trading_game.game.repository.SpaceObjectType.class);
 
     public final NumberPath<Long> x = createNumber("x", Long.class);
 
