@@ -7,3 +7,4 @@
 /test.html
 /resource/stylesheet/.sass-cache
 .DS_Store
+/${myweb:initParam.logfilePath}

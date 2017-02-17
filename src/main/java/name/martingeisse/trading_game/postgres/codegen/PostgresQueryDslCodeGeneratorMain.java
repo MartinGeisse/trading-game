@@ -26,7 +26,7 @@ public class PostgresQueryDslCodeGeneratorMain {
 
 		PGSimpleDataSource source = new PGSimpleDataSource();
 		source.setServerName("localhost");
-		source.setDatabaseName("companion-dev");
+		source.setDatabaseName("trading_game");
 		source.setUser("postgres");
 		source.setPassword("postgres");
 
