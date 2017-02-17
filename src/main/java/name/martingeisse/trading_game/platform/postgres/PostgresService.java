@@ -3,9 +3,9 @@ package name.martingeisse.trading_game.platform.postgres;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.database.DatabaseService;
+import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.platform.application.configuration.annotated.AnnotatedConfigurationParticipant;
 import name.martingeisse.trading_game.platform.application.configuration.annotated.ConfigurationSetting;
-import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import org.postgresql.ds.PGPoolingDataSource;
 
 import java.sql.Connection;

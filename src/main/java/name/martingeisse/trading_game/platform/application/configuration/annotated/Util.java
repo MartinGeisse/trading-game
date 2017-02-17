@@ -1,7 +1,7 @@
 package name.martingeisse.trading_game.platform.application.configuration.annotated;
 
-import name.martingeisse.trading_game.platform.application.configuration.ApplicationConfiguration;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
+import name.martingeisse.trading_game.platform.application.configuration.ApplicationConfiguration;
 import name.martingeisse.trading_game.platform.util.parameter.ParameterException;
 import name.martingeisse.trading_game.platform.util.parser.*;
 

@@ -9,8 +9,8 @@ package name.martingeisse.trading_game.platform.application;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import name.martingeisse.trading_game.platform.application.configuration.Configurator;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
+import name.martingeisse.trading_game.platform.application.configuration.Configurator;
 import name.martingeisse.trading_game.platform.util.parameter.ParameterException;
 
 /**

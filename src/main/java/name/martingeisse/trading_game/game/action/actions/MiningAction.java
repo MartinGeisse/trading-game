@@ -1,14 +1,10 @@
 package name.martingeisse.trading_game.game.action.actions;
 
-import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.definition.GameConstants;
-import name.martingeisse.trading_game.game.item.FixedInventory;
-import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.space.Asteroid;
 import name.martingeisse.trading_game.game.space.GeometryUtil;
-import name.martingeisse.trading_game.game.space.PlayerShip;
 
 /**
  *

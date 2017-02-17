@@ -1,7 +1,5 @@
 package name.martingeisse.trading_game.game.item;
 
-import name.martingeisse.trading_game.game.item.ItemStack;
-
 import java.util.ArrayList;
 import java.util.List;
 
