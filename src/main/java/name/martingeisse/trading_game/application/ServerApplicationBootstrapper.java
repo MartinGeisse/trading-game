@@ -9,12 +9,18 @@ package name.martingeisse.trading_game.application;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
+import name.martingeisse.trading_game.application.configuration.ApplicationConfiguration;
+import name.martingeisse.trading_game.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.util.logging.JulToLog4jBridge;
 import name.martingeisse.trading_game.util.logging.MyLayout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
 
 import javax.servlet.ServletContextEvent;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * This listener initializes Guice and the plugin system on servlet context start.
@@ -26,13 +32,18 @@ public class ServerApplicationBootstrapper extends GuiceServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
+
+		// prepare the logging system
 		if (MyLayout.instanceSource != null) {
 			throw new IllegalStateException("log4j initialized too early!", MyLayout.instanceSource);
 		}
 		log4jListener.contextInitialized(servletContextEvent);
 		LogManager.getLogger().info("starting application...");
 		JulToLog4jBridge.enable();
+
+		// continue with the normal Guice/Servlet startup procedure
 		super.contextInitialized(servletContextEvent);
+
 	}
 
 	@Override
@@ -55,7 +66,8 @@ public class ServerApplicationBootstrapper extends GuiceServletContextListener {
 
 	@Override
 	protected Injector getInjector() {
-		Injector injector = Guice.createInjector(new ServerApplicationModule(), new WebModule());
+		ApplicationConfiguration configuration = new ApplicationConfiguration();
+		Injector injector = Guice.createInjector(new ServerApplicationModule(configuration), new WebModule());
 		injector.getInstance(ServerApplicationInitializer.class).run();
 		return injector;
 	}

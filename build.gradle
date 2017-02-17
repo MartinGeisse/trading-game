@@ -69,6 +69,12 @@ dependencies {
 	compile 'org.apache.httpcomponents:httpcore:4.3.2'
 	compile 'org.apache.httpcomponents:httpmime:4.3.3'
 	compile 'org.apache.httpcomponents:httpclient:4.3.3'
+	
+	// PostgreSQL
+	compile 'com.querydsl:querydsl-sql:4.1.3'
+	compile 'com.querydsl:querydsl-sql-codegen:4.0.7'
+	compile 'org.postgresql:postgresql:9.4.1208.jre7'
+
 
 }
 configurations {

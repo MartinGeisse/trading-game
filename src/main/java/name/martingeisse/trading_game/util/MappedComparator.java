@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015 Martin Geisse
- *
- * This file is distributed under the terms of the MIT license.
- */
-
 package name.martingeisse.trading_game.util;
 
 import java.util.Comparator;

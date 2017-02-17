@@ -29,4 +29,21 @@ InventorySlot
 
 
 
+-----
+
+
+
+CREATE SCHEMA "game";
+
+CREATE TYPE "game"."TestEnum" AS ENUM ('EINS', 'ZWEI');
+
+CREATE TABLE "game"."MyTable" (
+	"id" bigserial NOT NULL PRIMARY KEY,
+	"foo" INTEGER NOT NULL,
+	"bar" character varying(2000) NOT NULL,
+	"baz" INTEGER NOT NULL,
+	"testenum" "game"."TestEnum" NOT NULL
+);
+CREATE INDEX "MyTable_fooIndex" ON "game"."MyTable" ("foo");
+CREATE INDEX "MyTable_fooBazIndex" ON "game"."MyTable" (("foo" != "baz"));
 
