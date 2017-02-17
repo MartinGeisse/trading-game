@@ -2,8 +2,7 @@ package name.martingeisse.trading_game.gui.websockets;
 
 import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.GameListener;
-import name.martingeisse.trading_game.gui.wicket.MyWicketApplication;
-import org.apache.wicket.Session;
+import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import org.apache.wicket.protocol.ws.api.WebSocketBehavior;
 import org.apache.wicket.protocol.ws.api.message.AbortedMessage;
 import org.apache.wicket.protocol.ws.api.message.ClosedMessage;

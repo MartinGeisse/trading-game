@@ -1,9 +1,6 @@
 package name.martingeisse.trading_game.gui;
 
-import name.martingeisse.trading_game.game.generate.StarNaming;
-import name.martingeisse.trading_game.game.generate.StarPlacement;
-import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
-import org.apache.commons.lang3.tuple.Pair;
+import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;

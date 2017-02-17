@@ -6,7 +6,7 @@
 
 package name.martingeisse.trading_game.gui.util;
 
-import name.martingeisse.trading_game.gui.wicket.MyWicketApplication;
+import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 
 import java.util.*;

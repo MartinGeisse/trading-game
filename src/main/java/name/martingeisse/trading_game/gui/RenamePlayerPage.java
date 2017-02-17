@@ -7,7 +7,7 @@
 package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
-import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
+import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import name.martingeisse.wicket.simpleform.SimpleFormPanel;
 import org.apache.wicket.model.Model;
 

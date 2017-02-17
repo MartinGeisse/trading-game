@@ -2,14 +2,13 @@ package name.martingeisse.trading_game.gui.map;
 
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.Game;
-import name.martingeisse.trading_game.game.generate.PerlinNoise;
 import name.martingeisse.trading_game.game.generate.SpectrumNoise;
 import name.martingeisse.trading_game.game.space.Asteroid;
 import name.martingeisse.trading_game.game.space.Planet;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.game.space.SpaceStation;
 import name.martingeisse.trading_game.game.space.*;
-import name.martingeisse.trading_game.gui.wicket.MyWicketApplication;
+import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.util.time.Duration;
 

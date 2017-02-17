@@ -10,7 +10,7 @@ targetCompatibility = '1.8'
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 }
-mainClassName = "name.martingeisse.trading_game.application.Main"
+mainClassName = "name.martingeisse.trading_game.platform.application.Main"
 
 sourceSets.main.java.srcDir 'src/main/generated'
 sourceSets.main.resources.srcDir 'src/main/java'

@@ -17,7 +17,7 @@ import java.sql.Types;
 /**
  * QSpaceObjectBaseData is a Querydsl query type for SpaceObjectBaseData
  */
-@Generated("name.martingeisse.trading_game.postgres.codegen.MyMetaDataSerializer")
+@Generated("MyMetaDataSerializer")
 @SuppressWarnings("all")
 public class QSpaceObjectBaseData extends com.querydsl.sql.RelationalPathBase<SpaceObjectBaseData> {
 

@@ -14,7 +14,7 @@ import name.martingeisse.trading_game.game.space.GeometryUtil;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.game.space.SpaceStation;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
-import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
+import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import name.martingeisse.wicket.helpers.InlineProgressBar;
 import name.martingeisse.wicket.helpers.ProgressBarClientProgressBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;

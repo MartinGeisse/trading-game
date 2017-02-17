@@ -15,7 +15,7 @@ import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.game.skill.Skill;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
-import name.martingeisse.trading_game.gui.wicket.page.AbstractPage;
+import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import name.martingeisse.wicket.helpers.InlineProgressBar;
 import name.martingeisse.wicket.helpers.InvisibleWebComponent;
 import name.martingeisse.wicket.helpers.ProgressBarClientProgressBehavior;
