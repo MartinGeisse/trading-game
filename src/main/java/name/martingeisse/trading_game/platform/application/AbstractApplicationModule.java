@@ -8,6 +8,8 @@ package name.martingeisse.trading_game.platform.application;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.multibindings.Multibinder;
+import name.martingeisse.trading_game.game.definition.GameDefinition;
+import name.martingeisse.trading_game.game.item.ItemTypeSerializer;
 
 /**
  *
@@ -16,6 +18,7 @@ public abstract class AbstractApplicationModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		bind(ItemTypeSerializer.class).to(GameDefinition.class);
 	}
 
 	/**

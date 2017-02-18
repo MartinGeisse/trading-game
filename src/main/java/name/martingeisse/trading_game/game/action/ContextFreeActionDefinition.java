@@ -3,7 +3,7 @@ package name.martingeisse.trading_game.game.action;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.actions.CraftingAction;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
-import name.martingeisse.trading_game.game.item.FixedInventory;
+import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 
 import java.util.function.Function;
 
@@ -22,8 +22,8 @@ public final class ContextFreeActionDefinition {
 
 	private final String name;
 	private final Function<Player, Action> factory;
-	private final FixedInventory billOfMaterials;
-	private final FixedInventory yield;
+	private final ImmutableItemStacks billOfMaterials;
+	private final ImmutableItemStacks yield;
 
 	public ContextFreeActionDefinition(String name, Function<Player, Action> factory) {
 		this.name = name;
@@ -32,7 +32,7 @@ public final class ContextFreeActionDefinition {
 		this.yield = null;
 	}
 
-	public ContextFreeActionDefinition(String name, Function<Player, Action> factory, FixedInventory billOfMaterials, FixedInventory yield) {
+	public ContextFreeActionDefinition(String name, Function<Player, Action> factory, ImmutableItemStacks billOfMaterials, ImmutableItemStacks yield) {
 		this.name = name;
 		this.factory = factory;
 		this.billOfMaterials = billOfMaterials;
@@ -76,7 +76,7 @@ public final class ContextFreeActionDefinition {
 	 *
 	 * @return the billOfMaterials
 	 */
-	public FixedInventory getBillOfMaterials() {
+	public ImmutableItemStacks getBillOfMaterials() {
 		return billOfMaterials;
 	}
 
@@ -85,7 +85,7 @@ public final class ContextFreeActionDefinition {
 	 *
 	 * @return the yield
 	 */
-	public FixedInventory getYield() {
+	public ImmutableItemStacks getYield() {
 		return yield;
 	}
 

@@ -1,9 +1,13 @@
 package name.martingeisse.trading_game.game.space;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.actions.MoveToPositionAction;
+import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
+import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.postgres_entities.QSpaceObjectBaseDataRow;
 
 /**
  *
@@ -12,10 +16,21 @@ public abstract class SpaceObject implements PositionProvider {
 
 	public static final String DEFAULT_NAME = "unnamed";
 
-	private long id = -1;
+	private PostgresService postgresService;
+	private long id;
 	private String name = DEFAULT_NAME;
 	private long x;
 	private long y;
+
+	/**
+	 * Setter method.
+	 *
+	 * @param postgresService the postgresService
+	 */
+	@Inject
+	public void internalSetPostgresService(PostgresService postgresService) {
+		this.postgresService = postgresService;
+	}
 
 	/**
 	 * Getter method.
@@ -31,15 +46,8 @@ public abstract class SpaceObject implements PositionProvider {
 	 *
 	 * @param id the id
 	 */
-	void setId(long id) {
-		if (id < 0) {
-			throw new IllegalArgumentException("id < 0");
-		}
-		if (this.id < 0) {
-			this.id = id;
-		} else {
-			throw new IllegalStateException("id has already been set");
-		}
+	void internalSetId(long id) {
+		this.id = id;
 	}
 
 	/**
@@ -56,7 +64,7 @@ public abstract class SpaceObject implements PositionProvider {
 	 *
 	 * @param name the name
 	 */
-	public void setName(String name) {
+	void internalSetName(String name) {
 		this.name = (name == null ? DEFAULT_NAME : name);
 	}
 
@@ -75,7 +83,7 @@ public abstract class SpaceObject implements PositionProvider {
 	 *
 	 * @param x the x
 	 */
-	public void setX(long x) {
+	void internalSetX(long x) {
 		this.x = x;
 	}
 
@@ -94,15 +102,43 @@ public abstract class SpaceObject implements PositionProvider {
 	 *
 	 * @param y the y
 	 */
-	public void setY(long y) {
+	void internalSetY(long y) {
 		this.y = y;
+	}
+
+	/**
+	 * Changes the name of this object.
+	 *
+	 * @param name the new name
+	 */
+	public void setName(String name) {
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
+			connection.update(qbd).set(qbd.name, name).execute();
+		}
+		internalSetName(name);
+	}
+
+	/**
+	 * Changes the position of this object.
+	 *
+	 * @param x the new x coordinate
+	 * @param y the new y coordinate
+	 */
+	public void setPosition(long x, long y) {
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
+			connection.update(qbd).set(qbd.x, x).set(qbd.y, y).execute();
+		}
+		internalSetX(x);
+		internalSetY(y);
 	}
 
 	/**
 	 * Called once every second to advance game logic. Whether this method is supported can be checked by
 	 * {@link SpaceObjectType#getTypesThatSupportTick()}.
 	 */
-	public void tick() {
+	public void tick(PostgresConnection connection) {
 		throw new UnsupportedOperationException("tick() not supported");
 	}
 

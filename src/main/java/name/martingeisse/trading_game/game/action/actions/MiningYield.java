@@ -1,17 +1,17 @@
 package name.martingeisse.trading_game.game.action.actions;
 
-import name.martingeisse.trading_game.game.item.FixedInventory;
+import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 
 /**
  *
  */
 public final class MiningYield {
 
-	private final FixedInventory items;
+	private final ImmutableItemStacks items;
 	private final boolean depleted;
 	private final boolean cargoExhausted;
 
-	public MiningYield(FixedInventory items, boolean depleted, boolean cargoExhausted) {
+	public MiningYield(ImmutableItemStacks items, boolean depleted, boolean cargoExhausted) {
 		this.items = items;
 		this.depleted = depleted;
 		this.cargoExhausted = cargoExhausted;
@@ -22,7 +22,7 @@ public final class MiningYield {
 	 *
 	 * @return the items
 	 */
-	public FixedInventory getItems() {
+	public ImmutableItemStacks getItems() {
 		return items;
 	}
 

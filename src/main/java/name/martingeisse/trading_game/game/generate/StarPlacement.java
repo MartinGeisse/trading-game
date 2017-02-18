@@ -69,4 +69,12 @@ public final class StarPlacement implements Iterable<Pair<Long, Long>> {
 		return stars.iterator();
 	}
 
+	public int getNumberOfStars() {
+		return stars.size();
+	}
+
+	public Pair<Long, Long> getStarPosition(int index) {
+		return stars.get(index);
+	}
+
 }

@@ -8,7 +8,7 @@ package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.item.ItemStack;
+import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.skill.Skill;
 import name.martingeisse.trading_game.game.space.GeometryUtil;
 import name.martingeisse.trading_game.game.space.SpaceObject;
@@ -135,9 +135,9 @@ public class MainPage extends AbstractPage {
 
 		WebMarkupContainer inventoryContainer = new WebMarkupContainer("inventoryContainer");
 		add(inventoryContainer);
-		inventoryContainer.add(new ListView<ItemStack>("itemStacks", getPlayer().getInventory().getItemStacks()) {
+		inventoryContainer.add(new ListView<ImmutableItemStack>("itemStacks", getPlayer().getInventory().getItems().getStacks()) {
 			@Override
-			protected void populateItem(ListItem<ItemStack> item) {
+			protected void populateItem(ListItem<ImmutableItemStack> item) {
 				item.add(new Label("size", "" + item.getModelObject().getSize()));
 				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
 				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
@@ -246,9 +246,9 @@ public class MainPage extends AbstractPage {
 			}
 
 		});
-		selectedSpaceObjectContainer.add(new ListView<ItemStack>("itemStacks", new PropertyModel<>(this, "selectedSpaceObjectItems")) {
+		selectedSpaceObjectContainer.add(new ListView<ImmutableItemStack>("itemStacks", new PropertyModel<>(this, "selectedSpaceObjectItems")) {
 			@Override
-			protected void populateItem(ListItem<ItemStack> item) {
+			protected void populateItem(ListItem<ImmutableItemStack> item) {
 				item.add(new Label("size", "" + item.getModelObject().getSize()));
 				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
 				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
@@ -288,9 +288,9 @@ public class MainPage extends AbstractPage {
 		}
 	}
 
-	public List<ItemStack> getSelectedSpaceObjectItems() {
+	public List<ImmutableItemStack> getSelectedSpaceObjectItems() {
 		if (selectedSpaceObjectModel.getObject() instanceof SpaceStation) {
-			return ((SpaceStation)selectedSpaceObjectModel.getObject()).getInventory().getItemStacks();
+			return ((SpaceStation)selectedSpaceObjectModel.getObject()).getInventory().getItems().getStacks();
 		} else {
 			return null;
 		}

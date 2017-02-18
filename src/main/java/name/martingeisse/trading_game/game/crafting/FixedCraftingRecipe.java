@@ -1,6 +1,6 @@
 package name.martingeisse.trading_game.game.crafting;
 
-import name.martingeisse.trading_game.game.item.FixedInventory;
+import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.ItemType;
 
 /**
@@ -9,8 +9,8 @@ import name.martingeisse.trading_game.game.item.ItemType;
 public final class FixedCraftingRecipe implements CraftingRecipe {
 
 	private final int requiredProgressPoints;
-	private final FixedInventory billOfMaterials;
-	private final FixedInventory yield;
+	private final ImmutableItemStacks billOfMaterials;
+	private final ImmutableItemStacks yield;
 
 	/**
 	 * Constructor.
@@ -19,7 +19,7 @@ public final class FixedCraftingRecipe implements CraftingRecipe {
 	 * @param billOfMaterials
 	 * @param yield
 	 */
-	public FixedCraftingRecipe(int requiredProgressPoints, FixedInventory billOfMaterials, FixedInventory yield) {
+	public FixedCraftingRecipe(int requiredProgressPoints, ImmutableItemStacks billOfMaterials, ImmutableItemStacks yield) {
 		this.requiredProgressPoints = requiredProgressPoints;
 		this.billOfMaterials = billOfMaterials;
 		this.yield = yield;
@@ -32,10 +32,10 @@ public final class FixedCraftingRecipe implements CraftingRecipe {
 	 * @param billOfMaterials
 	 * @param yield
 	 */
-	public FixedCraftingRecipe(int requiredProgressPoints, FixedInventory billOfMaterials, ItemType yield) {
+	public FixedCraftingRecipe(int requiredProgressPoints, ImmutableItemStacks billOfMaterials, ItemType yield) {
 		this.requiredProgressPoints = requiredProgressPoints;
 		this.billOfMaterials = billOfMaterials;
-		this.yield = FixedInventory.from(yield, 1);
+		this.yield = ImmutableItemStacks.from(yield, 1);
 	}
 
 	/**
@@ -52,7 +52,7 @@ public final class FixedCraftingRecipe implements CraftingRecipe {
 	 *
 	 * @return the billOfMaterials
 	 */
-	public FixedInventory getBillOfMaterials() {
+	public ImmutableItemStacks getBillOfMaterials() {
 		return billOfMaterials;
 	}
 
@@ -62,7 +62,7 @@ public final class FixedCraftingRecipe implements CraftingRecipe {
 	 * @return the yield
 	 */
 	@Override
-	public FixedInventory getYield() {
+	public ImmutableItemStacks getYield() {
 		return yield;
 	}
 

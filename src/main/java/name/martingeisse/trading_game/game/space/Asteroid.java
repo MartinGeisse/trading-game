@@ -6,7 +6,7 @@ import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.actions.MiningAction;
 import name.martingeisse.trading_game.game.action.actions.MiningYield;
 import name.martingeisse.trading_game.game.definition.MiningYieldInfo;
-import name.martingeisse.trading_game.game.item.FixedInventory;
+import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 
 /**
  *
@@ -33,7 +33,7 @@ public final class Asteroid extends StaticSpaceObject {
 				minedRockAmount = yieldCapacity;
 			}
 		}
-		FixedInventory yield = yieldInfo.determineYield(minedRockAmount);
+		ImmutableItemStacks yield = yieldInfo.determineYield(minedRockAmount);
 		return yield == null ? 0 : yield.getMass();
 	}
 
@@ -49,7 +49,7 @@ public final class Asteroid extends StaticSpaceObject {
 		if (depleted) {
 			minedRockAmount = yieldCapacity;
 		}
-		FixedInventory yield = yieldInfo.determineYield(minedRockAmount);
+		ImmutableItemStacks yield = yieldInfo.determineYield(minedRockAmount);
 		boolean cargoExhausted = availableCargoMass < yield.getMass();
 		if (cargoExhausted) {
 			long adjustedMinedRockAmount = minedRockAmount * availableCargoMass / yield.getMass();

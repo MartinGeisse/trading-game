@@ -1,13 +1,37 @@
 package name.martingeisse.trading_game.game.space;
 
 import name.martingeisse.trading_game.game.item.Inventory;
+import name.martingeisse.trading_game.game.item.InventoryProvider;
 
 /**
  *
  */
 public final class PlayerShip extends DynamicSpaceObject {
 
-	private final Inventory inventory = new Inventory();
+	private InventoryProvider inventoryProvider;
+	private long inventoryId;
+
+	public PlayerShip(InventoryProvider inventoryProvider) {
+		this.inventoryProvider = inventoryProvider;
+	}
+
+	/**
+	 * Setter method.
+	 *
+	 * @param inventoryId the inventoryId
+	 */
+	void internalSetInventoryId(long inventoryId) {
+		this.inventoryId = inventoryId;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the inventoryId
+	 */
+	public long getInventoryId() {
+		return inventoryId;
+	}
 
 	/**
 	 * Getter method.
@@ -15,7 +39,7 @@ public final class PlayerShip extends DynamicSpaceObject {
 	 * @return the inventory
 	 */
 	public Inventory getInventory() {
-		return inventory;
+		return inventoryProvider.getInventory(inventoryId);
 	}
 
 }

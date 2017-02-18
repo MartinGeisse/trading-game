@@ -41,12 +41,10 @@ public final class GeometryUtil {
 		double dy = destinationY - spaceObject.getY();
 		double norm = Math.sqrt(dx * dx + dy * dy);
 		if (norm <= speed) {
-			spaceObject.setX(destinationX);
-			spaceObject.setY(destinationY);
+			spaceObject.setPosition(destinationX, destinationY);
 		} else {
 			double factor = speed / norm;
-			spaceObject.setX(spaceObject.getX() + Math.round(dx * factor));
-			spaceObject.setY(spaceObject.getY() + Math.round(dy * factor));
+			spaceObject.setPosition(spaceObject.getX() + Math.round(dx * factor), spaceObject.getY() + Math.round(dy * factor));
 		}
 	}
 

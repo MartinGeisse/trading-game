@@ -2,6 +2,10 @@ package name.martingeisse.trading_game.game.space;
 
 import com.google.common.collect.ImmutableSet;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
+import name.martingeisse.trading_game.common.util.WtfException;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Distinguishes different types of space objects. This enum corresponds to the subclasses of {@link SpaceObject}.
@@ -13,6 +17,24 @@ public enum SpaceObjectType {
 	PLAYER_SHIP(PlayerShip.class),
 	SPACE_STATION(SpaceStation.class),
 	STAR(Star.class);
+
+	private static final ImmutableSet<SpaceObjectType> staticTypes;
+	private static final ImmutableSet<SpaceObjectType> dynamicTypes;
+	static {
+		Set<SpaceObjectType> staticTypesAccumulator = new HashSet<>();
+		Set<SpaceObjectType> dynamicTypesAccumulator = new HashSet<>();
+		for (SpaceObjectType type : values()) {
+			if (StaticSpaceObject.class.isAssignableFrom(type.getSpaceObjectClass())) {
+				staticTypesAccumulator.add(type);
+			} else if (DynamicSpaceObject.class.isAssignableFrom(type.getSpaceObjectClass())) {
+				dynamicTypesAccumulator.add(type);
+			} else {
+				throw new WtfException("found space object type that is neither static nor dynamic: " + type);
+			}
+		}
+		staticTypes = ImmutableSet.copyOf(staticTypesAccumulator);
+		dynamicTypes = ImmutableSet.copyOf(dynamicTypesAccumulator);
+	}
 
 	private final Class<? extends SpaceObject> spaceObjectClass;
 
@@ -36,19 +58,6 @@ public enum SpaceObjectType {
 	 */
 	public boolean isSupportsTick() {
 		return false;
-	}
-
-	/**
-	 * Creates a new space object of this type.
-	 *
-	 * @return the newly created object
-	 */
-	public SpaceObject newSpaceObject() {
-		try {
-			return spaceObjectClass.newInstance();
-		} catch (Exception e) {
-			throw new UnexpectedExceptionException(e);
-		}
 	}
 
 	/**
@@ -81,6 +90,20 @@ public enum SpaceObjectType {
 	 */
 	public static ImmutableSet<SpaceObjectType> getTypesThatSupportTick() {
 		return ImmutableSet.of();
+	}
+
+	/**
+	 * @return all static types
+	 */
+	public static ImmutableSet<SpaceObjectType> getStaticTypes() {
+		return staticTypes;
+	}
+
+	/**
+	 * @return all dynamic types
+	 */
+	public static ImmutableSet<SpaceObjectType> getDynamicTypes() {
+		return dynamicTypes;
 	}
 
 }

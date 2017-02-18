@@ -9,9 +9,8 @@ package name.martingeisse.trading_game.gui;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
-import name.martingeisse.trading_game.game.item.FixedInventory;
-import name.martingeisse.trading_game.game.item.FixedItemStack;
-import name.martingeisse.trading_game.game.item.ItemStack;
+import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
+import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.skill.Skill;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
@@ -77,26 +76,26 @@ public class MainPageOld extends AbstractPage {
 				link.add(new Label("name", item.getModelObject().getName()));
 				item.add(link);
 
-				FixedInventory billOfMaterials = item.getModelObject().getBillOfMaterials();
-				if (billOfMaterials == null || billOfMaterials.getItemStacks().isEmpty()) {
+				ImmutableItemStacks billOfMaterials = item.getModelObject().getBillOfMaterials();
+				if (billOfMaterials == null || billOfMaterials.getStacks().isEmpty()) {
 					item.add(new InvisibleWebComponent("billOfMaterials"));
 				} else {
-					item.add(new ListView<FixedItemStack>("billOfMaterials", billOfMaterials.getItemStacks()) {
+					item.add(new ListView<ImmutableItemStack>("billOfMaterials", billOfMaterials.getStacks()) {
 						@Override
-						protected void populateItem(ListItem<FixedItemStack> item) {
+						protected void populateItem(ListItem<ImmutableItemStack> item) {
 							item.add(new Label("amount", item.getModelObject().getSize()));
 							item.add(new Label("name", item.getModelObject().getItemType().getName()));
 						}
 					});
 				}
 
-				FixedInventory yield = item.getModelObject().getYield();
-				if (yield == null || yield.getItemStacks().isEmpty()) {
+				ImmutableItemStacks yield = item.getModelObject().getYield();
+				if (yield == null || yield.getStacks().isEmpty()) {
 					item.add(new InvisibleWebComponent("yield"));
 				} else {
-					item.add(new ListView<FixedItemStack>("yield", yield.getItemStacks()) {
+					item.add(new ListView<ImmutableItemStack>("yield", yield.getStacks()) {
 						@Override
-						protected void populateItem(ListItem<FixedItemStack> item) {
+						protected void populateItem(ListItem<ImmutableItemStack> item) {
 							item.add(new Label("amount", item.getModelObject().getSize()));
 							item.add(new Label("name", item.getModelObject().getItemType().getName()));
 						}
@@ -175,9 +174,9 @@ public class MainPageOld extends AbstractPage {
 
 		WebMarkupContainer inventoryContainer = new WebMarkupContainer("inventoryContainer");
 		add(inventoryContainer);
-		inventoryContainer.add(new ListView<ItemStack>("itemStacks", getPlayer().getInventory().getItemStacks()) {
+		inventoryContainer.add(new ListView<ImmutableItemStack>("itemStacks", getPlayer().getInventory().getItems().getStacks()) {
 			@Override
-			protected void populateItem(ListItem<ItemStack> item) {
+			protected void populateItem(ListItem<ImmutableItemStack> item) {
 				item.add(new Label("size", "" + item.getModelObject().getSize()));
 				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
 				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));

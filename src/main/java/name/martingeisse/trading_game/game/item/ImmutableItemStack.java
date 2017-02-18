@@ -1,20 +1,16 @@
 package name.martingeisse.trading_game.game.item;
 
 /**
- * Similar to an {@link ItemStack}, but with a fixed size (and thus totally immutable).
+ * An immutable stack of items that has an item type and stack size.
  */
-public final class FixedItemStack {
+public final class ImmutableItemStack {
 
 	private final ItemType itemType;
 	private final int size;
 
-	public FixedItemStack(ItemType itemType, int size) {
+	public ImmutableItemStack(ItemType itemType, int size) {
 		this.itemType = itemType;
 		this.size = size;
-	}
-
-	public static FixedItemStack fromItemStack(ItemStack itemStack) {
-		return new FixedItemStack(itemStack.getItemType(), itemStack.getSize());
 	}
 
 	/**
@@ -44,8 +40,8 @@ public final class FixedItemStack {
 		return size * itemType.getMass();
 	}
 
-	public FixedItemStack scale(double factor) {
-		return new FixedItemStack(itemType, (int) (size * factor));
+	public ImmutableItemStack scale(double factor) {
+		return new ImmutableItemStack(itemType, (int) (size * factor));
 	}
 
 }

@@ -1,6 +1,6 @@
 package name.martingeisse.trading_game.game.crafting;
 
-import name.martingeisse.trading_game.game.item.FixedInventory;
+import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 
 /**
  *
@@ -19,13 +19,13 @@ public interface CraftingRecipe {
 	 *
 	 * @return the billOfMaterials
 	 */
-	public FixedInventory getBillOfMaterials();
+	public ImmutableItemStacks getBillOfMaterials();
 
 	/**
 	 * Getter method.
 	 *
 	 * @return the yield
 	 */
-	public FixedInventory getYield();
+	public ImmutableItemStacks getYield();
 
 }

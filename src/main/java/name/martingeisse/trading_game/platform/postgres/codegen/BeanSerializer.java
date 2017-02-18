@@ -237,7 +237,6 @@ public class BeanSerializer extends SerializerHelper implements Serializer {
 		imports.add("java.io.Serializable");
 
 		// query-class
-		addIf(imports, queryTypeFactory.create(entityType).getFullName(), hasId);
 		addIf(imports, PostgresConnection.class.getName(), hasId);
 		addIf(imports, SQLInsertClause.class.getName(), hasId);
 

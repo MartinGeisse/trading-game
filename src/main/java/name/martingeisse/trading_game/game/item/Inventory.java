@@ -1,23 +1,65 @@
 package name.martingeisse.trading_game.game.item;
 
+import com.mysema.commons.lang.CloseableIterator;
+import com.querydsl.sql.dml.SQLInsertClause;
+import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
+import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.postgres_entities.InventorySlotRow;
+import name.martingeisse.trading_game.postgres_entities.QInventorySlotRow;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Holds a collection of item stacks. This class is used for players' inventory, containers, NPC, etc. Different subclasses
- * may be used for specific cases.
+ * Holds a mutable, persistent collection of item stacks.
  */
-public class Inventory {
+public final class Inventory {
 
-	private final List<ItemStack> itemStacks = new ArrayList<>();
+	private final PostgresService postgresService;
+	private final ItemTypeSerializer itemTypeSerializer;
+	private final long id;
+
+	// use InventoryProvider to get an instance of this class
+	Inventory(PostgresService postgresService, ItemTypeSerializer itemTypeSerializer, long id) {
+		this.postgresService = postgresService;
+		this.itemTypeSerializer = itemTypeSerializer;
+		this.id = id;
+	}
 
 	/**
 	 * Getter method.
 	 *
-	 * @return the itemStacks
+	 * @return the id
 	 */
-	public List<ItemStack> getItemStacks() {
-		return itemStacks;
+	public long getId() {
+		return id;
+	}
+
+	/**
+	 * @return all items
+	 */
+	public ImmutableItemStacks getItems() {
+		List<ImmutableItemStack> stacks = new ArrayList<>();
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
+			try (CloseableIterator<InventorySlotRow> iterator = connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id)).iterate()) {
+				while (iterator.hasNext()) {
+					InventorySlotRow row = iterator.next();
+//					TODO: stacks.add(new ImmutableItemStack(itemTypeSerializer.deserializeItemType(row.getItemType()), row.getQuantity()));
+				}
+			}
+		}
+		return ImmutableItemStacks.fromFixedItemStacks(stacks);
+	}
+
+	/**
+	 * @return the number of item stacks
+	 */
+	public int getNumberOfStacks() {
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
+			return (int)connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id)).fetchCount();
+		}
 	}
 
 	/**
@@ -27,29 +69,22 @@ public class Inventory {
 	 */
 	public int getMass() {
 		int result = 0;
-		for (ItemStack itemStack : itemStacks) {
+		for (ImmutableItemStack itemStack : getItems()) {
 			result += itemStack.getMass();
 		}
 		return result;
 	}
 
-	public ItemStack find(ItemType itemType) {
-		for (ItemStack itemStack : itemStacks) {
-			if (itemStack.getItemType() == itemType) {
-				return itemStack;
-			}
-		}
-		return null;
-	}
-
+	/**
+	 * Counts the items of the specified type.
+	 */
 	public int count(ItemType itemType) {
-		int result = 0;
-		for (ItemStack itemStack : itemStacks) {
-			if (itemStack.getItemType() == itemType) {
-				result += itemStack.getSize();
-			}
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
+			String serializedItemType = itemTypeSerializer.serializeItemType(itemType);
+			// TODO return (int)connection.query().select(qs.quantity.sum()).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).fetchCount();
+			return 0;
 		}
-		return result;
 	}
 
 	public Inventory add(ItemType itemType) {
@@ -57,16 +92,18 @@ public class Inventory {
 		return this;
 	}
 
-	public Inventory add(FixedInventory items) {
-		for (FixedItemStack stack : items.getItemStacks()) {
+	public Inventory add(ImmutableItemStacks items) {
+		for (ImmutableItemStack stack : items.getStacks()) {
 			add(stack);
 		}
 		return this;
 	}
 
-	public Inventory add(FixedItemStack stack) {
+	public Inventory add(ImmutableItemStack stack) {
 		return add(stack.getItemType(), stack.getSize());
 	}
+
+
 
 	public Inventory add(ItemType itemType, int amount) {
 		if (amount < 0) {
@@ -75,12 +112,15 @@ public class Inventory {
 		if (amount == 0) {
 			return this;
 		}
-		ItemStack itemStack = find(itemType);
-		if (itemStack == null) {
-			itemStack = new ItemStack(itemType, amount);
-			itemStacks.add(itemStack);
-		} else {
-			itemStack.add(amount);
+		Long slotId = findSlotId(itemType);
+		QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			if (slotId == null) {
+				String serializedItemType = itemTypeSerializer.serializeItemType(itemType);
+				connection.insert(qs).set(qs.inventoryId, id).set(qs.quantity, amount).execute(); // TODO itemType
+			} else {
+				connection.update(qs).set(qs.quantity, qs.quantity.add(amount)).where(qs.id.eq(slotId)).execute();
+			}
 		}
 		return this;
 	}
@@ -98,36 +138,45 @@ public class Inventory {
 		}
 
 		// there are enough items, so remove stacks (and possibly one partial stack) until the amount is reached
-		while (amount > 0) {
-			ItemStack itemStack = find(itemType);
-			if (itemStack.getSize() > amount) {
-				itemStack.remove(amount);
-				return this;
-			} else if (itemStack.getSize() == amount) {
-				itemStacks.remove(itemStack);
-				return this;
-			} else {
-				itemStacks.remove(itemStack);
-				amount -= itemStack.getSize();
-			}
-		}
+		// TODO
+//		while (amount > 0) {
+//			ItemStack itemStack = find(itemType);
+//			if (itemStack.getSize() > amount) {
+//				itemStack.remove(amount);
+//				return this;
+//			} else if (itemStack.getSize() == amount) {
+//				itemStacks.remove(itemStack);
+//				return this;
+//			} else {
+//				itemStacks.remove(itemStack);
+//				amount -= itemStack.getSize();
+//			}
+//		}
 
 		return this;
 	}
 
+	private Long findSlotId(ItemType itemType) {
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
+			// TODO return connection.query().select(qs.id).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).fetchFirst();
+			return null;
+		}
+	}
+
 	/**
 	 * Removes items of multiple types, assuming that the argument is a valid bill of materials according to
-	 * {@link FixedInventory#isValidBillOfMaterials()}. Does not remove anything if any items are missing.
+	 * {@link ImmutableItemStacks#isValidBillOfMaterials()}. Does not remove anything if any items are missing.
 	 *
 	 * @throws NotEnoughItemsException if the player doesn't have the required items
 	 */
-	public void removeBillOfMaterials(FixedInventory billOfMaterials) throws NotEnoughItemsException {
-		for (FixedItemStack stack : billOfMaterials.getItemStacks()) {
+	public void removeBillOfMaterials(ImmutableItemStacks billOfMaterials) throws NotEnoughItemsException {
+		for (ImmutableItemStack stack : billOfMaterials.getStacks()) {
 			if (count(stack.getItemType()) < stack.getSize()) {
 				throw new NotEnoughItemsException();
 			}
 		}
-		for (FixedItemStack stack : billOfMaterials.getItemStacks()) {
+		for (ImmutableItemStack stack : billOfMaterials.getStacks()) {
 			try {
 				remove(stack.getItemType(), stack.getSize());
 			} catch (NotEnoughItemsException e) {

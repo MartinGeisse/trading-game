@@ -5,17 +5,23 @@ import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.crafting.FixedCraftingRecipe;
-import name.martingeisse.trading_game.game.item.FixedInventory;
-import name.martingeisse.trading_game.game.item.FixedItemStack;
+import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
+import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.ItemType;
+import name.martingeisse.trading_game.game.item.ItemTypeSerializer;
 import name.martingeisse.trading_game.game.skill.Skill;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This object defines how the game works on a game-logic level. It is injected into all parts that need such static
  * definitions.
  */
 @Singleton
-public final class GameDefinition {
+public final class GameDefinition implements ItemTypeSerializer {
+
+	private final ImmutableList<ItemType> itemTypes;
 
 	private final ImmutableList<ContextFreeActionDefinition> contextFreeActionDefinitions;
 	private final ImmutableList<Skill> skills;
@@ -39,18 +45,30 @@ public final class GameDefinition {
 
 		ItemType logItemType = new ItemType("log", "no_icon.png", 10);
 
-		CraftingRecipe redPixelCraftingRecipe = new FixedCraftingRecipe(100, FixedInventory.EMPTY, redPixelItemType);
-		CraftingRecipe redPixelAssemblyCraftingRecipe = new FixedCraftingRecipe(300, FixedInventory.from(redPixelItemType, 5), redPixelAssemblyItemType);
-		CraftingRecipe redPixelLineCraftingRecipe = new FixedCraftingRecipe(300, FixedInventory.from(redPixelItemType, 10), redPixelLineItemType);
-		CraftingRecipe redPixelGlueCraftingRecipe = new FixedCraftingRecipe(50, FixedInventory.from(redPixelItemType, 5), redPixelGlueItemType);
+		List<ItemType> itemTypes = new ArrayList<>();
+		itemTypes.add(redPixelItemType);
+		itemTypes.add(redPixelAssemblyItemType);
+		itemTypes.add(redPixelLineItemType);
+		itemTypes.add(redPixelGlueItemType);
+		itemTypes.add(pixelAxeItemType);
+		itemTypes.add(pixelHoeItemType);
+		itemTypes.add(pixelHammerItemType);
+		itemTypes.add(pixelPickaxeItemType);
+		itemTypes.add(logItemType);
+		this.itemTypes = ImmutableList.copyOf(itemTypes);
 
-		CraftingRecipe fellTreeRecipe = new FixedCraftingRecipe(1000, FixedInventory.from(pixelAxeItemType, 1), FixedInventory.from(pixelAxeItemType, 1, logItemType, 3));
+		CraftingRecipe redPixelCraftingRecipe = new FixedCraftingRecipe(100, ImmutableItemStacks.EMPTY, redPixelItemType);
+		CraftingRecipe redPixelAssemblyCraftingRecipe = new FixedCraftingRecipe(300, ImmutableItemStacks.from(redPixelItemType, 5), redPixelAssemblyItemType);
+		CraftingRecipe redPixelLineCraftingRecipe = new FixedCraftingRecipe(300, ImmutableItemStacks.from(redPixelItemType, 10), redPixelLineItemType);
+		CraftingRecipe redPixelGlueCraftingRecipe = new FixedCraftingRecipe(50, ImmutableItemStacks.from(redPixelItemType, 5), redPixelGlueItemType);
 
-		FixedInventory pixelToolBillOfMaterials = new FixedInventory(ImmutableList.of(
-			new FixedItemStack(redPixelLineItemType, 3),
-			new FixedItemStack(redPixelAssemblyItemType, 5),
-			new FixedItemStack(redPixelItemType, 10),
-			new FixedItemStack(redPixelGlueItemType, 1)
+		CraftingRecipe fellTreeRecipe = new FixedCraftingRecipe(1000, ImmutableItemStacks.from(pixelAxeItemType, 1), ImmutableItemStacks.from(pixelAxeItemType, 1, logItemType, 3));
+
+		ImmutableItemStacks pixelToolBillOfMaterials = new ImmutableItemStacks(ImmutableList.of(
+			new ImmutableItemStack(redPixelLineItemType, 3),
+			new ImmutableItemStack(redPixelAssemblyItemType, 5),
+			new ImmutableItemStack(redPixelItemType, 10),
+			new ImmutableItemStack(redPixelGlueItemType, 1)
 		));
 		CraftingRecipe pixelAxeCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelAxeItemType);
 		CraftingRecipe pixelHoeCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelHoeItemType);
@@ -123,6 +141,21 @@ public final class GameDefinition {
 	 */
 	public ItemType getRedPixelAssemblyItemType() {
 		return redPixelAssemblyItemType;
+	}
+
+	@Override
+	public String serializeItemType(ItemType itemType) {
+		return itemType.getName();
+	}
+
+	@Override
+	public ItemType deserializeItemType(String serializedItemType) {
+		for (ItemType itemType : itemTypes) {
+			if (itemType.getName().equals(serializedItemType)) {
+				return itemType;
+			}
+		}
+		throw new RuntimeException("cannot deserialize item type: " + serializedItemType);
 	}
 
 }

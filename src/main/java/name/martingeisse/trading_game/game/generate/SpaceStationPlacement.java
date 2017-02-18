@@ -16,16 +16,16 @@ public final class SpaceStationPlacement implements Iterable<Pair<Long, Long>> {
 
 	private final List<Pair<Long, Long>> spaceStations = new ArrayList<>();
 
-	private SpaceStationPlacement(ImmutableList<? extends SpaceObject> anchors, int numberOfSpaceStations, long minimumDistance, long maximumDistance) {
+	private SpaceStationPlacement(StarPlacement starPlacement, int numberOfSpaceStations, long minimumDistance, long maximumDistance) {
 		double deltaDistance = maximumDistance - minimumDistance;
 		Random random = new Random();
 		for (int i=0; i<numberOfSpaceStations; i++) {
-			SpaceObject anchor = anchors.get(random.nextInt(anchors.size()));
+			Pair<Long, Long> star = starPlacement.getStarPosition(random.nextInt(starPlacement.getNumberOfStars()));
 			double angle = 2 * Math.PI * random.nextDouble();
 			double distance = minimumDistance + deltaDistance * random.nextDouble();
 			long dx = (long)(distance * Math.cos(angle));
 			long dy = (long)(distance * Math.sin(angle));
-			Pair<Long, Long> spaceStation = Pair.of(anchor.getX() + dx, anchor.getY() + dy);
+			Pair<Long, Long> spaceStation = Pair.of(star.getLeft() + dx, star.getRight() + dy);
 			spaceStations.add(spaceStation);
 		}
 	}
@@ -38,8 +38,8 @@ public final class SpaceStationPlacement implements Iterable<Pair<Long, Long>> {
 	/**
 	 *
 	 */
-	public static Iterable<Pair<Long, Long>> compute(ImmutableList<? extends SpaceObject> anchors, int numberOfSpaceStations, long minimumDistance, long maximumDistance) {
-		return new SpaceStationPlacement(anchors, numberOfSpaceStations, minimumDistance, maximumDistance);
+	public static Iterable<Pair<Long, Long>> compute(StarPlacement starPlacement, int numberOfSpaceStations, long minimumDistance, long maximumDistance) {
+		return new SpaceStationPlacement(starPlacement, numberOfSpaceStations, minimumDistance, maximumDistance);
 	}
 
 }

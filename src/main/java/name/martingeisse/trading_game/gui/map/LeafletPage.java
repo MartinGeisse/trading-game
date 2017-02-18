@@ -4,8 +4,7 @@ import name.martingeisse.trading_game.game.GameListener;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
-import name.martingeisse.trading_game.game.item.FixedItemStack;
-import name.martingeisse.trading_game.game.item.ItemStack;
+import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.space.*;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.leaflet.D3;
@@ -107,9 +106,9 @@ public class LeafletPage extends AbstractPage {
 			}
 		};
 		sidebar.add(remoteItemsContainer);
-		remoteItemsContainer.add(new ListView<ItemStack>("itemStacks", new PropertyModel<>(this, "remoteItems")) {
+		remoteItemsContainer.add(new ListView<ImmutableItemStack>("itemStacks", new PropertyModel<>(this, "remoteItems")) {
 			@Override
-			protected void populateItem(ListItem<ItemStack> item) {
+			protected void populateItem(ListItem<ImmutableItemStack> item) {
 				item.add(new Label("size", "" + item.getModelObject().getSize()));
 				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
 				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
@@ -118,7 +117,7 @@ public class LeafletPage extends AbstractPage {
 					public void onClick(AjaxRequestTarget target) {
 						Player player = getPlayer();
 						SpaceStation spaceStation = (SpaceStation)getSelectedSpaceObject();
-						FixedItemStack itemsToLoad = new FixedItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
+						ImmutableItemStack itemsToLoad = new ImmutableItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
 						player.cancelCurrentAction();
 						player.cancelAllPendingActions();
 						player.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.LOAD, itemsToLoad, item.getIndex()));
@@ -134,9 +133,9 @@ public class LeafletPage extends AbstractPage {
 			}
 		};
 		sidebar.add(localItemsContainer);
-		localItemsContainer.add(new ListView<ItemStack>("itemStacks", new PropertyModel<>(this, "localItems")) {
+		localItemsContainer.add(new ListView<ImmutableItemStack>("itemStacks", new PropertyModel<>(this, "localItems")) {
 			@Override
-			protected void populateItem(ListItem<ItemStack> item) {
+			protected void populateItem(ListItem<ImmutableItemStack> item) {
 				item.add(new Label("size", "" + item.getModelObject().getSize()));
 				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
 				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
@@ -145,7 +144,7 @@ public class LeafletPage extends AbstractPage {
 					public void onClick(AjaxRequestTarget target) {
 						Player player = getPlayer();
 						SpaceStation spaceStation = (SpaceStation)getSelectedSpaceObject();
-						FixedItemStack itemsToLoad = new FixedItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
+						ImmutableItemStack itemsToLoad = new ImmutableItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
 						player.cancelCurrentAction();
 						player.cancelAllPendingActions();
 						player.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, item.getIndex()));
@@ -366,20 +365,20 @@ public class LeafletPage extends AbstractPage {
 		}
 	}
 
-	public List<ItemStack> getRemoteItems() {
+	public List<ImmutableItemStack> getRemoteItems() {
 		SpaceObject selectedSpaceObject = getSelectedSpaceObject();
 		if (selectedSpaceObject instanceof SpaceStation) {
-			return ((SpaceStation)selectedSpaceObject).getInventory().getItemStacks();
+			return ((SpaceStation)selectedSpaceObject).getInventory().getItems().getStacks();
 		} else {
 			return null;
 		}
 	}
 
-	public List<ItemStack> getLocalItems() {
+	public List<ImmutableItemStack> getLocalItems() {
 		SpaceObject selectedSpaceObject = getSelectedSpaceObject();
 		Player player = getPlayer();
 		if (selectedSpaceObject instanceof SpaceStation || selectedSpaceObject == player.getShip()) {
-			return player.getInventory().getItemStacks();
+			return player.getInventory().getItems().getStacks();
 		} else {
 			return null;
 		}

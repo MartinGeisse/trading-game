@@ -1,17 +1,13 @@
 package name.martingeisse.trading_game.game;
 
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import name.martingeisse.trading_game.game.definition.GameConstants;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
-import name.martingeisse.trading_game.game.generate.SpaceStationPlacement;
-import name.martingeisse.trading_game.game.generate.StarNaming;
-import name.martingeisse.trading_game.game.generate.StarPlacement;
-import name.martingeisse.trading_game.game.item.FixedInventory;
-import name.martingeisse.trading_game.game.space.*;
+import name.martingeisse.trading_game.game.space.PlayerShip;
+import name.martingeisse.trading_game.game.space.Space;
+import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
+import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -24,47 +20,17 @@ public final class Game {
 	// debugging switch to speed up the game
 	private static final int TICK_MULTIPLIER = 1;
 
+	private final PostgresService postgresService;
 	private final GameDefinition gameDefinition;
+	private final Space space;
 	private final Map<String, Player> players;
-	private final Space space = new Space();
 	private final GameListenerSet listeners = new GameListenerSet();
 
 	@Inject
-	public Game(GameDefinition gameDefinition) {
+	public Game(PostgresService postgresService, GameDefinition gameDefinition, Space space) {
+		this.postgresService = postgresService;
 		this.gameDefinition = gameDefinition;
-
-		// TODO generate once and persist
-		{
-			long yieldCapacity = 1000 * GameConstants.BASE_MINING_SPEED;
-			double oreDensity = 0.01;
-			FixedInventory asteroidYieldPerTick = FixedInventory.from(gameDefinition.getRedPixelItemType(), 5);
-			for (Pair<Long, Long> starPosition : new StarPlacement()) {
-				Asteroid asteroid = new Asteroid(amount -> asteroidYieldPerTick.scale(amount * oreDensity), yieldCapacity);
-				asteroid.setX(starPosition.getLeft());
-				asteroid.setY(starPosition.getRight());
-				asteroid.setName(StarNaming.compute());
-				space.add(asteroid);
-			}
-		}
-		{
-			ImmutableList<StaticSpaceObject> anchors = ImmutableList.copyOf(space.getStaticSpaceObjects());
-			int numberOfSpaceStations = anchors.size() / 10 + 2;
-			int namingCounter = 1;
-			for (Pair<Long, Long> spaceStationPosition : SpaceStationPlacement.compute(anchors, numberOfSpaceStations, 3000, 6000)) {
-				SpaceStation spaceStation = new SpaceStation();
-				spaceStation.setX(spaceStationPosition.getLeft());
-				spaceStation.setY(spaceStationPosition.getRight());
-				spaceStation.setName("space station " + namingCounter);
-				space.add(spaceStation);
-				namingCounter++;
-
-				// TODO for testing
-				spaceStation.getInventory().add(gameDefinition.getRedPixelItemType(), 1000);
-				spaceStation.getInventory().add(gameDefinition.getRedPixelAssemblyItemType(), 1000);
-
-			}
-		}
-
+		this.space = space;
 		this.players = new HashMap<>();
 		new Timer(true).schedule(new TimerTask() {
 			@Override
@@ -72,8 +38,8 @@ public final class Game {
 				for (int i = 0; i < TICK_MULTIPLIER; i++) {
 					// TODO may drop ticks on high load depending on how the Timer class handles it
 					GlobalGameLock.lock();
-					try {
-						tick();
+					try (PostgresConnection connection = postgresService.newConnection()) {
+						tick(connection);
 					} finally {
 						GlobalGameLock.unlock();
 					}
@@ -106,8 +72,9 @@ public final class Game {
 			do {
 				id = generatePlayerId();
 			} while (players.get(id) != null);
-			PlayerShip ship = new PlayerShip();
-			space.add(ship);
+			long playerShipId = space.createPlayerShip("unnamed player ship", 0, 0);
+			// TODO this will only save the ID in the future
+			PlayerShip ship = (PlayerShip)space.get(playerShipId);
 			player = new Player(this, id, ship);
 			players.put(id, player);
 		}
@@ -121,11 +88,11 @@ public final class Game {
 	/**
 	 * Called once every second to advance the game logic.
 	 */
-	private void tick() {
+	private void tick(PostgresConnection connection) {
 		for (Player player : players.values()) {
 			player.tick();
 		}
-		space.tick();
+		space.tick(connection);
 		listeners.onDynamicSpaceObjectsChanged();
 	}
 

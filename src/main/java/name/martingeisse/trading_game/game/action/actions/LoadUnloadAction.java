@@ -4,9 +4,8 @@ import name.martingeisse.trading_game.common.util.WtfException;
 import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.item.FixedItemStack;
+import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.Inventory;
-import name.martingeisse.trading_game.game.item.ItemStack;
 import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 import name.martingeisse.trading_game.game.space.GeometryUtil;
 import name.martingeisse.trading_game.game.space.SpaceStation;
@@ -19,10 +18,10 @@ public final class LoadUnloadAction extends ImmediateAction {
 	private final Player player;
 	private final SpaceStation spaceStation;
 	private final Type type;
-	private final FixedItemStack items;
+	private final ImmutableItemStack items;
 	private final int preferredSoruceInventoryIndex;
 
-	public LoadUnloadAction(Player player, SpaceStation spaceStation, Type type, FixedItemStack items, int preferredSoruceInventoryIndex) {
+	public LoadUnloadAction(Player player, SpaceStation spaceStation, Type type, ImmutableItemStack items, int preferredSoruceInventoryIndex) {
 		if (player == null) {
 			throw new IllegalArgumentException("player is null");
 		}
@@ -82,27 +81,29 @@ public final class LoadUnloadAction extends ImmediateAction {
 	}
 
 	private boolean tryRemoveItems(Inventory sourceInventory, int index) {
-		if (index < 0 || index >= sourceInventory.getItemStacks().size()) {
-			return false;
-		}
-		ItemStack foundItemStack = sourceInventory.getItemStacks().get(index);
-		if (foundItemStack.getItemType() != items.getItemType()) {
-			return false;
-		}
-		if (foundItemStack.getSize() < items.getSize()) {
-			return false;
-		}
-		if (foundItemStack.getSize() == items.getSize()) {
-			sourceInventory.getItemStacks().remove(index);
-			return true;
-		} else {
-			try {
-				foundItemStack.remove(items.getSize());
-			} catch (NotEnoughItemsException e) {
-				throw new WtfException(e);
-			}
-			return true;
-		}
+		// TODO move this to class Inventory
+//		if (index < 0 || index >= sourceInventory.getItemStacks().size()) {
+//			return false;
+//		}
+//		ItemStack foundItemStack = sourceInventory.getItemStacks().get(index);
+//		if (foundItemStack.getItemType() != items.getItemType()) {
+//			return false;
+//		}
+//		if (foundItemStack.getSize() < items.getSize()) {
+//			return false;
+//		}
+//		if (foundItemStack.getSize() == items.getSize()) {
+//			sourceInventory.getItemStacks().remove(index);
+//			return true;
+//		} else {
+//			try {
+//				foundItemStack.remove(items.getSize());
+//			} catch (NotEnoughItemsException e) {
+//				throw new WtfException(e);
+//			}
+//			return true;
+//		}
+		return true;
 	}
 
 	@Override
