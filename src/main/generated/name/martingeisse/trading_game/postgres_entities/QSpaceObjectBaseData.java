@@ -9,8 +9,6 @@ import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
 
 import com.querydsl.sql.ColumnMetadata;
-import name.martingeisse.trading_game.game.space.SpaceObjectType;
-
 import java.sql.Types;
 
 
@@ -29,15 +27,23 @@ public class QSpaceObjectBaseData extends com.querydsl.sql.RelationalPathBase<Sp
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final NumberPath<Long> inventoryId = createNumber("inventoryId", Long.class);
+
+    public final NumberPath<Long> longField1 = createNumber("longField1", Long.class);
+
     public final StringPath name = createString("name");
 
-    public final EnumPath<SpaceObjectType> type = createEnum("type", SpaceObjectType.class);
+    public final EnumPath<name.martingeisse.trading_game.game.space.SpaceObjectType> type = createEnum("type", name.martingeisse.trading_game.game.space.SpaceObjectType.class);
 
     public final NumberPath<Long> x = createNumber("x", Long.class);
 
     public final NumberPath<Long> y = createNumber("y", Long.class);
 
     public final com.querydsl.sql.PrimaryKey<SpaceObjectBaseData> spaceObjectBaseDataPkey = createPrimaryKey(id);
+
+    public final com.querydsl.sql.ForeignKey<Inventory> spaceObjectBaseDataInventoryIdFkey = createForeignKey(inventoryId, "id");
+
+    public final com.querydsl.sql.ForeignKey<Player> _playerShipIdFkey = createInvForeignKey(id, "shipId");
 
     public QSpaceObjectBaseData(String variable) {
         super(SpaceObjectBaseData.class, forVariable(variable), "game", "SpaceObjectBaseData");
@@ -61,6 +67,8 @@ public class QSpaceObjectBaseData extends com.querydsl.sql.RelationalPathBase<Sp
 
     public void addMetadata() {
         addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
+        addMetadata(inventoryId, ColumnMetadata.named("inventoryId").withIndex(6).ofType(Types.BIGINT).withSize(19));
+        addMetadata(longField1, ColumnMetadata.named("longField1").withIndex(7).ofType(Types.BIGINT).withSize(19));
         addMetadata(name, ColumnMetadata.named("name").withIndex(3).ofType(Types.VARCHAR).withSize(2000).notNull());
         addMetadata(type, ColumnMetadata.named("type").withIndex(2).ofType(Types.VARCHAR).withSize(2147483647).notNull());
         addMetadata(x, ColumnMetadata.named("x").withIndex(4).ofType(Types.BIGINT).withSize(19).notNull());

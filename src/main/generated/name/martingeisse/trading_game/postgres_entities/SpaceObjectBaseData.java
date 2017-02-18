@@ -3,8 +3,6 @@
  */
 package name.martingeisse.trading_game.postgres_entities;
 
-import name.martingeisse.trading_game.game.space.SpaceObjectType;
-
 import java.io.Serializable;
 
 /**
@@ -24,6 +22,16 @@ public class SpaceObjectBaseData implements Serializable {
     private Long id;
 
     /**
+     * the inventoryId
+     */
+    private Long inventoryId;
+
+    /**
+     * the longField1
+     */
+    private Long longField1;
+
+    /**
      * the name
      */
     private String name;
@@ -31,7 +39,7 @@ public class SpaceObjectBaseData implements Serializable {
     /**
      * the type
      */
-    private SpaceObjectType type;
+    private name.martingeisse.trading_game.game.space.SpaceObjectType type;
 
     /**
      * the x
@@ -62,6 +70,42 @@ public class SpaceObjectBaseData implements Serializable {
     }
 
     /**
+     * Getter method for the inventoryId.
+     * 
+     * @return the inventoryId
+     */
+    public Long getInventoryId() {
+        return inventoryId;
+    }
+
+    /**
+     * Setter method for the inventoryId.
+     * 
+     * @param inventoryId the inventoryId to set
+     */
+    public void setInventoryId(Long inventoryId) {
+        this.inventoryId = inventoryId;
+    }
+
+    /**
+     * Getter method for the longField1.
+     * 
+     * @return the longField1
+     */
+    public Long getLongField1() {
+        return longField1;
+    }
+
+    /**
+     * Setter method for the longField1.
+     * 
+     * @param longField1 the longField1 to set
+     */
+    public void setLongField1(Long longField1) {
+        this.longField1 = longField1;
+    }
+
+    /**
      * Getter method for the name.
      * 
      * @return the name
@@ -84,7 +128,7 @@ public class SpaceObjectBaseData implements Serializable {
      * 
      * @return the type
      */
-    public SpaceObjectType getType() {
+    public name.martingeisse.trading_game.game.space.SpaceObjectType getType() {
         return type;
     }
 
@@ -93,7 +137,7 @@ public class SpaceObjectBaseData implements Serializable {
      * 
      * @param type the type to set
      */
-    public void setType(SpaceObjectType type) {
+    public void setType(name.martingeisse.trading_game.game.space.SpaceObjectType type) {
         this.type = type;
     }
 
@@ -138,7 +182,7 @@ public class SpaceObjectBaseData implements Serializable {
      */
     @Override
     public String toString() {
-        return "{SpaceObjectBaseData. id = " + id + ", name = " + name + ", type = " + type + ", x = " + x + ", y = " + y + "}";
+        return "{SpaceObjectBaseData. id = " + id + ", inventoryId = " + inventoryId + ", longField1 = " + longField1 + ", name = " + name + ", type = " + type + ", x = " + x + ", y = " + y + "}";
     }
 
 }
