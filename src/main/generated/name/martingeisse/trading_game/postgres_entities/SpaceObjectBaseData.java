@@ -3,6 +3,8 @@
  */
 package name.martingeisse.trading_game.postgres_entities;
 
+import name.martingeisse.trading_game.game.space.SpaceObjectType;
+
 import java.io.Serializable;
 
 /**
@@ -29,7 +31,7 @@ public class SpaceObjectBaseData implements Serializable {
     /**
      * the type
      */
-    private name.martingeisse.trading_game.game.repository.SpaceObjectType type;
+    private SpaceObjectType type;
 
     /**
      * the x
@@ -82,7 +84,7 @@ public class SpaceObjectBaseData implements Serializable {
      * 
      * @return the type
      */
-    public name.martingeisse.trading_game.game.repository.SpaceObjectType getType() {
+    public SpaceObjectType getType() {
         return type;
     }
 
@@ -91,7 +93,7 @@ public class SpaceObjectBaseData implements Serializable {
      * 
      * @param type the type to set
      */
-    public void setType(name.martingeisse.trading_game.game.repository.SpaceObjectType type) {
+    public void setType(SpaceObjectType type) {
         this.type = type;
     }
 

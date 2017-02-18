@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.game.space;
 
 import com.google.common.collect.ImmutableList;
-import name.martingeisse.trading_game.game.space.quadtree.Quadtree;
 
 import java.util.*;
 
@@ -12,19 +11,12 @@ public final class Space {
 
 	private final List<StaticSpaceObject> staticSpaceObjects = new ArrayList<>();
 	private ImmutableList<StaticSpaceObject> staticSpaceObjectsImmutable = null;
-	private Quadtree staticSpaceObjectsQuadtree = null;
 	private final List<DynamicSpaceObject> dynamicSpaceObjects = new ArrayList<>();
 	private ImmutableList<DynamicSpaceObject> dynamicSpaceObjectsImmutable = null;
 	private ImmutableList<SpaceObject> spaceObjectsImmutable = null;
 	private final Map<Long, SpaceObject> spaceObjectsById = new HashMap<>();
 	private long idCounter = 0;
 	private final List<SpaceObject> spaceObjectsThatSupportTick = new ArrayList<>();
-
-	private void checkStaticNotSealed() {
-		if (staticSpaceObjectsQuadtree != null) {
-			throw new IllegalStateException("the set of static space objects has already been sealed");
-		}
-	}
 
 	private void addInternal(SpaceObject spaceObject) {
 		spaceObject.setId(idCounter);
@@ -39,20 +31,10 @@ public final class Space {
 	 * Adds an object to this space.
 	 */
 	public void add(StaticSpaceObject spaceObject) {
-		checkStaticNotSealed();
 		addInternal(spaceObject);
 		staticSpaceObjects.add(spaceObject);
 		staticSpaceObjectsImmutable = null;
 	}
-
-	/**
-	 * Seals the set of static space objects. This initializes static data like the quadtree.
-	 */
-	public void sealStatic() {
-		checkStaticNotSealed();
-		staticSpaceObjectsQuadtree = new Quadtree(this, 10);
-	}
-
 
 	/**
 	 * Adds an object to this space.

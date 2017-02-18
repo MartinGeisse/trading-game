@@ -1,9 +1,6 @@
-package name.martingeisse.trading_game.game.repository;
+package name.martingeisse.trading_game.game.space;
 
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
-import name.martingeisse.trading_game.game.space.*;
-
-import java.io.Serializable;
 
 /**
  * Distinguishes different types of space objects. This enum corresponds to the subclasses of {@link SpaceObject}.

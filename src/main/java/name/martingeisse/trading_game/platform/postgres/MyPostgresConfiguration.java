@@ -4,7 +4,7 @@ import com.querydsl.sql.Configuration;
 import com.querydsl.sql.PostgreSQLTemplates;
 import com.querydsl.sql.SQLTemplates;
 import com.querydsl.sql.types.EnumByNameType;
-import name.martingeisse.trading_game.game.repository.SpaceObjectType;
+import name.martingeisse.trading_game.game.space.SpaceObjectType;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;

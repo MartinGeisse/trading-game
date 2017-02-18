@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.actions.MoveToPositionAction;
-import name.martingeisse.trading_game.game.repository.SpaceObjectType;
 import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseData;
 
 /**
@@ -31,11 +30,9 @@ public abstract class SpaceObject implements PositionProvider {
 	/**
 	 * Setter method.
 	 *
-	 * TODO public for database test
-	 *
 	 * @param id the id
 	 */
-	public void setId(long id) {
+	void setId(long id) {
 		if (id < 0) {
 			throw new IllegalArgumentException("id < 0");
 		}

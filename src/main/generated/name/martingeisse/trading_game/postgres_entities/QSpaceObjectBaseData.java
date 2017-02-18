@@ -9,6 +9,8 @@ import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
 
 import com.querydsl.sql.ColumnMetadata;
+import name.martingeisse.trading_game.game.space.SpaceObjectType;
+
 import java.sql.Types;
 
 
@@ -29,7 +31,7 @@ public class QSpaceObjectBaseData extends com.querydsl.sql.RelationalPathBase<Sp
 
     public final StringPath name = createString("name");
 
-    public final EnumPath<name.martingeisse.trading_game.game.repository.SpaceObjectType> type = createEnum("type", name.martingeisse.trading_game.game.repository.SpaceObjectType.class);
+    public final EnumPath<SpaceObjectType> type = createEnum("type", SpaceObjectType.class);
 
     public final NumberPath<Long> x = createNumber("x", Long.class);
 

@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.game.repository;
+package name.martingeisse.trading_game.game.space;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
