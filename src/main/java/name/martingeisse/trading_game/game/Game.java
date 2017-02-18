@@ -95,8 +95,12 @@ public final class Game {
 		return space;
 	}
 
-	public Player getPlayer(String knownPlayerId) {
-		Player player = players.get(knownPlayerId);
+	public Player getPlayer(String playerId) {
+		return players.get(playerId);
+	}
+
+	public Player getOrCreatePlayer(String playerId) {
+		Player player = players.get(playerId);
 		if (player == null) {
 			String id;
 			do {

@@ -49,7 +49,7 @@ public class MyWicketSession extends WebSession {
 	public Player getPlayer() {
 		bind();
 		Game game = MyWicketApplication.get().getDependency(Game.class);
-		Player player = game.getPlayer(playerId);
+		Player player = game.getOrCreatePlayer(playerId);
 		playerId = player.getId();
 		return player;
 	}
