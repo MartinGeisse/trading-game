@@ -29,6 +29,8 @@ public class QInventorySlotRow extends com.querydsl.sql.RelationalPathBase<Inven
 
     public final NumberPath<Long> inventoryId = createNumber("inventoryId", Long.class);
 
+    public final StringPath itemType = createString("itemType");
+
     public final NumberPath<Integer> quantity = createNumber("quantity", Integer.class);
 
     public final com.querydsl.sql.PrimaryKey<InventorySlotRow> inventorySlotPkey = createPrimaryKey(id);
@@ -58,7 +60,8 @@ public class QInventorySlotRow extends com.querydsl.sql.RelationalPathBase<Inven
     public void addMetadata() {
         addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(inventoryId, ColumnMetadata.named("inventoryId").withIndex(2).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(quantity, ColumnMetadata.named("quantity").withIndex(3).ofType(Types.INTEGER).withSize(10).notNull());
+        addMetadata(itemType, ColumnMetadata.named("itemType").withIndex(3).ofType(Types.VARCHAR).withSize(2000).notNull());
+        addMetadata(quantity, ColumnMetadata.named("quantity").withIndex(4).ofType(Types.INTEGER).withSize(10).notNull());
     }
 
 }

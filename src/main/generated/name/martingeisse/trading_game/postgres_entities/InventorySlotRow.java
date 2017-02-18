@@ -4,7 +4,6 @@
 package name.martingeisse.trading_game.postgres_entities;
 
 import com.querydsl.sql.dml.SQLInsertClause;
-import name.martingeisse.trading_game.postgres_entities.QInventorySlotRow;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import java.io.Serializable;
 
@@ -28,6 +27,11 @@ public class InventorySlotRow implements Serializable {
      * the inventoryId
      */
     private Long inventoryId;
+
+    /**
+     * the itemType
+     */
+    private String itemType;
 
     /**
      * the quantity
@@ -71,6 +75,24 @@ public class InventorySlotRow implements Serializable {
     }
 
     /**
+     * Getter method for the itemType.
+     * 
+     * @return the itemType
+     */
+    public String getItemType() {
+        return itemType;
+    }
+
+    /**
+     * Setter method for the itemType.
+     * 
+     * @param itemType the itemType to set
+     */
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
+    }
+
+    /**
      * Getter method for the quantity.
      * 
      * @return the quantity
@@ -110,6 +132,7 @@ public class InventorySlotRow implements Serializable {
         QInventorySlotRow q = QInventorySlotRow.InventorySlot;
         SQLInsertClause insert = connection.insert(q);
         insert.set(q.inventoryId, inventoryId);
+        insert.set(q.itemType, itemType);
         insert.set(q.quantity, quantity);
         id = insert.executeWithKey(Long.class);
     }
@@ -119,7 +142,7 @@ public class InventorySlotRow implements Serializable {
      */
     @Override
     public String toString() {
-        return "{InventorySlotRow. id = " + id + ", inventoryId = " + inventoryId + ", quantity = " + quantity + "}";
+        return "{InventorySlotRow. id = " + id + ", inventoryId = " + inventoryId + ", itemType = " + itemType + ", quantity = " + quantity + "}";
     }
 
 }

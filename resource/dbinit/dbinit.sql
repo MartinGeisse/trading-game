@@ -9,13 +9,13 @@ CREATE TABLE "game"."Inventory" (
 	"id" bigserial NOT NULL PRIMARY KEY
 );
 
--- TODO index on inventoryId?
 CREATE TABLE "game"."InventorySlot" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"inventoryId" bigint NOT NULL REFERENCES "game"."Inventory" ON DELETE CASCADE,
+	"itemType" character varying(2000) NOT NULL,
 	"quantity" int NOT NULL
-	-- TODO item type
 );
+CREATE INDEX "InventorySlot_inventoryIdItemTypeIndex" ON "game"."InventorySlot" ("inventoryId", "itemType");
 
 
 -----------------------------------------------------------------------------------------------------------------------
@@ -24,7 +24,6 @@ CREATE TABLE "game"."InventorySlot" (
 
 CREATE TYPE "game"."SpaceObjectType" AS ENUM ('Planet', 'Asteroid', 'PlayerShip');
 
--- TODO index on inventoryId?
 CREATE TABLE "game"."SpaceObjectBaseData" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"type" "game"."SpaceObjectType" NOT NULL,
@@ -36,13 +35,13 @@ CREATE TABLE "game"."SpaceObjectBaseData" (
 	"longField1" bigint
 );
 CREATE INDEX "SpaceObjectBaseData_nameIndex" ON "game"."SpaceObjectBaseData" ("name");
+CREATE INDEX "SpaceObjectBaseData_inventoryIdIndex" ON "game"."SpaceObjectBaseData" ("inventoryId");
 
 
 -----------------------------------------------------------------------------------------------------------------------
 -- players
 -----------------------------------------------------------------------------------------------------------------------
 
--- TODO index on shipId?
 CREATE TABLE "game"."Player" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"name" character varying(2000) NOT NULL,
@@ -51,3 +50,4 @@ CREATE TABLE "game"."Player" (
 	-- TODO skills
 );
 CREATE INDEX "Player_nameIndex" ON "game"."Player" ("name");
+CREATE INDEX "Player_shipIdIndex" ON "game"."Player" ("shipId");
