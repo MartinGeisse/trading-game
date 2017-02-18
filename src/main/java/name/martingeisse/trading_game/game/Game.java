@@ -64,7 +64,6 @@ public final class Game {
 
 			}
 		}
-		space.sealStatic();
 
 		this.players = new HashMap<>();
 		new Timer(true).schedule(new TimerTask() {
