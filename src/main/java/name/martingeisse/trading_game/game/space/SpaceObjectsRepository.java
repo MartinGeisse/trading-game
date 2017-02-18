@@ -14,7 +14,8 @@ import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseData;
 import java.util.function.Consumer;
 
 /**
- *
+ * Stores space objects. Usage of {@link SpaceObjectBaseData} should be limited to this class as much as possible
+ * to shield other code from the concrete database structure.
  */
 @Singleton
 public class SpaceObjectsRepository {
@@ -46,7 +47,13 @@ public class SpaceObjectsRepository {
 	}
 
 	public void insert(SpaceObject spaceObject) {
-		insert(spaceObject.getBaseData());
+		SpaceObjectBaseData baseData = new SpaceObjectBaseData();
+		baseData.setId(spaceObject.getId());
+		baseData.setType(SpaceObjectType.getType(spaceObject));
+		baseData.setName(spaceObject.getName());
+		baseData.setX(spaceObject.getX());
+		baseData.setY(spaceObject.getY());
+		insert(baseData);
 	}
 
 	public void insert(SpaceObjectBaseData baseData) {

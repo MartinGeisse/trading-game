@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.actions.MoveToPositionAction;
-import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseData;
 
 /**
  *
@@ -97,19 +96,6 @@ public abstract class SpaceObject implements PositionProvider {
 	 */
 	public void setY(long y) {
 		this.y = y;
-	}
-
-	/**
-	 * @return a SpaceObjectBaseData for this object
-	 */
-	public SpaceObjectBaseData getBaseData() {
-		SpaceObjectBaseData baseData = new SpaceObjectBaseData();
-		baseData.setId(id);
-		baseData.setType(SpaceObjectType.getType(this));
-		baseData.setName(name);
-		baseData.setX(x);
-		baseData.setY(y);
-		return baseData;
 	}
 
 	/**
