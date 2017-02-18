@@ -3,17 +3,20 @@
  */
 package name.martingeisse.trading_game.postgres_entities;
 
+import com.querydsl.sql.dml.SQLInsertClause;
+import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
+import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import java.io.Serializable;
 
 /**
  * This class represents rows from table 'Player'.
  */
-public class Player implements Serializable {
+public class PlayerRow implements Serializable {
 
     /**
      * Constructor.
      */
-    public Player() {
+    public PlayerRow() {
     }
 
     /**
@@ -85,12 +88,38 @@ public class Player implements Serializable {
         this.shipId = shipId;
     }
 
+    /**
+     * Loads the instance with the specified ID.
+     * 
+     * @param connection the database connection
+     * @param id the ID of the instance to load
+     * @return the loaded instance
+     */
+    public static PlayerRow loadById(PostgresConnection connection, Long id) {
+        QPlayerRow q = QPlayerRow.Player;
+        return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+    }
+
+    /**
+     * Inserts this instance into the database. This object must not have an ID yet.
+     */
+    public void insert(PostgresConnection connection) {
+        if (id != null) {
+        	throw new IllegalStateException("this object already has an id: " + id);
+        }
+        QPlayerRow q = QPlayerRow.Player;
+        SQLInsertClause insert = connection.insert(q);
+        insert.set(q.name, name);
+        insert.set(q.shipId, shipId);
+        id = insert.executeWithKey(Long.class);
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{Player. id = " + id + ", name = " + name + ", shipId = " + shipId + "}";
+        return "{PlayerRow. id = " + id + ", name = " + name + ", shipId = " + shipId + "}";
     }
 
 }

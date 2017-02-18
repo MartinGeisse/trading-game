@@ -2,14 +2,14 @@ package name.martingeisse.trading_game.platform.postgres.codegen;
 
 import com.mysema.codegen.CodeWriter;
 import com.mysema.codegen.model.*;
-import com.querydsl.codegen.EntityType;
-import com.querydsl.codegen.Property;
-import com.querydsl.codegen.Serializer;
-import com.querydsl.codegen.SerializerConfig;
+import com.querydsl.codegen.*;
 import com.querydsl.core.util.BeanUtils;
 import com.querydsl.sql.codegen.support.PrimaryKeyData;
+import com.querydsl.sql.dml.SQLInsertClause;
 import name.martingeisse.trading_game.common.util.WtfException;
+import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -20,9 +20,16 @@ import java.util.*;
  */
 public class BeanSerializer extends SerializerHelper implements Serializer {
 
+	private final QueryTypeFactory queryTypeFactory;
+
+	@Inject
+	public BeanSerializer(QueryTypeFactory queryTypeFactory) {
+		this.queryTypeFactory = queryTypeFactory;
+	}
+
 	/* (non-Javadoc)
-	 * @see com.mysema.query.codegen.Serializer#serialize(com.mysema.query.codegen.EntityType, com.mysema.query.codegen.SerializerConfig, com.mysema.codegen.CodeWriter)
-	 */
+		 * @see com.mysema.query.codegen.Serializer#serialize(com.mysema.query.codegen.EntityType, com.mysema.query.codegen.SerializerConfig, com.mysema.codegen.CodeWriter)
+		 */
 	@Override
 	public void serialize(final EntityType entityType, final SerializerConfig config, final CodeWriter w) throws IOException {
 		@SuppressWarnings("unused")
@@ -138,6 +145,46 @@ public class BeanSerializer extends SerializerHelper implements Serializer {
 
 		}
 
+		// generate static helper methods
+		String qLine;
+		{
+			Type queryType = queryTypeFactory.create(entityType);
+			String qtype = queryType.getSimpleName();
+			String qField = entityType.getSimpleName();
+			if (!qField.endsWith("Row")) {
+				throw new WtfException(qField);
+			}
+			qField = qField.substring(0, qField.length() - 3);
+			qLine = qtype + " q = " + qtype + "." + qField + ";";
+		}
+		Parameter connection = new Parameter("connection", new SimpleType("PostgresConnection"));
+		if (idProperty != null) {
+
+			// loadById
+			w.javadoc("Loads the instance with the specified ID.", "", "@param connection the database connection", "@param id the ID of the instance to load", "@return the loaded instance");
+			w.beginStaticMethod(entityType, "loadById", connection, new Parameter("id", idProperty.getType()));
+			w.line(qLine);
+			w.line("return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();");
+			w.end();
+
+			// insert
+			w.javadoc("Inserts this instance into the database. This object must not have an ID yet.");
+			w.beginPublicMethod(new SimpleType("void"), "insert", connection);
+			w.line("if (id != null) {");
+			w.line("	throw new IllegalStateException(\"this object already has an id: \" + id);");
+			w.line("}");
+			w.line(qLine);
+			w.line("SQLInsertClause insert = connection.insert(q);");
+			for (final Property property : entityType.getProperties()) {
+				if (property != idProperty) {
+					w.line("insert.set(q." + property.getEscapedName() + ", " + property.getEscapedName() + ");");
+				}
+			}
+			w.line("id = insert.executeWithKey(" + idProperty.getType() + ".class);");
+			w.end();
+
+		}
+
 		// generate toString() method
 		w.line("/* (non-Javadoc)");
 		w.line(" * @see java.lang.Object#toString()");
@@ -188,6 +235,11 @@ public class BeanSerializer extends SerializerHelper implements Serializer {
 		// utility classes
 		addIf(imports, Arrays.class.getName(), entityType.hasArrays());
 		imports.add("java.io.Serializable");
+
+		// query-class
+		addIf(imports, queryTypeFactory.create(entityType).getFullName(), hasId);
+		addIf(imports, PostgresConnection.class.getName(), hasId);
+		addIf(imports, SQLInsertClause.class.getName(), hasId);
 
 		// actually write the imports
 		printImports(w, imports);

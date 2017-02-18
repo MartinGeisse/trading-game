@@ -15,15 +15,15 @@ import java.sql.Types;
 
 
 /**
- * QInventorySlot is a Querydsl query type for InventorySlot
+ * QInventorySlotRow is a Querydsl query type for InventorySlotRow
  */
 @Generated("name.martingeisse.trading_game.platform.postgres.codegen.MyMetaDataSerializer")
 @SuppressWarnings("all")
-public class QInventorySlot extends com.querydsl.sql.RelationalPathBase<InventorySlot> {
+public class QInventorySlotRow extends com.querydsl.sql.RelationalPathBase<InventorySlotRow> {
 
-    private static final long serialVersionUID = 1622055531;
+    private static final long serialVersionUID = -20640913;
 
-    public static final QInventorySlot InventorySlot = new QInventorySlot("InventorySlot");
+    public static final QInventorySlotRow InventorySlot = new QInventorySlotRow("InventorySlot");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -31,27 +31,27 @@ public class QInventorySlot extends com.querydsl.sql.RelationalPathBase<Inventor
 
     public final NumberPath<Integer> quantity = createNumber("quantity", Integer.class);
 
-    public final com.querydsl.sql.PrimaryKey<InventorySlot> inventorySlotPkey = createPrimaryKey(id);
+    public final com.querydsl.sql.PrimaryKey<InventorySlotRow> inventorySlotPkey = createPrimaryKey(id);
 
-    public final com.querydsl.sql.ForeignKey<Inventory> inventorySlotInventoryIdFkey = createForeignKey(inventoryId, "id");
+    public final com.querydsl.sql.ForeignKey<InventoryRow> inventorySlotInventoryIdFkey = createForeignKey(inventoryId, "id");
 
-    public QInventorySlot(String variable) {
-        super(InventorySlot.class, forVariable(variable), "game", "InventorySlot");
+    public QInventorySlotRow(String variable) {
+        super(InventorySlotRow.class, forVariable(variable), "game", "InventorySlot");
         addMetadata();
     }
 
-    public QInventorySlot(String variable, String schema, String table) {
-        super(InventorySlot.class, forVariable(variable), schema, table);
+    public QInventorySlotRow(String variable, String schema, String table) {
+        super(InventorySlotRow.class, forVariable(variable), schema, table);
         addMetadata();
     }
 
-    public QInventorySlot(Path<? extends InventorySlot> path) {
+    public QInventorySlotRow(Path<? extends InventorySlotRow> path) {
         super(path.getType(), path.getMetadata(), "game", "InventorySlot");
         addMetadata();
     }
 
-    public QInventorySlot(PathMetadata metadata) {
-        super(InventorySlot.class, metadata, "game", "InventorySlot");
+    public QInventorySlotRow(PathMetadata metadata) {
+        super(InventorySlotRow.class, metadata, "game", "InventorySlot");
         addMetadata();
     }
 

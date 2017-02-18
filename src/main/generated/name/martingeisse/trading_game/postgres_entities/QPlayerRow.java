@@ -15,15 +15,15 @@ import java.sql.Types;
 
 
 /**
- * QPlayer is a Querydsl query type for Player
+ * QPlayerRow is a Querydsl query type for PlayerRow
  */
 @Generated("name.martingeisse.trading_game.platform.postgres.codegen.MyMetaDataSerializer")
 @SuppressWarnings("all")
-public class QPlayer extends com.querydsl.sql.RelationalPathBase<Player> {
+public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 
-    private static final long serialVersionUID = -1111152880;
+    private static final long serialVersionUID = -1042415446;
 
-    public static final QPlayer Player = new QPlayer("Player");
+    public static final QPlayerRow Player = new QPlayerRow("Player");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -31,27 +31,27 @@ public class QPlayer extends com.querydsl.sql.RelationalPathBase<Player> {
 
     public final NumberPath<Long> shipId = createNumber("shipId", Long.class);
 
-    public final com.querydsl.sql.PrimaryKey<Player> playerPkey = createPrimaryKey(id);
+    public final com.querydsl.sql.PrimaryKey<PlayerRow> playerPkey = createPrimaryKey(id);
 
-    public final com.querydsl.sql.ForeignKey<SpaceObjectBaseData> playerShipIdFkey = createForeignKey(shipId, "id");
+    public final com.querydsl.sql.ForeignKey<SpaceObjectBaseDataRow> playerShipIdFkey = createForeignKey(shipId, "id");
 
-    public QPlayer(String variable) {
-        super(Player.class, forVariable(variable), "game", "Player");
+    public QPlayerRow(String variable) {
+        super(PlayerRow.class, forVariable(variable), "game", "Player");
         addMetadata();
     }
 
-    public QPlayer(String variable, String schema, String table) {
-        super(Player.class, forVariable(variable), schema, table);
+    public QPlayerRow(String variable, String schema, String table) {
+        super(PlayerRow.class, forVariable(variable), schema, table);
         addMetadata();
     }
 
-    public QPlayer(Path<? extends Player> path) {
+    public QPlayerRow(Path<? extends PlayerRow> path) {
         super(path.getType(), path.getMetadata(), "game", "Player");
         addMetadata();
     }
 
-    public QPlayer(PathMetadata metadata) {
-        super(Player.class, metadata, "game", "Player");
+    public QPlayerRow(PathMetadata metadata) {
+        super(PlayerRow.class, metadata, "game", "Player");
         addMetadata();
     }
 

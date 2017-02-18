@@ -3,17 +3,20 @@
  */
 package name.martingeisse.trading_game.postgres_entities;
 
+import com.querydsl.sql.dml.SQLInsertClause;
+import name.martingeisse.trading_game.postgres_entities.QInventorySlotRow;
+import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import java.io.Serializable;
 
 /**
  * This class represents rows from table 'InventorySlot'.
  */
-public class InventorySlot implements Serializable {
+public class InventorySlotRow implements Serializable {
 
     /**
      * Constructor.
      */
-    public InventorySlot() {
+    public InventorySlotRow() {
     }
 
     /**
@@ -85,12 +88,38 @@ public class InventorySlot implements Serializable {
         this.quantity = quantity;
     }
 
+    /**
+     * Loads the instance with the specified ID.
+     * 
+     * @param connection the database connection
+     * @param id the ID of the instance to load
+     * @return the loaded instance
+     */
+    public static InventorySlotRow loadById(PostgresConnection connection, Long id) {
+        QInventorySlotRow q = QInventorySlotRow.InventorySlot;
+        return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+    }
+
+    /**
+     * Inserts this instance into the database. This object must not have an ID yet.
+     */
+    public void insert(PostgresConnection connection) {
+        if (id != null) {
+        	throw new IllegalStateException("this object already has an id: " + id);
+        }
+        QInventorySlotRow q = QInventorySlotRow.InventorySlot;
+        SQLInsertClause insert = connection.insert(q);
+        insert.set(q.inventoryId, inventoryId);
+        insert.set(q.quantity, quantity);
+        id = insert.executeWithKey(Long.class);
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{InventorySlot. id = " + id + ", inventoryId = " + inventoryId + ", quantity = " + quantity + "}";
+        return "{InventorySlotRow. id = " + id + ", inventoryId = " + inventoryId + ", quantity = " + quantity + "}";
     }
 
 }
