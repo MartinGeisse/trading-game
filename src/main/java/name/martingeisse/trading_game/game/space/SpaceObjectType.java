@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.space;
 
+import com.google.common.collect.ImmutableSet;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 
 /**
@@ -26,6 +27,15 @@ public enum SpaceObjectType {
 	 */
 	public Class<? extends SpaceObject> getSpaceObjectClass() {
 		return spaceObjectClass;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the supportsTick
+	 */
+	public boolean isSupportsTick() {
+		return false;
 	}
 
 	/**
@@ -64,6 +74,13 @@ public enum SpaceObjectType {
 	 */
 	public static SpaceObjectType getType(SpaceObject spaceObject) {
 		return getType(spaceObject.getClass());
+	}
+
+	/**
+	 * @return all types that support the tick() method
+	 */
+	public static ImmutableSet<SpaceObjectType> getTypesThatSupportTick() {
+		return ImmutableSet.of();
 	}
 
 }
