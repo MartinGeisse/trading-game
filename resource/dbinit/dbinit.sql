@@ -29,7 +29,8 @@ CREATE TABLE "game"."SpaceObjectBaseData" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"type" "game"."SpaceObjectType" NOT NULL,
 	"name" character varying(2000) NOT NULL,
-	"x" bigint NOT NULL,
+	"x" bigint NOT NULL, -- TODO cannot geo-index this since a 'point'-ops GiST index would require usage of the 'point'
+		-- data type which consists of two float numbers, not bigint numbers
 	"y" bigint NOT NULL,
 	"inventoryId" bigint REFERENCES "game"."Inventory",
 	"longField1" bigint
