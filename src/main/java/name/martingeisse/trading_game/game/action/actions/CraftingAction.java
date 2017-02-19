@@ -1,6 +1,6 @@
 package name.martingeisse.trading_game.game.action.actions;
 
-import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;

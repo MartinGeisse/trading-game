@@ -1,8 +1,7 @@
 package name.martingeisse.trading_game.game.action.actions;
 
-import name.martingeisse.trading_game.common.util.WtfException;
 import name.martingeisse.trading_game.game.Game;
-import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.Inventory;

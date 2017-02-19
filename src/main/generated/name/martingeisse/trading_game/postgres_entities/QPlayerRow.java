@@ -17,7 +17,7 @@ import java.sql.Types;
 /**
  * QPlayerRow is a Querydsl query type for PlayerRow
  */
-@Generated("name.martingeisse.trading_game.platform.postgres.codegen.MyMetaDataSerializer")
+@Generated("name.martingeisse.trading_game.tools.codegen.codegen.MyMetaDataSerializer")
 @SuppressWarnings("all")
 public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 

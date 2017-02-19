@@ -1,31 +1,43 @@
-package name.martingeisse.trading_game.game;
+package name.martingeisse.trading_game.game.player;
 
+import name.martingeisse.trading_game.game.Game;
+import name.martingeisse.trading_game.game.NameAlreadyUsedException;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ActionExecution;
 import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.skill.PlayerSkills;
 import name.martingeisse.trading_game.game.space.PlayerShip;
+import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
+import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
 /**
  *
  */
 public final class Player {
 
+	private final PostgresService postgresService;
+	private final PlayerRepository playerRepository;
+
 	private final Game game;
-	private final String id;
+	private final long id;
 	private final PlayerShip ship;
 	private String name;
 	private final ActionQueue pendingActions = new ActionQueue();
 	private ActionExecution actionExecution;
-	private final PlayerSkills skills;
 
-	public Player(Game game, String id, PlayerShip ship) {
+	public Player(PostgresService postgresService, PlayerRepository playerRepository, long id) {
+		this.postgresService = postgresService;
+		this.playerRepository = playerRepository;
+		// TODO merge constructors
+		this.id = id;
+	}
+
+	public Player(Game game, long id, PlayerShip ship) {
 		this.game = game;
 		this.id = id;
 		this.ship = ship;
 		this.name = "Player " + id;
-		this.skills = new PlayerSkills();
 		setShipName();
 	}
 
@@ -34,7 +46,7 @@ public final class Player {
 	 *
 	 * @return the id
 	 */
-	public String getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -74,11 +86,12 @@ public final class Player {
 		if (name == null) {
 			throw new IllegalArgumentException("name cannot be null");
 		}
-		if (!game.isRenamePossible(this, name)) {
+		if (!playerRepository.isRenamePossible(id, name)) {
 			throw new NameAlreadyUsedException();
 		}
 		String oldName = this.name;
 		this.name = name;
+		// TODO update name in database
 		if (ship.getName().equals(generateName(oldName))) {
 			setShipName();
 		}
@@ -157,18 +170,9 @@ public final class Player {
 	}
 
 	/**
-	 * Getter method.
-	 *
-	 * @return the skills
-	 */
-	public PlayerSkills getSkills() {
-		return skills;
-	}
-
-	/**
 	 * Called once every second to advance game logic.
 	 */
-	void tick() {
+	public void tick(PostgresConnection connection) {
 		while (actionExecution == null && !pendingActions.isEmpty()) {
 			actionExecution = pendingActions.startNext();
 		}
@@ -179,7 +183,6 @@ public final class Player {
 				actionExecution = null;
 			}
 		}
-		skills.tick();
 	}
 
 	public long getShipMovementSpeed() {

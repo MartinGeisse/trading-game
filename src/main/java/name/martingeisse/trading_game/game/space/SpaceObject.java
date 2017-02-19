@@ -2,7 +2,7 @@ package name.martingeisse.trading_game.game.space;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.actions.MoveToPositionAction;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;

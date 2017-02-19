@@ -17,7 +17,7 @@ import java.sql.Types;
 /**
  * QInventoryRow is a Querydsl query type for InventoryRow
  */
-@Generated("name.martingeisse.trading_game.platform.postgres.codegen.MyMetaDataSerializer")
+@Generated("name.martingeisse.trading_game.tools.codegen.codegen.MyMetaDataSerializer")
 @SuppressWarnings("all")
 public class QInventoryRow extends com.querydsl.sql.RelationalPathBase<InventoryRow> {
 

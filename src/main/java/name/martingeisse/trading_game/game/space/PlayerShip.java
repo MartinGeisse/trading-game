@@ -1,18 +1,18 @@
 package name.martingeisse.trading_game.game.space;
 
 import name.martingeisse.trading_game.game.item.Inventory;
-import name.martingeisse.trading_game.game.item.InventoryProvider;
+import name.martingeisse.trading_game.game.item.InventoryRepository;
 
 /**
  *
  */
 public final class PlayerShip extends DynamicSpaceObject {
 
-	private InventoryProvider inventoryProvider;
+	private InventoryRepository inventoryRepository;
 	private long inventoryId;
 
-	public PlayerShip(InventoryProvider inventoryProvider) {
-		this.inventoryProvider = inventoryProvider;
+	public PlayerShip(InventoryRepository inventoryRepository) {
+		this.inventoryRepository = inventoryRepository;
 	}
 
 	/**
@@ -39,7 +39,7 @@ public final class PlayerShip extends DynamicSpaceObject {
 	 * @return the inventory
 	 */
 	public Inventory getInventory() {
-		return inventoryProvider.getInventory(inventoryId);
+		return inventoryRepository.getInventory(inventoryId);
 	}
 
 }

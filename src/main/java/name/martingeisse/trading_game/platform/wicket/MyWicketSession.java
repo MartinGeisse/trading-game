@@ -1,7 +1,7 @@
 package name.martingeisse.trading_game.platform.wicket;
 
-import name.martingeisse.trading_game.game.Game;
-import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.player.Player;
+import name.martingeisse.trading_game.game.player.PlayerRepository;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.Request;
 
@@ -10,7 +10,7 @@ import org.apache.wicket.request.Request;
  */
 public class MyWicketSession extends WebSession {
 
-	private String playerId;
+	private long playerId = -1;
 
 	/**
 	 * Constructor.
@@ -33,25 +33,17 @@ public class MyWicketSession extends WebSession {
 	 *
 	 * @return the playerId
 	 */
-	public String getPlayerId() {
+	public long getPlayerId() {
 		return playerId;
-	}
-
-	/**
-	 * Setter method.
-	 *
-	 * @param playerId the playerId
-	 */
-	public void setPlayerId(String playerId) {
-		this.playerId = playerId;
 	}
 
 	public Player getPlayer() {
 		bind();
-		Game game = MyWicketApplication.get().getDependency(Game.class);
-		Player player = game.getOrCreatePlayer(playerId);
-		playerId = player.getId();
-		return player;
+		PlayerRepository playerRepository = MyWicketApplication.get().getDependency(PlayerRepository.class);
+		if (playerId < 0) {
+			playerId = playerRepository.createPlayer();
+		}
+		return playerRepository.getPlayerById(playerId);
 	}
 
 }

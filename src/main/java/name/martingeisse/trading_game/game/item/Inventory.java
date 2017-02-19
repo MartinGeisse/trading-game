@@ -1,7 +1,8 @@
 package name.martingeisse.trading_game.game.item;
 
 import com.mysema.commons.lang.CloseableIterator;
-import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.core.types.Path;
+import name.martingeisse.trading_game.common.util.WtfException;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.InventorySlotRow;
@@ -19,7 +20,7 @@ public final class Inventory {
 	private final ItemTypeSerializer itemTypeSerializer;
 	private final long id;
 
-	// use InventoryProvider to get an instance of this class
+	// use InventoryRepository to get an instance of this class
 	Inventory(PostgresService postgresService, ItemTypeSerializer itemTypeSerializer, long id) {
 		this.postgresService = postgresService;
 		this.itemTypeSerializer = itemTypeSerializer;
@@ -45,7 +46,7 @@ public final class Inventory {
 			try (CloseableIterator<InventorySlotRow> iterator = connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id)).iterate()) {
 				while (iterator.hasNext()) {
 					InventorySlotRow row = iterator.next();
-//					TODO: stacks.add(new ImmutableItemStack(itemTypeSerializer.deserializeItemType(row.getItemType()), row.getQuantity()));
+					stacks.add(new ImmutableItemStack(itemTypeSerializer.deserializeItemType(row.getItemType()), row.getQuantity()));
 				}
 			}
 		}
@@ -58,7 +59,7 @@ public final class Inventory {
 	public int getNumberOfStacks() {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
-			return (int)connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id)).fetchCount();
+			return (int) connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id)).fetchCount();
 		}
 	}
 
@@ -82,8 +83,7 @@ public final class Inventory {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
 			String serializedItemType = itemTypeSerializer.serializeItemType(itemType);
-			// TODO return (int)connection.query().select(qs.quantity.sum()).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).fetchCount();
-			return 0;
+			return (int) connection.query().select(qs.quantity.sum()).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).fetchCount();
 		}
 	}
 
@@ -103,8 +103,6 @@ public final class Inventory {
 		return add(stack.getItemType(), stack.getSize());
 	}
 
-
-
 	public Inventory add(ItemType itemType, int amount) {
 		if (amount < 0) {
 			throw new IllegalArgumentException("amount is negative");
@@ -117,7 +115,7 @@ public final class Inventory {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			if (slotId == null) {
 				String serializedItemType = itemTypeSerializer.serializeItemType(itemType);
-				connection.insert(qs).set(qs.inventoryId, id).set(qs.quantity, amount).execute(); // TODO itemType
+				connection.insert(qs).set(qs.inventoryId, id).set(qs.itemType, serializedItemType).set(qs.quantity, amount).execute();
 			} else {
 				connection.update(qs).set(qs.quantity, qs.quantity.add(amount)).where(qs.id.eq(slotId)).execute();
 			}
@@ -138,29 +136,43 @@ public final class Inventory {
 		}
 
 		// there are enough items, so remove stacks (and possibly one partial stack) until the amount is reached
-		// TODO
-//		while (amount > 0) {
-//			ItemStack itemStack = find(itemType);
-//			if (itemStack.getSize() > amount) {
-//				itemStack.remove(amount);
-//				return this;
-//			} else if (itemStack.getSize() == amount) {
-//				itemStacks.remove(itemStack);
-//				return this;
-//			} else {
-//				itemStacks.remove(itemStack);
-//				amount -= itemStack.getSize();
-//			}
-//		}
+		while (amount > 0) {
+			Long slotId = findSlotId(itemType);
+			if (slotId == null) {
+				throw new WtfException("did not find enough items despite checking first");
+			}
+			InventorySlotRow slot = findSlot(itemType);
+			try (PostgresConnection connection = postgresService.newConnection()) {
+				QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
+				if (slot.getQuantity() > amount) {
+					connection.update(qs).set(qs.quantity, qs.quantity.subtract(amount)).where(qs.id.eq(slot.getId())).execute();
+					return this;
+				} else {
+					amount -= slot.getQuantity();
+					connection.delete(qs).where(qs.id.eq(slot.getId())).execute();
+					if (amount <= 0) {
+						return this;
+					}
+				}
+			}
+		}
 
 		return this;
 	}
 
 	private Long findSlotId(ItemType itemType) {
+		return findSlot(itemType, QInventorySlotRow.InventorySlot.id);
+	}
+
+	private InventorySlotRow findSlot(ItemType itemType) {
+		return findSlot(itemType, QInventorySlotRow.InventorySlot);
+	}
+
+	private <T> T findSlot(ItemType itemType, Path<T> path) {
 		try (PostgresConnection connection = postgresService.newConnection()) {
+			String serializedItemType = itemTypeSerializer.serializeItemType(itemType);
 			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
-			// TODO return connection.query().select(qs.id).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).fetchFirst();
-			return null;
+			return connection.query().select(path).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).fetchFirst();
 		}
 	}
 

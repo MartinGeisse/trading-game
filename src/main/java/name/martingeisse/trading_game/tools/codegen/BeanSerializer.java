@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.platform.postgres.codegen;
+package name.martingeisse.trading_game.tools.codegen;
 
 import com.mysema.codegen.CodeWriter;
 import com.mysema.codegen.model.*;

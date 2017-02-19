@@ -6,7 +6,7 @@
 
 package name.martingeisse.trading_game.gui;
 
-import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;

@@ -6,7 +6,7 @@
 
 package name.martingeisse.trading_game.gui;
 
-import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;

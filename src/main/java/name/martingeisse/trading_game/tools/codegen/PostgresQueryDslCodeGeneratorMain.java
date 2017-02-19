@@ -1,6 +1,5 @@
-package name.martingeisse.trading_game.platform.postgres.codegen;
+package name.martingeisse.trading_game.tools.codegen;
 
-import com.querydsl.sql.SchemaAndTable;
 import com.querydsl.sql.codegen.DefaultNamingStrategy;
 import com.querydsl.sql.codegen.MetaDataExporter;
 import name.martingeisse.trading_game.platform.postgres.MyPostgresConfiguration;

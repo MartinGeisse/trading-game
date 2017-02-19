@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.game.tools;
+package name.martingeisse.trading_game.tools.init;
 
 import com.google.inject.Injector;
 import name.martingeisse.trading_game.game.definition.GameConstants;
@@ -7,6 +7,7 @@ import name.martingeisse.trading_game.game.generate.SpaceStationPlacement;
 import name.martingeisse.trading_game.game.generate.StarNaming;
 import name.martingeisse.trading_game.game.generate.StarPlacement;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
+import name.martingeisse.trading_game.game.space.InitialSpaceObjectsFactory;
 import name.martingeisse.trading_game.platform.application.CommandLineApplicationBootstrapper;
 import org.apache.commons.lang3.tuple.Pair;
 

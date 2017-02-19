@@ -1,18 +1,18 @@
 package name.martingeisse.trading_game.game.space;
 
 import name.martingeisse.trading_game.game.item.Inventory;
-import name.martingeisse.trading_game.game.item.InventoryProvider;
+import name.martingeisse.trading_game.game.item.InventoryRepository;
 
 /**
  *
  */
 public final class SpaceStation extends StaticSpaceObject {
 
-	private InventoryProvider inventoryProvider;
+	private InventoryRepository inventoryRepository;
 	private long inventoryId;
 
-	public SpaceStation(InventoryProvider inventoryProvider) {
-		this.inventoryProvider = inventoryProvider;
+	public SpaceStation(InventoryRepository inventoryRepository) {
+		this.inventoryRepository = inventoryRepository;
 	}
 
 	/**
@@ -39,7 +39,7 @@ public final class SpaceStation extends StaticSpaceObject {
 	 * @return the inventory
 	 */
 	public Inventory getInventory() {
-		return inventoryProvider.getInventory(inventoryId);
+		return inventoryRepository.getInventory(inventoryId);
 	}
 
 }

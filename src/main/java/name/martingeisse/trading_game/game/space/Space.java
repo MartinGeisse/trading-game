@@ -7,9 +7,9 @@ import com.google.inject.Injector;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
+import name.martingeisse.trading_game.game.item.InventoryRepository;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
-import name.martingeisse.trading_game.postgres_entities.InventoryRow;
 import name.martingeisse.trading_game.postgres_entities.QSpaceObjectBaseDataRow;
 import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseDataRow;
 
@@ -29,11 +29,13 @@ public final class Space {
 	private static final QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
 
 	private final PostgresService postgresService;
+	private final InventoryRepository inventoryRepository;
 	private final Injector injector; // might use a specialized SpaceObjectFactory instead
 
 	@Inject
-	public Space(PostgresService postgresService, Injector injector) {
+	public Space(PostgresService postgresService, InventoryRepository inventoryRepository, Injector injector) {
 		this.postgresService = postgresService;
+		this.inventoryRepository = inventoryRepository;
 		this.injector = injector;
 	}
 
@@ -145,19 +147,15 @@ public final class Space {
 	 * Creates a new player ship and returns its ID.
 	 */
 	public long createPlayerShip(String name, long x, long y) {
+		long inventoryId = inventoryRepository.createInventory();
 		try (PostgresConnection connection = postgresService.newConnection()) {
-
-			InventoryRow inventory = new InventoryRow();
-			inventory.insert(connection);
-
 			SpaceObjectBaseDataRow baseData = new SpaceObjectBaseDataRow();
 			baseData.setType(SpaceObjectType.PLAYER_SHIP);
 			baseData.setName(name);
 			baseData.setX(x);
 			baseData.setY(y);
-			baseData.setInventoryId(inventory.getId());
+			baseData.setInventoryId(inventoryId);
 			baseData.insert(connection);
-
 			return baseData.getId();
 		}
 	}

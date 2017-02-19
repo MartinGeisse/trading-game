@@ -7,7 +7,7 @@
 package name.martingeisse.trading_game.platform.wicket.page;
 
 import name.martingeisse.trading_game.game.Game;
-import name.martingeisse.trading_game.game.Player;
+import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.platform.wicket.MyWicketSession;
