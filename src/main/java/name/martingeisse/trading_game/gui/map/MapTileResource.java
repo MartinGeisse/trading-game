@@ -92,7 +92,7 @@ public class MapTileResource extends DynamicImageResource {
 		// add space objects to the heat map
 		int shift = zoomLevel + 8; // TODO wrong, should be (8 - shiftLevel), but hits the same problem: pixels != latLng != gameCoords
 									// -- must be solved first
-		ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Game.class).getSpace().getStaticSpaceObjects();
+		ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Space.class).getStaticSpaceObjects();
 		for (SpaceObject spaceObject : spaceObjects) {
 			// long lx = spaceObject.getX() - (tileX << shift); // TODO see above
 			// long ly = spaceObject.getY() - (tileY << shift); // TODO see above
@@ -133,7 +133,7 @@ public class MapTileResource extends DynamicImageResource {
 
 		// draw space objects
 		g.setFont(g.getFont().deriveFont((float)(MapCoordinates.convertGameDistanceToMapDistance(5000))));
-		ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Game.class).getSpace().getStaticSpaceObjects();
+		ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Space.class).getStaticSpaceObjects();
 		for (SpaceObject spaceObject : spaceObjects) {
 			draw(spaceObject, g);
 		}

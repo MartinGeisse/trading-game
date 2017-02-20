@@ -46,7 +46,7 @@ public class MainPage extends AbstractPage {
 	private final IModel<SpaceObject> selectedSpaceObjectModel = new LoadableDetachableModel<SpaceObject>() {
 		@Override
 		protected SpaceObject load() {
-			return getGame().getSpace().get(selectedSpaceObjectId);
+			return getSpace().get(selectedSpaceObjectId);
 		}
 	};
 
@@ -165,14 +165,15 @@ public class MainPage extends AbstractPage {
 		skillCurrentlyBeingLearnedProgressBar.add(new ProgressBarClientProgressBehavior() {
 			@Override
 			protected int getRemainingSeconds() {
-				return getPlayer().getSkills().getSkillCurrentlyBeingLearned().getRequiredSecondsForLearning() - getPlayer().getSkills().getSecondsLearned();
+				// TODO return getPlayer().getSkills().getSkillCurrentlyBeingLearned().getRequiredSecondsForLearning() - getPlayer().getSkills().getSecondsLearned();
+				return 0;
 			}
 		});
 		skillsContainer.queue(skillCurrentlyBeingLearnedProgressBar);
 		skillsContainer.queue(new AjaxLink<Void>("cancelSkillCurrentlyBeingLearnedLink") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				getPlayer().getSkills().cancelSkillCurrentlyBeingLearned();
+				// TODO getPlayer().getSkills().cancelSkillCurrentlyBeingLearned();
 				target.add(MainPage.this.get("skillsContainer"));
 			}
 		});
@@ -188,7 +189,7 @@ public class MainPage extends AbstractPage {
 				Link<?> link = new Link<Void>("link") {
 					@Override
 					public void onClick() {
-						getPlayer().getSkills().enqueueForLearning(item.getModelObject());
+						// TODO getPlayer().getSkills().enqueueForLearning(item.getModelObject());
 					}
 				};
 				link.add(new Label("name", item.getModelObject().getName()));
@@ -258,18 +259,20 @@ public class MainPage extends AbstractPage {
 	}
 
 	public final List<Skill> getPlayerSkills() {
-		List<Skill> skills = new ArrayList<>(getPlayer().getSkills().getSkills());
-		Collections.sort(skills, (x, y) -> x.getName().compareTo(y.getName()));
-		return skills;
+		// TODO List<Skill> skills = new ArrayList<>(getPlayer().getSkills().getSkills());
+		// TODO Collections.sort(skills, (x, y) -> x.getName().compareTo(y.getName()));
+		// TODO return skills;
+		return null;
 	}
 
 	public final List<Skill> getSkillsAvailableForLearning() {
 		List<Skill> skills = new ArrayList<>(getGameDefinition().getSkills());
-		skills.removeAll(getPlayer().getSkills().getSkills());
-		skills.remove(getPlayer().getSkills().getSkillCurrentlyBeingLearned());
-		skills.removeAll(getPlayer().getSkills().getLearningQueue());
-		Collections.sort(skills, (x, y) -> x.getName().compareTo(y.getName()));
-		return skills;
+		// TODO skills.removeAll(getPlayer().getSkills().getSkills());
+		// TODO skills.remove(getPlayer().getSkills().getSkillCurrentlyBeingLearned());
+		// TODO skills.removeAll(getPlayer().getSkills().getLearningQueue());
+		// TODO Collections.sort(skills, (x, y) -> x.getName().compareTo(y.getName()));
+		// TODO return skills;
+		return null;
 	}
 
 	public Double getSelectedSpaceObjectDistance() {

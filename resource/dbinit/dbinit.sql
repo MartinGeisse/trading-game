@@ -39,15 +39,49 @@ CREATE INDEX "SpaceObjectBaseData_inventoryIdIndex" ON "game"."SpaceObjectBaseDa
 
 
 -----------------------------------------------------------------------------------------------------------------------
+-- actions
+-----------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE "game"."ActionQueue" (
+	"id" bigserial NOT NULL PRIMARY KEY
+);
+
+CREATE TABLE "game"."ActionQueueSlot" (
+	"id" bigserial NOT NULL PRIMARY KEY,
+	"actionQueueId" bigint NOT NULL REFERENCES "game"."ActionQueue" ON DELETE CASCADE,
+	"prerequisite" boolean NOT NULL,
+	"action" jsonb NOT NULL,
+	"started" boolean NOT NULL
+);
+CREATE INDEX "ActionQueueSlot_mainIndex" ON "game"."ActionQueueSlot" ("actionQueueId" ASC, "prerequisite" DESC, "id" ASC);
+
+-----------------------------------------------------------------------------------------------------------------------
 -- players
 -----------------------------------------------------------------------------------------------------------------------
 
 CREATE TABLE "game"."Player" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"name" character varying(2000) NOT NULL,
-	"shipId" bigint NOT NULL REFERENCES "game"."SpaceObjectBaseData"
-	-- TODO actions
-	-- TODO skills
+	"shipId" bigint NOT NULL REFERENCES "game"."SpaceObjectBaseData",
+	"actionQueueId" bigint NOT NULL REFERENCES "game"."ActionQueue"
 );
 CREATE INDEX "Player_nameIndex" ON "game"."Player" ("name");
 CREATE INDEX "Player_shipIdIndex" ON "game"."Player" ("shipId");
+CREATE INDEX "Player_actionQueueId" ON "game"."Player" ("actionQueueId");
+
+CREATE TABLE "game"."PlayerSkill" (
+	"id" bigserial NOT NULL PRIMARY KEY,
+	"playerId" bigint NOT NULL REFERENCES "game"."Player" ON DELETE CASCADE,
+	"skillType" character varying(2000) NOT NULL
+);
+CREATE INDEX "PlayerSkill_playerIdIndex" ON "game"."PlayerSkill" ("playerId");
+
+CREATE TABLE "game"."PlayerSkillLearningQueueSlot" (
+	"id" bigserial NOT NULL PRIMARY KEY,
+	"playerId" bigint NOT NULL REFERENCES "game"."Player" ON DELETE CASCADE,
+	"skillType" character varying(2000) NOT NULL,
+	"learningPoints" integer NOT NULL,
+	"learningOrderIndex" integer -- entries with learningOrderIndex null aren't actively part of the queue, but
+		-- have acquired learning points that should not be dropped
+);
+CREATE INDEX "PlayerSkillLearningQueueSlot_playerIdIndex" ON "game"."PlayerSkillLearningQueueSlot" ("playerId");

@@ -1,10 +1,10 @@
 package name.martingeisse.trading_game.gui.map;
 
 import name.martingeisse.trading_game.game.GameListener;
-import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
+import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.space.*;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.leaflet.D3;
@@ -215,7 +215,7 @@ public class LeafletPage extends AbstractPage {
 						long clickX = MapCoordinates.convertLongitudeToX(clickLongitude);
 						long clickY = MapCoordinates.convertLatitudeToY(clickLatitude);
 						long radius = 5000 + (MapCoordinates.convertMapDistanceToGameDistance(10) >> zoom); // 5000 = object radius, plus 10 pixels extra
-						SpaceObject spaceObject = getGame().getSpace().get(clickX, clickY, radius, playerShipsLowPriorityComparator);
+						SpaceObject spaceObject = getSpace().get(clickX, clickY, radius, playerShipsLowPriorityComparator);
 						System.out.println("-> " + spaceObject);
 						if (spaceObject != null) {
 							selectedSpaceObjectId = spaceObject.getId();
@@ -295,7 +295,7 @@ public class LeafletPage extends AbstractPage {
 
 	private void buildDynamicSpaceObjectsData(StringBuilder builder) {
 		builder.append("dynamicSpaceObjectsData = [\n");
-		for (DynamicSpaceObject spaceObject : getGame().getSpace().getDynamicSpaceObjects()) {
+		for (DynamicSpaceObject spaceObject : getSpace().getDynamicSpaceObjects()) {
 			builder.append("\t{x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
 			builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
 			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(500));
@@ -344,7 +344,7 @@ public class LeafletPage extends AbstractPage {
 	}
 
 	public SpaceObject getSelectedSpaceObject() {
-		return getGame().getSpace().get(selectedSpaceObjectId);
+		return getSpace().get(selectedSpaceObjectId);
 	}
 
 	public Double getSelectedSpaceObjectDistance() {

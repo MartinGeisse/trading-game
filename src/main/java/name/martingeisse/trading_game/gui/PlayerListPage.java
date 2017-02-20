@@ -13,7 +13,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.PropertyModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,7 +45,7 @@ public class PlayerListPage extends AbstractPage {
 
 	@Override
 	protected void onBeforeRender() {
-		players = new ArrayList<>(getGame().getPlayers());
+		// TODO players = new ArrayList<>(getGame().getPlayers());
 		super.onBeforeRender();
 	}
 

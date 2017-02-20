@@ -72,7 +72,8 @@ public final class PlayerRepository {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QPlayerRow qp = QPlayerRow.Player;
 			PlayerRow row = connection.query().select(qp).from(qp).where(predicate).fetchFirst();
-			return new Player(postgresService, this, row.getId());
+			// TODO return new Player(postgresService, this, row.getId());
+			return null;
 		}
 	}
 

@@ -6,11 +6,11 @@
 
 package name.martingeisse.trading_game.gui;
 
-import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
-import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
+import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
+import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.skill.Skill;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
@@ -34,8 +34,6 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -204,14 +202,15 @@ public class MainPageOld extends AbstractPage {
 		skillCurrentlyBeingLearnedProgressBar.add(new ProgressBarClientProgressBehavior() {
 			@Override
 			protected int getRemainingSeconds() {
-				return getPlayer().getSkills().getSkillCurrentlyBeingLearned().getRequiredSecondsForLearning() - getPlayer().getSkills().getSecondsLearned();
+				// TODO return getPlayer().getSkills().getSkillCurrentlyBeingLearned().getRequiredSecondsForLearning() - getPlayer().getSkills().getSecondsLearned();
+				return 0;
 			}
 		});
 		skillsContainer.queue(skillCurrentlyBeingLearnedProgressBar);
 		skillsContainer.queue(new AjaxLink<Void>("cancelSkillCurrentlyBeingLearnedLink") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				getPlayer().getSkills().cancelSkillCurrentlyBeingLearned();
+				// TODO getPlayer().getSkills().cancelSkillCurrentlyBeingLearned();
 				target.add(MainPageOld.this.get("skillsContainer"));
 			}
 		});
@@ -227,7 +226,7 @@ public class MainPageOld extends AbstractPage {
 				Link<?> link = new Link<Void>("link") {
 					@Override
 					public void onClick() {
-						getPlayer().getSkills().enqueueForLearning(item.getModelObject());
+						// TODO getPlayer().getSkills().enqueueForLearning(item.getModelObject());
 					}
 				};
 				link.add(new Label("name", item.getModelObject().getName()));
@@ -274,18 +273,20 @@ public class MainPageOld extends AbstractPage {
 	}
 
 	public final List<Skill> getPlayerSkills() {
-		List<Skill> skills = new ArrayList<>(getPlayer().getSkills().getSkills());
-		Collections.sort(skills, (x, y) -> x.getName().compareTo(y.getName()));
-		return skills;
+		// TODO List<Skill> skills = new ArrayList<>(getPlayer().getSkills().getSkills());
+		// TODO Collections.sort(skills, (x, y) -> x.getName().compareTo(y.getName()));
+		// TODO return skills;
+		return null;
 	}
 
 	public final List<Skill> getSkillsAvailableForLearning() {
-		List<Skill> skills = new ArrayList<>(getGameDefinition().getSkills());
-		skills.removeAll(getPlayer().getSkills().getSkills());
-		skills.remove(getPlayer().getSkills().getSkillCurrentlyBeingLearned());
-		skills.removeAll(getPlayer().getSkills().getLearningQueue());
-		Collections.sort(skills, (x, y) -> x.getName().compareTo(y.getName()));
-		return skills;
+		// TODO List<Skill> skills = new ArrayList<>(getGameDefinition().getSkills());
+		// TODO skills.removeAll(getPlayer().getSkills().getSkills());
+		// TODO skills.remove(getPlayer().getSkills().getSkillCurrentlyBeingLearned());
+		// TODO skills.removeAll(getPlayer().getSkills().getLearningQueue());
+		// TODO Collections.sort(skills, (x, y) -> x.getName().compareTo(y.getName()));
+		// TODO return skills;
+		return null;
 	}
 
 }

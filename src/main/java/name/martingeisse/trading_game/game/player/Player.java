@@ -18,28 +18,29 @@ public final class Player {
 
 	private final PostgresService postgresService;
 	private final PlayerRepository playerRepository;
-
 	private final Game game;
+
 	private final long id;
-	private final PlayerShip ship;
+	// private final PlayerShip ship;
 	private String name;
 	private final ActionQueue pendingActions = new ActionQueue();
 	private ActionExecution actionExecution;
 
-	public Player(PostgresService postgresService, PlayerRepository playerRepository, long id) {
+	public Player(PostgresService postgresService, PlayerRepository playerRepository, Game game, long id) {
 		this.postgresService = postgresService;
 		this.playerRepository = playerRepository;
+		this.game = game;
 		// TODO merge constructors
 		this.id = id;
 	}
 
-	public Player(Game game, long id, PlayerShip ship) {
-		this.game = game;
-		this.id = id;
-		this.ship = ship;
-		this.name = "Player " + id;
-		setShipName();
-	}
+//	public Player(Game game, long id, PlayerShip ship) {
+//		this.game = game;
+//		this.id = id;
+//		this.ship = ship;
+//		this.name = "Player " + id;
+//		setShipName();
+//	}
 
 	/**
 	 * Getter method.
@@ -65,7 +66,8 @@ public final class Player {
 	 * @return the ship
 	 */
 	public PlayerShip getShip() {
-		return ship;
+		// TODO return ship;
+		return null;
 	}
 
 	/**
@@ -92,13 +94,13 @@ public final class Player {
 		String oldName = this.name;
 		this.name = name;
 		// TODO update name in database
-		if (ship.getName().equals(generateName(oldName))) {
+		if (getShip().getName().equals(generateName(oldName))) {
 			setShipName();
 		}
 	}
 
 	private void setShipName() {
-		ship.setName(generateName(name));
+		getShip().setName(generateName(name));
 	}
 
 	private static String generateName(String playerName) {
@@ -111,7 +113,7 @@ public final class Player {
 	 * @return the inventory
 	 */
 	public Inventory getInventory() {
-		return ship.getInventory();
+		return getShip().getInventory();
 	}
 
 	/**
