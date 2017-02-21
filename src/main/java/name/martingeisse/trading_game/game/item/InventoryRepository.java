@@ -33,9 +33,9 @@ public class InventoryRepository {
 	}
 
 	/**
-	 * Creates a new, empty repository
+	 * Creates a new, empty inventory
 	 *
-	 * @return the ID of the new repository
+	 * @return the ID of the new inventory
 	 */
 	public long createInventory() {
 		try (PostgresConnection connection = postgresService.newConnection()) {
@@ -46,9 +46,9 @@ public class InventoryRepository {
 	}
 
 	/**
-	 * Creates a new repository with the specified contents
+	 * Creates a new inventory with the specified contents
 	 *
-	 * @return the ID of the new repository
+	 * @return the ID of the new inventory
 	 */
 	public long createInventory(ImmutableItemStacks itemStacks) {
 		try (PostgresConnection connection = postgresService.newConnection()) {

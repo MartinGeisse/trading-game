@@ -10,6 +10,8 @@ import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.item.ItemTypeSerializer;
 import name.martingeisse.trading_game.game.skill.Skill;
+import name.martingeisse.trading_game.game.skill.SkillByNameSerializer;
+import name.martingeisse.trading_game.game.skill.SkillSerializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.List;
  * definitions.
  */
 @Singleton
-public final class GameDefinition implements ItemTypeSerializer {
+public final class GameDefinition implements ItemTypeSerializer, SkillSerializer {
 
 	private final ImmutableList<ItemType> itemTypes;
 
@@ -27,6 +29,8 @@ public final class GameDefinition implements ItemTypeSerializer {
 	private final ImmutableList<Skill> skills;
 	private final ItemType redPixelItemType;
 	private final ItemType redPixelAssemblyItemType;
+
+	private final SkillByNameSerializer skillByNameSerializer;
 
 	/**
 	 *
@@ -102,6 +106,7 @@ public final class GameDefinition implements ItemTypeSerializer {
 			}
 
 		});
+		this.skillByNameSerializer = new SkillByNameSerializer(skills);
 
 		this.redPixelItemType = redPixelItemType;
 		this.redPixelAssemblyItemType = redPixelAssemblyItemType;
@@ -156,6 +161,16 @@ public final class GameDefinition implements ItemTypeSerializer {
 			}
 		}
 		throw new RuntimeException("cannot deserialize item type: " + serializedItemType);
+	}
+
+	@Override
+	public String serializeSkill(Skill skill) {
+		return skillByNameSerializer.serializeSkill(skill);
+	}
+
+	@Override
+	public Skill deserializeSkill(String serializedSkill) {
+		return skillByNameSerializer.deserializeSkill(serializedSkill);
 	}
 
 }
