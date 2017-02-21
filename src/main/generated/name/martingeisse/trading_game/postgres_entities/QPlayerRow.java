@@ -17,13 +17,15 @@ import java.sql.Types;
 /**
  * QPlayerRow is a Querydsl query type for PlayerRow
  */
-@Generated("name.martingeisse.trading_game.tools.codegen.codegen.MyMetaDataSerializer")
+@Generated("name.martingeisse.trading_game.tools.codegen.MyMetaDataSerializer")
 @SuppressWarnings("all")
 public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 
     private static final long serialVersionUID = -1042415446;
 
     public static final QPlayerRow Player = new QPlayerRow("Player");
+
+    public final NumberPath<Long> actionQueueId = createNumber("actionQueueId", Long.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -33,7 +35,13 @@ public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 
     public final com.querydsl.sql.PrimaryKey<PlayerRow> playerPkey = createPrimaryKey(id);
 
+    public final com.querydsl.sql.ForeignKey<ActionQueueRow> playerActionQueueIdFkey = createForeignKey(actionQueueId, "id");
+
     public final com.querydsl.sql.ForeignKey<SpaceObjectBaseDataRow> playerShipIdFkey = createForeignKey(shipId, "id");
+
+    public final com.querydsl.sql.ForeignKey<PlayerSkillRow> _playerSkillPlayerIdFkey = createInvForeignKey(id, "playerId");
+
+    public final com.querydsl.sql.ForeignKey<PlayerSkillLearningQueueSlotRow> _playerSkillLearningQueueSlotPlayerIdFkey = createInvForeignKey(id, "playerId");
 
     public QPlayerRow(String variable) {
         super(PlayerRow.class, forVariable(variable), "game", "Player");
@@ -56,6 +64,7 @@ public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
     }
 
     public void addMetadata() {
+        addMetadata(actionQueueId, ColumnMetadata.named("actionQueueId").withIndex(4).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(name, ColumnMetadata.named("name").withIndex(2).ofType(Types.VARCHAR).withSize(2000).notNull());
         addMetadata(shipId, ColumnMetadata.named("shipId").withIndex(3).ofType(Types.BIGINT).withSize(19).notNull());

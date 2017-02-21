@@ -8,15 +8,20 @@ import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import java.io.Serializable;
 
 /**
- * This class represents rows from table 'Player'.
+ * This class represents rows from table 'ActionQueueSlot'.
  */
-public class PlayerRow implements Serializable {
+public class ActionQueueSlotRow implements Serializable {
 
     /**
      * Constructor.
      */
-    public PlayerRow() {
+    public ActionQueueSlotRow() {
     }
+
+    /**
+     * the action
+     */
+    private Object action;
 
     /**
      * the actionQueueId
@@ -29,14 +34,32 @@ public class PlayerRow implements Serializable {
     private Long id;
 
     /**
-     * the name
+     * the prerequisite
      */
-    private String name;
+    private Boolean prerequisite;
 
     /**
-     * the shipId
+     * the started
      */
-    private Long shipId;
+    private Boolean started;
+
+    /**
+     * Getter method for the action.
+     * 
+     * @return the action
+     */
+    public Object getAction() {
+        return action;
+    }
+
+    /**
+     * Setter method for the action.
+     * 
+     * @param action the action to set
+     */
+    public void setAction(Object action) {
+        this.action = action;
+    }
 
     /**
      * Getter method for the actionQueueId.
@@ -75,39 +98,39 @@ public class PlayerRow implements Serializable {
     }
 
     /**
-     * Getter method for the name.
+     * Getter method for the prerequisite.
      * 
-     * @return the name
+     * @return the prerequisite
      */
-    public String getName() {
-        return name;
+    public Boolean getPrerequisite() {
+        return prerequisite;
     }
 
     /**
-     * Setter method for the name.
+     * Setter method for the prerequisite.
      * 
-     * @param name the name to set
+     * @param prerequisite the prerequisite to set
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setPrerequisite(Boolean prerequisite) {
+        this.prerequisite = prerequisite;
     }
 
     /**
-     * Getter method for the shipId.
+     * Getter method for the started.
      * 
-     * @return the shipId
+     * @return the started
      */
-    public Long getShipId() {
-        return shipId;
+    public Boolean getStarted() {
+        return started;
     }
 
     /**
-     * Setter method for the shipId.
+     * Setter method for the started.
      * 
-     * @param shipId the shipId to set
+     * @param started the started to set
      */
-    public void setShipId(Long shipId) {
-        this.shipId = shipId;
+    public void setStarted(Boolean started) {
+        this.started = started;
     }
 
     /**
@@ -117,8 +140,8 @@ public class PlayerRow implements Serializable {
      * @param id the ID of the instance to load
      * @return the loaded instance
      */
-    public static PlayerRow loadById(PostgresConnection connection, Long id) {
-        QPlayerRow q = QPlayerRow.Player;
+    public static ActionQueueSlotRow loadById(PostgresConnection connection, Long id) {
+        QActionQueueSlotRow q = QActionQueueSlotRow.ActionQueueSlot;
         return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
     }
 
@@ -129,11 +152,12 @@ public class PlayerRow implements Serializable {
         if (id != null) {
         	throw new IllegalStateException("this object already has an id: " + id);
         }
-        QPlayerRow q = QPlayerRow.Player;
+        QActionQueueSlotRow q = QActionQueueSlotRow.ActionQueueSlot;
         SQLInsertClause insert = connection.insert(q);
+        insert.set(q.action, action);
         insert.set(q.actionQueueId, actionQueueId);
-        insert.set(q.name, name);
-        insert.set(q.shipId, shipId);
+        insert.set(q.prerequisite, prerequisite);
+        insert.set(q.started, started);
         id = insert.executeWithKey(Long.class);
     }
 
@@ -142,7 +166,7 @@ public class PlayerRow implements Serializable {
      */
     @Override
     public String toString() {
-        return "{PlayerRow. actionQueueId = " + actionQueueId + ", id = " + id + ", name = " + name + ", shipId = " + shipId + "}";
+        return "{ActionQueueSlotRow. action = " + action + ", actionQueueId = " + actionQueueId + ", id = " + id + ", prerequisite = " + prerequisite + ", started = " + started + "}";
     }
 
 }

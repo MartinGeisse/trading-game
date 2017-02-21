@@ -39,19 +39,14 @@ public class SpaceObjectBaseDataRow implements Serializable {
     private String name;
 
     /**
+     * the position
+     */
+    private Object position;
+
+    /**
      * the type
      */
     private name.martingeisse.trading_game.game.space.SpaceObjectType type;
-
-    /**
-     * the x
-     */
-    private Long x;
-
-    /**
-     * the y
-     */
-    private Long y;
 
     /**
      * Getter method for the id.
@@ -126,6 +121,24 @@ public class SpaceObjectBaseDataRow implements Serializable {
     }
 
     /**
+     * Getter method for the position.
+     * 
+     * @return the position
+     */
+    public Object getPosition() {
+        return position;
+    }
+
+    /**
+     * Setter method for the position.
+     * 
+     * @param position the position to set
+     */
+    public void setPosition(Object position) {
+        this.position = position;
+    }
+
+    /**
      * Getter method for the type.
      * 
      * @return the type
@@ -141,42 +154,6 @@ public class SpaceObjectBaseDataRow implements Serializable {
      */
     public void setType(name.martingeisse.trading_game.game.space.SpaceObjectType type) {
         this.type = type;
-    }
-
-    /**
-     * Getter method for the x.
-     * 
-     * @return the x
-     */
-    public Long getX() {
-        return x;
-    }
-
-    /**
-     * Setter method for the x.
-     * 
-     * @param x the x to set
-     */
-    public void setX(Long x) {
-        this.x = x;
-    }
-
-    /**
-     * Getter method for the y.
-     * 
-     * @return the y
-     */
-    public Long getY() {
-        return y;
-    }
-
-    /**
-     * Setter method for the y.
-     * 
-     * @param y the y to set
-     */
-    public void setY(Long y) {
-        this.y = y;
     }
 
     /**
@@ -203,9 +180,8 @@ public class SpaceObjectBaseDataRow implements Serializable {
         insert.set(q.inventoryId, inventoryId);
         insert.set(q.longField1, longField1);
         insert.set(q.name, name);
+        insert.set(q.position, position);
         insert.set(q.type, type);
-        insert.set(q.x, x);
-        insert.set(q.y, y);
         id = insert.executeWithKey(Long.class);
     }
 
@@ -214,7 +190,7 @@ public class SpaceObjectBaseDataRow implements Serializable {
      */
     @Override
     public String toString() {
-        return "{SpaceObjectBaseDataRow. id = " + id + ", inventoryId = " + inventoryId + ", longField1 = " + longField1 + ", name = " + name + ", type = " + type + ", x = " + x + ", y = " + y + "}";
+        return "{SpaceObjectBaseDataRow. id = " + id + ", inventoryId = " + inventoryId + ", longField1 = " + longField1 + ", name = " + name + ", position = " + position + ", type = " + type + "}";
     }
 
 }

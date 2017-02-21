@@ -17,7 +17,7 @@ import java.sql.Types;
 /**
  * QSpaceObjectBaseDataRow is a Querydsl query type for SpaceObjectBaseDataRow
  */
-@Generated("name.martingeisse.trading_game.tools.codegen.codegen.MyMetaDataSerializer")
+@Generated("name.martingeisse.trading_game.tools.codegen.MyMetaDataSerializer")
 @SuppressWarnings("all")
 public class QSpaceObjectBaseDataRow extends com.querydsl.sql.RelationalPathBase<SpaceObjectBaseDataRow> {
 
@@ -33,11 +33,9 @@ public class QSpaceObjectBaseDataRow extends com.querydsl.sql.RelationalPathBase
 
     public final StringPath name = createString("name");
 
+    public final SimplePath<Object> position = createSimple("position", Object.class);
+
     public final EnumPath<name.martingeisse.trading_game.game.space.SpaceObjectType> type = createEnum("type", name.martingeisse.trading_game.game.space.SpaceObjectType.class);
-
-    public final NumberPath<Long> x = createNumber("x", Long.class);
-
-    public final NumberPath<Long> y = createNumber("y", Long.class);
 
     public final com.querydsl.sql.PrimaryKey<SpaceObjectBaseDataRow> spaceObjectBaseDataPkey = createPrimaryKey(id);
 
@@ -67,12 +65,11 @@ public class QSpaceObjectBaseDataRow extends com.querydsl.sql.RelationalPathBase
 
     public void addMetadata() {
         addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(inventoryId, ColumnMetadata.named("inventoryId").withIndex(6).ofType(Types.BIGINT).withSize(19));
-        addMetadata(longField1, ColumnMetadata.named("longField1").withIndex(7).ofType(Types.BIGINT).withSize(19));
+        addMetadata(inventoryId, ColumnMetadata.named("inventoryId").withIndex(5).ofType(Types.BIGINT).withSize(19));
+        addMetadata(longField1, ColumnMetadata.named("longField1").withIndex(6).ofType(Types.BIGINT).withSize(19));
         addMetadata(name, ColumnMetadata.named("name").withIndex(3).ofType(Types.VARCHAR).withSize(2000).notNull());
+        addMetadata(position, ColumnMetadata.named("position").withIndex(4).ofType(Types.OTHER).withSize(2147483647).notNull());
         addMetadata(type, ColumnMetadata.named("type").withIndex(2).ofType(Types.VARCHAR).withSize(2147483647).notNull());
-        addMetadata(x, ColumnMetadata.named("x").withIndex(4).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(y, ColumnMetadata.named("y").withIndex(5).ofType(Types.BIGINT).withSize(19).notNull());
     }
 
 }

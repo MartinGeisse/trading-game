@@ -8,20 +8,15 @@ import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import java.io.Serializable;
 
 /**
- * This class represents rows from table 'Player'.
+ * This class represents rows from table 'PlayerSkill'.
  */
-public class PlayerRow implements Serializable {
+public class PlayerSkillRow implements Serializable {
 
     /**
      * Constructor.
      */
-    public PlayerRow() {
+    public PlayerSkillRow() {
     }
-
-    /**
-     * the actionQueueId
-     */
-    private Long actionQueueId;
 
     /**
      * the id
@@ -29,32 +24,14 @@ public class PlayerRow implements Serializable {
     private Long id;
 
     /**
-     * the name
+     * the playerId
      */
-    private String name;
+    private Long playerId;
 
     /**
-     * the shipId
+     * the skillType
      */
-    private Long shipId;
-
-    /**
-     * Getter method for the actionQueueId.
-     * 
-     * @return the actionQueueId
-     */
-    public Long getActionQueueId() {
-        return actionQueueId;
-    }
-
-    /**
-     * Setter method for the actionQueueId.
-     * 
-     * @param actionQueueId the actionQueueId to set
-     */
-    public void setActionQueueId(Long actionQueueId) {
-        this.actionQueueId = actionQueueId;
-    }
+    private String skillType;
 
     /**
      * Getter method for the id.
@@ -75,39 +52,39 @@ public class PlayerRow implements Serializable {
     }
 
     /**
-     * Getter method for the name.
+     * Getter method for the playerId.
      * 
-     * @return the name
+     * @return the playerId
      */
-    public String getName() {
-        return name;
+    public Long getPlayerId() {
+        return playerId;
     }
 
     /**
-     * Setter method for the name.
+     * Setter method for the playerId.
      * 
-     * @param name the name to set
+     * @param playerId the playerId to set
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setPlayerId(Long playerId) {
+        this.playerId = playerId;
     }
 
     /**
-     * Getter method for the shipId.
+     * Getter method for the skillType.
      * 
-     * @return the shipId
+     * @return the skillType
      */
-    public Long getShipId() {
-        return shipId;
+    public String getSkillType() {
+        return skillType;
     }
 
     /**
-     * Setter method for the shipId.
+     * Setter method for the skillType.
      * 
-     * @param shipId the shipId to set
+     * @param skillType the skillType to set
      */
-    public void setShipId(Long shipId) {
-        this.shipId = shipId;
+    public void setSkillType(String skillType) {
+        this.skillType = skillType;
     }
 
     /**
@@ -117,8 +94,8 @@ public class PlayerRow implements Serializable {
      * @param id the ID of the instance to load
      * @return the loaded instance
      */
-    public static PlayerRow loadById(PostgresConnection connection, Long id) {
-        QPlayerRow q = QPlayerRow.Player;
+    public static PlayerSkillRow loadById(PostgresConnection connection, Long id) {
+        QPlayerSkillRow q = QPlayerSkillRow.PlayerSkill;
         return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
     }
 
@@ -129,11 +106,10 @@ public class PlayerRow implements Serializable {
         if (id != null) {
         	throw new IllegalStateException("this object already has an id: " + id);
         }
-        QPlayerRow q = QPlayerRow.Player;
+        QPlayerSkillRow q = QPlayerSkillRow.PlayerSkill;
         SQLInsertClause insert = connection.insert(q);
-        insert.set(q.actionQueueId, actionQueueId);
-        insert.set(q.name, name);
-        insert.set(q.shipId, shipId);
+        insert.set(q.playerId, playerId);
+        insert.set(q.skillType, skillType);
         id = insert.executeWithKey(Long.class);
     }
 
@@ -142,7 +118,7 @@ public class PlayerRow implements Serializable {
      */
     @Override
     public String toString() {
-        return "{PlayerRow. actionQueueId = " + actionQueueId + ", id = " + id + ", name = " + name + ", shipId = " + shipId + "}";
+        return "{PlayerSkillRow. id = " + id + ", playerId = " + playerId + ", skillType = " + skillType + "}";
     }
 
 }
