@@ -3,9 +3,16 @@ package name.martingeisse.trading_game.game.action;
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.postgres_entities.ActionQueueSlotRow;
+import name.martingeisse.trading_game.postgres_entities.QActionQueueRow;
+import name.martingeisse.trading_game.postgres_entities.QActionQueueSlotRow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
+ * TODO move all the database handling to a separate class (maybe a per-run class that takes the connection and
+ * implements closeable), so this class contains visible logic steps
  */
 public final class ActionQueue {
 
@@ -20,25 +27,48 @@ public final class ActionQueue {
 		this.id = id;
 	}
 
-	// TODO insert
-	// TODO tick / start next / tick action / finish
-	// TODO get all actions (for displaying)
-	// TODO cancel current
-	// TODO cancel pending
-
-
-
-
 	/**
 	 * Schedules an action to be performed after all currently pending actions.
 	 *
 	 * @param action the action to schedule
 	 */
 	public void scheduleAction(Action action) {
-		pendingActions.add(action);
+		ActionQueueSlotRow row = new ActionQueueSlotRow();
+		row.setActionQueueId(id);
+		row.setAction();
+		row.setPrerequisite(false);
+		row.setStarted(false);
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			row.insert(connection);
+		}
+	}
+
+	/**
+	 * Gets all actions in this queue.
+	 * <p>
+	 * TODO currently cannot return the 'prerequisite' flag
+	 *
+	 * @return all actions
+	 */
+	public ImmutableList<Action> getAll() {
+		List<ActionQueueSlotRow> rows;
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QActionQueueSlotRow qaqs = QActionQueueSlotRow.ActionQueueSlot;
+			rows = connection.query().select(qaqs).from(qaqs).where(qaqs.actionQueueId.eq(id)).orderBy(qaqs.prerequisite.desc(), qaqs.id.asc()).fetch();
+		}
+		List<Action> actions = new ArrayList<>();
+		for (ActionQueueSlotRow row : rows) {
+			actions.add();
+		}
+		return actions;
 	}
 
 
+
+
+
+
+	// TODO old TODO tick / start next / tick action / finish
 	public void tick(PostgresConnection connection) {
 		while (actionExecution == null && !pendingActions.isEmpty()) {
 			actionExecution = pendingActions.startNext();
@@ -67,18 +97,22 @@ public final class ActionQueue {
 		return action.startExecution();
 	}
 
-	public ImmutableList<Action> getAll() {
-		// TODO
-	}
+
+
+
+
+
 
 	/**
 	 * Cancels the currently executed action (if any).
 	 */
 	public void cancelCurrentAction() {
-
-		if (actionExecution != null) {
-			actionExecution.cancel();
-			actionExecution = null;
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QActionQueueSlotRow qaqs = QActionQueueSlotRow.ActionQueueSlot;
+			ActionQueueSlotRow row = connection.query().select(qaqs).from(qaqs).where(qaqs.actionQueueId.eq(id), qaqs.started.isTrue()).fetchFirst();
+			Action action = null; // TODO
+			action.cancel();
+			connection.delete(qaqs).where(qaqs.id.eq(row.getId())).execute();
 		}
 	}
 
@@ -88,8 +122,12 @@ public final class ActionQueue {
 	 * @param index the index of the action to cancel
 	 */
 	public void cancelPendingAction(int index) {
-		if (index >= 0 && index < pendingActions.size()) {
-			pendingActions.remove(index);
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QActionQueueSlotRow qaqs = QActionQueueSlotRow.ActionQueueSlot;
+			Long slotId = connection.query().select(qaqs.id).from(qaqs).where(qaqs.actionQueueId.eq(id), qaqs.started.isFalse()).orderBy(qaqs.prerequisite.desc(), qaqs.id.asc()).limit(1).offset(index).fetchFirst();
+			if (slotId != null) {
+				connection.delete(qaqs).where(qaqs.id.eq(slotId)).execute();
+			}
 		}
 	}
 
@@ -97,7 +135,10 @@ public final class ActionQueue {
 	 * Cancels all pending actions (but not the current action).
 	 */
 	public void cancelAllPendingActions() {
-		pendingActions.clear();
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QActionQueueSlotRow qaqs = QActionQueueSlotRow.ActionQueueSlot;
+			connection.delete(qaqs).where(qaqs.actionQueueId.eq(id), qaqs.started.isFalse()).execute();
+		}
 	}
 
 }
