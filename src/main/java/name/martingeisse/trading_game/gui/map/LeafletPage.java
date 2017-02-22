@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.gui.map;
 
 import name.martingeisse.trading_game.game.GameListener;
-import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.player.Player;

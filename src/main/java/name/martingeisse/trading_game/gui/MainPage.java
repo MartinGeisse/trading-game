@@ -7,7 +7,6 @@
 package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.player.Player;
-import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.skill.Skill;
 import name.martingeisse.trading_game.game.space.GeometryUtil;
@@ -34,7 +33,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

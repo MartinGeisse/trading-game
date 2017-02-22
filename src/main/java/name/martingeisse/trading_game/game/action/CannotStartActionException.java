@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.game.action.take2;
+package name.martingeisse.trading_game.game.action;
 
 /**
  * Indicates that an action cannot be started due to failed preconditions. If possible, the action should have reported

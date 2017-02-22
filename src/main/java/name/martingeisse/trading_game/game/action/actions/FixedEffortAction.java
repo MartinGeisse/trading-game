@@ -1,13 +1,15 @@
 package name.martingeisse.trading_game.game.action.actions;
 
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.action.ActionExecution;
+import name.martingeisse.trading_game.game.action.CannotStartActionException;
 import name.martingeisse.trading_game.game.action.ProgressSnapshot;
 
 /**
  * Base class for an action that has a fixed effort (required progress points) to complete.
  */
 public abstract class FixedEffortAction implements Action {
+
+	private int currentProgressPoints;
 
 	/**
 	 * @return the total number of progress points needed for this action.
@@ -26,59 +28,57 @@ public abstract class FixedEffortAction implements Action {
 		return getTotalRequiredProgressPoints() / getProgressPointsPerSecond();
 	}
 
-	// narrow down return type
 	@Override
-	public abstract AbstractExecution startExecution();
+	public final void start() throws CannotStartActionException {
+		onStart();
+	}
+
+	@Override
+	public final ProgressSnapshot getProgress() {
+		return new ProgressSnapshot(getTotalRequiredProgressPoints(), currentProgressPoints);
+	}
+
+	public final Integer getRemainingProgressPoints() {
+		return getTotalRequiredProgressPoints() - currentProgressPoints;
+	}
+
+	@Override
+	public final Integer getRemainingTime() {
+		return getRemainingProgressPoints() / getProgressPointsPerSecond();
+	}
+
+	@Override
+	public final void cancel() {
+		currentProgressPoints = 0;
+		onCancel();
+	}
+
+	@Override
+	public Status tick() {
+		currentProgressPoints += getProgressPointsPerSecond();
+		if (currentProgressPoints >= getTotalRequiredProgressPoints()) {
+			onFinish();
+			return Status.FINISHED;
+		} else {
+			return Status.RUNNING;
+		}
+	}
 
 	/**
-	 * Base execution implementation.
+	 * Called when startingthe action.
+	 *
+	 * @throws CannotStartActionException if this action cannot be started
 	 */
-	public abstract class AbstractExecution implements ActionExecution {
+	protected abstract void onStart() throws CannotStartActionException;
 
-		private int currentProgressPoints;
+	/**
+	 * Called when cancelling the action.
+	 */
+	protected abstract void onCancel();
 
-		@Override
-		public final ProgressSnapshot getProgress() {
-			return new ProgressSnapshot(getTotalRequiredProgressPoints(), currentProgressPoints);
-		}
-
-		public final Integer getRemainingProgressPoints() {
-			return getTotalRequiredProgressPoints() - currentProgressPoints;
-		}
-
-		@Override
-		public final Integer getRemainingTime() {
-			return getRemainingProgressPoints() / getProgressPointsPerSecond();
-		}
-
-		@Override
-		public void tick() {
-			currentProgressPoints += getProgressPointsPerSecond();
-		}
-
-		@Override
-		public final boolean isFinishable() {
-			return currentProgressPoints >= getTotalRequiredProgressPoints();
-		}
-
-		@Override
-		public final void finish() {
-			if (!isFinishable()) {
-				throw new IllegalStateException("this action cannot be finished");
-			}
-			onFinish();
-		}
-
-		/**
-		 * Called when finishing the action successfully.
-		 */
-		protected abstract void onFinish();
-
-		@Override
-		public String toString() {
-			return getName() + " (" + currentProgressPoints + " / " + getTotalRequiredProgressPoints() + ")";
-		}
-
-	}
+	/**
+	 * Called when finishing the action successfully.
+	 */
+	protected abstract void onFinish();
 
 }

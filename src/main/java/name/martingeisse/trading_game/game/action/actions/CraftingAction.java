@@ -1,11 +1,12 @@
 package name.martingeisse.trading_game.game.action.actions;
 
-import name.martingeisse.trading_game.game.player.Player;
+import name.martingeisse.trading_game.game.action.CannotStartActionException;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
-import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
+import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
+import name.martingeisse.trading_game.game.player.Player;
 
 /**
  * An action backed by a {@link CraftingRecipe}.
@@ -37,17 +38,26 @@ public final class CraftingAction extends FixedEffortAction {
 	}
 
 	@Override
-	public AbstractExecution startExecution() {
+	protected void onStart() throws CannotStartActionException {
 		try {
 			player.getInventory().removeBillOfMaterials(recipe.getBillOfMaterials());
-			return new Execution();
 		} catch (NotEnoughItemsException e) {
-			return null;
+			throw new CannotStartActionException("not enough items");
 		}
 	}
 
 	@Override
-	public String toString() {
+	protected void onCancel() {
+		player.getInventory().add(recipe.getBillOfMaterials());
+	}
+
+	@Override
+	protected void onFinish() {
+		player.getInventory().add(recipe.getYield());
+	}
+
+	@Override
+	public String getName() {
 		return (customName == null ? getDefaultText(recipe) : customName);
 	}
 
@@ -66,25 +76,6 @@ public final class CraftingAction extends FixedEffortAction {
 		} else {
 			return recipe.toString();
 		}
-	}
-
-	public final class Execution extends AbstractExecution {
-
-		@Override
-		public String getName() {
-			return CraftingAction.this.toString();
-		}
-
-		@Override
-		public void cancel() {
-			player.getInventory().add(recipe.getBillOfMaterials());
-		}
-
-		@Override
-		protected void onFinish() {
-			player.getInventory().add(recipe.getYield());
-		}
-
 	}
 
 }

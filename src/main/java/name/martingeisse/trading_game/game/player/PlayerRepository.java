@@ -2,6 +2,8 @@ package name.martingeisse.trading_game.game.player;
 
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import name.martingeisse.trading_game.game.Game;
+import name.martingeisse.trading_game.game.action.ActionQueueRepository;
 import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
@@ -15,10 +17,14 @@ public final class PlayerRepository {
 
 	private final PostgresService postgresService;
 	private final Space space;
+	private final ActionQueueRepository actionQueueRepository;
+	private final Game game;
 
-	public PlayerRepository(PostgresService postgresService, Space space) {
+	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, Game game) {
 		this.postgresService = postgresService;
 		this.space = space;
+		this.actionQueueRepository = actionQueueRepository;
+		this.game = game;
 	}
 
 	/**
@@ -29,8 +35,8 @@ public final class PlayerRepository {
 	public long createPlayer() {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			PlayerRow playerRow = new PlayerRow();
-			playerRow.setName("noname");
 			playerRow.setShipId(space.createPlayerShip("noname's ship", 0, 0));
+			playerRow.setName("noname");
 			playerRow.insert(connection);
 			return playerRow.getId();
 		}
@@ -71,9 +77,8 @@ public final class PlayerRepository {
 	private Player getPlayer(BooleanExpression predicate) {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QPlayerRow qp = QPlayerRow.Player;
-			PlayerRow row = connection.query().select(qp).from(qp).where(predicate).fetchFirst();
-			// TODO return new Player(postgresService, this, row.getId());
-			return null;
+			PlayerRow playerRow = connection.query().select(qp).from(qp).where(predicate).fetchFirst();
+			return new Player(postgresService, this, space, actionQueueRepository, game, playerRow);
 		}
 	}
 
@@ -85,8 +90,7 @@ public final class PlayerRepository {
 		try (CloseableIterator<PlayerRow> iterator = connection.query().select(qp).from(qp).iterate()) {
 			while (iterator.hasNext()) {
 				PlayerRow playerRow = iterator.next();
-				// TODO reconstruct player object
-				Player player = null; // new Player()
+				Player player = new Player(postgresService, this, space, actionQueueRepository, game, playerRow);
 				player.tick(connection);
 			}
 		}

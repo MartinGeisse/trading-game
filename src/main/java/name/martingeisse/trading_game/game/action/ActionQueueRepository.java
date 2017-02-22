@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.game.action.take2;
+package name.martingeisse.trading_game.game.action;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

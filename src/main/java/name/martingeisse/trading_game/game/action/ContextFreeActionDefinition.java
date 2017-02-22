@@ -1,9 +1,9 @@
 package name.martingeisse.trading_game.game.action;
 
-import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.action.actions.CraftingAction;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
+import name.martingeisse.trading_game.game.player.Player;
 
 import java.util.function.Function;
 

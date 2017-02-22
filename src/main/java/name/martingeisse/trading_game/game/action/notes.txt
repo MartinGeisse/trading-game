@@ -1,28 +1,4 @@
 
-- use ActionQueueRepository as the entry point
-- main entity is ActionQueue, contains Actions
-- Actions and ActionExecutions should be merged (no point keeping them separate)
-- Actions within a queue are ordered by ID -> new ones enqueued last
-- need additional "prerequisite" flag (boolean) to execute them first and display them differently,
-	so its: ORDER BY prerequisite desc, ID asc
--> this makes it an ActionQueueSlot, not an action!
+Actions within a queue are ordered by ID -> new ones enqueued last
 
-- the action meaning is encoded as JSON, similar to ItemType (ActionType)
-- might also just encode the whole "action" as JSON and not distinguish "action" and "action type"
-	- the term "item type" is useful for items because there is no "item"; items are kept as stacks!
-	- this is not the case for actions
-- note that "starting" an action is a meaningful step in executing it. For example, starting a
-	crafting action removes items from the player's inventory
-	- this is important in the distinction of actionType/action/execution
-	- but in the end it means that such actions need a "started" flag, either in the DB row
-		or in the JSON
-- "started" flag in the DB row probably allows to must that part of the logic into the base system
-	-> better-factored code
-- "total time" / "remaining time" / "progress" of an action must be calculated by the action
-	instance / type instance, this cannot be stored
-- the prerequisite, if any, must be determined at starting. This cannot be stored either
-- the name of an action / execution might as well be determined by the implementation, since that
-	implementation must be re-created for the remaining time anyway
-- (tick / isFinishable / finish) might be better-factored by using an "ExecutionStatus" (enum) return value
-- cancel should be implemented as a lifecycle callback of the action class / type class, just
-	like starting
+ORDER BY prerequisite desc, ID asc

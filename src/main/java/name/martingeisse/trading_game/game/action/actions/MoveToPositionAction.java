@@ -27,21 +27,11 @@ public final class MoveToPositionAction extends ContinuousAction implements Posi
 		this.speedProvider = speedProvider;
 	}
 
-	/**
-	 * Getter method.
-	 *
-	 * @return the x
-	 */
 	@Override
 	public long getX() {
 		return x;
 	}
 
-	/**
-	 * Getter method.
-	 *
-	 * @return the y
-	 */
 	@Override
 	public long getY() {
 		return y;
@@ -53,22 +43,18 @@ public final class MoveToPositionAction extends ContinuousAction implements Posi
 	}
 
 	@Override
-	protected Integer getRemainingTime() {
+	public Integer getRemainingTime() {
 		return GeometryUtil.getMovementTime(spaceObject, this, speedProvider.get());
 	}
 
 	@Override
-	public boolean isFinishable() {
-		return GeometryUtil.isAtSamePosition(spaceObject, this);
-	}
-
-	@Override
-	public void tick() {
+	public Status tick() {
 		GeometryUtil.moveSpaceObjectTowards(spaceObject, x, y, speedProvider.get());
+		return GeometryUtil.isAtSamePosition(spaceObject, this) ? Status.FINISHED : Status.RUNNING;
 	}
 
 	@Override
-	public String toString() {
+	public String getName() {
 		return "move " + spaceObject.getName() + " to " + x + ", " + y;
 	}
 

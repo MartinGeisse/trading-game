@@ -2,14 +2,14 @@ package name.martingeisse.trading_game.game.player;
 
 import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
-import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.action.ActionExecution;
 import name.martingeisse.trading_game.game.action.ActionQueue;
+import name.martingeisse.trading_game.game.action.ActionQueueRepository;
 import name.martingeisse.trading_game.game.item.Inventory;
-import name.martingeisse.trading_game.game.skill.PlayerSkills;
 import name.martingeisse.trading_game.game.space.PlayerShip;
+import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 
 /**
  *
@@ -18,29 +18,25 @@ public final class Player {
 
 	private final PostgresService postgresService;
 	private final PlayerRepository playerRepository;
+	private final Space space;
+	private final ActionQueueRepository actionQueueRepository;
 	private final Game game;
-
 	private final long id;
-	// private final PlayerShip ship;
+	private final long shipId;
+	private final long actionQueueId;
 	private String name;
-	private final ActionQueue pendingActions = new ActionQueue();
-	private ActionExecution actionExecution;
 
-	public Player(PostgresService postgresService, PlayerRepository playerRepository, Game game, long id) {
+	public Player(PostgresService postgresService, PlayerRepository playerRepository, Space space, ActionQueueRepository actionQueueRepository, Game game, PlayerRow playerRow) {
 		this.postgresService = postgresService;
 		this.playerRepository = playerRepository;
+		this.space = space;
+		this.actionQueueRepository = actionQueueRepository;
 		this.game = game;
-		// TODO merge constructors
-		this.id = id;
+		this.id = playerRow.getId();
+		this.shipId = playerRow.getShipId();
+		this.actionQueueId = playerRow.getActionQueueId();
+		this.name = playerRow.getName();
 	}
-
-//	public Player(Game game, long id, PlayerShip ship) {
-//		this.game = game;
-//		this.id = id;
-//		this.ship = ship;
-//		this.name = "Player " + id;
-//		setShipName();
-//	}
 
 	/**
 	 * Getter method.
@@ -49,25 +45,6 @@ public final class Player {
 	 */
 	public long getId() {
 		return id;
-	}
-
-	/**
-	 * Getter method.
-	 *
-	 * @return the game
-	 */
-	public Game getGame() {
-		return game;
-	}
-
-	/**
-	 * Getter method.
-	 *
-	 * @return the ship
-	 */
-	public PlayerShip getShip() {
-		// TODO return ship;
-		return null;
 	}
 
 	/**
@@ -93,7 +70,6 @@ public final class Player {
 		}
 		String oldName = this.name;
 		this.name = name;
-		// TODO update name in database
 		if (getShip().getName().equals(generateName(oldName))) {
 			setShipName();
 		}
@@ -110,6 +86,15 @@ public final class Player {
 	/**
 	 * Getter method.
 	 *
+	 * @return the ship
+	 */
+	public PlayerShip getShip() {
+		return (PlayerShip)space.get(shipId);
+	}
+
+	/**
+	 * Getter method.
+	 *
 	 * @return the inventory
 	 */
 	public Inventory getInventory() {
@@ -119,78 +104,29 @@ public final class Player {
 	/**
 	 * Getter method.
 	 *
-	 * @return the pendingActions
+	 * @return the action queue
 	 */
-	public ActionQueue getPendingActions() {
-		return pendingActions;
-	}
-
-	/**
-	 * Getter method.
-	 *
-	 * @return the actionExecution
-	 */
-	public ActionExecution getActionExecution() {
-		return actionExecution;
-	}
-
-	/**
-	 * Schedules an action to be performed after all currently pending actions.
-	 *
-	 * @param action the action to schedule
-	 */
-	public void scheduleAction(Action action) {
-		pendingActions.add(action);
-	}
-
-	/**
-	 * Cancels the currently executed action (if any).
-	 */
-	public void cancelCurrentAction() {
-		if (actionExecution != null) {
-			actionExecution.cancel();
-			actionExecution = null;
-		}
-	}
-
-	/**
-	 * Cancels the pending action at the specified index.
-	 *
-	 * @param index the index of the action to cancel
-	 */
-	public void cancelPendingAction(int index) {
-		if (index >= 0 && index < pendingActions.size()) {
-			pendingActions.remove(index);
-		}
-	}
-
-	/**
-	 * Cancels all pending actions (but not the current action).
-	 */
-	public void cancelAllPendingActions() {
-		pendingActions.clear();
+	public ActionQueue getActionQueue() {
+		return actionQueueRepository.getActionQueue(actionQueueId);
 	}
 
 	/**
 	 * Called once every second to advance game logic.
 	 */
 	public void tick(PostgresConnection connection) {
-		while (actionExecution == null && !pendingActions.isEmpty()) {
-			actionExecution = pendingActions.startNext();
-		}
-		if (actionExecution != null) {
-			actionExecution.tick();
-			if (actionExecution.isFinishable()) {
-				actionExecution.finish();
-				actionExecution = null;
-			}
-		}
+		getActionQueue().tick(connection);
 	}
 
+	/**
+	 * @return the movement speed of the player's ship
+	 */
 	public long getShipMovementSpeed() {
-		return 50000; // TODO
+		return 50000;
 	}
 
+	/**
+	 * @return the maximum cargo mass that can be loaded into the player's ship
+	 */
 	public int getMaximumCargoMass() {
 		return 10_000;
 	}

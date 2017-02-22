@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.game.action.take2;
+package name.martingeisse.trading_game.game.action;
 
 /**
  * Provides a serialized representation of actions as strings.
