@@ -31,4 +31,9 @@ public final class ProgressSnapshot {
 		return currentProgressPoints;
 	}
 
+	@Override
+	public String toString() {
+		return currentProgressPoints + " / " + requiredProgressPoints;
+	}
+
 }
