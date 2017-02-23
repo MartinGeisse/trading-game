@@ -5,10 +5,13 @@ import com.querydsl.sql.PostgreSQLTemplates;
 import com.querydsl.sql.SQLTemplates;
 import com.querydsl.sql.types.EnumByNameType;
 import name.martingeisse.trading_game.game.space.SpaceObjectType;
+import name.martingeisse.trading_game.tools.codegen.PostgresJsonb;
+import name.martingeisse.trading_game.tools.codegen.PostgresJsonbType;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
+import org.postgresql.geometric.PGpoint;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +45,7 @@ public final class MyPostgresConfiguration {
 		for (Class enumClass : ENUM_CLASS_TO_TYPE_NAME.keySet()) {
 			TEMPLATES.getCustomTypes().add(new EnumByNameType<>(enumClass));
 		}
+		TEMPLATES.getCustomTypes().add(new PostgresJsonbType());
 
 		CONFIGURATION = new Configuration(TEMPLATES);
 		for (Map.Entry<Class<? extends Enum<?>>, String> entry : ENUM_CLASS_TO_TYPE_NAME.entrySet()) {
@@ -51,6 +55,8 @@ public final class MyPostgresConfiguration {
 		CONFIGURATION.registerType("timestamp", LocalDateTime.class);
 		CONFIGURATION.registerType("date", LocalDate.class);
 		CONFIGURATION.registerType("time", LocalTime.class);
+		CONFIGURATION.registerType("jsonb", PostgresJsonb.class);
+		CONFIGURATION.registerType("point", PGpoint.class);
 
 	}
 

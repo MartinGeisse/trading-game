@@ -3,6 +3,7 @@ package name.martingeisse.trading_game.platform.postgres;
 import com.querydsl.core.types.Path;
 import com.querydsl.sql.Configuration;
 import com.querydsl.sql.SQLSerializer;
+import name.martingeisse.trading_game.tools.codegen.PostgresJsonb;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -51,6 +52,8 @@ public class MyPostgresSqlSerializer extends SQLSerializer {
 			super.visitConstant(constant);
 			if (constant instanceof Enum<?>) {
 				append("::").append(MyPostgresConfiguration.ENUM_CLASS_TO_TYPE_NAME.get(constant.getClass()));
+			} else if (constant instanceof PostgresJsonb) {
+				append("::jsonb");
 			}
 		}
 	}
