@@ -6,6 +6,7 @@ import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.ActionQueueSlotRow;
 import name.martingeisse.trading_game.postgres_entities.QActionQueueRow;
 import name.martingeisse.trading_game.postgres_entities.QActionQueueSlotRow;
+import name.martingeisse.trading_game.tools.codegen.PostgresJsonb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public final class ActionQueue {
 	public void scheduleAction(Action action) {
 		ActionQueueSlotRow row = new ActionQueueSlotRow();
 		row.setActionQueueId(id);
-		// TODO row.setAction();
+		row.setAction(new PostgresJsonb(actionSerializer.serializeAction(action)));
 		row.setPrerequisite(false);
 		row.setStarted(false);
 		try (PostgresConnection connection = postgresService.newConnection()) {
@@ -58,10 +59,9 @@ public final class ActionQueue {
 		}
 		List<Action> actions = new ArrayList<>();
 		for (ActionQueueSlotRow row : rows) {
-			// TODO actions.add();
+			actions.add(actionSerializer.deserializeAction(row.getAction().getValue()));
 		}
-		// TODO return actions;
-		return null;
+		return ImmutableList.copyOf(actions);
 	}
 
 
@@ -115,7 +115,7 @@ public final class ActionQueue {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QActionQueueSlotRow qaqs = QActionQueueSlotRow.ActionQueueSlot;
 			ActionQueueSlotRow row = connection.query().select(qaqs).from(qaqs).where(qaqs.actionQueueId.eq(id), qaqs.started.isTrue()).fetchFirst();
-			Action action = null; // TODO
+			Action action = actionSerializer.deserializeAction(row.getAction().getValue());
 			action.cancel();
 			connection.delete(qaqs).where(qaqs.id.eq(row.getId())).execute();
 		}
