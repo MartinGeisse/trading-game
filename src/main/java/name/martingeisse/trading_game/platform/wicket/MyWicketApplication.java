@@ -12,8 +12,6 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import name.martingeisse.trading_game.game.GlobalGameLock;
-import name.martingeisse.trading_game.gui.MainPage;
-import name.martingeisse.trading_game.gui.MapPageOld2;
 import name.martingeisse.trading_game.gui.map.ComputedTileResource;
 import name.martingeisse.trading_game.gui.map.LeafletPage;
 import name.martingeisse.trading_game.gui.map.MapTileResource;
@@ -155,9 +153,6 @@ public class MyWicketApplication extends WebApplication {
 		//		mountPage("bar/${id}", BarPage.class);
 		// internal
 
-		mountPage("map", MapPageOld2.class);
-		mountPage("leaflet", LeafletPage.class);
-
 		getSharedResources().add("MapTile", new MapTileResource());
 		getSharedResources().add("ComputedTile", new ComputedTileResource());
 
@@ -210,7 +205,7 @@ public class MyWicketApplication extends WebApplication {
 	 */
 	@Override
 	public Class<? extends Page> getHomePage() {
-		return MainPage.class;
+		return LeafletPage.class;
 	}
 
 	/* (non-Javadoc)

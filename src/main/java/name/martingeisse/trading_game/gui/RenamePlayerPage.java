@@ -27,7 +27,7 @@ public class RenamePlayerPage extends AbstractPage {
 			protected void onSubmit() {
 				try {
 					getPlayer().setName(newName);
-					setResponsePage(MainPage.class);
+					// TODO setResponsePage(MainPage.class);
 				} catch (NameAlreadyUsedException e) {
 					get("form:formBlocks:1:decoratedBody:textField").error("This name is already taken.");
 				}

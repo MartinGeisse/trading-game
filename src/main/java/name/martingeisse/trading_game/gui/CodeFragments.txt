@@ -1,0 +1,55 @@
+
+
+IModel<Integer> currentActionProgressModel = new PropertyModel<>(this, "player.actionExecution.progress.currentProgressPoints");
+InlineProgressBar currentActionProgressBar = new InlineProgressBar("currentActionProgressBar", currentActionProgressModel) {
+	@Override
+	protected void onConfigure() {
+		super.onConfigure();
+		// TODO setVisible(getPlayer().getActionExecution().getProgress() != null);
+	}
+};
+currentActionProgressBar.setTotalAmountModel(new PropertyModel<>(this, "player.actionExecution.progress.requiredProgressPoints"));
+currentActionProgressBar.add(new ProgressBarClientProgressBehavior() {
+	@Override
+	protected int getRemainingSeconds() {
+		// TODO Integer remainingTime = getPlayer().getActionExecution().getRemainingTime();
+		// TODO return (remainingTime == null ? 0 : remainingTime);
+		return 0;
+	}
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+currentActionContainer.add(new Label("remainingTime", new AbstractReadOnlyModel<String>() {
+	@Override
+	public String getObject() {
+		// TODO Integer remainingTime = getPlayer().getActionExecution().getRemainingTime();
+		Integer remainingTime = 0;
+		if (remainingTime == null) {
+			return "N/A";
+		} else if (remainingTime < 60) {
+			return remainingTime + "s";
+		} else if (remainingTime < 3600) {
+			return String.format("%dm %02ds", remainingTime / 60, remainingTime % 60);
+		} else {
+			return String.format("%dh %02dm %02ds", remainingTime / 3600, remainingTime / 60 % 60, remainingTime % 60);
+		}
+	}
+}));
+
+
+
+
+
+
