@@ -1,4 +1,0 @@
-
-Actions within a queue are ordered by ID -> new ones enqueued last
-
-ORDER BY prerequisite desc, ID asc

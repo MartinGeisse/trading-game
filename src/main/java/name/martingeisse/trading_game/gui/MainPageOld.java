@@ -7,16 +7,13 @@
 package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
-import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.skill.Skill;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import name.martingeisse.wicket.helpers.InlineProgressBar;
-import name.martingeisse.wicket.helpers.InvisibleWebComponent;
 import name.martingeisse.wicket.helpers.ProgressBarClientProgressBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
@@ -56,52 +53,6 @@ public class MainPageOld extends AbstractPage {
 		playerContainer.add(new BookmarkablePageLink<>("renamePlayerLink", RenamePlayerPage.class));
 		playerContainer.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)));
 		add(playerContainer);
-
-		add(new ListView<ContextFreeActionDefinition>("contextFreeActionDefinitions", gameDefinitionModel("contextFreeActionDefinitions")) {
-
-			@Override
-			protected void populateItem(ListItem<ContextFreeActionDefinition> item) {
-				AjaxLink<?> link = new AjaxLink<Void>("link") {
-					@Override
-					public void onClick(AjaxRequestTarget target) {
-						Player player = getPlayer();
-						// TODO player.scheduleAction(item.getModelObject().getFactory().apply(player));
-						target.add(MainPageOld.this.get("currentActionContainer"));
-						target.add(MainPageOld.this.get("pendingActionsContainer"));
-						target.add(MainPageOld.this.get("inventoryContainer"));
-					}
-				};
-				link.add(new Label("name", item.getModelObject().getName()));
-				item.add(link);
-
-				ImmutableItemStacks billOfMaterials = item.getModelObject().getBillOfMaterials();
-				if (billOfMaterials == null || billOfMaterials.getStacks().isEmpty()) {
-					item.add(new InvisibleWebComponent("billOfMaterials"));
-				} else {
-					item.add(new ListView<ImmutableItemStack>("billOfMaterials", billOfMaterials.getStacks()) {
-						@Override
-						protected void populateItem(ListItem<ImmutableItemStack> item) {
-							item.add(new Label("amount", item.getModelObject().getSize()));
-							item.add(new Label("name", item.getModelObject().getItemType().getName()));
-						}
-					});
-				}
-
-				ImmutableItemStacks yield = item.getModelObject().getYield();
-				if (yield == null || yield.getStacks().isEmpty()) {
-					item.add(new InvisibleWebComponent("yield"));
-				} else {
-					item.add(new ListView<ImmutableItemStack>("yield", yield.getStacks()) {
-						@Override
-						protected void populateItem(ListItem<ImmutableItemStack> item) {
-							item.add(new Label("amount", item.getModelObject().getSize()));
-							item.add(new Label("name", item.getModelObject().getItemType().getName()));
-						}
-					});
-				}
-			}
-
-		});
 
 		WebMarkupContainer currentActionContainer = new WebMarkupContainer("currentActionContainer");
 		add(currentActionContainer);

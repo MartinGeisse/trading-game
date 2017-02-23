@@ -2,11 +2,10 @@ package name.martingeisse.trading_game.game.definition;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Singleton;
-import name.martingeisse.trading_game.game.action.ContextFreeActionDefinition;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.crafting.FixedCraftingRecipe;
-import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
+import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.item.ItemTypeSerializer;
 import name.martingeisse.trading_game.game.skill.Skill;
@@ -25,7 +24,6 @@ public final class GameDefinition implements ItemTypeSerializer, SkillSerializer
 
 	private final ImmutableList<ItemType> itemTypes;
 
-	private final ImmutableList<ContextFreeActionDefinition> contextFreeActionDefinitions;
 	private final ImmutableList<Skill> skills;
 	private final ItemType redPixelItemType;
 	private final ItemType redPixelAssemblyItemType;
@@ -79,19 +77,20 @@ public final class GameDefinition implements ItemTypeSerializer, SkillSerializer
 		CraftingRecipe pixelHammerCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelHammerItemType);
 		CraftingRecipe pixelPickaxeCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelPickaxeItemType);
 
-		this.contextFreeActionDefinitions = ImmutableList.of(
-			new ContextFreeActionDefinition(redPixelCraftingRecipe),
-			new ContextFreeActionDefinition(redPixelAssemblyCraftingRecipe),
-			new ContextFreeActionDefinition(redPixelLineCraftingRecipe),
-			new ContextFreeActionDefinition(redPixelGlueCraftingRecipe),
-
-			new ContextFreeActionDefinition(pixelAxeCraftingRecipe),
-			new ContextFreeActionDefinition(pixelHoeCraftingRecipe),
-			new ContextFreeActionDefinition(pixelHammerCraftingRecipe),
-			new ContextFreeActionDefinition(pixelPickaxeCraftingRecipe),
-
-			new ContextFreeActionDefinition("Fell a tree", fellTreeRecipe)
-		);
+		// TODO
+//		this.contextFreeActionDefinitions = ImmutableList.of(
+//			new ContextFreeActionDefinition(redPixelCraftingRecipe),
+//			new ContextFreeActionDefinition(redPixelAssemblyCraftingRecipe),
+//			new ContextFreeActionDefinition(redPixelLineCraftingRecipe),
+//			new ContextFreeActionDefinition(redPixelGlueCraftingRecipe),
+//
+//			new ContextFreeActionDefinition(pixelAxeCraftingRecipe),
+//			new ContextFreeActionDefinition(pixelHoeCraftingRecipe),
+//			new ContextFreeActionDefinition(pixelHammerCraftingRecipe),
+//			new ContextFreeActionDefinition(pixelPickaxeCraftingRecipe),
+//
+//			new ContextFreeActionDefinition("Fell a tree", fellTreeRecipe)
+//		);
 
 		this.skills = ImmutableList.of(new Skill() {
 
@@ -110,15 +109,6 @@ public final class GameDefinition implements ItemTypeSerializer, SkillSerializer
 
 		this.redPixelItemType = redPixelItemType;
 		this.redPixelAssemblyItemType = redPixelAssemblyItemType;
-	}
-
-	/**
-	 * Getter method.
-	 *
-	 * @return the contextFreeActionDefinitions
-	 */
-	public ImmutableList<ContextFreeActionDefinition> getContextFreeActionDefinitions() {
-		return contextFreeActionDefinitions;
 	}
 
 	/**
