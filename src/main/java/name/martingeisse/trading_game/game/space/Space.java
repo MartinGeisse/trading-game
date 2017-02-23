@@ -44,8 +44,8 @@ public final class Space {
 		spaceObject.internalSetPostgresService(postgresService);
 		spaceObject.internalSetId(baseData.getId());
 		spaceObject.internalSetName(baseData.getName());
-		spaceObject.internalSetX(baseData.getX());
-		spaceObject.internalSetY(baseData.getY());
+		// TODO spaceObject.internalSetX(baseData.getPosition().x);
+		// TODO spaceObject.internalSetY(baseData.getPosition().y);
 		return spaceObject;
 	}
 
@@ -104,6 +104,8 @@ public final class Space {
 		long matchingSquaredDistance = Long.MAX_VALUE;
 		long squaredRadius = radius * radius;
 		try (PostgresConnection connection = postgresService.newConnection()) {
+			// TODO
+			/*
 			BooleanExpression p1 = qbd.x.goe(x - radius);
 			BooleanExpression p2 = qbd.x.loe(x + radius);
 			BooleanExpression p3 = qbd.y.goe(y - radius);
@@ -111,11 +113,13 @@ public final class Space {
 			try (CloseableIterator<SpaceObjectBaseDataRow> iterator = connection.query().select(qbd).from(qbd).where(p1, p2, p3, p4).iterate()) {
 				while (iterator.hasNext()) {
 					SpaceObjectBaseDataRow baseData = iterator.next();
-					long dx = baseData.getX() - x;
+					// TODO long dx = baseData.getPosition().x - x;
+					long dx = 0;
 					if (dx > radius || dx < -radius) {
 						continue;
 					}
-					long dy = baseData.getY() - y;
+					// TODO long dy = baseData.getPosition().y - y;
+					long dy = 0;
 					if (dy > radius || dy < -radius) {
 						continue;
 					}
@@ -139,6 +143,7 @@ public final class Space {
 					}
 				}
 			}
+			*/
 		}
 		return matchingObject;
 	}
@@ -152,8 +157,8 @@ public final class Space {
 			SpaceObjectBaseDataRow baseData = new SpaceObjectBaseDataRow();
 			baseData.setType(SpaceObjectType.PLAYER_SHIP);
 			baseData.setName(name);
-			baseData.setX(x);
-			baseData.setY(y);
+			// TODO baseData.setX(x);
+			// TODO baseData.setY(y);
 			baseData.setInventoryId(inventoryId);
 			baseData.insert(connection);
 			return baseData.getId();

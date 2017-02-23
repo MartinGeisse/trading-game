@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.gui.map;
 
 import name.martingeisse.trading_game.game.GameListener;
+import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.player.Player;
@@ -87,9 +88,9 @@ public class LeafletPage extends AbstractPage {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						Player player = getPlayer();
-						player.cancelCurrentAction();
-						player.cancelAllPendingActions();
-						player.scheduleAction(actionItem.getModelObject());
+						// TODO player.cancelCurrentAction();
+						// TODO player.cancelAllPendingActions();
+						// TODO player.scheduleAction(actionItem.getModelObject());
 					}
 				};
 				link.add(new Label("name", actionItem.getModelObject().toString()));
@@ -117,9 +118,9 @@ public class LeafletPage extends AbstractPage {
 						Player player = getPlayer();
 						SpaceStation spaceStation = (SpaceStation)getSelectedSpaceObject();
 						ImmutableItemStack itemsToLoad = new ImmutableItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
-						player.cancelCurrentAction();
-						player.cancelAllPendingActions();
-						player.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.LOAD, itemsToLoad, item.getIndex()));
+						// TODO player.cancelCurrentAction();
+						// TODO player.cancelAllPendingActions();
+						// TODO player.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.LOAD, itemsToLoad, item.getIndex()));
 					}
 				});
 			}
@@ -144,9 +145,9 @@ public class LeafletPage extends AbstractPage {
 						Player player = getPlayer();
 						SpaceStation spaceStation = (SpaceStation)getSelectedSpaceObject();
 						ImmutableItemStack itemsToLoad = new ImmutableItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
-						player.cancelCurrentAction();
-						player.cancelAllPendingActions();
-						player.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, item.getIndex()));
+						// TODO player.cancelCurrentAction();
+						// TODO player.cancelAllPendingActions();
+						// TODO player.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, item.getIndex()));
 					}
 				});
 			}

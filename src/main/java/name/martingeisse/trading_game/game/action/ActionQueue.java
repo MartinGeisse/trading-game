@@ -35,7 +35,7 @@ public final class ActionQueue {
 	public void scheduleAction(Action action) {
 		ActionQueueSlotRow row = new ActionQueueSlotRow();
 		row.setActionQueueId(id);
-		row.setAction();
+		// TODO row.setAction();
 		row.setPrerequisite(false);
 		row.setStarted(false);
 		try (PostgresConnection connection = postgresService.newConnection()) {
@@ -58,9 +58,10 @@ public final class ActionQueue {
 		}
 		List<Action> actions = new ArrayList<>();
 		for (ActionQueueSlotRow row : rows) {
-			actions.add();
+			// TODO actions.add();
 		}
-		return actions;
+		// TODO return actions;
+		return null;
 	}
 
 
@@ -70,6 +71,8 @@ public final class ActionQueue {
 
 	// TODO old TODO tick / start next / tick action / finish
 	public void tick(PostgresConnection connection) {
+		// TODO
+		/*
 		while (actionExecution == null && !pendingActions.isEmpty()) {
 			actionExecution = pendingActions.startNext();
 		}
@@ -80,10 +83,11 @@ public final class ActionQueue {
 				actionExecution = null;
 			}
 		}
-
+		*/
 	}
 
 	// TODO old
+	/*
 	private ActionExecution startNext() {
 		if (isEmpty()) {
 			return null;
@@ -96,6 +100,7 @@ public final class ActionQueue {
 		remove(0);
 		return action.startExecution();
 	}
+	*/
 
 
 

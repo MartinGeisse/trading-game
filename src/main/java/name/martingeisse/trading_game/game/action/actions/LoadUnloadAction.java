@@ -75,9 +75,9 @@ public final class LoadUnloadAction extends ImmediateAction {
 			}
 		}
 		destinationInventory.add(items);
-		Game game = player.getGame();
-		game.getListeners().onSpaceObjectPropertiesChanged(player.getShip());
-		game.getListeners().onSpaceObjectPropertiesChanged(spaceStation);
+		// TODO Game game = player.getGame();
+		// TODO game.getListeners().onSpaceObjectPropertiesChanged(player.getShip());
+		// TODO game.getListeners().onSpaceObjectPropertiesChanged(spaceStation);
 	}
 
 	private boolean tryRemoveItems(Inventory sourceInventory, int index) {

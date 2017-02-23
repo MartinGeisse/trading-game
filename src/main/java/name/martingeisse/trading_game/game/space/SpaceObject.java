@@ -128,7 +128,7 @@ public abstract class SpaceObject implements PositionProvider {
 	public void setPosition(long x, long y) {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
-			connection.update(qbd).set(qbd.x, x).set(qbd.y, y).execute();
+			// TODO connection.update(qbd).set(qbd.x, x).set(qbd.y, y).execute();
 		}
 		internalSetX(x);
 		internalSetY(y);

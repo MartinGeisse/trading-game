@@ -6,6 +6,7 @@
 
 package name.martingeisse.trading_game.gui;
 
+import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.skill.Skill;
@@ -78,29 +79,31 @@ public class MainPage extends AbstractPage {
 			@Override
 			protected void onConfigure() {
 				super.onConfigure();
-				setVisible(getPlayer().getActionExecution().getProgress() != null);
+				// TODO setVisible(getPlayer().getActionExecution().getProgress() != null);
 			}
 		};
 		currentActionProgressBar.setTotalAmountModel(new PropertyModel<>(this, "player.actionExecution.progress.requiredProgressPoints"));
 		currentActionProgressBar.add(new ProgressBarClientProgressBehavior() {
 			@Override
 			protected int getRemainingSeconds() {
-				Integer remainingTime = getPlayer().getActionExecution().getRemainingTime();
-				return (remainingTime == null ? 0 : remainingTime);
+				// TODO Integer remainingTime = getPlayer().getActionExecution().getRemainingTime();
+				// TODO return (remainingTime == null ? 0 : remainingTime);
+				return 0;
 			}
 		});
 		currentActionContainer.queue(currentActionProgressBar);
 		currentActionContainer.queue(new AjaxLink<Void>("cancelCurrentActionLink") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				getPlayer().cancelCurrentAction();
+				// TODO getPlayer().cancelCurrentAction();
 				target.add(MainPage.this.get("currentActionContainer"));
 			}
 		});
 		currentActionContainer.add(new Label("remainingTime", new AbstractReadOnlyModel<String>() {
 			@Override
 			public String getObject() {
-				Integer remainingTime = getPlayer().getActionExecution().getRemainingTime();
+				// TODO Integer remainingTime = getPlayer().getActionExecution().getRemainingTime();
+				Integer remainingTime = 0;
 				if (remainingTime == null) {
 					return "N/A";
 				} else if (remainingTime < 60) {
@@ -123,7 +126,7 @@ public class MainPage extends AbstractPage {
 				item.add(new AjaxLink<Void>("cancelLink") {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						getPlayer().cancelPendingAction(item.getIndex());
+						// TODO getPlayer().cancelPendingAction(item.getIndex());
 						target.add(MainPage.this.get("pendingActionsContainer"));
 					}
 				});
@@ -232,9 +235,9 @@ public class MainPage extends AbstractPage {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						Player player = getPlayer();
-						player.cancelCurrentAction();
-						player.cancelAllPendingActions();
-						player.scheduleAction(actionItem.getModelObject());
+						// TODO player.cancelCurrentAction();
+						// TODO player.cancelAllPendingActions();
+						// TODO player.scheduleAction(actionItem.getModelObject());
 						target.add(MainPage.this.get("currentActionContainer"));
 						target.add(MainPage.this.get("pendingActionsContainer"));
 						target.add(MainPage.this.get("inventoryContainer"));

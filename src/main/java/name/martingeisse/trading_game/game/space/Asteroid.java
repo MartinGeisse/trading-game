@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.game.space;
 
 import com.google.common.collect.ImmutableList;
+import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.action.actions.MiningAction;
 import name.martingeisse.trading_game.game.action.actions.MiningYield;

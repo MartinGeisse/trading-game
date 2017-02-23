@@ -45,8 +45,8 @@ public final class InitialSpaceObjectsFactory {
 			SpaceObjectBaseDataRow baseData = new SpaceObjectBaseDataRow();
 			baseData.setType(type);
 			baseData.setName(name);
-			baseData.setX(x);
-			baseData.setY(y);
+			// TODO baseData.setX(x);
+			// TODO baseData.setY(y);
 			baseData.setInventoryId(inventoryId);
 			baseData.setLongField1(longField1);
 			baseData.insert(connection);
