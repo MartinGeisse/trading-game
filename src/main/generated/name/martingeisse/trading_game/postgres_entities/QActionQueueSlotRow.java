@@ -25,7 +25,7 @@ public class QActionQueueSlotRow extends com.querydsl.sql.RelationalPathBase<Act
 
     public static final QActionQueueSlotRow ActionQueueSlot = new QActionQueueSlotRow("ActionQueueSlot");
 
-    public final SimplePath<Object> action = createSimple("action", Object.class);
+    public final SimplePath<name.martingeisse.trading_game.tools.codegen.PostgresJsonb> action = createSimple("action", name.martingeisse.trading_game.tools.codegen.PostgresJsonb.class);
 
     public final NumberPath<Long> actionQueueId = createNumber("actionQueueId", Long.class);
 

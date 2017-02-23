@@ -21,7 +21,7 @@ public class ActionQueueSlotRow implements Serializable {
     /**
      * the action
      */
-    private Object action;
+    private name.martingeisse.trading_game.tools.codegen.PostgresJsonb action;
 
     /**
      * the actionQueueId
@@ -48,7 +48,7 @@ public class ActionQueueSlotRow implements Serializable {
      * 
      * @return the action
      */
-    public Object getAction() {
+    public name.martingeisse.trading_game.tools.codegen.PostgresJsonb getAction() {
         return action;
     }
 
@@ -57,7 +57,7 @@ public class ActionQueueSlotRow implements Serializable {
      * 
      * @param action the action to set
      */
-    public void setAction(Object action) {
+    public void setAction(name.martingeisse.trading_game.tools.codegen.PostgresJsonb action) {
         this.action = action;
     }
 

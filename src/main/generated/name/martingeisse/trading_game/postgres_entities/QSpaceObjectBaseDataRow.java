@@ -33,7 +33,7 @@ public class QSpaceObjectBaseDataRow extends com.querydsl.sql.RelationalPathBase
 
     public final StringPath name = createString("name");
 
-    public final SimplePath<Object> position = createSimple("position", Object.class);
+    public final SimplePath<org.postgresql.geometric.PGpoint> position = createSimple("position", org.postgresql.geometric.PGpoint.class);
 
     public final EnumPath<name.martingeisse.trading_game.game.space.SpaceObjectType> type = createEnum("type", name.martingeisse.trading_game.game.space.SpaceObjectType.class);
 

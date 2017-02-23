@@ -41,7 +41,7 @@ public class SpaceObjectBaseDataRow implements Serializable {
     /**
      * the position
      */
-    private Object position;
+    private org.postgresql.geometric.PGpoint position;
 
     /**
      * the type
@@ -125,7 +125,7 @@ public class SpaceObjectBaseDataRow implements Serializable {
      * 
      * @return the position
      */
-    public Object getPosition() {
+    public org.postgresql.geometric.PGpoint getPosition() {
         return position;
     }
 
@@ -134,7 +134,7 @@ public class SpaceObjectBaseDataRow implements Serializable {
      * 
      * @param position the position to set
      */
-    public void setPosition(Object position) {
+    public void setPosition(org.postgresql.geometric.PGpoint position) {
         this.position = position;
     }
 
