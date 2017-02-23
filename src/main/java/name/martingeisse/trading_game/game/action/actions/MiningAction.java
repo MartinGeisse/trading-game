@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.action.actions;
 
+import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.definition.GameConstants;
 import name.martingeisse.trading_game.game.player.Player;
@@ -11,11 +12,13 @@ import name.martingeisse.trading_game.game.space.GeometryUtil;
  */
 public final class MiningAction extends ContinuousAction {
 
+	private final Game game;
 	private final Asteroid asteroid;
 	private final Player player;
 	private final long miningSpeed = GameConstants.BASE_MINING_SPEED; // in the future, this will be modified by upgrades and skills
 
-	public MiningAction(Asteroid asteroid, Player player) {
+	public MiningAction(Game game, Asteroid asteroid, Player player) {
+		this.game = game;
 		this.asteroid = asteroid;
 		this.player = player;
 	}
@@ -59,7 +62,7 @@ public final class MiningAction extends ContinuousAction {
 		MiningYield yield = asteroid.obtainYield(miningSpeed, getRemainingCargoMass());
 		if (yield.getItems() != null) {
 			player.getInventory().add(yield.getItems());
-			// TODO player.getGame().getListeners().onSpaceObjectPropertiesChanged(player.getShip());
+			game.getListeners().onSpaceObjectPropertiesChanged(player.getShip());
 		}
 		if (yield.isDepleted() || yield.isCargoExhausted()) {
 			return Action.Status.FINISHED;

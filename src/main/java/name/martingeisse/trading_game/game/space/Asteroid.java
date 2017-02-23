@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.game.space;
 
 import com.google.common.collect.ImmutableList;
+import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.action.actions.MiningAction;
@@ -13,10 +14,12 @@ import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
  */
 public final class Asteroid extends StaticSpaceObject {
 
+	private final Game game;
 	private final MiningYieldInfo yieldInfo;
 	private long yieldCapacity;
 
-	public Asteroid(MiningYieldInfo yieldInfo, long yieldCapacity) {
+	public Asteroid(Game game, MiningYieldInfo yieldInfo, long yieldCapacity) {
+		this.game = game;
 		this.yieldInfo = yieldInfo;
 		this.yieldCapacity = yieldCapacity;
 	}
@@ -65,7 +68,7 @@ public final class Asteroid extends StaticSpaceObject {
 
 	@Override
 	public ImmutableList<Action> getActionsFor(Player player) {
-		return ImmutableList.of(getMoveToPositionActionFor(player), new MiningAction(this, player));
+		return ImmutableList.of(getMoveToPositionActionFor(player), new MiningAction(game, this, player));
 	}
 
 	/**
