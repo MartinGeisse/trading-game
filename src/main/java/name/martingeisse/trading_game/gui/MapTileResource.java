@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.gui.map;
+package name.martingeisse.trading_game.gui;
 
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.Game;

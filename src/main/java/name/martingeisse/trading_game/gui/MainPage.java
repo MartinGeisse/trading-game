@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.gui.map;
+package name.martingeisse.trading_game.gui;
 
 import name.martingeisse.trading_game.game.GameListener;
 import name.martingeisse.trading_game.game.action.Action;
@@ -41,7 +41,7 @@ import java.util.List;
 /**
  *
  */
-public class LeafletPage extends AbstractPage {
+public class MainPage extends AbstractPage {
 
 	private static final IWebSocketPushMessage dynamicObjectsChangedPushMessage = new IWebSocketPushMessage() {
 	};
@@ -68,7 +68,7 @@ public class LeafletPage extends AbstractPage {
 
 	private long selectedSpaceObjectId = -1;
 
-	public LeafletPage(PageParameters parameters) {
+	public MainPage(PageParameters parameters) {
 		super(parameters);
 
 		IModel<SpaceObject> selectedSpaceObjectModel = new PropertyModel<>(this, "selectedSpaceObject");
