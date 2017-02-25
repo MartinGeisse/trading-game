@@ -11,7 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- *
+ * TODO remove this class!!!
  */
 @Singleton
 public final class Game {

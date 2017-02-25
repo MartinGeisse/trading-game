@@ -10,6 +10,7 @@ import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.QSpaceObjectBaseDataRow;
 import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseDataRow;
+import org.postgresql.geometric.PGpoint;
 
 /**
  * Creates the initial space objects.
@@ -45,8 +46,7 @@ public final class InitialSpaceObjectsFactory {
 			SpaceObjectBaseDataRow baseData = new SpaceObjectBaseDataRow();
 			baseData.setType(type);
 			baseData.setName(name);
-			// TODO baseData.setX(x);
-			// TODO baseData.setY(y);
+			baseData.setPosition(new PGpoint(x, y));
 			baseData.setInventoryId(inventoryId);
 			baseData.setLongField1(longField1);
 			baseData.insert(connection);

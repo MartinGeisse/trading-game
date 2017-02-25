@@ -3,15 +3,15 @@ package name.martingeisse.trading_game.game.space;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.mysema.commons.lang.CloseableIterator;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
+import name.martingeisse.trading_game.common.database.GeometricExpressions;
 import name.martingeisse.trading_game.game.item.InventoryRepository;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.QSpaceObjectBaseDataRow;
 import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseDataRow;
+import org.postgresql.geometric.PGpoint;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -30,23 +30,17 @@ public final class Space {
 
 	private final PostgresService postgresService;
 	private final InventoryRepository inventoryRepository;
-	private final Injector injector; // might use a specialized SpaceObjectFactory instead
+	private final SpaceObjectFactory spaceObjectFactory;
 
 	@Inject
-	public Space(PostgresService postgresService, InventoryRepository inventoryRepository, Injector injector) {
+	public Space(PostgresService postgresService, InventoryRepository inventoryRepository, SpaceObjectFactory spaceObjectFactory) {
 		this.postgresService = postgresService;
 		this.inventoryRepository = inventoryRepository;
-		this.injector = injector;
+		this.spaceObjectFactory = spaceObjectFactory;
 	}
 
 	private SpaceObject reconstructSpaceObject(SpaceObjectBaseDataRow baseData) {
-		SpaceObject spaceObject = injector.getInstance(baseData.getType().getSpaceObjectClass());
-		spaceObject.internalSetPostgresService(postgresService);
-		spaceObject.internalSetId(baseData.getId());
-		spaceObject.internalSetName(baseData.getName());
-		// TODO spaceObject.internalSetX(baseData.getPosition().x);
-		// TODO spaceObject.internalSetY(baseData.getPosition().y);
-		return spaceObject;
+		return baseData.getType().newInstance(spaceObjectFactory, baseData);
 	}
 
 	/**
@@ -104,22 +98,16 @@ public final class Space {
 		long matchingSquaredDistance = Long.MAX_VALUE;
 		long squaredRadius = radius * radius;
 		try (PostgresConnection connection = postgresService.newConnection()) {
-			// TODO
-			/*
-			BooleanExpression p1 = qbd.x.goe(x - radius);
-			BooleanExpression p2 = qbd.x.loe(x + radius);
-			BooleanExpression p3 = qbd.y.goe(y - radius);
-			BooleanExpression p4 = qbd.y.loe(y + radius);
-			try (CloseableIterator<SpaceObjectBaseDataRow> iterator = connection.query().select(qbd).from(qbd).where(p1, p2, p3, p4).iterate()) {
+			PostgreSQLQuery<SpaceObjectBaseDataRow> query = connection.query().select(qbd).from(qbd);
+			query.where(GeometricExpressions.pointInsideBoundingBox(qbd.position, x, y, radius));
+			try (CloseableIterator<SpaceObjectBaseDataRow> iterator = query.iterate()) {
 				while (iterator.hasNext()) {
 					SpaceObjectBaseDataRow baseData = iterator.next();
-					// TODO long dx = baseData.getPosition().x - x;
-					long dx = 0;
+					long dx = (long)baseData.getPosition().x - x;
 					if (dx > radius || dx < -radius) {
 						continue;
 					}
-					// TODO long dy = baseData.getPosition().y - y;
-					long dy = 0;
+					long dy = (long)baseData.getPosition().y - y;
 					if (dy > radius || dy < -radius) {
 						continue;
 					}
@@ -143,7 +131,6 @@ public final class Space {
 					}
 				}
 			}
-			*/
 		}
 		return matchingObject;
 	}
@@ -157,8 +144,7 @@ public final class Space {
 			SpaceObjectBaseDataRow baseData = new SpaceObjectBaseDataRow();
 			baseData.setType(SpaceObjectType.PLAYER_SHIP);
 			baseData.setName(name);
-			// TODO baseData.setX(x);
-			// TODO baseData.setY(y);
+			baseData.setPosition(new PGpoint(x, y));
 			baseData.setInventoryId(inventoryId);
 			baseData.insert(connection);
 			return baseData.getId();

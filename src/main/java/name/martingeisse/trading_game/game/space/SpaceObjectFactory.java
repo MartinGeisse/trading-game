@@ -2,6 +2,9 @@ package name.martingeisse.trading_game.game.space;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.game.Game;
+import name.martingeisse.trading_game.game.definition.MiningYieldInfo;
+import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.InventoryRepository;
 
 /**
@@ -10,10 +13,12 @@ import name.martingeisse.trading_game.game.item.InventoryRepository;
 @Singleton
 public final class SpaceObjectFactory {
 
+	private final Game game;
 	private final InventoryRepository inventoryRepository;
 
 	@Inject
-	public SpaceObjectFactory(InventoryRepository inventoryRepository) {
+	public SpaceObjectFactory(Game game, InventoryRepository inventoryRepository) {
+		this.game = game;
 		this.inventoryRepository = inventoryRepository;
 	}
 
@@ -22,8 +27,10 @@ public final class SpaceObjectFactory {
 	 *
 	 * @return the new object
 	 */
-	public Asteroid newAsteroid() {
-
+	Asteroid newAsteroid(long inventoryId, long yieldCapacity) {
+		ImmutableItemStacks stacks = inventoryRepository.getInventory(inventoryId).getItems();
+		MiningYieldInfo yieldInfo = stacks::scale;
+		return new Asteroid(game, yieldInfo, yieldCapacity);
 	}
 
 	/**
@@ -31,7 +38,7 @@ public final class SpaceObjectFactory {
 	 *
 	 * @return the new object
 	 */
-	public Planet newPlanet() {
+	Planet newPlanet() {
 		return new Planet();
 	}
 
@@ -40,7 +47,7 @@ public final class SpaceObjectFactory {
 	 *
 	 * @return the new object
 	 */
-	public PlayerShip newPlayerShip() {
+	PlayerShip newPlayerShip() {
 		return new PlayerShip(inventoryRepository);
 	}
 
@@ -49,7 +56,7 @@ public final class SpaceObjectFactory {
 	 *
 	 * @return the new object
 	 */
-	public SpaceStation newSpaceStation() {
+	SpaceStation newSpaceStation() {
 		return new SpaceStation(inventoryRepository);
 	}
 
@@ -58,7 +65,7 @@ public final class SpaceObjectFactory {
 	 *
 	 * @return the new object
 	 */
-	public Star newStar() {
+	Star newStar() {
 		return new Star();
 	}
 

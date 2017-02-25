@@ -8,6 +8,7 @@ import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.QSpaceObjectBaseDataRow;
+import org.postgresql.geometric.PGpoint;
 
 /**
  *
@@ -128,7 +129,7 @@ public abstract class SpaceObject implements PositionProvider {
 	public void setPosition(long x, long y) {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
-			// TODO connection.update(qbd).set(qbd.x, x).set(qbd.y, y).execute();
+			connection.update(qbd).set(qbd.position, new PGpoint(x, y).execute();
 		}
 		internalSetX(x);
 		internalSetY(y);

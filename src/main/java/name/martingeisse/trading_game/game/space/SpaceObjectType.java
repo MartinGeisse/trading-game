@@ -1,8 +1,8 @@
 package name.martingeisse.trading_game.game.space;
 
 import com.google.common.collect.ImmutableSet;
-import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.common.util.WtfException;
+import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseDataRow;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,11 +12,40 @@ import java.util.Set;
  */
 public enum SpaceObjectType {
 
-	ASTEROID(Asteroid.class),
-	PLANET(Planet.class),
-	PLAYER_SHIP(PlayerShip.class),
-	SPACE_STATION(SpaceStation.class),
-	STAR(Star.class);
+	ASTEROID(Asteroid.class) {
+		@Override
+		public SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row) {
+			return prepareSpaceObject(row, factory.newAsteroid(row.getInventoryId(), row.getLongField1()));
+		}
+	},
+
+	PLANET(Planet.class) {
+		@Override
+		public SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row) {
+			return prepareSpaceObject(row, factory.newPlanet());
+		}
+	},
+
+	PLAYER_SHIP(PlayerShip.class) {
+		@Override
+		public SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row) {
+			return prepareSpaceObject(row, factory.newPlayerShip());
+		}
+	},
+
+	SPACE_STATION(SpaceStation.class) {
+		@Override
+		public SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row) {
+			return prepareSpaceObject(row, factory.newSpaceStation());
+		}
+	},
+
+	STAR(Star.class) {
+		@Override
+		public SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row) {
+			return prepareSpaceObject(row, factory.newStar());
+		}
+	};
 
 	private static final ImmutableSet<SpaceObjectType> staticTypes;
 	private static final ImmutableSet<SpaceObjectType> dynamicTypes;
@@ -58,6 +87,19 @@ public enum SpaceObjectType {
 	 */
 	public boolean isSupportsTick() {
 		return false;
+	}
+
+	/**
+	 * Creates a new space object of this type from a DB row.
+	 */
+	public abstract SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row);
+
+	protected final SpaceObject prepareSpaceObject(SpaceObjectBaseDataRow source, SpaceObject destination) {
+		destination.internalSetId(source.getId());
+		destination.internalSetName(source.getName());
+		destination.internalSetX((long)source.getPosition().x);
+		destination.internalSetY((long)source.getPosition().y);
+		return destination;
 	}
 
 	/**
