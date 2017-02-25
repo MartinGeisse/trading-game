@@ -1,7 +1,5 @@
 package name.martingeisse.trading_game.game.item;
 
-import com.google.inject.Singleton;
-
 /**
  * Provides a serialized representation of item types as strings.
  *

@@ -5,7 +5,6 @@ import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.InventoryRepository;
-import name.martingeisse.trading_game.game.space.SpaceObjectType;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.QSpaceObjectBaseDataRow;

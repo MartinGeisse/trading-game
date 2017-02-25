@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.ActionQueueSlotRow;
-import name.martingeisse.trading_game.postgres_entities.QActionQueueRow;
 import name.martingeisse.trading_game.postgres_entities.QActionQueueSlotRow;
 import name.martingeisse.trading_game.tools.codegen.PostgresJsonb;
 

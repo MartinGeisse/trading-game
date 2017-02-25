@@ -1,25 +1,25 @@
 package name.martingeisse.trading_game.game.space;
 
 import com.google.common.collect.ImmutableList;
-import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.action.actions.MiningAction;
 import name.martingeisse.trading_game.game.action.actions.MiningYield;
 import name.martingeisse.trading_game.game.definition.MiningYieldInfo;
+import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
+import name.martingeisse.trading_game.game.player.Player;
 
 /**
  *
  */
 public final class Asteroid extends StaticSpaceObject {
 
-	private final Game game;
+	private final GameEventEmitter gameEventEmitter;
 	private final MiningYieldInfo yieldInfo;
 	private long yieldCapacity;
 
-	public Asteroid(Game game, MiningYieldInfo yieldInfo, long yieldCapacity) {
-		this.game = game;
+	public Asteroid(GameEventEmitter gameEventEmitter, MiningYieldInfo yieldInfo, long yieldCapacity) {
+		this.gameEventEmitter = gameEventEmitter;
 		this.yieldInfo = yieldInfo;
 		this.yieldCapacity = yieldCapacity;
 	}
@@ -68,7 +68,7 @@ public final class Asteroid extends StaticSpaceObject {
 
 	@Override
 	public ImmutableList<Action> getActionsFor(Player player) {
-		return ImmutableList.of(getMoveToPositionActionFor(player), new MiningAction(game, this, player));
+		return ImmutableList.of(getMoveToPositionActionFor(player), new MiningAction(gameEventEmitter, this, player));
 	}
 
 	/**

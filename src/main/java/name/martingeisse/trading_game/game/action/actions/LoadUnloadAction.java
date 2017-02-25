@@ -1,6 +1,5 @@
 package name.martingeisse.trading_game.game.action.actions;
 
-import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.CannotStartActionException;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
@@ -15,17 +14,13 @@ import name.martingeisse.trading_game.game.space.SpaceStation;
  */
 public final class LoadUnloadAction extends ImmediateAction {
 
-	private final Game game;
 	private final Player player;
 	private final SpaceStation spaceStation;
 	private final Type type;
 	private final ImmutableItemStack items;
 	private final int preferredSoruceInventoryIndex;
 
-	public LoadUnloadAction(Game game, Player player, SpaceStation spaceStation, Type type, ImmutableItemStack items, int preferredSoruceInventoryIndex) {
-		if (game == null) {
-			throw new IllegalArgumentException("game is null");
-		}
+	public LoadUnloadAction(Player player, SpaceStation spaceStation, Type type, ImmutableItemStack items, int preferredSoruceInventoryIndex) {
 		if (player == null) {
 			throw new IllegalArgumentException("player is null");
 		}
@@ -38,7 +33,6 @@ public final class LoadUnloadAction extends ImmediateAction {
 		if (items == null) {
 			throw new IllegalArgumentException("items is null");
 		}
-		this.game = game;
 		this.player = player;
 		this.spaceStation = spaceStation;
 		this.type = type;
@@ -80,8 +74,6 @@ public final class LoadUnloadAction extends ImmediateAction {
 			}
 		}
 		destinationInventory.add(items);
-		game.getListeners().onSpaceObjectPropertiesChanged(player.getShip());
-		game.getListeners().onSpaceObjectPropertiesChanged(spaceStation);
 	}
 
 	private boolean tryRemoveItems(Inventory sourceInventory, int index) {

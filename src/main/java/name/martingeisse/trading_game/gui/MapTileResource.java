@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.gui;
 
 import com.google.common.collect.ImmutableList;
-import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.generate.SpectrumNoise;
 import name.martingeisse.trading_game.game.space.*;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;

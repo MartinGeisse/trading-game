@@ -2,8 +2,8 @@ package name.martingeisse.trading_game.game.space;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.definition.MiningYieldInfo;
+import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.InventoryRepository;
 
@@ -13,12 +13,12 @@ import name.martingeisse.trading_game.game.item.InventoryRepository;
 @Singleton
 public final class SpaceObjectFactory {
 
-	private final Game game;
+	private final GameEventEmitter gameEventEmitter;
 	private final InventoryRepository inventoryRepository;
 
 	@Inject
-	public SpaceObjectFactory(Game game, InventoryRepository inventoryRepository) {
-		this.game = game;
+	public SpaceObjectFactory(GameEventEmitter gameEventEmitter, InventoryRepository inventoryRepository) {
+		this.gameEventEmitter = gameEventEmitter;
 		this.inventoryRepository = inventoryRepository;
 	}
 
@@ -30,7 +30,7 @@ public final class SpaceObjectFactory {
 	Asteroid newAsteroid(long inventoryId, long yieldCapacity) {
 		ImmutableItemStacks stacks = inventoryRepository.getInventory(inventoryId).getItems();
 		MiningYieldInfo yieldInfo = stacks::scale;
-		return new Asteroid(game, yieldInfo, yieldCapacity);
+		return new Asteroid(gameEventEmitter, yieldInfo, yieldCapacity);
 	}
 
 	/**

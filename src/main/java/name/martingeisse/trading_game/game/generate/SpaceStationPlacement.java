@@ -1,7 +1,5 @@
 package name.martingeisse.trading_game.game.generate;
 
-import com.google.common.collect.ImmutableList;
-import name.martingeisse.trading_game.game.space.SpaceObject;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;

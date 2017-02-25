@@ -5,6 +5,7 @@ package name.martingeisse.trading_game.postgres_entities;
 
 import com.querydsl.sql.dml.SQLInsertClause;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
+
 import java.io.Serializable;
 
 /**

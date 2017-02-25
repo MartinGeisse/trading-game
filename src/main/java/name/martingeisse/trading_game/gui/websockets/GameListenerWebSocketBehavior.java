@@ -1,7 +1,7 @@
 package name.martingeisse.trading_game.gui.websockets;
 
-import name.martingeisse.trading_game.game.Game;
-import name.martingeisse.trading_game.game.GameListener;
+import name.martingeisse.trading_game.game.event.GameEventEmitter;
+import name.martingeisse.trading_game.game.event.GameEventListener;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import org.apache.wicket.protocol.ws.api.WebSocketBehavior;
 import org.apache.wicket.protocol.ws.api.message.AbortedMessage;
@@ -15,13 +15,13 @@ import org.apache.wicket.protocol.ws.api.message.ConnectedMessage;
  */
 public abstract class GameListenerWebSocketBehavior extends WebSocketBehavior {
 
-	private transient GameListener listener = null;
+	private transient GameEventListener listener = null;
 
 	@Override
 	protected void onConnect(ConnectedMessage message) {
 		discardListener();
 		listener = createListener(new PushMessageSender(message));
-		getGame().getListeners().add(listener);
+		getGameEventEmitter().addListener(listener);
 	}
 
 	@Override
@@ -34,21 +34,21 @@ public abstract class GameListenerWebSocketBehavior extends WebSocketBehavior {
 		discardListener();
 	}
 
-	private Game getGame() {
-		return MyWicketApplication.get().getDependency(Game.class);
+	private GameEventEmitter getGameEventEmitter() {
+		return MyWicketApplication.get().getDependency(GameEventEmitter.class);
 	}
 
 	private void discardListener() {
 		if (listener != null) {
-			getGame().getListeners().remove(listener);
+			getGameEventEmitter().removeListener(listener);
 			destroyListener(listener);
 			listener = null;
 		}
 	}
 
-	protected abstract GameListener createListener(PushMessageSender pushMessageSender);
+	protected abstract GameEventListener createListener(PushMessageSender pushMessageSender);
 
-	protected void destroyListener(GameListener listener) {
+	protected void destroyListener(GameEventListener listener) {
 	}
 
 }

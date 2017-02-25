@@ -6,9 +6,8 @@
 
 package name.martingeisse.trading_game.platform.wicket.page;
 
-import name.martingeisse.trading_game.game.Game;
-import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
+import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.platform.wicket.MyWicketSession;
@@ -73,10 +72,6 @@ public class AbstractPage extends WebPage {
 		for (Object renderToken : jQueryHeaderItem.getRenderTokens()) {
 			response.markRendered(renderToken);
 		}
-	}
-
-	public final Game getGame() {
-		return MyWicketApplication.get().getDependency(Game.class);
 	}
 
 	public final Space getSpace() {

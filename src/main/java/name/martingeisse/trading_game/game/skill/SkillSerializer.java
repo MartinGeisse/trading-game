@@ -1,7 +1,5 @@
 package name.martingeisse.trading_game.game.skill;
 
-import name.martingeisse.trading_game.game.item.ItemType;
-
 /**
  * Provides a serialized representation of skills as strings.
  *

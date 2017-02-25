@@ -1,9 +1,10 @@
 package name.martingeisse.trading_game.gui;
 
-import name.martingeisse.trading_game.game.GameListener;
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
+import name.martingeisse.trading_game.game.event.GameEvent;
+import name.martingeisse.trading_game.game.event.GameEventListener;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
+import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.space.*;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
@@ -253,7 +254,7 @@ public class MainPage extends AbstractPage {
 		add(new GameListenerWebSocketBehavior() {
 
 			@Override
-			protected GameListener createListener(PushMessageSender pushMessageSender) {
+			protected GameEventListener createListener(PushMessageSender pushMessageSender) {
 				return new PushGameListener(pushMessageSender);
 			}
 
@@ -311,7 +312,7 @@ public class MainPage extends AbstractPage {
 	/**
 	 * This object listens to game events and generates push messages whenever the page is interested.
 	 */
-	private static class PushGameListener implements GameListener {
+	private static class PushGameListener implements GameEventListener {
 
 		private final PushMessageSender sender;
 
@@ -320,6 +321,15 @@ public class MainPage extends AbstractPage {
 				throw new IllegalArgumentException("sender is null");
 			}
 			this.sender = sender;
+		}
+
+		@Override
+		public void receive(GameEvent event) {
+			if (event instanceof SpaceObjectPositionChangedEvent) {
+				// TODO
+			} else if (event instanceof InventoryChangedEvent) {
+				// TODO
+			}
 		}
 
 		@Override

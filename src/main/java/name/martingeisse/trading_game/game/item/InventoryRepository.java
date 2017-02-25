@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.game.item;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.InventoryRow;
@@ -15,11 +16,13 @@ public class InventoryRepository {
 
 	private final PostgresService postgresService;
 	private final ItemTypeSerializer itemTypeSerializer;
+	private final GameEventEmitter gameEventEmitter;
 
 	@Inject
-	public InventoryRepository(PostgresService postgresService, ItemTypeSerializer itemTypeSerializer) {
+	public InventoryRepository(PostgresService postgresService, ItemTypeSerializer itemTypeSerializer, GameEventEmitter gameEventEmitter) {
 		this.postgresService = postgresService;
 		this.itemTypeSerializer = itemTypeSerializer;
+		this.gameEventEmitter = gameEventEmitter;
 	}
 
 	/**
@@ -29,7 +32,7 @@ public class InventoryRepository {
 	 * @param id the inventory ID
 	 */
 	public Inventory getInventory(long id) {
-		return new Inventory(postgresService, itemTypeSerializer, id);
+		return new Inventory(postgresService, itemTypeSerializer, gameEventEmitter, id);
 	}
 
 	/**
@@ -41,6 +44,7 @@ public class InventoryRepository {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			InventoryRow inventory = new InventoryRow();
 			inventory.insert(connection);
+			gameEventEmitter.emit(new InventoryChangedEvent(inventory.getId()));
 			return inventory.getId();
 		}
 	}
@@ -61,6 +65,7 @@ public class InventoryRepository {
 				slot.setQuantity(stack.getSize());
 				slot.insert(connection);
 			}
+			gameEventEmitter.emit(new InventoryChangedEvent(inventory.getId()));
 			return inventory.getId();
 		}
 	}

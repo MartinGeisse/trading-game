@@ -2,7 +2,6 @@ package name.martingeisse.trading_game.game.player;
 
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.action.ActionQueueRepository;
 import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
@@ -18,13 +17,11 @@ public final class PlayerRepository {
 	private final PostgresService postgresService;
 	private final Space space;
 	private final ActionQueueRepository actionQueueRepository;
-	private final Game game;
 
-	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, Game game) {
+	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository) {
 		this.postgresService = postgresService;
 		this.space = space;
 		this.actionQueueRepository = actionQueueRepository;
-		this.game = game;
 	}
 
 	/**
@@ -78,7 +75,7 @@ public final class PlayerRepository {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QPlayerRow qp = QPlayerRow.Player;
 			PlayerRow playerRow = connection.query().select(qp).from(qp).where(predicate).fetchFirst();
-			return new Player(postgresService, this, space, actionQueueRepository, game, playerRow);
+			return new Player(postgresService, this, space, actionQueueRepository, playerRow);
 		}
 	}
 
@@ -90,7 +87,7 @@ public final class PlayerRepository {
 		try (CloseableIterator<PlayerRow> iterator = connection.query().select(qp).from(qp).iterate()) {
 			while (iterator.hasNext()) {
 				PlayerRow playerRow = iterator.next();
-				Player player = new Player(postgresService, this, space, actionQueueRepository, game, playerRow);
+				Player player = new Player(postgresService, this, space, actionQueueRepository, playerRow);
 				player.tick(connection);
 			}
 		}

@@ -1,7 +1,7 @@
 package name.martingeisse.trading_game.game.action.actions;
 
-import name.martingeisse.trading_game.game.action.CannotStartActionException;
 import name.martingeisse.trading_game.game.action.Action;
+import name.martingeisse.trading_game.game.action.CannotStartActionException;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;

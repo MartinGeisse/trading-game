@@ -1,8 +1,8 @@
 package name.martingeisse.trading_game.game.action.actions;
 
+import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.CannotStartActionException;
 import name.martingeisse.trading_game.game.action.ProgressSnapshot;
-import name.martingeisse.trading_game.game.action.Action;
 
 /**
  * Base class for an action that has a continuous effect while it is being performed. This implies:

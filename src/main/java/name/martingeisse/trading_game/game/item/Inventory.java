@@ -3,6 +3,7 @@ package name.martingeisse.trading_game.game.item;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.Path;
 import name.martingeisse.trading_game.common.util.WtfException;
+import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.InventorySlotRow;
@@ -18,12 +19,14 @@ public final class Inventory {
 
 	private final PostgresService postgresService;
 	private final ItemTypeSerializer itemTypeSerializer;
+	private final GameEventEmitter gameEventEmitter;
 	private final long id;
 
 	// use InventoryRepository to get an instance of this class
-	Inventory(PostgresService postgresService, ItemTypeSerializer itemTypeSerializer, long id) {
+	Inventory(PostgresService postgresService, ItemTypeSerializer itemTypeSerializer, GameEventEmitter gameEventEmitter, long id) {
 		this.postgresService = postgresService;
 		this.itemTypeSerializer = itemTypeSerializer;
+		this.gameEventEmitter = gameEventEmitter;
 		this.id = id;
 	}
 
@@ -120,6 +123,7 @@ public final class Inventory {
 				connection.update(qs).set(qs.quantity, qs.quantity.add(amount)).where(qs.id.eq(slotId)).execute();
 			}
 		}
+		gameEventEmitter.emit(new InventoryChangedEvent(id));
 		return this;
 	}
 
@@ -146,17 +150,18 @@ public final class Inventory {
 				QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
 				if (slot.getQuantity() > amount) {
 					connection.update(qs).set(qs.quantity, qs.quantity.subtract(amount)).where(qs.id.eq(slot.getId())).execute();
-					return this;
+					break;
 				} else {
 					amount -= slot.getQuantity();
 					connection.delete(qs).where(qs.id.eq(slot.getId())).execute();
 					if (amount <= 0) {
-						return this;
+						break;
 					}
 				}
 			}
 		}
 
+		gameEventEmitter.emit(new InventoryChangedEvent(id));
 		return this;
 	}
 

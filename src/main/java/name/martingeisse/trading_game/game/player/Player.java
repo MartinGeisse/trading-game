@@ -1,6 +1,5 @@
 package name.martingeisse.trading_game.game.player;
 
-import name.martingeisse.trading_game.game.Game;
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
 import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.ActionQueueRepository;
@@ -20,18 +19,16 @@ public final class Player {
 	private final PlayerRepository playerRepository;
 	private final Space space;
 	private final ActionQueueRepository actionQueueRepository;
-	private final Game game;
 	private final long id;
 	private final long shipId;
 	private final long actionQueueId;
 	private String name;
 
-	public Player(PostgresService postgresService, PlayerRepository playerRepository, Space space, ActionQueueRepository actionQueueRepository, Game game, PlayerRow playerRow) {
+	public Player(PostgresService postgresService, PlayerRepository playerRepository, Space space, ActionQueueRepository actionQueueRepository, PlayerRow playerRow) {
 		this.postgresService = postgresService;
 		this.playerRepository = playerRepository;
 		this.space = space;
 		this.actionQueueRepository = actionQueueRepository;
-		this.game = game;
 		this.id = playerRow.getId();
 		this.shipId = playerRow.getShipId();
 		this.actionQueueId = playerRow.getActionQueueId();

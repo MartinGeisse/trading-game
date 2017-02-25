@@ -21,7 +21,6 @@ public final class Game {
 
 	private final Space space;
 	private final PlayerRepository playerRepository;
-	private final GameListenerSet listeners = new GameListenerSet();
 
 	@Inject
 	public Game(PostgresService postgresService, Space space, PlayerRepository playerRepository) {
@@ -30,15 +29,13 @@ public final class Game {
 		new Timer(true).schedule(new TimerTask() {
 			@Override
 			public void run() {
-				for (int i = 0; i < TICK_MULTIPLIER; i++) {
-					// TODO may drop ticks on high load depending on how the Timer class handles it
-					GlobalGameLock.lock();
-					try (PostgresConnection connection = postgresService.newConnection()) {
+				try (PostgresConnection connection = postgresService.newConnection()) {
+					for (int i = 0; i < TICK_MULTIPLIER; i++) {
+						// TODO may drop ticks on high load depending on how the Timer class handles it
 						tick(connection);
-					} finally {
-						GlobalGameLock.unlock();
 					}
 				}
+
 			}
 		}, 0, 1000);
 	}
@@ -49,16 +46,7 @@ public final class Game {
 	private void tick(PostgresConnection connection) {
 		playerRepository.tick(connection);
 		space.tick(connection);
-		listeners.onDynamicSpaceObjectsChanged();
-	}
-
-	/**
-	 * Getter method.
-	 *
-	 * @return the listeners
-	 */
-	public GameListenerSet getListeners() {
-		return listeners;
+		// TODO listeners.onDynamicSpaceObjectsChanged();
 	}
 
 }

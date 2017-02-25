@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.actions.MoveToPositionAction;
+import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
@@ -18,6 +19,7 @@ public abstract class SpaceObject implements PositionProvider {
 	public static final String DEFAULT_NAME = "unnamed";
 
 	private PostgresService postgresService;
+	private GameEventEmitter gameEventEmitter;
 	private long id;
 	private String name = DEFAULT_NAME;
 	private long x;
@@ -31,6 +33,16 @@ public abstract class SpaceObject implements PositionProvider {
 	@Inject
 	public void internalSetPostgresService(PostgresService postgresService) {
 		this.postgresService = postgresService;
+	}
+
+	/**
+	 * Setter method.
+	 *
+	 * @param gameEventEmitter the gameEventEmitter
+	 */
+	@Inject
+	public void internalSetGameEventEmitter(GameEventEmitter gameEventEmitter) {
+		this.gameEventEmitter = gameEventEmitter;
 	}
 
 	/**
@@ -129,10 +141,11 @@ public abstract class SpaceObject implements PositionProvider {
 	public void setPosition(long x, long y) {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
-			connection.update(qbd).set(qbd.position, new PGpoint(x, y).execute();
+			connection.update(qbd).set(qbd.position, new PGpoint(x, y)).execute();
 		}
 		internalSetX(x);
 		internalSetY(y);
+		gameEventEmitter.emit(new SpaceObjectPositionChangedEvent(id));
 	}
 
 	/**

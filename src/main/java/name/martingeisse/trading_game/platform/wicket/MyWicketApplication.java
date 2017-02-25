@@ -11,27 +11,19 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
-import name.martingeisse.trading_game.game.GlobalGameLock;
 import name.martingeisse.trading_game.gui.MainPage;
 import name.martingeisse.trading_game.gui.MapTileResource;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
-import org.apache.wicket.core.request.handler.BufferedResponseRequestHandler;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.ws.WebSocketSettings;
 import org.apache.wicket.request.IExceptionMapper;
-import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.IProvider;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 /**
@@ -167,31 +159,6 @@ public class MyWicketApplication extends WebApplication {
 				mountResource("/fonts/" + fontFile, new PackageResourceReference(AbstractPage.class, fontFile));
 			}
 		}
-
-		// acquire the global lock for the Game object during all requests except a few whitelisted ones that don't
-		// need that object. In particular, both rendering requests and listener requests need the lock.
-		getRequestCycleListeners().add(new AbstractRequestCycleListener() {
-
-			@Override
-			public void onRequestHandlerResolved(RequestCycle cycle, IRequestHandler handler) {
-				if (handler instanceof BufferedResponseRequestHandler) {
-					// this just renders the actions from a buffered response, so the Game object isn't involved
-					return;
-				}
-				if (handler instanceof ResourceReferenceRequestHandler) {
-					ResourceReference reference = ((ResourceReferenceRequestHandler) handler).getResourceReference();
-					if (reference instanceof PackageResourceReference) {
-						return;
-					}
-				}
-				GlobalGameLock.onBeginRequest((HttpServletRequest) cycle.getRequest().getContainerRequest());
-			}
-
-			@Override
-			public void onDetach(RequestCycle cycle) {
-				GlobalGameLock.onFinishRequest((HttpServletRequest) cycle.getRequest().getContainerRequest());
-			}
-		});
 
 		// TODO workaround for WICKET-6262, may be removed in the future
 		WebSocketSettings.Holder.get(this).setFilterPrefix("/.");
