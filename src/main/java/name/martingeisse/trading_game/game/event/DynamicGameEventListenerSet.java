@@ -1,5 +1,7 @@
 package name.martingeisse.trading_game.game.event;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,9 +20,16 @@ final class DynamicGameEventListenerSet implements GameEventListener {
 	}
 
 	@Override
-	public void receive(GameEvent event) {
+	public void receiveGameEvent(GameEvent event) {
 		for (GameEventListener listener : listeners.values()) {
-			listener.receive(event);
+			listener.receiveGameEvent(event);
+		}
+	}
+
+	@Override
+	public void receiveGameEventBatch(ImmutableList<GameEvent> eventBatch) {
+		for (GameEventListener listener : listeners.values()) {
+			listener.receiveGameEventBatch(eventBatch);
 		}
 	}
 

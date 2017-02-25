@@ -1,54 +1,45 @@
 package name.martingeisse.trading_game.gui.websockets;
 
-import name.martingeisse.trading_game.game.event.GameEventEmitter;
+import com.google.common.collect.ImmutableList;
+import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.event.GameEventListener;
-import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
-import org.apache.wicket.protocol.ws.api.WebSocketBehavior;
-import org.apache.wicket.protocol.ws.api.message.AbortedMessage;
-import org.apache.wicket.protocol.ws.api.message.ClosedMessage;
-import org.apache.wicket.protocol.ws.api.message.ConnectedMessage;
+import org.apache.wicket.protocol.ws.api.WebSocketRequestHandler;
+import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
 
 /**
- * Specialized web socket behavior that manages a single game listener driven by the life-cycle of the web socket
- * connection. The listener is built around a {@link PushMessageSender} and is expected to send relevant changes as
- * push messages.
+ * Default web socket behavior that listens to all game events and pushes them as {@link GameEventBatchPushMessage}.
+ * The onPush() method handles that message and invokes {@link #onGameEventBatch(ImmutableList)}. Implement the
+ * latter to react to game events within a push-request-cycle.
  */
-public abstract class GameListenerWebSocketBehavior extends WebSocketBehavior {
-
-	private transient GameEventListener listener = null;
+public abstract class GameListenerWebSocketBehavior extends AbstractGameListenerWebSocketBehavior {
 
 	@Override
-	protected void onConnect(ConnectedMessage message) {
-		discardListener();
-		listener = createListener(new PushMessageSender(message));
-		getGameEventEmitter().addListener(listener);
+	protected GameEventListener createListener(PushMessageSender pushMessageSender) {
+		return new MyListener(pushMessageSender);
 	}
 
 	@Override
-	protected void onClose(ClosedMessage message) {
-		discardListener();
-	}
-
-	@Override
-	protected void onAbort(AbortedMessage message) {
-		discardListener();
-	}
-
-	private GameEventEmitter getGameEventEmitter() {
-		return MyWicketApplication.get().getDependency(GameEventEmitter.class);
-	}
-
-	private void discardListener() {
-		if (listener != null) {
-			getGameEventEmitter().removeListener(listener);
-			destroyListener(listener);
-			listener = null;
+	protected void onPush(WebSocketRequestHandler handler, IWebSocketPushMessage message) {
+		if (message instanceof GameEventBatchPushMessage) {
+			onGameEventBatch(handler, ((GameEventBatchPushMessage) message).getEvents());
 		}
 	}
 
-	protected abstract GameEventListener createListener(PushMessageSender pushMessageSender);
+	protected abstract void onGameEventBatch(WebSocketRequestHandler handler, ImmutableList<GameEvent> eventBatch);
 
-	protected void destroyListener(GameEventListener listener) {
+	private static class MyListener implements GameEventListener {
+
+		private final PushMessageSender pushMessageSender;
+
+		public MyListener(PushMessageSender pushMessageSender) {
+			this.pushMessageSender = pushMessageSender;
+		}
+
+		@Override
+		public void receiveGameEventBatch(ImmutableList<GameEvent> eventBatch) {
+			pushMessageSender.send(new GameEventBatchPushMessage(eventBatch));
+		}
+
 	}
 
 }

@@ -1,10 +1,11 @@
 package name.martingeisse.trading_game.gui;
 
+import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.event.GameEvent;
-import name.martingeisse.trading_game.game.event.GameEventListener;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
+import name.martingeisse.trading_game.game.item.ObjectWithInventory;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.space.*;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
@@ -12,7 +13,6 @@ import name.martingeisse.trading_game.gui.leaflet.D3;
 import name.martingeisse.trading_game.gui.leaflet.Leaflet;
 import name.martingeisse.trading_game.gui.leaflet.LeafletD3SvgOverlay;
 import name.martingeisse.trading_game.gui.websockets.GameListenerWebSocketBehavior;
-import name.martingeisse.trading_game.gui.websockets.PushMessageSender;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -29,7 +29,6 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.ws.api.WebSocketRequestHandler;
-import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -43,23 +42,6 @@ import java.util.List;
  *
  */
 public class MainPage extends AbstractPage {
-
-	private static final IWebSocketPushMessage dynamicObjectsChangedPushMessage = new IWebSocketPushMessage() {
-	};
-
-	static class SpaceObjectPropertiesChangedPushMessage implements IWebSocketPushMessage {
-
-		private final SpaceObject spaceObject;
-
-		public SpaceObjectPropertiesChangedPushMessage(SpaceObject spaceObject) {
-			this.spaceObject = spaceObject;
-		}
-
-		public SpaceObject getSpaceObject() {
-			return spaceObject;
-		}
-
-	};
 
 	private static final Comparator<SpaceObject> playerShipsLowPriorityComparator = (a, b) -> {
 		boolean a2 = (a instanceof PlayerShip);
@@ -254,23 +236,42 @@ public class MainPage extends AbstractPage {
 		add(new GameListenerWebSocketBehavior() {
 
 			@Override
-			protected GameEventListener createListener(PushMessageSender pushMessageSender) {
-				return new PushGameListener(pushMessageSender);
-			}
+			protected void onGameEventBatch(WebSocketRequestHandler handler, ImmutableList<GameEvent> events) {
 
-			@Override
-			protected void onPush(WebSocketRequestHandler handler, IWebSocketPushMessage message) {
-				if (message == dynamicObjectsChangedPushMessage) {
+				// analyze events
+				boolean anySpaceObjectChangedItsPosition = false;
+				boolean sidebarChanged = false;
+				for (GameEvent event : events) {
+					if (event instanceof SpaceObjectPositionChangedEvent) {
+						anySpaceObjectChangedItsPosition = true;
+						if (((SpaceObjectPositionChangedEvent)event).getId() == selectedSpaceObjectId) {
+							sidebarChanged = true;
+						}
+					} else if (event instanceof InventoryChangedEvent) {
+						SpaceObject selectedSpaceObject = getSelectedSpaceObject();
+						if (selectedSpaceObject instanceof ObjectWithInventory) {
+							long eventInventoryId = ((InventoryChangedEvent)event).getInventoryId();
+							long selectedSpaceObjectInventoryId = ((ObjectWithInventory)selectedSpaceObject).getInventoryId();
+							if (eventInventoryId == selectedSpaceObjectInventoryId) {
+								sidebarChanged = true;
+							}
+						}
+					}
+				}
+
+				// react to space objects changing their position (e.g. ships)
+				if (anySpaceObjectChangedItsPosition) {
 					StringBuilder builder = new StringBuilder();
 					buildDynamicSpaceObjectsData(builder);
 					builder.append("redrawDynamicSpaceObjects();");
 					handler.appendJavaScript(builder.toString());
-				} else if (message instanceof SpaceObjectPropertiesChangedPushMessage) {
-					SpaceObjectPropertiesChangedPushMessage typedMessage = (SpaceObjectPropertiesChangedPushMessage)message;
-					if (typedMessage.getSpaceObject() == getPlayer().getShip() || typedMessage.getSpaceObject() == getSelectedSpaceObject()) {
-						handler.add(sidebar);
-					}
 				}
+
+				// react to changes in the side bar
+				if (sidebarChanged) {
+					handler.add(sidebar);
+				}
+
 			}
 
 		});
@@ -307,41 +308,6 @@ public class MainPage extends AbstractPage {
 
 	private String getAbsoluteUrlFor(ResourceReference reference) {
 		return getRequestCycle().getUrlRenderer().renderFullUrl(Url.parse(urlFor(reference, null)));
-	}
-
-	/**
-	 * This object listens to game events and generates push messages whenever the page is interested.
-	 */
-	private static class PushGameListener implements GameEventListener {
-
-		private final PushMessageSender sender;
-
-		public PushGameListener(PushMessageSender sender) {
-			if (sender == null) {
-				throw new IllegalArgumentException("sender is null");
-			}
-			this.sender = sender;
-		}
-
-		@Override
-		public void receive(GameEvent event) {
-			if (event instanceof SpaceObjectPositionChangedEvent) {
-				// TODO
-			} else if (event instanceof InventoryChangedEvent) {
-				// TODO
-			}
-		}
-
-		@Override
-		public void onDynamicSpaceObjectsChanged() {
-			sender.send(dynamicObjectsChangedPushMessage);
-		}
-
-		@Override
-		public void onSpaceObjectPropertiesChanged(SpaceObject spaceObject) {
-			sender.send(new SpaceObjectPropertiesChangedPushMessage(spaceObject));
-		}
-
 	}
 
 	/**

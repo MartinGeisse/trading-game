@@ -2,11 +2,12 @@ package name.martingeisse.trading_game.game.space;
 
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.item.InventoryRepository;
+import name.martingeisse.trading_game.game.item.ObjectWithInventory;
 
 /**
  *
  */
-public final class SpaceStation extends StaticSpaceObject {
+public final class SpaceStation extends StaticSpaceObject implements ObjectWithInventory {
 
 	private InventoryRepository inventoryRepository;
 	private long inventoryId;
@@ -29,6 +30,7 @@ public final class SpaceStation extends StaticSpaceObject {
 	 *
 	 * @return the inventoryId
 	 */
+	@Override
 	public long getInventoryId() {
 		return inventoryId;
 	}
@@ -38,6 +40,7 @@ public final class SpaceStation extends StaticSpaceObject {
 	 *
 	 * @return the inventory
 	 */
+	@Override
 	public Inventory getInventory() {
 		return inventoryRepository.getInventory(inventoryId);
 	}
