@@ -23,12 +23,13 @@ public interface Action {
 	public Action getPrerequisite();
 
 	/**
-	 * Starts the action. This method must not be called if the action has any prerequisite actions as returned by
-	 * {@link #getPrerequisite()}.
+	 * Starts the action.
 	 *
-	 * @throws CannotStartActionException if this action cannot be started
+	 * This method must not be called if the action has any prerequisite actions as returned by {@link #getPrerequisite()}.
+	 * If called anyway, this action may fail by returning FAILED, apply inconsistent or undesired changes to the database,
+	 * fail with an exception, and so on.
 	 */
-	public void start() throws CannotStartActionException;
+	public Status start();
 
 	/**
 	 * @return a snapshot of the current and required progress points, or null if unknown or not applicable for this action.

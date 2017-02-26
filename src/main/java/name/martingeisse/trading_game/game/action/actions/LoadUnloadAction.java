@@ -62,44 +62,12 @@ public final class LoadUnloadAction extends ImmediateAction {
 			sourceInventory = player.getInventory();
 			destinationInventory = spaceStation.getInventory();
 		}
-		if (!tryRemoveItems(sourceInventory, preferredSoruceInventoryIndex)) {
-			if (!tryRemoveItems(sourceInventory, preferredSoruceInventoryIndex - 1)) {
-				if (!tryRemoveItems(sourceInventory, preferredSoruceInventoryIndex + 1)) {
-					try {
-						sourceInventory.remove(items.getItemType(), items.getSize());
-					} catch (NotEnoughItemsException e) {
-						return;
-					}
-				}
-			}
+		try {
+			sourceInventory.remove(items.getItemType(), items.getSize(), preferredSoruceInventoryIndex);
+		} catch (NotEnoughItemsException e) {
+			return;
 		}
 		destinationInventory.add(items);
-	}
-
-	private boolean tryRemoveItems(Inventory sourceInventory, int index) {
-		// TODO move this to class Inventory
-//		if (index < 0 || index >= sourceInventory.getItemStacks().size()) {
-//			return false;
-//		}
-//		ItemStack foundItemStack = sourceInventory.getItemStacks().get(index);
-//		if (foundItemStack.getItemType() != items.getItemType()) {
-//			return false;
-//		}
-//		if (foundItemStack.getSize() < items.getSize()) {
-//			return false;
-//		}
-//		if (foundItemStack.getSize() == items.getSize()) {
-//			sourceInventory.getItemStacks().remove(index);
-//			return true;
-//		} else {
-//			try {
-//				foundItemStack.remove(items.getSize());
-//			} catch (NotEnoughItemsException e) {
-//				throw new WtfException(e);
-//			}
-//			return true;
-//		}
-		return true;
 	}
 
 	@Override

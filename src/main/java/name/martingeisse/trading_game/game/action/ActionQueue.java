@@ -4,27 +4,26 @@ import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.ActionQueueSlotRow;
-import name.martingeisse.trading_game.postgres_entities.QActionQueueSlotRow;
-import name.martingeisse.trading_game.tools.codegen.PostgresJsonb;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO move all the database handling to a separate class (maybe a per-run class that takes the connection and
- * implements closeable), so this class contains visible logic steps
+ *
  */
 public final class ActionQueue {
 
 	private final PostgresService postgresService;
 	private final ActionSerializer actionSerializer;
 	private final long id;
+	private final ActionQueueHelper helper;
 
 	// use ActionQueueRepository to get an instance of this class
 	ActionQueue(PostgresService postgresService, ActionSerializer actionSerializer, long id) {
 		this.postgresService = postgresService;
 		this.actionSerializer = actionSerializer;
 		this.id = id;
+		this.helper = new ActionQueueHelper(actionSerializer, id);
 	}
 
 	/**
@@ -33,90 +32,59 @@ public final class ActionQueue {
 	 * @param action the action to schedule
 	 */
 	public void scheduleAction(Action action) {
-		ActionQueueSlotRow row = new ActionQueueSlotRow();
-		row.setActionQueueId(id);
-		row.setAction(new PostgresJsonb(actionSerializer.serializeAction(action)));
-		row.setPrerequisite(false);
-		row.setStarted(false);
 		try (PostgresConnection connection = postgresService.newConnection()) {
-			row.insert(connection);
+			helper.insertSlot(connection, action, false, false);
 		}
 	}
 
 	/**
-	 * Gets all actions in this queue.
-	 * <p>
-	 * TODO currently cannot return the 'prerequisite' flag
+	 * Gets all entries in this queue.
 	 *
 	 * @return all actions
 	 */
-	public ImmutableList<Action> getAll() {
+	public ImmutableList<ActionQueueEntry> getEntries() {
 		List<ActionQueueSlotRow> rows;
 		try (PostgresConnection connection = postgresService.newConnection()) {
-			QActionQueueSlotRow qaqs = QActionQueueSlotRow.ActionQueueSlot;
-			rows = connection.query().select(qaqs).from(qaqs).where(qaqs.actionQueueId.eq(id)).orderBy(qaqs.prerequisite.desc(), qaqs.id.asc()).fetch();
+			rows = helper.fetchAllSlots(connection);
 		}
-		List<Action> actions = new ArrayList<>();
+		List<ActionQueueEntry> entries = new ArrayList<>();
 		for (ActionQueueSlotRow row : rows) {
-			actions.add(actionSerializer.deserializeAction(row.getAction().getValue()));
+			entries.add(new ActionQueueEntry(helper.extractAction(row), row.getPrerequisite()));
 		}
-		return ImmutableList.copyOf(actions);
+		return ImmutableList.copyOf(entries);
 	}
 
-
-
-
-
-
-	// TODO old TODO tick / start next / tick action / finish
+	/**
+	 * Called once every second to advance game logic.
+	 */
 	public void tick(PostgresConnection connection) {
-		// TODO
-		/*
-		while (actionExecution == null && !pendingActions.isEmpty()) {
-			actionExecution = pendingActions.startNext();
+		ActionQueueSlotRow runningSlot = helper.fetchStartedSlot(connection);
+		Action runningAction;
+		if (runningSlot == null) {
+			ActionStarter starter = new ActionStarter(connection, helper);
+			starter.startAction();
+			runningSlot = starter.getRunningSlot();
+			runningAction = starter.getRunningAction();
+		} else {
+			runningAction = helper.extractAction(runningSlot);
 		}
-		if (actionExecution != null) {
-			actionExecution.tick();
-			if (actionExecution.isFinishable()) {
-				actionExecution.finish();
-				actionExecution = null;
+		if (runningSlot != null) {
+			Action.Status status = runningAction.tick();
+			if (status != Action.Status.RUNNING) {
+				helper.deleteSlot(connection, runningSlot);
 			}
 		}
-		*/
 	}
-
-	// TODO old
-	/*
-	private ActionExecution startNext() {
-		if (isEmpty()) {
-			return null;
-		}
-		Action action = get(0);
-		Action prerequisite = action.getPrerequisite();
-		if (prerequisite != null) {
-			return new PrerequisiteActionExecutionDecorator(prerequisite.startExecution());
-		}
-		remove(0);
-		return action.startExecution();
-	}
-	*/
-
-
-
-
-
-
 
 	/**
 	 * Cancels the currently executed action (if any).
 	 */
 	public void cancelCurrentAction() {
 		try (PostgresConnection connection = postgresService.newConnection()) {
-			QActionQueueSlotRow qaqs = QActionQueueSlotRow.ActionQueueSlot;
-			ActionQueueSlotRow row = connection.query().select(qaqs).from(qaqs).where(qaqs.actionQueueId.eq(id), qaqs.started.isTrue()).fetchFirst();
-			Action action = actionSerializer.deserializeAction(row.getAction().getValue());
+			ActionQueueSlotRow row = helper.fetchStartedSlot(connection);
+			Action action = helper.extractAction(row);
 			action.cancel();
-			connection.delete(qaqs).where(qaqs.id.eq(row.getId())).execute();
+			helper.deleteSlot(connection, row);
 		}
 	}
 
@@ -127,10 +95,9 @@ public final class ActionQueue {
 	 */
 	public void cancelPendingAction(int index) {
 		try (PostgresConnection connection = postgresService.newConnection()) {
-			QActionQueueSlotRow qaqs = QActionQueueSlotRow.ActionQueueSlot;
-			Long slotId = connection.query().select(qaqs.id).from(qaqs).where(qaqs.actionQueueId.eq(id), qaqs.started.isFalse()).orderBy(qaqs.prerequisite.desc(), qaqs.id.asc()).limit(1).offset(index).fetchFirst();
-			if (slotId != null) {
-				connection.delete(qaqs).where(qaqs.id.eq(slotId)).execute();
+			ActionQueueSlotRow row = helper.fetchPendingSlot(connection, index);
+			if (row != null) {
+				helper.deleteSlot(connection, row);
 			}
 		}
 	}
@@ -140,8 +107,7 @@ public final class ActionQueue {
 	 */
 	public void cancelAllPendingActions() {
 		try (PostgresConnection connection = postgresService.newConnection()) {
-			QActionQueueSlotRow qaqs = QActionQueueSlotRow.ActionQueueSlot;
-			connection.delete(qaqs).where(qaqs.actionQueueId.eq(id), qaqs.started.isFalse()).execute();
+			helper.deleteAllPendingSlots(connection);
 		}
 	}
 

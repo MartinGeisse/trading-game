@@ -9,8 +9,6 @@ import java.util.Random;
 
 /**
  * Places stars while keeping some distance constraints.
- *
- * TODO: the net suggest poisson disc sampling with the density parameter determined using perlin noise
  */
 public final class StarPlacement implements Iterable<Pair<Long, Long>> {
 

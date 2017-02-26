@@ -120,8 +120,33 @@ public final class ImmutableItemStacks implements Iterable<ImmutableItemStack> {
 		return new ImmutableItemStacks(ImmutableList.copyOf(newStacks));
 	}
 
-	public ImmutableItemStacks reduceToMass(int mass) {
-		return this; // TODO
+	/**
+	 * Returns an instance that is a reduced version of this one, with at most the specified mass. Specifically,
+	 *
+	 * - the returned instance has at most the specified target mass
+	 * - the returned instance does not contain items (type or per-type quantity) which this object does not contain
+	 * - as few items as possible have been removed, though this is a soft rule since the value of different item types
+	 *   cannot be compared
+	 */
+	public ImmutableItemStacks reduceToMass(int targetMass) {
+		if (targetMass < 0) {
+			throw new IllegalArgumentException("invalid target mass: " + targetMass);
+		}
+		// this is very simple, but for now it's ok
+		List<ImmutableItemStack> validStacks = new ArrayList<>();
+		int validStacksMass = 0;
+		for (ImmutableItemStack stack : stacks) {
+			int maxStackSize = (targetMass - validStacksMass) / stack.getItemType().getMass();
+			if (maxStackSize == 0) {
+				continue;
+			}
+			if (maxStackSize > stack.getSize()) {
+				stack = new ImmutableItemStack(stack.getItemType(), maxStackSize);
+			}
+			validStacks.add(stack);
+			validStacksMass += stack.getMass();
+		}
+		return new ImmutableItemStacks(ImmutableList.copyOf(validStacks));
 	}
 
 }

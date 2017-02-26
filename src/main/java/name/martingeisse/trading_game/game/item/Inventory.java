@@ -132,6 +132,35 @@ public final class Inventory {
 		return this;
 	}
 
+	public Inventory remove(ItemType itemType, int amount, int preferredIndex) throws NotEnoughItemsException {
+
+		// TODO implement. For now, just take the items from any slot with the right item type
+		remove(itemType, amount);
+
+//		if (index < 0 || index >= sourceInventory.getItemStacks().size()) {
+//			return false;
+//		}
+//		ItemStack foundItemStack = sourceInventory.getItemStacks().get(index);
+//		if (foundItemStack.getItemType() != items.getItemType()) {
+//			return false;
+//		}
+//		if (foundItemStack.getSize() < items.getSize()) {
+//			return false;
+//		}
+//		if (foundItemStack.getSize() == items.getSize()) {
+//			sourceInventory.getItemStacks().remove(index);
+//			return true;
+//		} else {
+//			try {
+//				foundItemStack.remove(items.getSize());
+//			} catch (NotEnoughItemsException e) {
+//				throw new WtfException(e);
+//			}
+//			return true;
+//		}
+
+	}
+
 	public Inventory remove(ItemType itemType, int amount) throws NotEnoughItemsException {
 
 		// first check if there are enough items, so we don't mess up the item stacks if not
