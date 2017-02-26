@@ -324,7 +324,7 @@ public class MainPage extends AbstractPage {
 	}
 
 	public SpaceObject getSelectedSpaceObject() {
-		return getSpace().get(selectedSpaceObjectId);
+		return selectedSpaceObjectId == -1 ? null : getSpace().get(selectedSpaceObjectId);
 	}
 
 	public Double getSelectedSpaceObjectDistance() {

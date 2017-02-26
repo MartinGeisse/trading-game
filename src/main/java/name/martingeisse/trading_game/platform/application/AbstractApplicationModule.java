@@ -8,8 +8,13 @@ package name.martingeisse.trading_game.platform.application;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.multibindings.Multibinder;
+import name.martingeisse.trading_game.game.action.ActionSerializer;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
+import name.martingeisse.trading_game.game.event.GameEventListener;
 import name.martingeisse.trading_game.game.item.ItemTypeSerializer;
+import name.martingeisse.trading_game.game.skill.SkillSerializer;
+import name.martingeisse.trading_game.platform.application.configuration.ConfigurationParticipant;
+import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
 /**
  *
@@ -18,7 +23,19 @@ public abstract class AbstractApplicationModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+
+		// various services
 		bind(ItemTypeSerializer.class).to(GameDefinition.class);
+		bind(ActionSerializer.class).to(GameDefinition.class);
+		bind(SkillSerializer.class).to(GameDefinition.class);
+
+		// configuration participants
+		defineExtensionPoint(ConfigurationParticipant.class);
+		extend(ConfigurationParticipant.class, PostgresService.class);
+
+		// game listeners
+		defineExtensionPoint(GameEventListener.class);
+
 	}
 
 	/**

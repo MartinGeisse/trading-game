@@ -1,5 +1,7 @@
 package name.martingeisse.trading_game.game.player;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import name.martingeisse.trading_game.game.action.ActionQueueRepository;
@@ -12,12 +14,14 @@ import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 /**
  *
  */
+@Singleton
 public final class PlayerRepository {
 
 	private final PostgresService postgresService;
 	private final Space space;
 	private final ActionQueueRepository actionQueueRepository;
 
+	@Inject
 	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository) {
 		this.postgresService = postgresService;
 		this.space = space;

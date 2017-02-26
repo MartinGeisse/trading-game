@@ -61,7 +61,10 @@ dependencies {
 
 	// JSON
 	compile 'com.google.code.gson:gson:2.3'
-	
+	compile 'com.fasterxml.jackson.core:jackson-core:2.8.7'
+	compile 'com.fasterxml.jackson.core:jackson-databind:2.8.7'
+	compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.7'
+
 	// awesome-wicket-components
 	compile project(':awesome-wicket-components')
 

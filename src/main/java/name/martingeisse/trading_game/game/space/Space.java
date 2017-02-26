@@ -3,6 +3,7 @@ package name.martingeisse.trading_game.game.space;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import name.martingeisse.trading_game.common.database.GeometricExpressions;
@@ -24,6 +25,7 @@ import java.util.function.Consumer;
  * Note that the same space object will be returned as a new Java object ({@link SpaceObject}) each time. Use the
  * object's id to check for identity in the repository.
  */
+@Singleton
 public final class Space {
 
 	private static final QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
@@ -51,7 +53,11 @@ public final class Space {
 	 */
 	public SpaceObject get(long id) {
 		try (PostgresConnection connection = postgresService.newConnection()) {
-			return reconstructSpaceObject(SpaceObjectBaseDataRow.loadById(connection, id));
+			SpaceObjectBaseDataRow row = SpaceObjectBaseDataRow.loadById(connection, id);
+			if (row == null) {
+				throw new IllegalArgumentException("invalid space object ID: " + id);
+			}
+			return reconstructSpaceObject(row);
 		}
 	}
 
