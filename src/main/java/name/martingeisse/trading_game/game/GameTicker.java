@@ -11,10 +11,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * TODO remove this class!!!
+ * Calls the tick() method of all game objects regularly.
  */
 @Singleton
-public final class Game {
+public final class GameTicker {
 
 	// debugging switch to speed up the game
 	private static final int TICK_MULTIPLIER = 1;
@@ -23,7 +23,7 @@ public final class Game {
 	private final PlayerRepository playerRepository;
 
 	@Inject
-	public Game(PostgresService postgresService, Space space, PlayerRepository playerRepository) {
+	public GameTicker(PostgresService postgresService, Space space, PlayerRepository playerRepository) {
 		this.space = space;
 		this.playerRepository = playerRepository;
 		new Timer(true).schedule(new TimerTask() {
@@ -31,7 +31,6 @@ public final class Game {
 			public void run() {
 				try (PostgresConnection connection = postgresService.newConnection()) {
 					for (int i = 0; i < TICK_MULTIPLIER; i++) {
-						// TODO may drop ticks on high load depending on how the Timer class handles it
 						tick(connection);
 					}
 				}
@@ -46,7 +45,6 @@ public final class Game {
 	private void tick(PostgresConnection connection) {
 		playerRepository.tick(connection);
 		space.tick(connection);
-		// TODO listeners.onDynamicSpaceObjectsChanged();
 	}
 
 }

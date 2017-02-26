@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.game.action.actions;
 
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.action.CannotStartActionException;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
@@ -38,11 +37,12 @@ public final class CraftingAction extends FixedEffortAction {
 	}
 
 	@Override
-	protected void onStart() throws CannotStartActionException {
+	protected boolean onStart() {
 		try {
 			player.getInventory().removeBillOfMaterials(recipe.getBillOfMaterials());
+			return true;
 		} catch (NotEnoughItemsException e) {
-			throw new CannotStartActionException("not enough items");
+			return false;
 		}
 	}
 
@@ -52,8 +52,10 @@ public final class CraftingAction extends FixedEffortAction {
 	}
 
 	@Override
-	protected void onFinish() {
+	protected boolean onFinish() {
+		// TODO check inventory space
 		player.getInventory().add(recipe.getYield());
+		return true;
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.game.action.actions;
 
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.action.CannotStartActionException;
 import name.martingeisse.trading_game.game.action.ProgressSnapshot;
 
 /**
@@ -15,17 +14,17 @@ public abstract class ImmediateAction implements Action {
 	}
 
 	@Override
-	public final void start() throws CannotStartActionException {
-		onExecute();
+	public final Status start() {
+		return onExecute() ? Status.FINISHED : Status.FAILED;
 	}
 
 	/**
 	 * Executes this action. This method must not be called if the action has any prerequisite actions as returned by
 	 * {@link #getPrerequisite()}.
 	 *
-	 * @throws CannotStartActionException if this action cannot be started
+	 * @return whether the action was successful
 	 */
-	protected abstract void onExecute() throws CannotStartActionException;
+	protected abstract boolean onExecute();
 
 	@Override
 	public final ProgressSnapshot getProgress() {

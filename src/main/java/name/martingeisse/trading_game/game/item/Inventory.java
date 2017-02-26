@@ -136,6 +136,7 @@ public final class Inventory {
 
 		// TODO implement. For now, just take the items from any slot with the right item type
 		remove(itemType, amount);
+		return this;
 
 //		if (index < 0 || index >= sourceInventory.getItemStacks().size()) {
 //			return false;

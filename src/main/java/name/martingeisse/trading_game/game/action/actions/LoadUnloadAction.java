@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.game.action.actions;
 
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.action.CannotStartActionException;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
@@ -50,9 +49,9 @@ public final class LoadUnloadAction extends ImmediateAction {
 	}
 
 	@Override
-	protected void onExecute() throws CannotStartActionException {
+	protected boolean onExecute() {
 		if (type == Type.LOAD && player.getInventory().getMass() + items.getMass() > player.getMaximumCargoMass()) {
-			return;
+			return false;
 		}
 		Inventory sourceInventory, destinationInventory;
 		if (type == Type.LOAD) {
@@ -65,9 +64,10 @@ public final class LoadUnloadAction extends ImmediateAction {
 		try {
 			sourceInventory.remove(items.getItemType(), items.getSize(), preferredSoruceInventoryIndex);
 		} catch (NotEnoughItemsException e) {
-			return;
+			return false;
 		}
 		destinationInventory.add(items);
+		return true;
 	}
 
 	@Override

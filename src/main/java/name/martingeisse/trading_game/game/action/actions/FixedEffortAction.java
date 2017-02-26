@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.game.action.actions;
 
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.action.CannotStartActionException;
 import name.martingeisse.trading_game.game.action.ProgressSnapshot;
 
 /**
@@ -29,8 +28,8 @@ public abstract class FixedEffortAction implements Action {
 	}
 
 	@Override
-	public final void start() throws CannotStartActionException {
-		onStart();
+	public final Status start() {
+		return onStart() ? Status.RUNNING : Status.FAILED;
 	}
 
 	@Override
@@ -57,8 +56,7 @@ public abstract class FixedEffortAction implements Action {
 	public Status tick() {
 		currentProgressPoints += getProgressPointsPerSecond();
 		if (currentProgressPoints >= getTotalRequiredProgressPoints()) {
-			onFinish();
-			return Status.FINISHED;
+			return onFinish() ? Status.FINISHED : Status.FAILED;
 		} else {
 			return Status.RUNNING;
 		}
@@ -67,9 +65,9 @@ public abstract class FixedEffortAction implements Action {
 	/**
 	 * Called when startingthe action.
 	 *
-	 * @throws CannotStartActionException if this action cannot be started
+	 * @return whether starting the action was successful
 	 */
-	protected abstract void onStart() throws CannotStartActionException;
+	protected abstract boolean onStart();
 
 	/**
 	 * Called when cancelling the action.
@@ -78,7 +76,9 @@ public abstract class FixedEffortAction implements Action {
 
 	/**
 	 * Called when finishing the action successfully.
+	 *
+	 * @return whether finishing the action was successful
 	 */
-	protected abstract void onFinish();
+	protected abstract boolean onFinish();
 
 }

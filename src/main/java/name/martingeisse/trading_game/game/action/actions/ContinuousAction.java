@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.game.action.actions;
 
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.action.CannotStartActionException;
 import name.martingeisse.trading_game.game.action.ProgressSnapshot;
 
 /**
@@ -21,7 +20,8 @@ public abstract class ContinuousAction implements Action {
 	}
 
 	@Override
-	public void start() throws CannotStartActionException {
+	public Status start() {
+		return Status.RUNNING;
 	}
 
 	@Override
