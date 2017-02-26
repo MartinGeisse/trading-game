@@ -2,6 +2,8 @@ package name.martingeisse.trading_game.gui;
 
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.action.Action;
+import name.martingeisse.trading_game.game.action.ActionQueue;
+import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
 import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
@@ -70,10 +72,10 @@ public class MainPage extends AbstractPage {
 				AjaxLink<?> link = new AjaxLink<Void>("link") {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						Player player = getPlayer();
-						// TODO player.cancelCurrentAction();
-						// TODO player.cancelAllPendingActions();
-						// TODO player.scheduleAction(actionItem.getModelObject());
+						ActionQueue actionQueue = getPlayer().getActionQueue();
+						actionQueue.cancelCurrentAction();
+						actionQueue.cancelAllPendingActions();
+						actionQueue.scheduleAction(actionItem.getModelObject());
 					}
 				};
 				link.add(new Label("name", actionItem.getModelObject().toString()));
@@ -101,9 +103,10 @@ public class MainPage extends AbstractPage {
 						Player player = getPlayer();
 						SpaceStation spaceStation = (SpaceStation)getSelectedSpaceObject();
 						ImmutableItemStack itemsToLoad = new ImmutableItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
-						// TODO player.cancelCurrentAction();
-						// TODO player.cancelAllPendingActions();
-						// TODO player.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.LOAD, itemsToLoad, item.getIndex()));
+						ActionQueue actionQueue = player.getActionQueue();
+						actionQueue.cancelCurrentAction();
+						actionQueue.cancelAllPendingActions();
+						actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.LOAD, itemsToLoad, item.getIndex()));
 					}
 				});
 			}
@@ -128,9 +131,10 @@ public class MainPage extends AbstractPage {
 						Player player = getPlayer();
 						SpaceStation spaceStation = (SpaceStation)getSelectedSpaceObject();
 						ImmutableItemStack itemsToLoad = new ImmutableItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
-						// TODO player.cancelCurrentAction();
-						// TODO player.cancelAllPendingActions();
-						// TODO player.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, item.getIndex()));
+						ActionQueue actionQueue = player.getActionQueue();
+						actionQueue.cancelCurrentAction();
+						actionQueue.cancelAllPendingActions();
+						actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, item.getIndex()));
 					}
 				});
 			}

@@ -157,7 +157,6 @@ public class MapTileResource extends DynamicImageResource {
 			g.setColor(Color.RED);
 			g.drawString("?", (int)x - 5, (int)y - 5);
 		}
-		// drawCircle(g, (int)spaceObject.getX(), (int)spaceObject.getY(), 30); // TODO int/long
 	}
 
 	private static void drawCircle(Graphics2D g, double centerX, double centerY, double radius) {
