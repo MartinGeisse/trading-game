@@ -9,7 +9,6 @@ package name.martingeisse.trading_game.platform.application;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
-import name.martingeisse.trading_game.platform.application.configuration.ApplicationConfiguration;
 import name.martingeisse.trading_game.platform.util.logging.JulToLog4jBridge;
 import name.martingeisse.trading_game.platform.util.logging.MyLayout;
 import org.apache.logging.log4j.LogManager;
@@ -61,8 +60,7 @@ public class ServerApplicationBootstrapper extends GuiceServletContextListener {
 
 	@Override
 	protected Injector getInjector() {
-		ApplicationConfiguration configuration = new ApplicationConfiguration();
-		Injector injector = Guice.createInjector(new ServerApplicationModule(configuration), new WebModule());
+		Injector injector = Guice.createInjector(new ServerApplicationModule(), new WebModule());
 		injector.getInstance(ServerApplicationInitializer.class).run();
 		return injector;
 	}

@@ -24,7 +24,9 @@ public final class CommandLineApplicationBootstrapper {
 	 * @return the injector
 	 */
 	public static Injector bootstrap() {
-		return Guice.createInjector(new CommandLineApplicationModule());
+		Injector injector = Guice.createInjector(new CommandLineApplicationModule());
+		injector.getInstance(CommandLineApplicationInitializer.class).run();
+		return injector;
 	}
 
 }
