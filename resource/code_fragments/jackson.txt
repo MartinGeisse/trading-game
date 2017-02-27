@@ -1,0 +1,32 @@
+		ObjectMapper mapper = new ObjectMapper();
+
+		mapper.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+		mapper.disable(JsonGenerator.Feature.AUTO_CLOSE_JSON_CONTENT);
+		mapper.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
+		// for pretty-printing
+		// mapper.disable(SerializationFeature.INDENT_OUTPUT);
+		mapper.disable(SerializationFeature.CLOSE_CLOSEABLE);
+		// if this causes underlying streams to be flushed, but according to the docs this shouldn't happen since this
+		// feature only affects the case where a JsonGenerator is passed explicitly
+		// mapper.disable(SerializationFeature.FLUSH_AFTER_WRITE_VALUE);
+		// I probably don't care about this one, but note that char[] -> string by default
+		// mapper.enable(SerializationFeature.WRITE_CHAR_ARRAYS_AS_JSON_ARRAYS);
+		mapper.enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
+		mapper.enable(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS);
+		// missing property values don't fail for setters, so I don't want them to fail for constructors
+		// mapper.enable(FAIL_ON_MISSING_CREATOR_PROPERTIES);
+		mapper.disable(DeserializationFeature.ACCEPT_FLOAT_AS_INT);
+		mapper.disable(MapperFeature.AUTO_DETECT_CREATORS);
+		// Changing final fields is not thread-safe according to the Java memory model, even when done only during
+		// object construction and only by a single thread, before ever publishing the object to other threads.
+		mapper.disable(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS);
+		// whether property naming strategies should also affect explicit names
+		// mapper.enable(ALLOW_EXPLICIT_PROPERTY_RENAMING);
+		// anything time-related
+		// TODO SerializationFeature.WRITE_DATES_AS_TIMESTAMPS -- check with Joda types if needed
+		// TODO SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS -- check with Joda types if needed
+		// TODO SerializationFeature.WRITE_DATES_WITH_ZONE_ID -- check with Joda types if needed
+		// TODO SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS -- check with Joda types if needed
+		// TODO SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS -- check with Joda types if needed
+		// TODO DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS -- check with Joda types if needed
+		// TODO DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE -- check with Joda types if needed
