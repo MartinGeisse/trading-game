@@ -1,9 +1,15 @@
 package name.martingeisse.trading_game.game.definition;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.common.util.JacksonUtil;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ActionSerializer;
@@ -36,14 +42,11 @@ public final class GameDefinition implements ItemTypeSerializer, SkillSerializer
 
 	private final SkillByNameSerializer skillByNameSerializer;
 
-	private final ObjectMapper objectMapper;
-
 	/**
 	 *
 	 */
 	public GameDefinition() {
 
-		objectMapper = new ObjectMapper();
 
 		ItemType redPixelItemType = new ItemType("red pixel", "red_pixel.png", 10);
 		ItemType redPixelAssemblyItemType = new ItemType("red pixel assembly", "red_pixel_assembly.png", 10);
@@ -176,7 +179,7 @@ public final class GameDefinition implements ItemTypeSerializer, SkillSerializer
 	@Override
 	public String serializeAction(Action action) {
 		try {
-			return objectMapper.writeValueAsString(action);
+			return JacksonUtil.objectMapper.writeValueAsString(action);
 		} catch (JsonProcessingException e) {
 			throw new UnexpectedExceptionException(e);
 		}
@@ -185,7 +188,7 @@ public final class GameDefinition implements ItemTypeSerializer, SkillSerializer
 	@Override
 	public Action deserializeAction(String serializedAction) {
 		try {
-			return objectMapper.readValue(serializedAction, Action.class);
+			return JacksonUtil.objectMapper.readValue(serializedAction, Action.class);
 		} catch (IOException e) {
 			throw new UnexpectedExceptionException(e);
 		}

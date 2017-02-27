@@ -22,7 +22,7 @@ CREATE INDEX "InventorySlot_inventoryIdItemTypeIndex" ON "game"."InventorySlot" 
 -- space objects
 -----------------------------------------------------------------------------------------------------------------------
 
-CREATE TYPE "game"."SpaceObjectType" AS ENUM ('Planet', 'Asteroid', 'PlayerShip');
+CREATE TYPE "game"."SpaceObjectType" AS ENUM ('ASTEROID', 'PLANET', 'PLAYER_SHIP', 'SPACE_STATION', 'STAR');
 
 CREATE TABLE "game"."SpaceObjectBaseData" (
 	"id" bigserial NOT NULL PRIMARY KEY,

@@ -34,7 +34,7 @@ public class MyPostgresSqlSerializer extends SQLSerializer {
 				}
 				append("?");
 				if (element instanceof Enum<?>) {
-					append("::").append(MyPostgresConfiguration.ENUM_CLASS_TO_TYPE_NAME.get(element.getClass()));
+					append("::").append(getEnumTypeName(constant.getClass()));
 				}
 				getConstants().add(element);
 				if (first && (constantPaths.size() < getConstants().size())) {
@@ -51,10 +51,20 @@ public class MyPostgresSqlSerializer extends SQLSerializer {
 		} else {
 			super.visitConstant(constant);
 			if (constant instanceof Enum<?>) {
-				append("::").append(MyPostgresConfiguration.ENUM_CLASS_TO_TYPE_NAME.get(constant.getClass()));
+				append("::").append(getEnumTypeName(constant.getClass()));
 			} else if (constant instanceof PostgresJsonb) {
 				append("::jsonb");
 			}
 		}
 	}
+
+	private String getEnumTypeName(Class<?> c) {
+		Class<?> sc = c.getSuperclass();
+		if (Enum.class.equals(sc)) {
+			return MyPostgresConfiguration.ENUM_CLASS_TO_TYPE_NAME.get(c);
+		} else {
+			return MyPostgresConfiguration.ENUM_CLASS_TO_TYPE_NAME.get(sc);
+		}
+	}
+
 }
