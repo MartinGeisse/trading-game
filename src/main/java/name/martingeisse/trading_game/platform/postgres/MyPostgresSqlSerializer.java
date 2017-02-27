@@ -34,7 +34,7 @@ public class MyPostgresSqlSerializer extends SQLSerializer {
 				}
 				append("?");
 				if (element instanceof Enum<?>) {
-					append("::").append(getEnumTypeName(constant.getClass()));
+					append("::").append(getEnumTypeName(element.getClass()));
 				}
 				getConstants().add(element);
 				if (first && (constantPaths.size() < getConstants().size())) {

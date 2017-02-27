@@ -37,6 +37,7 @@ public final class PlayerRepository {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			PlayerRow playerRow = new PlayerRow();
 			playerRow.setShipId(space.createPlayerShip("noname's ship", 0, 0));
+			playerRow.setActionQueueId(actionQueueRepository.createActionQueue());
 			playerRow.setName("noname");
 			playerRow.insert(connection);
 			return playerRow.getId();
