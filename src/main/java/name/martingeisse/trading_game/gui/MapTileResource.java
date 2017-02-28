@@ -130,9 +130,20 @@ public class MapTileResource extends DynamicImageResource {
 		g.translate(-(double) (x << 8), -(double) (y << 8)); // translate to render the correct tile
 		g.scale(1 << z, 1 << z); // apply zoom
 
+		// select visible space objects
+		double zoomFactor = Math.pow(2.0, 8 - z);
+		long x1 = MapCoordinates.convertLongitudeToX(x * zoomFactor);
+		long y1 = MapCoordinates.convertLatitudeToY(y * zoomFactor);
+		long x2 = MapCoordinates.convertLongitudeToX((x + 1) * zoomFactor);
+		long y2 = MapCoordinates.convertLatitudeToY((y + 1) * zoomFactor);
+		long minX = Math.min(x1, x2);
+		long maxX = Math.max(x1, x2);
+		long minY = Math.min(y1, y2);
+		long maxY = Math.max(y1, y2);
+		ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Space.class).getStaticSpaceObjects(minX, minY, maxX, maxY);
+
 		// draw space objects
 		g.setFont(g.getFont().deriveFont((float)(MapCoordinates.convertGameDistanceToMapDistance(5000))));
-		ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Space.class).getStaticSpaceObjects();
 		for (SpaceObject spaceObject : spaceObjects) {
 			draw(spaceObject, g);
 		}
