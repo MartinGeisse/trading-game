@@ -28,3 +28,9 @@ Action Stacks sind vermutlich doch nicht so sinnvoll. Eher ist es sinnvoll, dass
 	sinnlos. Also evtl. Subklasse RepeatableAction. Demnach muss auch nicht bei jeder Action beim enqueue die Anzahl wählbar sein.
 
 
+nach MVP:
+- Ship:
+    - noch nicht: ShipModule (Maschinen, Laderaum, ...; jeweils mit Größe) -> das nicht im MVP
+    - sondern: LaderaumGröße; Maschinen und sonstige Upgrades zählen separat
+- Manufacturing
+- Lernen

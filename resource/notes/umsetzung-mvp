@@ -1,74 +1,20 @@
 
-Spielobjekte auf toplevel:
-- Player (Referenz auf Ship)
-- SpaceObject (ship; PrerenderedSpaceObject (planet, star, asteroid))
-	-> position, Größe in width/height
-
-Ship:
-- noch nicht: ShipModule (Maschinen, Laderaum, ...; jeweils mit Größe) -> das nicht im MVP
-- sondern: LaderaumGröße; Maschinen und sonstige Upgrades zählen separat
-- Inventory des Spielers (ist im Grunde egal, ob das im Ship oder im Spieler-Objekt liegt)
-	-> später für autonome Schiffe ist es aber günstiger, wenn das Inv im Schiff liegt
-
-Planet:
-- nur zum Upgrades kaufen / Erz verkaufen
-- hat keine inventories und man kann dort nichts lagern und nichts produzieren
-
-Star:
-- hat Spielerisch erst mal keine Bedeutung
-
-Asteroid:
-- hat Restbestand (hier kann ein Inventory-Objekt benutzt werden)
-
-NICHT:
-- Manufacturing
-- Lernen
-
----> Änderungen zu bisher:
-- SpaceObject-Klassenhierarchie
-- Movement-Action
-	Wird vom Spieler ausgeführt und bewegt das Schiff. Wird *nicht* vom Schiff ausgeführt, weil es mit anderen Aktionen des Spielers konkurriert.
-	Autonome Schiffe funktionieren später anders, dort gibt es keinen Spieler und die Aktionen werden vom Schiff ausgeführt, weil dort auch
-	keine anderen Aktionen (z.B. Manufacturing) möglich sind, die damit konkurrieren.
-- Spieler-Inventory -> Ship
-- Änderungen zur ActionQueue ?
-- keine ContextFreeActionFactories
-- UI
-- Ship hält Inventory
-	-> was ist mit ActionItems (temp. inventory für laufende Action)? Im Ship oder im Player?
-	-> überlegung: Die Trennung (Aktionen = Spieler, Inventory = Ship) wird gemacht, weil der Spieler auch
-		z.B. Manufacturing in einer Raumstation betreiben könnte. Dann gilt ein anderes Inventory, aber es
-		konukurriert mit Ship-Actions.
-	-> Es klingt sinnvoll, die ActionItems dort abzulegen, wo die Actions ausgeführt werden. Z.B. kann ein
-		Spieler, der an einer Station angedockt ist, nur eine Action ausführen (Ship oder Station) und
-		demzufolge nur einen Satz von ActionItems gleichzeitig haben. Die Ship/Station Unterscheidung ist nur
-		dafür wichtig, wo die Items bei Abbruch wieder hingelegt werden -- aber dasselbe gilt auch bei Erfolg.
-	-> Weiteres Argument ist, falls mal zwei Spieler auf dasselbe "Lager" (z.B. innerhalb einer Station) zugreifen
-		und daraus Sachen craften, dann haben sie getrennte ActionItems. Ebenso bei 2 Maschinen, die auf dasselbe
-	Lager zugreifen.
-	-> Fazit: ActionItems weiter beim Spieler
-
-
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 Milestones:
+- UI
+	- Map-GUI
+	- aktionen der Space Objects über Map auswählbar
 - Spielinhalt
+	- Erz in SpaceStation verkaufen
 	- Schiffe können Upgrades haben
+	- Upgrades in SpaceStation kaufen
 	- verschiedene Erzsorten in den Asteroiden
 	- Upgrades müssen als Actions mit Zeit gebaut werden, brauchen verschiedene Erze und sind gleich im Schiff verbaut
 		- schneller fliegen
 		- schneller Erz abbauen
 		- höhere Ausbeute
 		- mehr Frachtraum
-- Map-GUI
-	- tile rendering (kein pre-rendering sondern on the fly)
-	- pan, zoom
-	- aktionen der Space Objects über Map auswählbar
-	- ...
-- Datenbank
 - Feinschliff
 	- Restzeit bei Mining anhand von Restbestand und Frachtraum ermitteln
-	- keine ContextFreeActionFactories
 	- prerequisite actions farblich hervorgehoben und nicht cancellable
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -89,7 +35,3 @@ Umsetzungs-Überlegungen (betr. alle Milestones)
 	zumindest wenn man nicht extrem weit rauszoomt. Hier wäre es sinnvoll, dass die gerenderte Map nicht einfach aus
 	Quadraten besteht, sondern aus Rechtecken mit Größen- und Positionsangabe -- dann kann man diese Fälle
 	verallgemeinern.
-- Klasse ActionLoop (kapselt action queue, action items, action progress). Geht erst, wenn die Actions ihr
-	Ziel-Inventory kennen. Idee wäre dann ein actionLoop.bindToInventory(inventory), danach beziehen sich action items
-	(nehmen, zurücklegen) und manufacturing-yield auf dieses inventory. Das inv kann ein Spieler-inv, SpaceStation-inv
-	oder sonstwas sein.
