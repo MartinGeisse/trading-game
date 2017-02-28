@@ -31,7 +31,3 @@ Umsetzungs-Überlegungen (betr. alle Milestones)
     	passiert. Für UI sowie beim Abbruch von Aktionen wird ein Zwischenergebnis interpoliert.
     	Das vermeidet auch Rundungsfehler beim Zwischenergebnis von Bewegung ganz gut, ist aber davon abhängig, dass
     	die Gesamtzeit für Bewegung genau ermittelt wird.
-- Prerendering der Map ist vor allem für Asteroidenfelder wichtig. Bei Sternen und Planeten würden DIVs reichen,
-	zumindest wenn man nicht extrem weit rauszoomt. Hier wäre es sinnvoll, dass die gerenderte Map nicht einfach aus
-	Quadraten besteht, sondern aus Rechtecken mit Größen- und Positionsangabe -- dann kann man diese Fälle
-	verallgemeinern.
