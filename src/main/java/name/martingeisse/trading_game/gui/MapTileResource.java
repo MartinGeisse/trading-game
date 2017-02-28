@@ -20,6 +20,8 @@ public class MapTileResource extends DynamicImageResource {
 
 	private static final boolean DRAW_GRID = false;
 
+	// private static ThreadLocal<Long> timer = new ThreadLocal<>();
+
 	private final SpectrumNoise noise = new SpectrumNoise(4, 2.0);
 
 	@Override
@@ -29,6 +31,7 @@ public class MapTileResource extends DynamicImageResource {
 
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
+		// timer.set(System.currentTimeMillis());
 		int x = attributes.getParameters().get("x").toInt(0);
 		int y = attributes.getParameters().get("y").toInt(0);
 		int z = attributes.getParameters().get("z").toInt(0);
@@ -36,6 +39,7 @@ public class MapTileResource extends DynamicImageResource {
 			BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_GRAY);
 			renderHeatMapTile(x, y, z, image);
 			// renderNoiseMapTile(x, y, z, image);
+			// System.out.println("done heatmap: " + (System.currentTimeMillis() - timer.get()));
 			return toImageData(image);
 		} else {
 			BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
@@ -45,6 +49,7 @@ public class MapTileResource extends DynamicImageResource {
 			} finally {
 				g.dispose();
 			}
+			// System.out.println("done detail: " + (System.currentTimeMillis() - timer.get()));
 			return toImageData(image);
 		}
 	}
@@ -91,7 +96,8 @@ public class MapTileResource extends DynamicImageResource {
 		// add space objects to the heat map
 		int shift = zoomLevel + 8; // TODO wrong, should be (8 - shiftLevel), but hits the same problem: pixels != latLng != gameCoords
 									// -- must be solved first
-		ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Space.class).getStaticSpaceObjects();
+		// ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Space.class).getStaticSpaceObjects();
+		ImmutableList<StaticSpaceObject> spaceObjects = getRelevantStaticSpaceObjects(tileX, tileY, zoomLevel);
 		for (SpaceObject spaceObject : spaceObjects) {
 			// long lx = spaceObject.getX() - (tileX << shift); // TODO see above
 			// long ly = spaceObject.getY() - (tileY << shift); // TODO see above
@@ -130,19 +136,8 @@ public class MapTileResource extends DynamicImageResource {
 		g.translate(-(double) (x << 8), -(double) (y << 8)); // translate to render the correct tile
 		g.scale(1 << z, 1 << z); // apply zoom
 
-		// select visible space objects
-		double zoomFactor = Math.pow(2.0, 8 - z);
-		long x1 = MapCoordinates.convertLongitudeToX(x * zoomFactor);
-		long y1 = MapCoordinates.convertLatitudeToY(y * zoomFactor);
-		long x2 = MapCoordinates.convertLongitudeToX((x + 1) * zoomFactor);
-		long y2 = MapCoordinates.convertLatitudeToY((y + 1) * zoomFactor);
-		long minX = Math.min(x1, x2);
-		long maxX = Math.max(x1, x2);
-		long minY = Math.min(y1, y2);
-		long maxY = Math.max(y1, y2);
-		ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Space.class).getStaticSpaceObjects(minX, minY, maxX, maxY);
-
 		// draw space objects
+		ImmutableList<StaticSpaceObject> spaceObjects = getRelevantStaticSpaceObjects(x, y, z);
 		g.setFont(g.getFont().deriveFont((float)(MapCoordinates.convertGameDistanceToMapDistance(5000))));
 		for (SpaceObject spaceObject : spaceObjects) {
 			draw(spaceObject, g);
@@ -178,6 +173,19 @@ public class MapTileResource extends DynamicImageResource {
 	private static void drawBox(Graphics2D g, double centerX, double centerY, double radius) {
 		double diameter = 2 * radius;
 		g.fill(new Rectangle2D.Double(centerX - radius, centerY - radius, diameter, diameter));
+	}
+
+	private static ImmutableList<StaticSpaceObject> getRelevantStaticSpaceObjects(int x, int y, int z) {
+		double zoomFactor = Math.pow(2.0, 8 - z);
+		long x1 = MapCoordinates.convertLongitudeToX(x * zoomFactor);
+		long y1 = MapCoordinates.convertLatitudeToY(y * zoomFactor);
+		long x2 = MapCoordinates.convertLongitudeToX((x + 1) * zoomFactor);
+		long y2 = MapCoordinates.convertLatitudeToY((y + 1) * zoomFactor);
+		long minX = Math.min(x1, x2);
+		long maxX = Math.max(x1, x2);
+		long minY = Math.min(y1, y2);
+		long maxY = Math.max(y1, y2);
+		return MyWicketApplication.get().getDependency(Space.class).getStaticSpaceObjects(minX, minY, maxX, maxY);
 	}
 
 }
