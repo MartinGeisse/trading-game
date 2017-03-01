@@ -2,12 +2,6 @@ package name.martingeisse.trading_game.game.skill;
 
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-
 /**
  * Represents the skills of a player.
  */

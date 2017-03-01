@@ -44,7 +44,7 @@ CREATE TABLE "game"."PlayerShipEquimentSlot" (
 	"slotType" "game"."PlayerShipEquimentSlotType" NOT NULL,
 	"itemType" character varying(2000) NOT NULL
 );
-CREATE INDEX "PlayerShipEquimentSlot"_spaceObjectBaseDataIdSlotTypeIndex ON "game"."PlayerShipEquimentSlot" ("spaceObjectBaseDataId", "slotType");
+CREATE INDEX "PlayerShipEquimentSlot_spaceObjectBaseDataIdSlotTypeIndex" ON "game"."PlayerShipEquimentSlot" ("spaceObjectBaseDataId", "slotType");
 
 -----------------------------------------------------------------------------------------------------------------------
 -- actions
