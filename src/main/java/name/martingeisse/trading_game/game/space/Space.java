@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.mysema.commons.lang.CloseableIterator;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import name.martingeisse.trading_game.common.database.GeometricExpressions;
 import name.martingeisse.trading_game.game.item.InventoryRepository;
@@ -89,6 +90,30 @@ public final class Space {
 	}
 
 	/**
+	 * Gets a subset of static space objects in a newly created list. This method selects all objects that overlap a
+	 * selection rectangle.
+	 *
+	 * Note that for now, all objects are represented by a maximal bounding circle. This should use the actual object
+	 * size instead.
+	 */
+	public ImmutableList<StaticSpaceObject> getStaticSpaceObjects(long minX, long minY, long maxX, long maxY) {
+
+		// adjust for object size by using a maximal bounding circle, so we can search for object centers
+		long adjustedMinX = minX - StaticSpaceObject.BOUNDING_RADIUS;
+		long adjustedMinY = minY - StaticSpaceObject.BOUNDING_RADIUS;
+		long adjustedMaxX = maxX + StaticSpaceObject.BOUNDING_RADIUS;
+		long adjustedMaxY = maxY + StaticSpaceObject.BOUNDING_RADIUS;
+
+		return ImmutableList.copyOf((List<StaticSpaceObject>) (List) get(query -> {
+			query.where(qbd.type.in(SpaceObjectType.getStaticTypes()));
+			PGpoint minPoint = new PGpoint(adjustedMinX, adjustedMinY);
+			PGpoint maxPoint = new PGpoint(adjustedMaxX, adjustedMaxY);
+			query.where(GeometricExpressions.pointInsideRectangle(qbd.position, Expressions.constant(minPoint), Expressions.constant(maxPoint)));
+		}));
+
+	}
+
+	/**
 	 * Gets all dynamic space objects in a newly created list.
 	 */
 	public ImmutableList<DynamicSpaceObject> getDynamicSpaceObjects() {
@@ -98,6 +123,10 @@ public final class Space {
 	/**
 	 * Finds a space object by position and matching radius. If multiple objects match then the nearest one is returned.
 	 * Returns null if no object lies within the radius.
+	 *
+	 * Note that this method ignores the radius of space objects for now and treats them all as points.
+	 * This should be fixed in the future, so the selection radius argument can be an object-independent
+	 * user interface based radius. (Currently, that radius is a workaround for the point-based search).
 	 */
 	public SpaceObject get(long x, long y, long radius, Comparator<SpaceObject> priorityComparator) {
 		SpaceObject matchingObject = null;
