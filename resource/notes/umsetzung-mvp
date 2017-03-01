@@ -1,6 +1,10 @@
 
 Milestones:
 - UI
+    - Map Performance
+        - def. MaxSpaceObjectRadius; Space.getStaticSpaceObjects(boudningbox) vergrößert bbox um MaxSpaceObjectRadius
+            und sucht nach Mittelpunkten per geo-index. Per Namen der Methode klarmachen, dass diese nach overlap
+            sucht
 	- Map-GUI
 	- aktionen der Space Objects über Map auswählbar
 - Spielinhalt
