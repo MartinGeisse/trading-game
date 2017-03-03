@@ -31,7 +31,7 @@ public final class PlayerShipEquipment {
 		Map<PlayerShipEquipmentSlotType, ItemType> result = new HashMap<>();
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
-			try (CloseableIterator<PlayerShipEquipmentSlotRow> iterator = connection.query().select(qs).from(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId)).iterate()){
+			try (CloseableIterator<PlayerShipEquipmentSlotRow> iterator = connection.query().select(qs).from(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId)).iterate()) {
 				while (iterator.hasNext()) {
 					PlayerShipEquipmentSlotRow row = iterator.next();
 					result.put(row.getSlotType(), row.getItemType());
@@ -47,10 +47,8 @@ public final class PlayerShipEquipment {
 	public ItemType getSlotItem(PlayerShipEquipmentSlotType slotType) {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
-			return connection.query().select(qs.itemType).from(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId), qs.slotType.eq(slotType).fetchFirst();)
-
+			return connection.query().select(qs.itemType).from(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId), qs.slotType.eq(slotType).fetchFirst());
 		}
-
 	}
 
 	/**
@@ -60,7 +58,11 @@ public final class PlayerShipEquipment {
 	 * Throws an {@link IllegalStateException} if the slot is already used.
 	 */
 	public void equip(ItemType itemType) {
-
+		// TODO catch uniqueness violation; throw as IllegalStateException due to slow already being used
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
+			connection.insert(qs).set(qs.spaceObjectBaseDataId, playerShipId).set(qs.slotType, slotType).set(qs.itemType, itemType).execute();
+		}
 	}
 
 	/**
@@ -70,7 +72,11 @@ public final class PlayerShipEquipment {
 	 * Throws an {@link IllegalStateException} if the slot is empty.
 	 */
 	public void unequip(PlayerShipEquipmentSlotType slotType) {
-
+		// TODO obtain deleted row count and throw IllegalStateException if 0
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
+			connection.delete(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId), qs.slotType.eq(slotType)).execute();
+		}
 	}
 
 }
