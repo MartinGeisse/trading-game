@@ -17,8 +17,8 @@ public final class PlayerShipEquipmentRepository {
 		this.postgresService = postgresService;
 	}
 
-	public PlayerShipEquipment getPlayerShipEquipment(long playerShipId) {
-		return new PlayerShipEquipment(postgresService, playerShipId);
-	}
+//	public PlayerShipEquipment getPlayerShipEquipment(long playerShipId) {
+//		return new PlayerShipEquipment(postgresService, playerShipId);
+//	}
 
 }

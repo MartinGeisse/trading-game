@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.postgres_entities;
 
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
@@ -21,7 +22,7 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QPlayerShipEquipmentSlotRow extends com.querydsl.sql.RelationalPathBase<PlayerShipEquipmentSlotRow> {
 
-    private static final long serialVersionUID = 313821298;
+    private static final long serialVersionUID = 639401754;
 
     public static final QPlayerShipEquipmentSlotRow PlayerShipEquipmentSlot = new QPlayerShipEquipmentSlotRow("PlayerShipEquipmentSlot");
 
@@ -29,7 +30,7 @@ public class QPlayerShipEquipmentSlotRow extends com.querydsl.sql.RelationalPath
 
     public final StringPath itemType = createString("itemType");
 
-    public final StringPath slotType = createString("slotType");
+    public final EnumPath<name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType> slotType = createEnum("slotType", name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType.class);
 
     public final NumberPath<Long> spaceObjectBaseDataId = createNumber("spaceObjectBaseDataId", Long.class);
 

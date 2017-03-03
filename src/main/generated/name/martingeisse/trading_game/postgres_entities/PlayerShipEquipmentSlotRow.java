@@ -32,7 +32,7 @@ public class PlayerShipEquipmentSlotRow implements Serializable {
     /**
      * the slotType
      */
-    private String slotType;
+    private name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType slotType;
 
     /**
      * the spaceObjectBaseDataId
@@ -80,7 +80,7 @@ public class PlayerShipEquipmentSlotRow implements Serializable {
      * 
      * @return the slotType
      */
-    public String getSlotType() {
+    public name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType getSlotType() {
         return slotType;
     }
 
@@ -89,7 +89,7 @@ public class PlayerShipEquipmentSlotRow implements Serializable {
      * 
      * @param slotType the slotType to set
      */
-    public void setSlotType(String slotType) {
+    public void setSlotType(name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType slotType) {
         this.slotType = slotType;
     }
 
