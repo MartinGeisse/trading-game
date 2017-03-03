@@ -36,15 +36,15 @@ CREATE INDEX "SpaceObjectBaseData_nameIndex" ON "game"."SpaceObjectBaseData" ("n
 CREATE INDEX "SpaceObjectBaseData_inventoryIdIndex" ON "game"."SpaceObjectBaseData" ("inventoryId");
 CREATE INDEX "SpaceObjectBaseData_positionIndex" ON "game"."SpaceObjectBaseData" USING GIST ("position" point_ops);
 
-CREATE TYPE "game"."PlayerShipEquimentSlotType" AS ENUM ('ENGINE', 'MINING', 'CARGO');
+CREATE TYPE "game"."PlayerShipEquipmentSlotType" AS ENUM ('ENGINE', 'MINING', 'CARGO');
 
-CREATE TABLE "game"."PlayerShipEquimentSlot" (
+CREATE TABLE "game"."PlayerShipEquipmentSlot" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"spaceObjectBaseDataId" bigint NOT NULL REFERENCES "game"."SpaceObjectBaseData" ON DELETE CASCADE,
-	"slotType" "game"."PlayerShipEquimentSlotType" NOT NULL,
+	"slotType" "game"."PlayerShipEquipmentSlotType" NOT NULL,
 	"itemType" character varying(2000) NOT NULL
 );
-CREATE INDEX "PlayerShipEquimentSlot_spaceObjectBaseDataIdSlotTypeIndex" ON "game"."PlayerShipEquimentSlot" ("spaceObjectBaseDataId", "slotType");
+CREATE INDEX "PlayerShipEquipmentSlot_spaceObjectBaseDataIdSlotTypeIndex" ON "game"."PlayerShipEquipmentSlot" ("spaceObjectBaseDataId", "slotType");
 
 -----------------------------------------------------------------------------------------------------------------------
 -- actions

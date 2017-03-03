@@ -15,15 +15,15 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 /**
- * QPlayerShipEquimentSlotRow is a Querydsl query type for PlayerShipEquimentSlotRow
+ * QPlayerShipEquipmentSlotRow is a Querydsl query type for PlayerShipEquipmentSlotRow
  */
 @Generated("name.martingeisse.trading_game.tools.codegen.MyMetaDataSerializer")
 @SuppressWarnings("all")
-public class QPlayerShipEquimentSlotRow extends com.querydsl.sql.RelationalPathBase<PlayerShipEquimentSlotRow> {
+public class QPlayerShipEquipmentSlotRow extends com.querydsl.sql.RelationalPathBase<PlayerShipEquipmentSlotRow> {
 
     private static final long serialVersionUID = 313821298;
 
-    public static final QPlayerShipEquimentSlotRow PlayerShipEquimentSlot = new QPlayerShipEquimentSlotRow("PlayerShipEquimentSlot");
+    public static final QPlayerShipEquipmentSlotRow PlayerShipEquipmentSlot = new QPlayerShipEquipmentSlotRow("PlayerShipEquipmentSlot");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -33,27 +33,27 @@ public class QPlayerShipEquimentSlotRow extends com.querydsl.sql.RelationalPathB
 
     public final NumberPath<Long> spaceObjectBaseDataId = createNumber("spaceObjectBaseDataId", Long.class);
 
-    public final com.querydsl.sql.PrimaryKey<PlayerShipEquimentSlotRow> playerShipEquimentSlotPkey = createPrimaryKey(id);
+    public final com.querydsl.sql.PrimaryKey<PlayerShipEquipmentSlotRow> playerShipEquipmentSlotPkey = createPrimaryKey(id);
 
-    public final com.querydsl.sql.ForeignKey<SpaceObjectBaseDataRow> playerShipEquimentSlotSpaceObjectBaseDataIdFkey = createForeignKey(spaceObjectBaseDataId, "id");
+    public final com.querydsl.sql.ForeignKey<SpaceObjectBaseDataRow> playerShipEquipmentSlotSpaceObjectBaseDataIdFkey = createForeignKey(spaceObjectBaseDataId, "id");
 
-    public QPlayerShipEquimentSlotRow(String variable) {
-        super(PlayerShipEquimentSlotRow.class, forVariable(variable), "game", "PlayerShipEquimentSlot");
+    public QPlayerShipEquipmentSlotRow(String variable) {
+        super(PlayerShipEquipmentSlotRow.class, forVariable(variable), "game", "PlayerShipEquipmentSlot");
         addMetadata();
     }
 
-    public QPlayerShipEquimentSlotRow(String variable, String schema, String table) {
-        super(PlayerShipEquimentSlotRow.class, forVariable(variable), schema, table);
+    public QPlayerShipEquipmentSlotRow(String variable, String schema, String table) {
+        super(PlayerShipEquipmentSlotRow.class, forVariable(variable), schema, table);
         addMetadata();
     }
 
-    public QPlayerShipEquimentSlotRow(Path<? extends PlayerShipEquimentSlotRow> path) {
-        super(path.getType(), path.getMetadata(), "game", "PlayerShipEquimentSlot");
+    public QPlayerShipEquipmentSlotRow(Path<? extends PlayerShipEquipmentSlotRow> path) {
+        super(path.getType(), path.getMetadata(), "game", "PlayerShipEquipmentSlot");
         addMetadata();
     }
 
-    public QPlayerShipEquimentSlotRow(PathMetadata metadata) {
-        super(PlayerShipEquimentSlotRow.class, metadata, "game", "PlayerShipEquimentSlot");
+    public QPlayerShipEquipmentSlotRow(PathMetadata metadata) {
+        super(PlayerShipEquipmentSlotRow.class, metadata, "game", "PlayerShipEquipmentSlot");
         addMetadata();
     }
 

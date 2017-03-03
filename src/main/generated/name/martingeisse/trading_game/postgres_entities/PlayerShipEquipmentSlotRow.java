@@ -9,14 +9,14 @@ import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import java.io.Serializable;
 
 /**
- * This class represents rows from table 'PlayerShipEquimentSlot'.
+ * This class represents rows from table 'PlayerShipEquipmentSlot'.
  */
-public class PlayerShipEquimentSlotRow implements Serializable {
+public class PlayerShipEquipmentSlotRow implements Serializable {
 
     /**
      * Constructor.
      */
-    public PlayerShipEquimentSlotRow() {
+    public PlayerShipEquipmentSlotRow() {
     }
 
     /**
@@ -118,8 +118,8 @@ public class PlayerShipEquimentSlotRow implements Serializable {
      * @param id the ID of the instance to load
      * @return the loaded instance
      */
-    public static PlayerShipEquimentSlotRow loadById(PostgresConnection connection, Long id) {
-        QPlayerShipEquimentSlotRow q = QPlayerShipEquimentSlotRow.PlayerShipEquimentSlot;
+    public static PlayerShipEquipmentSlotRow loadById(PostgresConnection connection, Long id) {
+        QPlayerShipEquipmentSlotRow q = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
         return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
     }
 
@@ -130,7 +130,7 @@ public class PlayerShipEquimentSlotRow implements Serializable {
         if (id != null) {
         	throw new IllegalStateException("this object already has an id: " + id);
         }
-        QPlayerShipEquimentSlotRow q = QPlayerShipEquimentSlotRow.PlayerShipEquimentSlot;
+        QPlayerShipEquipmentSlotRow q = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
         SQLInsertClause insert = connection.insert(q);
         insert.set(q.itemType, itemType);
         insert.set(q.slotType, slotType);
@@ -143,7 +143,7 @@ public class PlayerShipEquimentSlotRow implements Serializable {
      */
     @Override
     public String toString() {
-        return "{PlayerShipEquimentSlotRow. id = " + id + ", itemType = " + itemType + ", slotType = " + slotType + ", spaceObjectBaseDataId = " + spaceObjectBaseDataId + "}";
+        return "{PlayerShipEquipmentSlotRow. id = " + id + ", itemType = " + itemType + ", slotType = " + slotType + ", spaceObjectBaseDataId = " + spaceObjectBaseDataId + "}";
     }
 
 }

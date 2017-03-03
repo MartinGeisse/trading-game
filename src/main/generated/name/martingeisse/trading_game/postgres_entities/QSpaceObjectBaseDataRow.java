@@ -43,7 +43,7 @@ public class QSpaceObjectBaseDataRow extends com.querydsl.sql.RelationalPathBase
 
     public final com.querydsl.sql.ForeignKey<InventoryRow> spaceObjectBaseDataInventoryIdFkey = createForeignKey(inventoryId, "id");
 
-    public final com.querydsl.sql.ForeignKey<PlayerShipEquimentSlotRow> _playerShipEquimentSlotSpaceObjectBaseDataIdFkey = createInvForeignKey(id, "spaceObjectBaseDataId");
+    public final com.querydsl.sql.ForeignKey<PlayerShipEquipmentSlotRow> _playerShipEquipmentSlotSpaceObjectBaseDataIdFkey = createInvForeignKey(id, "spaceObjectBaseDataId");
 
     public final com.querydsl.sql.ForeignKey<PlayerRow> _playerShipIdFkey = createInvForeignKey(id, "shipId");
 
