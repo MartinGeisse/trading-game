@@ -1,5 +1,11 @@
 <html>
 <wicket:head>
+    <style type="text/css">
+        #context-menu {
+            position: absolute;
+            display: none;
+        }
+    </style>
     <script type="text/javascript">
 
         spaceObjectSelectionIndicator = null;
@@ -67,7 +73,7 @@
 
             // right-clicking (long-press on mobile) opens a context menu, but again we must first search for the object
             leafletMap.on('contextmenu', function(e) {
-                sendMapMenuCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom());
+                sendMapMenuCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom(), e.originalEvent.pageX, e.originalEvent.pageY);
             });
 
             changeSpaceObjectSelectionIndicator = function(lat, lng, radius) {
@@ -87,12 +93,22 @@
                     leafletMap.flyTo(spaceObjectSelectionIndicator.getLatLng());
                 }
             });
+            $(document).on('click contextmenu', '#map, #sidebar', function() {
+                $('#context-menu').css('display', 'none');
+            });
 
         });
     </script>
 </wicket:head>
 <body>
     <div id="map" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 400px; cursor: initial; "></div>
+    <ul class="dropdown-menu" id="context-menu">
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+    </ul>
     <div id="sidebar" wicket:id="sidebar" style="position: fixed; width: 400px; top: 0px; bottom: 0px; right: 0px; ">
         <h2>Properties</h2>
         <div>Name: <span wicket:id="name"></span></div>

@@ -168,6 +168,8 @@ public class MainPage extends AbstractPage {
 							CallbackParameter.explicit("latitude"),
 							CallbackParameter.explicit("longitude"),
 							CallbackParameter.explicit("zoom"),
+							CallbackParameter.explicit("x"),
+							CallbackParameter.explicit("y"),
 						};
 						builder.append("sendMapMenuCommand = ").append(getCallbackFunction(parameters)).append(';');
 					}
@@ -215,6 +217,9 @@ public class MainPage extends AbstractPage {
 						}
 						target.add(sidebar);
 						if (command.equals("menu")) {
+							int x = parameters.getParameterValue("x").toInt();
+							int y = parameters.getParameterValue("y").toInt();
+							target.appendJavaScript("$('#context-menu').css({display: 'block', left: " + x + ", top: " + y + "});");
 							// TODO open the context menu
 						}
 						break;
