@@ -19,7 +19,7 @@ public final class LoadUnloadAction extends ImmediateAction {
 	private final SpaceStation spaceStation;
 	private final Type type;
 	private final ImmutableItemStack items;
-	private final int preferredSoruceInventoryIndex;
+	private final int preferredSoruceInventoryIndex; // TODO typo
 
 	public LoadUnloadAction(Player player, SpaceStation spaceStation, Type type, ImmutableItemStack items, int preferredSoruceInventoryIndex) {
 		if (player == null) {

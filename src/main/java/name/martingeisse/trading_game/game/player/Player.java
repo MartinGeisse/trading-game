@@ -3,6 +3,8 @@ package name.martingeisse.trading_game.game.player;
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
 import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.ActionQueueRepository;
+import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
+import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentRepository;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.space.PlayerShip;
 import name.martingeisse.trading_game.game.space.Space;
@@ -19,16 +21,18 @@ public final class Player {
 	private final PlayerRepository playerRepository;
 	private final Space space;
 	private final ActionQueueRepository actionQueueRepository;
+	private final PlayerShipEquipmentRepository playerShipEquipmentRepository;
 	private final long id;
 	private final long shipId;
 	private final long actionQueueId;
 	private String name;
 
-	public Player(PostgresService postgresService, PlayerRepository playerRepository, Space space, ActionQueueRepository actionQueueRepository, PlayerRow playerRow) {
+	public Player(PostgresService postgresService, PlayerRepository playerRepository, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, PlayerRow playerRow) {
 		this.postgresService = postgresService;
 		this.playerRepository = playerRepository;
 		this.space = space;
 		this.actionQueueRepository = actionQueueRepository;
+		this.playerShipEquipmentRepository = playerShipEquipmentRepository;
 		this.id = playerRow.getId();
 		this.shipId = playerRow.getShipId();
 		this.actionQueueId = playerRow.getActionQueueId();
@@ -105,6 +109,15 @@ public final class Player {
 	 */
 	public ActionQueue getActionQueue() {
 		return actionQueueRepository.getActionQueue(actionQueueId);
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the player ship equipment
+	 */
+	public PlayerShipEquipment getEquipment() {
+		return playerShipEquipmentRepository.getPlayerShipEquipment(shipId);
 	}
 
 	/**

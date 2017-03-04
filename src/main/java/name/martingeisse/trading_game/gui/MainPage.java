@@ -3,6 +3,7 @@ package name.martingeisse.trading_game.gui;
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ActionQueue;
+import name.martingeisse.trading_game.game.action.actions.EquipAction;
 import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
 import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
@@ -136,6 +137,25 @@ public class MainPage extends AbstractPage {
 						actionQueue.cancelAllPendingActions();
 						actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, item.getIndex()));
 					}
+				});
+				item.add(new AjaxLink<Void>("equipLink") {
+
+					@Override
+					protected void onConfigure() {
+						super.onConfigure();
+						setVisible(item.getModelObject().getItemType().getPlayerShipEquipmentSlotType() != null);
+					}
+
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						Player player = getPlayer();
+						ActionQueue actionQueue = player.getActionQueue();
+						// TODO should add this action as the next one but keep other actions
+						actionQueue.cancelCurrentAction();
+						actionQueue.cancelAllPendingActions();
+						actionQueue.scheduleAction(new EquipAction(player, item.getModelObject().getItemType()));
+					}
+
 				});
 			}
 		});
