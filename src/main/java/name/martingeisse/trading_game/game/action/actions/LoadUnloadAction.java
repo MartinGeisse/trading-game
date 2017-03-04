@@ -10,6 +10,8 @@ import name.martingeisse.trading_game.game.space.SpaceStation;
 
 /**
  *
+ * TODO serialization
+ *
  */
 public final class LoadUnloadAction extends ImmediateAction {
 

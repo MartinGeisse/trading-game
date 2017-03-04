@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.common.util;
+package name.martingeisse.trading_game.game;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -6,14 +6,22 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
+
+import java.io.IOException;
 
 /**
- *
+ * (De-)serializes game objects.
  */
-public class JacksonUtil {
+@Singleton
+public final class JacksonService {
 
-	public static final ObjectMapper objectMapper;
-	static {
+	private final ObjectMapper objectMapper;
+
+	@Inject
+	public JacksonService() {
 		objectMapper = new ObjectMapper();
 		objectMapper.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
 		objectMapper.disable(JsonGenerator.Feature.AUTO_CLOSE_JSON_CONTENT);
@@ -38,6 +46,31 @@ public class JacksonUtil {
 		// SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS -- check with Joda types if needed
 		// DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS -- check with Joda types if needed
 		// DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE -- check with Joda types if needed
+	}
+
+	public String serialize(Object object) {
+		try {
+			return objectMapper.writeValueAsString(object);
+		} catch (IOException e) {
+			throw new UnexpectedExceptionException(e);
+		}
+	}
+
+	public <T> T deserialize(String json, Class<T> klass) {
+		try {
+			return objectMapper.readValue(json, klass);
+		} catch (IOException e) {
+			throw new UnexpectedExceptionException(e);
+		}
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the objectMapper
+	 */
+	public ObjectMapper getObjectMapper() {
+		return objectMapper;
 	}
 
 }

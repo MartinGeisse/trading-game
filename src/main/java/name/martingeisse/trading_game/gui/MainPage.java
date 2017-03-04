@@ -78,7 +78,7 @@ public class MainPage extends AbstractPage {
 						actionQueue.scheduleAction(actionItem.getModelObject());
 					}
 				};
-				link.add(new Label("name", actionItem.getModelObject().toString()));
+				link.add(new Label("name", actionItem.getModelObject().getName()));
 				actionItem.add(link);
 			}
 

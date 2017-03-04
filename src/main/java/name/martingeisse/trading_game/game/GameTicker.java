@@ -19,13 +19,21 @@ public final class GameTicker {
 	// debugging switch to speed up the game
 	private static final int TICK_MULTIPLIER = 1;
 
+	private final PostgresService postgresService;
 	private final Space space;
 	private final PlayerRepository playerRepository;
 
 	@Inject
 	public GameTicker(PostgresService postgresService, Space space, PlayerRepository playerRepository) {
+		this.postgresService = postgresService;
 		this.space = space;
 		this.playerRepository = playerRepository;
+	}
+
+	/**
+	 * Starts game logic ticking.
+	 */
+	public void start() {
 		new Timer(true).schedule(new TimerTask() {
 			@Override
 			public void run() {

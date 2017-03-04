@@ -16,6 +16,15 @@ public abstract class FixedEffortAction implements Action {
 	public abstract int getTotalRequiredProgressPoints();
 
 	/**
+	 * Getter method.
+	 *
+	 * @return the currentProgressPoints
+	 */
+	public int getCurrentProgressPoints() {
+		return currentProgressPoints;
+	}
+
+	/**
 	 * @return the number of progress points obtained per second (default is 1; may be modified by upgrades)
 	 */
 	public int getProgressPointsPerSecond() {

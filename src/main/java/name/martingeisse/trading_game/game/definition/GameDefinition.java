@@ -3,8 +3,8 @@ package name.martingeisse.trading_game.game.definition;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Singleton;
-import name.martingeisse.trading_game.common.util.JacksonUtil;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
+import name.martingeisse.trading_game.game.JacksonService;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ActionSerializer;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
@@ -28,6 +28,8 @@ import java.util.List;
 @Singleton
 public final class GameDefinition implements ItemTypeSerializer, SkillSerializer, ActionSerializer {
 
+	private final JacksonService jacksonService;
+
 	private final ImmutableList<ItemType> itemTypes;
 
 	private final ImmutableList<Skill> skills;
@@ -39,8 +41,8 @@ public final class GameDefinition implements ItemTypeSerializer, SkillSerializer
 	/**
 	 *
 	 */
-	public GameDefinition() {
-
+	public GameDefinition(JacksonService jacksonService) {
+		this.jacksonService = jacksonService;
 
 		ItemType redPixelItemType = new ItemType("red pixel", "red_pixel.png", 10);
 		ItemType redPixelAssemblyItemType = new ItemType("red pixel assembly", "red_pixel_assembly.png", 10);
@@ -172,20 +174,12 @@ public final class GameDefinition implements ItemTypeSerializer, SkillSerializer
 
 	@Override
 	public String serializeAction(Action action) {
-		try {
-			return JacksonUtil.objectMapper.writeValueAsString(action);
-		} catch (JsonProcessingException e) {
-			throw new UnexpectedExceptionException(e);
-		}
+		return jacksonService.serialize(action);
 	}
 
 	@Override
 	public Action deserializeAction(String serializedAction) {
-		try {
-			return JacksonUtil.objectMapper.readValue(serializedAction, Action.class);
-		} catch (IOException e) {
-			throw new UnexpectedExceptionException(e);
-		}
+		return jacksonService.deserialize(serializedAction, Action.class);
 	}
 
 }

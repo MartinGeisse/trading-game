@@ -9,6 +9,7 @@ package name.martingeisse.trading_game.platform.application;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.game.GameTicker;
 
 /**
  * This class continues the work that {@link ServerApplicationBootstrapper} started.
@@ -23,4 +24,9 @@ public final class ServerApplicationInitializer extends AbstractApplicationIniti
 		super(injector);
 	}
 
+	@Override
+	protected void run() {
+		super.run();
+		injector.getInstance(GameTicker.class).start();
+	}
 }

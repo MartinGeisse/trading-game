@@ -9,6 +9,8 @@ import java.util.function.Supplier;
 
 /**
  *
+ * TODO serialization
+ *
  */
 public final class MoveToPositionAction extends ContinuousAction implements PositionProvider {
 
