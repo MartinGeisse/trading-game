@@ -60,3 +60,46 @@ und Schiffe unterscheiden sich nur in der Anzahl Slots und den Basisattributen.
 
 -> Schiffe könnten sich darin unterscheiden, dass *manche* Slots nur für manche Ausrüstung geht, andere Slots für alles.
 -> Schiffe könnten sich außerdem darin unterscheiden, dass *manche* Ausrüstung fest installiert ist, andere per Slots.
+-> Anders als bei Eve wäre es möglich, dass high-equipment in mid/low gefitted wird. Das könnte nach Größe gehen,
+	wobei es dann ja eher so sein müsste, dass man z.B. 3 low-slots aus einem high-slot machen könnte.
+-> Die Trennung "inside" (module) / "outside" (mount point) macht auch Sinn
+
+Eve kennt "Fitting-Schwierigkeit", aber das find ich blöd. Besser: Energie, Computing, Cooling.
+- mount points:
+	- Waffen
+	- Drone Link Augmenter
+	- Energy Drainer
+	- ECM
+	- cap/shield/armor/hull support für andere Schiffe
+	- warp interdictor
+	- asteroid/ice/gas harvester/miner
+- inner module
+	- Erzkompressor
+	- Frachtraum
+	- Manufacturing Unit
+	- CPU / Energy / Cooling Upgrade
+	- Shield / Armor / Hull Upgrade
+	- Drone Bay
+	- Warp Core
+	- Waffen-Upgrade (z.B. Zielcomputer)
+	- Support für Capital Ships, z.B. dass diese überhaupt irgendwo hinfliegen können
+	- cloaking
+	- Gebiet beanspruchen
+	- sonstige Upgrades für Allies
+	- Salvager
+	- Tractor beams (holt Wracks und Cargo)
+	- Scanners
+	- Upgrades für bestimmte Waffen
+	- Upgrades für Dronen (z.B. Dronen-Steuercomputer)
+	- Remote Scanner für Schiffe, Stationen etc., um deren Ausrüstung und Cargo zu sehen
+	- auto-repair
+	- Upgrades für Mining/Harvesting Gear
+	- High-End-Module, die eine dieser Eigenschaften extrem verstärken, dafür aber andere verschlechtern
+- Antrieb (Trennung zu inner?)
+	- normaler Antrieb
+	- verbesserte Manövrierfähigkeit (macht nicht schneller, sondern besser im Kampf)
+	- Micro-Warp (nur außerhalb Kampf)
+	- Micro-Warp für Allies
+	- Jump Drive
+	- Jump Drive für Allies
+	* Warp / Jump evtl nur in Kombination mit weiteren inner modules
