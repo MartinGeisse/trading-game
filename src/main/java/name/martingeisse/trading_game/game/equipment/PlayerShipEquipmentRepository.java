@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.game.equipment;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.game.item.ItemTypeSerializer;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
 /**
@@ -11,14 +12,16 @@ import name.martingeisse.trading_game.platform.postgres.PostgresService;
 public final class PlayerShipEquipmentRepository {
 
 	private final PostgresService postgresService;
+	private final ItemTypeSerializer itemTypeSerializer;
 
 	@Inject
-	public PlayerShipEquipmentRepository(PostgresService postgresService) {
+	public PlayerShipEquipmentRepository(PostgresService postgresService, ItemTypeSerializer itemTypeSerializer) {
 		this.postgresService = postgresService;
+		this.itemTypeSerializer = itemTypeSerializer;
 	}
 
-//	public PlayerShipEquipment getPlayerShipEquipment(long playerShipId) {
-//		return new PlayerShipEquipment(postgresService, playerShipId);
-//	}
+	public PlayerShipEquipment getPlayerShipEquipment(long playerShipId) {
+		return new PlayerShipEquipment(postgresService, itemTypeSerializer, playerShipId);
+	}
 
 }

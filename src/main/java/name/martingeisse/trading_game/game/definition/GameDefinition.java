@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.game.definition;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.game.JacksonService;
@@ -9,6 +10,7 @@ import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ActionSerializer;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.crafting.FixedCraftingRecipe;
+import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.ItemType;
@@ -41,10 +43,11 @@ public final class GameDefinition implements ItemTypeSerializer, SkillSerializer
 	/**
 	 *
 	 */
+	@Inject
 	public GameDefinition(JacksonService jacksonService) {
 		this.jacksonService = jacksonService;
 
-		ItemType redPixelItemType = new ItemType("red pixel", "red_pixel.png", 10);
+		ItemType redPixelItemType = new ItemType("red pixel", "red_pixel.png", 10, PlayerShipEquipmentSlotType.ENGINE);
 		ItemType redPixelAssemblyItemType = new ItemType("red pixel assembly", "red_pixel_assembly.png", 10);
 		ItemType redPixelLineItemType = new ItemType("red pixel line", "no_icon.png", 10);
 		ItemType redPixelGlueItemType = new ItemType("red pixel glue", "no_icon.png", 10);
