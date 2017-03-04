@@ -5,6 +5,8 @@ import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.actions.EquipAction;
 import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
+import name.martingeisse.trading_game.game.action.actions.UnequipAction;
+import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
@@ -154,6 +156,37 @@ public class MainPage extends AbstractPage {
 						actionQueue.cancelCurrentAction();
 						actionQueue.cancelAllPendingActions();
 						actionQueue.scheduleAction(new EquipAction(player, item.getModelObject().getItemType()));
+					}
+
+				});
+			}
+		});
+
+
+		WebMarkupContainer equipmentContainer = new WebMarkupContainer("equipmentContainer") {
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+				setVisible(getLocalItems() != null);
+			}
+		};
+		sidebar.add(equipmentContainer);
+		equipmentContainer.add(new ListView<SlotInfo>("slots", new PropertyModel<>(this, "equipmentSlots")) {
+			@Override
+			protected void populateItem(ListItem<SlotInfo> item) {
+				item.add(new Label("slotType", item.getModelObject().getPlayerShipEquipmentSlotType().name().toLowerCase()));
+				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
+				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
+				item.add(new AjaxLink<Void>("unequipLink") {
+
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						Player player = getPlayer();
+						ActionQueue actionQueue = player.getActionQueue();
+						// TODO should add this action as the next one but keep other actions
+						actionQueue.cancelCurrentAction();
+						actionQueue.cancelAllPendingActions();
+						actionQueue.scheduleAction(new UnequipAction(player, item.getModelObject().getPlayerShipEquipmentSlotType()));
 					}
 
 				});
@@ -387,6 +420,10 @@ public class MainPage extends AbstractPage {
 		} else {
 			return null;
 		}
+	}
+
+	public List<SlotInfo> getEquipmentSlots() {
+		return getPlayer().getEquipment().getAllSlots();
 	}
 
 }

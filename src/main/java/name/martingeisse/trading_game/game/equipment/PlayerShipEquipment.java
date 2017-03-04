@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.equipment;
 
+import com.google.common.collect.ImmutableList;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.QueryException;
 import name.martingeisse.trading_game.common.database.DatabaseUtil;
@@ -11,7 +12,9 @@ import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerShipEquipmentSlotRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerShipEquipmentSlotRow;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,20 +34,20 @@ public final class PlayerShipEquipment {
 	}
 
 	/**
-	 * Gets a mapping of slot type to item type for all slots.
+	 * Gets a list of all slots.
 	 */
-	public Map<PlayerShipEquipmentSlotType, ItemType> getAllSlots() {
-		Map<PlayerShipEquipmentSlotType, ItemType> result = new HashMap<>();
+	public ImmutableList<SlotInfo> getAllSlots() {
+		List<SlotInfo> result = new ArrayList<>();
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
 			try (CloseableIterator<PlayerShipEquipmentSlotRow> iterator = connection.query().select(qs).from(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId)).orderBy(qs.slotType.asc()).iterate()) {
 				while (iterator.hasNext()) {
 					PlayerShipEquipmentSlotRow row = iterator.next();
-					result.put(row.getSlotType(), itemTypeSerializer.deserializeItemType(row.getItemType()));
+					result.add(new SlotInfo(row.getSlotType(), itemTypeSerializer.deserializeItemType(row.getItemType())));
 				}
 			}
 		}
-		return result;
+		return ImmutableList.copyOf(result);
 	}
 
 	/**
