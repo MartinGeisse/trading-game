@@ -1,0 +1,62 @@
+
+
+Mehrere equipment items vom selben slot type:
+- Impl.-Variante A: Unterscheidung nach DB-ID. Dann müssen alle slots auch leer angelegt werden, damit sich die
+	Reihenfolge nicht beim Leeren und neu befüllen ändert. Der Unique Index muss dann weg und die Limitierung
+	auf N slots mit demselben slot type muss im code passieren.
+- Impl.-Variante B: Zusätzliches Feld "slotNumber" zur Unterscheidung der Slots mit demselben type. Der Unique Index
+	muss den slotNumber mit einbeziehen. Die DB prüft dann immer noch per uniqueness, dass man nicht zuviele items in
+	denselben slot lädt.
+-> Anders gesagt: bei B ist die slotNumber explizit, bei A implizit in der ID-Reihenfolge. Da klingt B besser, um
+	die Bedeutung der slotNumber deutlich zu machen.
+(?) Vermeidung von Redundanz: Ein Slot, der in der DB liegt, ist auch mit einem Item gefüllt. Damit wird ein leerer
+	Slot immer durch einen nicht vorhandenen DB-Eintrag dargestellt und nie durch einen vorhandenen Eintrag ohne Item.
+	->
+	Nachteil: Man benötigt immer externe Informationen (aus dem PlayerShip), um zu wissen, ob noch ein Slot frei ist.
+	Vorteil: Die Anzahl Slots ist nicht Redundant in den Slot-Objekten und dem PlayerShip gespeichert, sondern nur in
+	dem PlayerShip.
+	-->
+	Alternative: Es werden immer alle Slots angelegt, leer oder gefüllt. Dann wäre eine Redundanz in Bezug auf die
+	Anzahl Slots da, aber nicht zwischen "keine Row" / "Row mit null", und zusätzlich könnte man alleine anhand der
+	SlotRows sehen, ob slots frei sind. Das gefällt mir aktuell am besten.
+
+
+
+EO slot types:
+- modules (add/remove), gruppiert nach high/mid/low (?)
+	"
+	A module in EVE Online is an item that may be fit (that is, attached) to a ship that either
+    Improves the attributes of the ship (for example, an armor plate increases the amount of armor of the ship)
+    Grants the ship some sort of functionality (for example, an autocannon allows the ship to shoot other ships), or
+    Improves the attributes of other modules on the ship (for example, a gyrostabilizer increases the damage done by projectile weapons including autocannons).
+    "
+    To see if your ship can accept the module, SHOW INFO on the module and click the FITTING tab. All modules can only be fit to discrete slots on a ship. Some specialized modules, like Covert Ops Cloaking Devices, can only be fit to certain hulls. Additionally, many modules require that the ship they are fit to provide some amount of CPU (measured in teraflops or "tf") and powergrid (measured in megawatts, or "MW") to keep the module online. The sum total of the CPU and powergrid requirements of all modules that are fit to the ship and online must be less than or equal to the amount of CPU and powergrid that the ship can provide.
+    "
+    "Fit" means that the module is in a slot on your ship. If the module has any drawbacks (that is, disadvantages), then those drawbacks are being applied to your ship. Fit modules may be offline or online.
+    "Offline" means that a fit module is not providing benefits, but also is not using any CPU or powergrid. Keep in mind that if a module has any drawbacks, then your ship still suffers those drawbacks even if the module is offline but fit. Depending upon your interface settings, offline modules will appear on your module interface next to your capacitor, but will be dim.
+    "Online" means that the module is currently fit and using some of the ship's CPU and powergrid. To enjoy the benefits of passive modules, you only need the module to be online. Active modules are a bit more complicated, as explained below. Online "active modules" may be Inactive or Active.
+    "Inactive" means that a module is fit and online, but not providing its full benefits, performing its full function, or using capacitor energy. Some modules will provide a limited benefit while online but inactive, other modules provide no benefit whatsoever while online but inactive; which the case is depends upon the module in question. In either case, the module is still applying any drawbacks it has and occupying CPU and powergrid. Weapons that are ready to be fired, but aren't actually shooting anything, fall into this category. Passive modules cannot be activated and provide their full benefit at all times.
+    "Active" means that the module is fit, online, using capacitor energy, and providing its full benefit or functionality. Weapons that are firing on targets fall into this category.
+	"
+- rigs (add/destroy)
+	"
+	Rigs don't have powergrid or CPU fitting requirements, but instead require calibration, a rig-specific fitting resource. All ships have 400 calibration points, except for pirate faction ships which have 350. A Tech 1 rig requires between 50 and 250 calibration points, with Tech 2 variants requiring 50% more calibration than their Tech 1 equivalents.
+    Rigs fit into rig slots, and, just like modules, each rig takes up one rig slot. Tech 1 ships have 3 rig slots, Tech 2 ships have 2, and a few ships (notably Freighters, Jump Freighters, Corvettes, and Shuttles) have none.
+    Rigs come in four sizes:
+    Small, for Frigates and Destroyers
+    Medium, for Cruisers, Battlecruisers, Industrials, and Mining Barges
+    Large, for Battleships
+    Capital, for Capital Ships
+    Unlike for modules, it's not possible to fit a "wrong-sized" rig on a ship. Nearly all rigs come in all four sizes, with identical stats for each size.
+	"
+- drones
+- "CHRG" (?)
+-->
+Grundsätzliche Idee hier ist, möglichst wenige SlotTypes zu haben! Dadurch geht es nicht darum, ein Schiff "möglichst weit"
+zu upgraden, sondern es gibt verschiedene Wege, wie man upgradet.
+-
+Andersherum sind wenige Slot Types blöd in Bezug auf die Auswahl an Schiffen. Im Extremfall gibt es nur einen Slot Type
+und Schiffe unterscheiden sich nur in der Anzahl Slots und den Basisattributen.
+
+-> Schiffe könnten sich darin unterscheiden, dass *manche* Slots nur für manche Ausrüstung geht, andere Slots für alles.
+-> Schiffe könnten sich außerdem darin unterscheiden, dass *manche* Ausrüstung fest installiert ist, andere per Slots.

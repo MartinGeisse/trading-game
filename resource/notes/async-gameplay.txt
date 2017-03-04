@@ -1,0 +1,20 @@
+
+Variante A: Alles basiert auf festen Formeln -> klingt langweilig
+
+Variante B: Alles wird als vollautomatischer Ablauf simuliert -> klingt interessanter und man kann Zufall reinbringen
+- Der Spieler bekommt dann jeweils ein Protokoll, z.B. über einen Kampf
+- Aber die Idee kann man ja prinzipiell auch auf andere Dinge als Kampf anwenden, z.B. Mining
+	- Zufall, wie viel man entdeckt
+		- scanners
+	- Zufall, wie viel man mined
+		- mining gear
+- Beim Beladen des Schiffs ist Zufall erst mal blöd, weil man es ja immer wieder probieren kann
+- Interessanter wird es z.B. beim "Bereinigen" von Erz: heraus kommt bereinigtes Erz, was immer noch Erz ist,
+	aber weniger Gewicht pro Einheit hat. Hier kann es vom Zufall abhängen, wie viel man rausholt. Man kann es zwar
+	auch immer wieder versuchen (konvergiert gegen ein Minimalgewicht), aber das kostet dann ja Zeit.
+- Die Reisegeschwindigkeit kann auch vom Zufall bestimmt sein
+	- Meteorschwärme halten einen auf
+		- Ausrüstung dagegen
+	- Unzuverlässiges Equipment hält einen auf
+		- billiger Antrieb
+		- CPU, Energie nahe am Limit
