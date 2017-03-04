@@ -1,14 +1,11 @@
 package name.martingeisse.trading_game.game.equipment;
 
-import com.google.inject.Injector;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.QueryException;
 import name.martingeisse.trading_game.common.database.DatabaseUtil;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
-import name.martingeisse.trading_game.game.definition.GameDefinition;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.item.ItemTypeSerializer;
-import name.martingeisse.trading_game.platform.application.CommandLineApplicationBootstrapper;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerShipEquipmentSlotRow;

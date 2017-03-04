@@ -1,10 +1,8 @@
 package name.martingeisse.trading_game.game.definition;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.game.JacksonService;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ActionSerializer;
@@ -19,7 +17,6 @@ import name.martingeisse.trading_game.game.skill.Skill;
 import name.martingeisse.trading_game.game.skill.SkillByNameSerializer;
 import name.martingeisse.trading_game.game.skill.SkillSerializer;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
