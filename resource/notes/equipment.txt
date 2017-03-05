@@ -103,3 +103,31 @@ Eve kennt "Fitting-Schwierigkeit", aber das find ich blöd. Besser: Energie, Com
 	- Jump Drive
 	- Jump Drive für Allies
 	* Warp / Jump evtl nur in Kombination mit weiteren inner modules
+
+EO fitting resources:
+- power (MW)
+- cpu (tf = teraflops)
+- capacitor (realtime resource -- passt hier nicht gut) (GJ)
+- module slots, rig slots
+- rig calibration points
+- drone capacity (m^3)
+- drone bandwidth (MBit/sec)
+
+EO ship features:
+- velocity
+- inertia modifier
+- warp speed
+- base time to warp (z.B. 8 sekunden)
+- max targetting range (km)
+- max # of locked targets
+- gravimetric sensor points
+- sig radius (m)
+- scan res (mm)
+- structure hitpoints
+- mass
+- volume
+- cargo capacity (m^3)
+- shield hitpoints
+- shield resistances: EM, THR, KIN, EXP (damage types)
+- armor hitpoints
+- armor resistances: EM, THR, KIN, EXP (damage types)
