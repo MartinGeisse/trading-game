@@ -1,0 +1,9 @@
+- "A CCP run contest where players offers these type of drawing for each ships would be nice. After being done, you
+	would access a new right click option on each ship blueprint, where you could see the artwork :)"
+	- "Why limit it to just ships? If you're crowdsourcing with an already interested audience and minimal development
+		cost, why not try and get all bps illustrated?"
+- (SC): "For contributing to the project's funding, backers receive virtual rewards in the form of tiered pledge
+	packages, which include a spaceship and credits to buy additional equipment and to cover initial costs in the
+	virtual economy, like fuel and rental fees,[77] but according to the developers, players will be able to earn all
+	backer rewards in the game itself, with the exception of certain cosmetic items and Lifetime Insurance (LTI),[not
+	in citation given] without having to spend additional money.[78]

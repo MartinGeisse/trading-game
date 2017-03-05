@@ -21,23 +21,95 @@ Mining / etc:
 - dark matter
 	- braucht ultra-high-end gear
 
+Mining Equipment
+- Mining Gear / m.laser
+	- spezialisierung auf Erztypen bzw. Sondertypen
+- Mining Drone
+	- spezialisierung auf Erztypen bzw. Sondertypen
+	- mit integriertem compressor
+
+Manufacturing
+- Blueprint Originals, Blueprint Copies
+	- researching Blueprints sollte als eigener Zweig durchgehen, was Spieler machen können
+	- Blueprints optimieren könnte auch als Spieler-Aktion durchgehen
+- disassembled Manufacturing Sites
+	- Können in Stationen und in großen Schiffen installiert werden
+	- variieren in Schnelligkeit, Waste, Items die erzeugt werden können
+	- einfache Sites variieren in den Items nur nach "besser" (bessere sites können auch schlechtere Items);
+		Highend sites können nur Spezial-Items
+	- keine Unterschiede darin, wie viele Aufträge man queuen kann, da man da drum rum scripten kann und es daher keine
+		Einschränkung wäre, nur umständlich
+- Manufacturing Tools
+	- müssen mit Sites kombiniert werden, um bestimmte Items herzustellen
+	- können auch einfach die Eigenschaften upgraden
+- Manufacturing Upgrades (überhaupt? oder dasselbe wie m.tools?)
+	- verbessern nur die Eigenschaften
+- disassembled Erzkompressor -> kann auch installiert werden
+	- und ähnliche spezialisierte m.sites
+- Kombination aus Laderaum und spezialisierten m.sites (z.B. Laderaum, der gleichzeitig Erz compressed)
+- items ("Zutaten"), die beim Manufacturing verbraucht werden und bei komplexeren blueprints mit einer chance, ob
+	überhaupt was bei rauskommt, trotzdem weg sind
+	- demzufolge auch manufacturing equipment und skills, die diese chance verbessern
+	- zusätzliche Items, die nur helfen, die Chance zu verbessern und im Falle eines Fehlschlags einen Teil der
+		Items retten bzw. die Chance verbessern, items zu retten
+
+Fracht
+- disassembled ship cargo module
+- cargo container
+- secured cargo container (verschiedene levels; können gehackt werden, aber ohne hacking nicht geklaut, sonst wärs doof)
+
+Schiffe (disassembled)
+- disassembled $SHIP (kann i.A. nur in Stationen gelagert werden, da sonst zu groß)
+- Stationen und große Schiffe können nur in mehreren Stufen direkt im Raum zusammengebaut werden
+	- benötigt als Aufhänger ein Item, welches in den Laderaum passt und am Zielort deployed werden muss
+- Kanonentürme
+- Frachthallen
+- Tankstationen (?)
+- Treibstoff (?)
+	- wenn alle, dann fliegt man nur noch mit Solarantrieb, d.h. langsam
+
+Forschung:
+- T1-Kopien anzufertigen ist auch nicht umsonst und kostet Zeit
+- EO T2: Forschung erzeugt blueprint "copies", keine originale, also limitiert, und auch die copies nur mit einer
+	gewissen Chance
+
+Teile (EO sample):
+	fusion thruster
+	radar sensor cluster
+	nanoelectrical microrocessor
+	tungsten carbide armor plate
+	antimatter reactor unit
+	mega beam laster 1 (als input item für MBL2)
+	R.A.M. Weapon Tech
+	laser focusing crystals
+	morphite (mineral)
+	robotics
+	datacore - hydromagnetic physics
+	datacore - nanite engineering
+		-> datacores werden "verbraucht" um aus einem blueprint ein besseres zu machen
+	energized adaptive nano membrane 1 (für 2)
+	R.A.M. armor/hull tech
+	fernite carbide composite armor plate
+	titanium diborite armor plate
+	crystalline carbonide armor plate
+	tesseract capacitor unit
+	base metals -> reactive metals...
+	heavy metals -> toxic metals --+--> construction blocks
+	non-cs crystals -> chriral structures...
+	felsic magma -> silicon --+--> miniature electronics --+--> smart-fab units
+	complex organisms -> proteins...
+	carbon compounds -> biofuels --+--> livestock
+	microorganisms -> bacteria...
+	planktic colonies -> biomass --+--> viral agent --+-->vaccines --+++--> sterile conduits
+		+water (aus aqueous liquids)
+	commodities (= güter aller art), nur zum Handeln z.B. mit Planeten
+
+
+------------------------------------------------------------------------------------------------------------
 
 Idee:
-- "Having to pay for crewing and having a hard time getting new crew if you throw them away by the thousands might be
-	interesting to stop ships from being essentially worthless."
-	- "Having a crew slowly level up would be cool too. This game is already complicated. No one would mind if we added
-		more depth to it."
-- "A CCP run contest where players offers these type of drawing for each ships would be nice. After being done, you
-	would access a new right click option on each ship blueprint, where you could see the artwork :)"
-	- "Why limit it to just ships? If you're crowdsourcing with an already interested audience and minimal development
-		cost, why not try and get all bps illustrated?"
 - "If you think Eve's crafting system is simple, start looking into T2 production, moon mining, POS reactions, and T2
 	invention. It's a whole other game."
-- (SC): "For contributing to the project's funding, backers receive virtual rewards in the form of tiered pledge
-	packages, which include a spaceship and credits to buy additional equipment and to cover initial costs in the
-	virtual economy, like fuel and rental fees,[77] but according to the developers, players will be able to earn all
-	backer rewards in the game itself, with the exception of certain cosmetic items and Lifetime Insurance (LTI),[not
-	in citation given] without having to spend additional money.[78]
 
 
 EO manufacturing:
