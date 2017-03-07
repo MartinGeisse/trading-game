@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.action;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
@@ -11,11 +12,13 @@ public interface Action {
 	/**
 	 * @return the name of the action
 	 */
+	@JsonIgnore
 	public String getName();
 
 	/**
 	 * @return the total time needed to execute the action, or null if unknown or not applicable for this action.
 	 */
+	@JsonIgnore
 	public Integer getTotalTime();
 
 	/**
@@ -23,6 +26,7 @@ public interface Action {
 	 *
 	 * @return the prerequisite action, if any, or null.
 	 */
+	@JsonIgnore
 	public Action getPrerequisite();
 
 	/**
@@ -32,21 +36,25 @@ public interface Action {
 	 * If called anyway, this action may fail by returning FAILED, apply inconsistent or undesired changes to the database,
 	 * fail with an exception, and so on.
 	 */
+	@JsonIgnore
 	public Status start();
 
 	/**
 	 * @return a snapshot of the current and required progress points, or null if unknown or not applicable for this action.
 	 */
+	@JsonIgnore
 	public ProgressSnapshot getProgress();
 
 	/**
 	 * @return the remaining time for this action in seconds, or null if unknown or not applicable for this action.
 	 */
+	@JsonIgnore
 	public Integer getRemainingTime();
 
 	/**
 	 * Cancels this action.
 	 */
+	@JsonIgnore
 	public void cancel();
 
 	/**
@@ -54,6 +62,7 @@ public interface Action {
 	 *
 	 * @return the status of this action
 	 */
+	@JsonIgnore
 	public Status tick();
 
 	/**

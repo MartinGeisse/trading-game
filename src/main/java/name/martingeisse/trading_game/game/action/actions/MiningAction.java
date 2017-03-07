@@ -30,7 +30,7 @@ public final class MiningAction extends ContinuousAction {
 		if (GeometryUtil.isAtSamePosition(player.getShip(), asteroid)) {
 			return null;
 		} else {
-			return new MoveToPositionAction(player.getShip(), asteroid.getX(), asteroid.getY(), player::getShipMovementSpeed);
+			return new MoveToPositionAction(player, asteroid.getX(), asteroid.getY());
 		}
 	}
 

@@ -46,7 +46,7 @@ public final class LoadUnloadAction extends ImmediateAction {
 		if (GeometryUtil.isAtSamePosition(player.getShip(), spaceStation)) {
 			return null;
 		} else {
-			return new MoveToPositionAction(player.getShip(), spaceStation.getX(), spaceStation.getY(), player::getShipMovementSpeed);
+			return new MoveToPositionAction(player, spaceStation.getX(), spaceStation.getY());
 		}
 	}
 

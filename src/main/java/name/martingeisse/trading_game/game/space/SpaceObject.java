@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.space;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import name.martingeisse.trading_game.game.action.Action;
@@ -50,6 +51,7 @@ public abstract class SpaceObject implements PositionProvider {
 	 *
 	 * @return the id
 	 */
+	@JsonValue
 	public long getId() {
 		return id;
 	}
@@ -168,7 +170,7 @@ public abstract class SpaceObject implements PositionProvider {
 	 * @return
 	 */
 	public final Action getMoveToPositionActionFor(Player player) {
-		return new MoveToPositionAction(player.getShip(), x, y, player::getShipMovementSpeed);
+		return new MoveToPositionAction(player, x, y);
 	}
 
 }

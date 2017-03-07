@@ -1,6 +1,9 @@
 package name.martingeisse.trading_game.game.action.actions;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import name.martingeisse.trading_game.game.action.Action;
+import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.space.GeometryUtil;
 import name.martingeisse.trading_game.game.space.PositionProvider;
 import name.martingeisse.trading_game.game.space.SpaceObject;
@@ -8,25 +11,40 @@ import name.martingeisse.trading_game.game.space.SpaceObject;
 import java.util.function.Supplier;
 
 /**
- *
+ * In the long run, this action shouldn't take the player. Currently it does both to obtain the player's ship to
+ * move as well as the movement speed from the player itself. It would be nicer to obtain the player from the context
+ * (e.g. per-run JacksonInject).
+ * <p>
+ * Might also take a SpaceObject (ID) instead of x,y to follow a target object (unclear though what to do when reaching it)
+ * <p>
  * TODO serialization
- *
  */
 public final class MoveToPositionAction extends ContinuousAction implements PositionProvider {
 
-	private final SpaceObject spaceObject;
+	private final Player player;
 	private final long x;
 	private final long y;
-	private final Supplier<Long> speedProvider;
 
 	/**
 	 *
 	 */
-	public MoveToPositionAction(SpaceObject spaceObject, long x, long y, Supplier<Long> speedProvider) {
-		this.spaceObject = spaceObject;
+	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+	public MoveToPositionAction(
+			@JsonProperty(value = "player", required = true) Player player,
+			@JsonProperty(value = "x", required = true) long x,
+			@JsonProperty(value = "y", required = true) long y) {
+		this.player = player;
 		this.x = x;
 		this.y = y;
-		this.speedProvider = speedProvider;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the player
+	 */
+	public Player getPlayer() {
+		return player;
 	}
 
 	@Override
@@ -46,18 +64,18 @@ public final class MoveToPositionAction extends ContinuousAction implements Posi
 
 	@Override
 	public Integer getRemainingTime() {
-		return GeometryUtil.getMovementTime(spaceObject, this, speedProvider.get());
+		return GeometryUtil.getMovementTime(player.getShip(), this, player.getShipMovementSpeed());
 	}
 
 	@Override
 	public Status tick() {
-		GeometryUtil.moveSpaceObjectTowards(spaceObject, x, y, speedProvider.get());
-		return GeometryUtil.isAtSamePosition(spaceObject, this) ? Status.FINISHED : Status.RUNNING;
+		GeometryUtil.moveSpaceObjectTowards(player.getShip(), this, player.getShipMovementSpeed());
+		return GeometryUtil.isAtSamePosition(player.getShip(), this) ? Status.FINISHED : Status.RUNNING;
 	}
 
 	@Override
 	public String getName() {
-		return "move " + spaceObject.getName() + " to " + x + ", " + y;
+		return "move " + player.getShip().getName() + " to " + x + ", " + y;
 	}
 
 }

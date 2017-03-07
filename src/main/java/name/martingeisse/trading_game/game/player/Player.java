@@ -1,5 +1,7 @@
 package name.martingeisse.trading_game.game.player;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
 import name.martingeisse.trading_game.game.action.ActionQueue;
@@ -28,7 +30,7 @@ public final class Player {
 	private final long actionQueueId;
 	private String name;
 
-	public Player(PostgresService postgresService, PlayerRepository playerRepository, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, PlayerRow playerRow) {
+	Player(PostgresService postgresService, PlayerRepository playerRepository, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, PlayerRow playerRow) {
 		this.postgresService = postgresService;
 		this.playerRepository = playerRepository;
 		this.space = space;
