@@ -1,0 +1,37 @@
+MF = method-level / field-level
+JacksonInject -- MF: "deserialize" by using value set in ObjectMapper
+JsonAnyGetter -- MF: method returns map with all fields
+JsonAnySetter -- MF: method(fieldName, value) sets any field
+JsonAutoDetect -- class-level; defines minimum required getter/setter visibility for auto-detection
+JsonBackReference -- MF: not serialized back-reference that is set during deserialization based on another (forward) reference
+JsonClassDescription -- for JSON schema
+JsonCreator -- constructor / factory level annotation
+	- variant #1: annotate single-arg constructor; no JsonProperty anno at arg; first deserializes object into that arg type, then calls constructor
+	- variant #2: annotate constructor; JsonProperty or JsonInject for all args; deserializes those from properties, then calls constructor
+		- JsonProperty-Name ist seit JDK8 optional
+JsonEnumDefaultValue -- benötigt READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE; mappt unbekannte enum-constant-Namen auf diese enum-constant (dreckig)
+JsonFilter -- kann wohl irgendwie benutzt werden, um einzelne Properties / Properties von bestimmtem Typ zu filtern
+	-> vermutlich kann man sich damit eine Menge Ignore-Annotations sparen!
+JsonFormat -- gibt alle möglichen Datentyp-abhängigen Formatparameter in einer möglichst allgemeinen Struktur an. Vermutung: Das ist eine Art 80/20
+	Lösung, um die ansonsten nötigen Unmengen von Annotation-Typen zu vermeiden. Kann nicht alles ausdrücken, aber vieles. Der Deserializer(?)
+	gibt diesen Parametern dann Bedeutung.
+JsonGetter, JsonSetter -- i.A. nicht verwenden, sondenr lieber JsonProperty. Aber in Spezialfällen kann man hiermit noch mehr tricksen, z.B.
+	verschiedene Property-Namen bei serialize/deserialize.
+JsonIdentityInfo -- serialize first occurence of referenced object fully, later occurences as references; defines identity properties for references
+JsonIdentityReference -- allows to also serialize first occurence as reference
+JsonIgnore -- do not serialize/deserialize
+JsonIgnoreProperties -- list ignored properties at class level
+JsonIgnoreType -- ignore all properties of this type (Zusammenhang zu JsonFilter unklar, vermutlich ist JsonFilter flexibler)
+JsonInclude -- Definiert einfache Filterregeln, z.B. ob null-Werte oder Leerstrings weggelassen werden sollen
+JsonManagedReference -- forward-reference passend zu JsonBackReference
+JsonProperty -- "serialize this property", i.A. nur nötig, wenn der Name angegeben werden soll o.ä.
+JsonPropertyDescription -- für JSON schema
+JsonPropertyOrder -- Reihenfolge der Properties im JSON
+JsonRawValue -- method returns JSON fragment to be included literally, not as JSON string
+JsonRootName -- defines name for root-level wrapping (but does not enable wrapping itself)
+JsonTypeInfo, JsonSubTypes, JsonTypeId, JsonTypeName -- define type property for subclasses
+JsonUnwrapped -- serialize object properties as properties of containing object
+JsonValue -- MF: serialize this value to represent the whole object
+JsonView -- defines "views" (Vermutung: Verschiedene Varianten, wie derselbe Typ serialized werden kann)
+
+
