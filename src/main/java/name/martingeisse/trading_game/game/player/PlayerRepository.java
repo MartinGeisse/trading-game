@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import name.martingeisse.trading_game.game.action.ActionQueueRepository;
+import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentRepository;
 import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
@@ -20,12 +21,14 @@ public final class PlayerRepository {
 	private final PostgresService postgresService;
 	private final Space space;
 	private final ActionQueueRepository actionQueueRepository;
+	private final PlayerShipEquipmentRepository playerShipEquipmentRepository;
 
 	@Inject
-	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository) {
+	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository) {
 		this.postgresService = postgresService;
 		this.space = space;
 		this.actionQueueRepository = actionQueueRepository;
+		this.playerShipEquipmentRepository = playerShipEquipmentRepository;
 	}
 
 	/**
@@ -80,7 +83,7 @@ public final class PlayerRepository {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QPlayerRow qp = QPlayerRow.Player;
 			PlayerRow playerRow = connection.query().select(qp).from(qp).where(predicate).fetchFirst();
-			return new Player(postgresService, this, space, actionQueueRepository, playerRow);
+			return new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, playerRow);
 		}
 	}
 
@@ -92,7 +95,7 @@ public final class PlayerRepository {
 		try (CloseableIterator<PlayerRow> iterator = connection.query().select(qp).from(qp).iterate()) {
 			while (iterator.hasNext()) {
 				PlayerRow playerRow = iterator.next();
-				Player player = new Player(postgresService, this, space, actionQueueRepository, playerRow);
+				Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, playerRow);
 				player.tick(connection);
 			}
 		}

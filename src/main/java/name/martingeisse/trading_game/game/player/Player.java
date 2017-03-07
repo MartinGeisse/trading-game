@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.player;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
 import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.ActionQueueRepository;
@@ -44,6 +45,7 @@ public final class Player {
 	 *
 	 * @return the id
 	 */
+	@JsonValue
 	public long getId() {
 		return id;
 	}

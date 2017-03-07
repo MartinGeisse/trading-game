@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.item;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.Path;
 import name.martingeisse.trading_game.common.util.WtfException;
@@ -35,6 +36,7 @@ public final class Inventory {
 	 *
 	 * @return the id
 	 */
+	@JsonValue
 	public long getId() {
 		return id;
 	}
