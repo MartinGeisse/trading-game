@@ -1,0 +1,49 @@
+		mapper.registerModule(new Module() {
+
+			@Override
+			public String getModuleName() {
+				return "test";
+			}
+
+			@Override
+			public Version version() {
+				return Version.unknownVersion();
+			}
+
+			@Override
+			public void setupModule(SetupContext context) {
+				context.addValueInstantiators(new ValueInstantiators() {
+					@Override
+					public ValueInstantiator findValueInstantiator(DeserializationConfig config, BeanDescription beanDesc, ValueInstantiator defaultInstantiator) {
+						if (beanDesc.getBeanClass() == SimpleBean.class) {
+							return new ValueInstantiator.Base(SimpleBean.class) {
+
+								@Override
+								public boolean canCreateFromInt() {
+									return true;
+								}
+
+								@Override
+								public boolean canCreateFromLong() {
+									return true;
+								}
+
+								@Override
+								public Object createFromInt(DeserializationContext ctxt, int value) throws IOException {
+									return createFromLong(ctxt, value);
+								}
+
+								@Override
+								public Object createFromLong(DeserializationContext ctxt, long value) throws IOException {
+									SimpleBean bean = new SimpleBean();
+									bean.setNumber(value);
+									return bean;
+								}
+							};
+						} else {
+							return defaultInstantiator;
+						}
+					}
+				});
+			}
+		});
