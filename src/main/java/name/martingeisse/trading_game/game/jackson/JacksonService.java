@@ -1,16 +1,22 @@
-package name.martingeisse.trading_game.game;
+package name.martingeisse.trading_game.game.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.ValueInstantiator;
+import com.fasterxml.jackson.databind.deser.ValueInstantiators;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
+import name.martingeisse.trading_game.game.player.Player;
+import name.martingeisse.trading_game.game.player.PlayerRepository;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * (De-)serializes game objects.
@@ -18,10 +24,18 @@ import java.io.IOException;
 @Singleton
 public final class JacksonService {
 
+	private final Injector injector;
 	private final ObjectMapper objectMapper;
+	private final Map<Class<?>, ValueInstantiator> valueInstantiators = new HashMap<>();
 
 	@Inject
-	public JacksonService() {
+	public JacksonService(Injector injector) {
+		this.injector = injector;
+
+		// helper objects
+		addValueInstantiator(Player.class, id -> injector.getInstance(PlayerRepository.class).getPlayerById(id));
+
+		// create basic object mapper
 		objectMapper = new ObjectMapper();
 		objectMapper.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
 		objectMapper.disable(JsonGenerator.Feature.AUTO_CLOSE_JSON_CONTENT);
@@ -46,6 +60,36 @@ public final class JacksonService {
 		// SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS -- check with Joda types if needed
 		// DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS -- check with Joda types if needed
 		// DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE -- check with Joda types if needed
+
+		// register a custom module to add custom de/serializers etc.
+		objectMapper.registerModule(new Module() {
+
+			@Override
+			public String getModuleName() {
+				return "application";
+			}
+
+			@Override
+			public Version version() {
+				return Version.unknownVersion();
+			}
+
+			@Override
+			public void setupModule(SetupContext context) {
+				context.addValueInstantiators(new ValueInstantiators() {
+					@Override
+					public ValueInstantiator findValueInstantiator(DeserializationConfig config, BeanDescription beanDesc, ValueInstantiator defaultInstantiator) {
+						ValueInstantiator valueInstantiator = valueInstantiators.get(beanDesc.getBeanClass());
+						return valueInstantiator != null ? valueInstantiator : defaultInstantiator;
+					}
+				});
+			}
+		});
+
+	}
+
+	private <T> void addValueInstantiator(Class<T> klass, Function<Long, T> actualInstantiator) {
+		valueInstantiators.put(klass, new DatabaseValueInstantiator<T>(klass, actualInstantiator));
 	}
 
 	public String serialize(Object object) {

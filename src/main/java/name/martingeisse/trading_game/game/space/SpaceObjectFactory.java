@@ -6,6 +6,7 @@ import name.martingeisse.trading_game.game.definition.MiningYieldInfo;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.InventoryRepository;
+import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
 /**
  *
@@ -13,11 +14,13 @@ import name.martingeisse.trading_game.game.item.InventoryRepository;
 @Singleton
 public final class SpaceObjectFactory {
 
+	private final PostgresService postgresService;
 	private final GameEventEmitter gameEventEmitter;
 	private final InventoryRepository inventoryRepository;
 
 	@Inject
-	public SpaceObjectFactory(GameEventEmitter gameEventEmitter, InventoryRepository inventoryRepository) {
+	public SpaceObjectFactory(PostgresService postgresService, GameEventEmitter gameEventEmitter, InventoryRepository inventoryRepository) {
+		this.postgresService = postgresService;
 		this.gameEventEmitter = gameEventEmitter;
 		this.inventoryRepository = inventoryRepository;
 	}
@@ -30,7 +33,7 @@ public final class SpaceObjectFactory {
 	Asteroid newAsteroid(long inventoryId, long yieldCapacity) {
 		ImmutableItemStacks stacks = inventoryRepository.getInventory(inventoryId).getItems();
 		MiningYieldInfo yieldInfo = stacks::scale;
-		return new Asteroid(gameEventEmitter, yieldInfo, yieldCapacity);
+		return inject(new Asteroid(gameEventEmitter, yieldInfo, yieldCapacity));
 	}
 
 	/**
@@ -39,7 +42,7 @@ public final class SpaceObjectFactory {
 	 * @return the new object
 	 */
 	Planet newPlanet() {
-		return new Planet();
+		return inject(new Planet());
 	}
 
 	/**
@@ -48,7 +51,7 @@ public final class SpaceObjectFactory {
 	 * @return the new object
 	 */
 	PlayerShip newPlayerShip() {
-		return new PlayerShip(inventoryRepository);
+		return inject(new PlayerShip(inventoryRepository));
 	}
 
 	/**
@@ -57,7 +60,7 @@ public final class SpaceObjectFactory {
 	 * @return the new object
 	 */
 	SpaceStation newSpaceStation() {
-		return new SpaceStation(inventoryRepository);
+		return inject(new SpaceStation(inventoryRepository));
 	}
 
 	/**
@@ -66,7 +69,13 @@ public final class SpaceObjectFactory {
 	 * @return the new object
 	 */
 	Star newStar() {
-		return new Star();
+		return inject(new Star());
+	}
+
+	private <T extends SpaceObject> T inject(T spaceObject) {
+		spaceObject.internalSetPostgresService(postgresService);
+		spaceObject.internalSetGameEventEmitter(gameEventEmitter);
+		return spaceObject;
 	}
 
 }

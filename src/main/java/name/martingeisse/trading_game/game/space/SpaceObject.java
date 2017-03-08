@@ -129,7 +129,7 @@ public abstract class SpaceObject implements PositionProvider {
 	public void setName(String name) {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
-			connection.update(qbd).set(qbd.name, name).execute();
+			connection.update(qbd).set(qbd.name, name).where(qbd.id.eq(id)).execute();
 		}
 		internalSetName(name);
 	}
@@ -143,7 +143,7 @@ public abstract class SpaceObject implements PositionProvider {
 	public void setPosition(long x, long y) {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
-			connection.update(qbd).set(qbd.position, new PGpoint(x, y)).execute();
+			connection.update(qbd).set(qbd.position, new PGpoint(x, y)).where(qbd.id.eq(id)).execute();
 		}
 		internalSetX(x);
 		internalSetY(y);

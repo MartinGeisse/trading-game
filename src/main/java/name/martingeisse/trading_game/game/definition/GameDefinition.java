@@ -3,7 +3,7 @@ package name.martingeisse.trading_game.game.definition;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import name.martingeisse.trading_game.game.JacksonService;
+import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ActionSerializer;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
