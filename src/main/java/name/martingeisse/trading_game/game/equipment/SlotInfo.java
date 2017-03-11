@@ -2,8 +2,6 @@ package name.martingeisse.trading_game.game.equipment;
 
 import name.martingeisse.trading_game.game.item.ItemType;
 
-import java.util.Map;
-
 /**
  *
  */

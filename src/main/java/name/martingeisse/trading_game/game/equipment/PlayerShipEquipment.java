@@ -7,15 +7,14 @@ import name.martingeisse.trading_game.common.database.DatabaseUtil;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.item.ItemTypeSerializer;
+import name.martingeisse.trading_game.game.player.PlayerRepository;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerShipEquipmentSlotRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerShipEquipmentSlotRow;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Represents the whole equipment of a player ship. Equipment is managed as a set of typed slots
@@ -25,11 +24,13 @@ public final class PlayerShipEquipment {
 
 	private final PostgresService postgresService;
 	private final ItemTypeSerializer itemTypeSerializer;
+	private final PlayerRepository playerRepository;
 	private final long playerShipId;
 
-	PlayerShipEquipment(PostgresService postgresService, ItemTypeSerializer itemTypeSerializer, long playerShipId) {
+	PlayerShipEquipment(PostgresService postgresService, ItemTypeSerializer itemTypeSerializer, PlayerRepository playerRepository, long playerShipId) {
 		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");
 		this.itemTypeSerializer = ParameterUtil.ensureNotNull(itemTypeSerializer, "itemTypeSerializer");
+		this.playerRepository = playerRepository;
 		this.playerShipId = ParameterUtil.ensurePositive(playerShipId, "playerShipId");
 	}
 
@@ -85,6 +86,7 @@ public final class PlayerShipEquipment {
 				}
 			}
 		}
+		updateAttributes();
 	}
 
 	/**
@@ -100,6 +102,11 @@ public final class PlayerShipEquipment {
 				throw new RuntimeException("this player has no item of type " + slotType + " equipped");
 			}
 		}
+		updateAttributes();
+	}
+
+	private void updateAttributes() {
+		playerRepository.getPlayerByShipId(playerShipId).updateAttributes();
 	}
 
 }

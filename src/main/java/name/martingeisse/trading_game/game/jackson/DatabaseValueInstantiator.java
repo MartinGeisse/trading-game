@@ -2,8 +2,6 @@ package name.martingeisse.trading_game.game.jackson;
 
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.ValueInstantiator;
-import com.google.inject.Injector;
-import name.martingeisse.trading_game.game.player.PlayerRepository;
 
 import java.io.IOException;
 import java.util.function.Function;

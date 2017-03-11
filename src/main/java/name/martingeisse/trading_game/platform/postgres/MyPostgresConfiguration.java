@@ -5,6 +5,7 @@ import com.querydsl.sql.PostgreSQLTemplates;
 import com.querydsl.sql.SQLTemplates;
 import com.querydsl.sql.types.EnumByNameType;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType;
+import name.martingeisse.trading_game.game.player.PlayerAttributeKey;
 import name.martingeisse.trading_game.game.space.SpaceObjectType;
 import name.martingeisse.trading_game.tools.codegen.PostgresJsonb;
 import name.martingeisse.trading_game.tools.codegen.PostgresJsonbType;
@@ -42,6 +43,7 @@ public final class MyPostgresConfiguration {
 		ENUM_CLASS_TO_TYPE_NAME = new HashMap<>();
 		ENUM_CLASS_TO_TYPE_NAME.put(SpaceObjectType.class, "\"game\".\"SpaceObjectType\"");
 		ENUM_CLASS_TO_TYPE_NAME.put(PlayerShipEquipmentSlotType.class, "\"game\".\"PlayerShipEquipmentSlotType\"");
+		ENUM_CLASS_TO_TYPE_NAME.put(PlayerAttributeKey.class, "\"game\".\"PlayerAttributeKey\"");
 
 		TEMPLATES = PostgreSQLTemplates.builder().quote().printSchema().build();
 		for (Class enumClass : ENUM_CLASS_TO_TYPE_NAME.keySet()) {

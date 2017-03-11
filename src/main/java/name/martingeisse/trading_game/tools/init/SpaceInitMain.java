@@ -21,7 +21,13 @@ public class SpaceInitMain {
 	 * @throws Exception on errors
 	 */
 	public static void main(String[] args) throws Exception {
-		Injector injector = CommandLineApplicationBootstrapper.bootstrap();
+		init(CommandLineApplicationBootstrapper.bootstrap());
+	}
+
+	/**
+	 * @param injector ...
+	 */
+	public static void init(Injector injector) {
 		GameDefinition gameDefinition = injector.getInstance(GameDefinition.class);
 		InitialSpaceObjectsFactory initialSpaceObjectsFactory = injector.getInstance(InitialSpaceObjectsFactory.class);
 		StarPlacement starPlacement = new StarPlacement();

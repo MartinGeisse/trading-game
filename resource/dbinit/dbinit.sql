@@ -1,4 +1,5 @@
 
+DROP SCHEMA IF EXISTS "game" CASCADE;
 CREATE SCHEMA "game";
 
 -----------------------------------------------------------------------------------------------------------------------
@@ -67,6 +68,8 @@ CREATE INDEX "ActionQueueSlot_mainIndex" ON "game"."ActionQueueSlot" ("actionQue
 -- players
 -----------------------------------------------------------------------------------------------------------------------
 
+CREATE TYPE "game"."PlayerAttributeKey" AS ENUM ('SHIP_MOVEMENT_SPEED', 'MAXIMUM_CARGO_MASS');
+
 CREATE TABLE "game"."Player" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"name" character varying(2000) NOT NULL,
@@ -93,3 +96,11 @@ CREATE TABLE "game"."PlayerSkillLearningQueueSlot" (
 		-- have acquired learning points that should not be dropped
 );
 CREATE INDEX "PlayerSkillLearningQueueSlot_playerIdIndex" ON "game"."PlayerSkillLearningQueueSlot" ("playerId");
+
+CREATE TABLE "game"."CachedPlayerAttribute" (
+	"id" bigserial NOT NULL PRIMARY KEY,
+	"playerId" bigint NOT NULL REFERENCES "game"."Player" ON DELETE CASCADE,
+	"key" "game"."PlayerAttributeKey" NOT NULL,
+	"value" text NOT NULL
+);
+CREATE UNIQUE INDEX "CachedPlayerAttribute_playerIdKeyIndex" ON "game"."CachedPlayerAttribute" ("playerId", "key");

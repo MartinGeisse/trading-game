@@ -22,13 +22,15 @@ public final class PlayerRepository {
 	private final Space space;
 	private final ActionQueueRepository actionQueueRepository;
 	private final PlayerShipEquipmentRepository playerShipEquipmentRepository;
+	private final PlayerAttributeValueSerializer playerAttributeValueSerializer;
 
 	@Inject
-	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository) {
+	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, PlayerAttributeValueSerializer playerAttributeValueSerializer) {
 		this.postgresService = postgresService;
 		this.space = space;
 		this.actionQueueRepository = actionQueueRepository;
 		this.playerShipEquipmentRepository = playerShipEquipmentRepository;
+		this.playerAttributeValueSerializer = playerAttributeValueSerializer;
 	}
 
 	/**
@@ -43,6 +45,8 @@ public final class PlayerRepository {
 			playerRow.setActionQueueId(actionQueueRepository.createActionQueue());
 			playerRow.setName("noname");
 			playerRow.insert(connection);
+			Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, playerAttributeValueSerializer, playerRow);
+			player.updateAttributes();
 			return playerRow.getId();
 		}
 	}
@@ -68,6 +72,16 @@ public final class PlayerRepository {
 	}
 
 	/**
+	 * Gets player by ship id.
+	 *
+	 * @param shipId the ship id
+	 * @return the player
+	 */
+	public Player getPlayerByShipId(long shipId) {
+		return getPlayer(QPlayerRow.Player.shipId.eq(shipId));
+	}
+
+	/**
 	 * Checks if renaming a player is possible based on uniqueness of the new name.
 	 *
 	 * @param id      the player's id
@@ -83,7 +97,7 @@ public final class PlayerRepository {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QPlayerRow qp = QPlayerRow.Player;
 			PlayerRow playerRow = connection.query().select(qp).from(qp).where(predicate).fetchFirst();
-			return new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, playerRow);
+			return new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, playerAttributeValueSerializer, playerRow);
 		}
 	}
 
@@ -95,7 +109,7 @@ public final class PlayerRepository {
 		try (CloseableIterator<PlayerRow> iterator = connection.query().select(qp).from(qp).iterate()) {
 			while (iterator.hasNext()) {
 				PlayerRow playerRow = iterator.next();
-				Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, playerRow);
+				Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, playerAttributeValueSerializer, playerRow);
 				player.tick(connection);
 			}
 		}

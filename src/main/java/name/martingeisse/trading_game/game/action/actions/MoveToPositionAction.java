@@ -6,9 +6,6 @@ import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.space.GeometryUtil;
 import name.martingeisse.trading_game.game.space.PositionProvider;
-import name.martingeisse.trading_game.game.space.SpaceObject;
-
-import java.util.function.Supplier;
 
 /**
  * In the long run, this action shouldn't take the player. Currently it does both to obtain the player's ship to
