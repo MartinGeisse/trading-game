@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.game.action;
 
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
+import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.ActionQueueSlotRow;
@@ -15,16 +16,16 @@ import java.util.List;
 public final class ActionQueue {
 
 	private final PostgresService postgresService;
-	private final ActionSerializer actionSerializer;
+	private final JacksonService jacksonService;
 	private final long id;
 	private final ActionQueueHelper helper;
 
 	// use ActionQueueRepository to get an instance of this class
-	ActionQueue(PostgresService postgresService, ActionSerializer actionSerializer, long id) {
+	ActionQueue(PostgresService postgresService, JacksonService jacksonService, long id) {
 		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");;
-		this.actionSerializer = ParameterUtil.ensureNotNull(actionSerializer, "actionSerializer");;
+		this.jacksonService = ParameterUtil.ensureNotNull(jacksonService, "jacksonService");;
 		this.id = ParameterUtil.ensurePositive(id, "id");;
-		this.helper = new ActionQueueHelper(actionSerializer, id);
+		this.helper = new ActionQueueHelper(jacksonService, id);
 	}
 
 	/**

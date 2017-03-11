@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.game.action;
 
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
+import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.postgres_entities.ActionQueueSlotRow;
 import name.martingeisse.trading_game.postgres_entities.QActionQueueSlotRow;
@@ -16,17 +17,17 @@ final class ActionQueueHelper {
 
 	private static final QActionQueueSlotRow qaqs = QActionQueueSlotRow.ActionQueueSlot;
 
-	private final ActionSerializer actionSerializer;
+	private final JacksonService jacksonService;
 	private final long id;
 
-	ActionQueueHelper(ActionSerializer actionSerializer, long id) {
-		this.actionSerializer = ParameterUtil.ensureNotNull(actionSerializer, "actionSerializer");
+	ActionQueueHelper(JacksonService jacksonService, long id) {
+		this.jacksonService = ParameterUtil.ensureNotNull(jacksonService, "jacksonService");
 		this.id = ParameterUtil.ensurePositive(id, "id");
 	}
 
 	Action extractAction(ActionQueueSlotRow row) {
 		ParameterUtil.ensureNotNull(row, "row");
-		return actionSerializer.deserializeAction(row.getAction().getValue());
+		return jacksonService.deserialize(row.getAction().getValue(), Action.class);
 	}
 
 	ActionQueueSlotRow insertSlot(PostgresConnection connection, Action action, boolean prerequisite, boolean started) {
@@ -34,7 +35,7 @@ final class ActionQueueHelper {
 		ParameterUtil.ensureNotNull(action, "action");
 		ActionQueueSlotRow row = new ActionQueueSlotRow();
 		row.setActionQueueId(id);
-		row.setAction(new PostgresJsonb(actionSerializer.serializeAction(action)));
+		row.setAction(new PostgresJsonb(jacksonService.serialize(action)));
 		row.setPrerequisite(prerequisite);
 		row.setStarted(started);
 		row.insert(connection);

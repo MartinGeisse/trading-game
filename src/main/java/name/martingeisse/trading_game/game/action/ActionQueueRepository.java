@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.game.action;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.ActionQueueRow;
@@ -13,12 +14,12 @@ import name.martingeisse.trading_game.postgres_entities.ActionQueueRow;
 public class ActionQueueRepository {
 
 	private final PostgresService postgresService;
-	private final ActionSerializer actionSerializer;
+	private final JacksonService jacksonService;
 
 	@Inject
-	public ActionQueueRepository(PostgresService postgresService, ActionSerializer actionSerializer) {
+	public ActionQueueRepository(PostgresService postgresService, JacksonService jacksonService) {
 		this.postgresService = postgresService;
-		this.actionSerializer = actionSerializer;
+		this.jacksonService = jacksonService;
 	}
 
 	/**
@@ -41,7 +42,7 @@ public class ActionQueueRepository {
 	 * @param id the action queue ID
 	 */
 	public ActionQueue getActionQueue(long id) {
-		return new ActionQueue(postgresService, actionSerializer, id);
+		return new ActionQueue(postgresService, jacksonService, id);
 	}
 
 }

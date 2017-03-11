@@ -3,8 +3,6 @@ package name.martingeisse.trading_game.game.definition;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.action.ActionSerializer;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
 import name.martingeisse.trading_game.game.crafting.FixedCraftingRecipe;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType;
@@ -25,7 +23,7 @@ import java.util.List;
  * definitions.
  */
 @Singleton
-public final class GameDefinition implements ItemTypeSerializer, SkillSerializer, ActionSerializer {
+public final class GameDefinition implements ItemTypeSerializer, SkillSerializer {
 
 	private final JacksonService jacksonService;
 
@@ -170,16 +168,6 @@ public final class GameDefinition implements ItemTypeSerializer, SkillSerializer
 	@Override
 	public Skill deserializeSkill(String serializedSkill) {
 		return skillByNameSerializer.deserializeSkill(serializedSkill);
-	}
-
-	@Override
-	public String serializeAction(Action action) {
-		return jacksonService.serialize(action);
-	}
-
-	@Override
-	public Action deserializeAction(String serializedAction) {
-		return jacksonService.deserialize(serializedAction, Action.class);
 	}
 
 }
