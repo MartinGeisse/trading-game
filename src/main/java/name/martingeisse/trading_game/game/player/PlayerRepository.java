@@ -6,6 +6,7 @@ import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import name.martingeisse.trading_game.game.action.ActionQueueRepository;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentRepository;
+import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
@@ -22,15 +23,15 @@ public final class PlayerRepository {
 	private final Space space;
 	private final ActionQueueRepository actionQueueRepository;
 	private final PlayerShipEquipmentRepository playerShipEquipmentRepository;
-	private final PlayerAttributeValueSerializer playerAttributeValueSerializer;
+	private final JacksonService jacksonService;
 
 	@Inject
-	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, PlayerAttributeValueSerializer playerAttributeValueSerializer) {
+	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, JacksonService jacksonService) {
 		this.postgresService = postgresService;
 		this.space = space;
 		this.actionQueueRepository = actionQueueRepository;
 		this.playerShipEquipmentRepository = playerShipEquipmentRepository;
-		this.playerAttributeValueSerializer = playerAttributeValueSerializer;
+		this.jacksonService = jacksonService;
 	}
 
 	/**
@@ -45,7 +46,7 @@ public final class PlayerRepository {
 			playerRow.setActionQueueId(actionQueueRepository.createActionQueue());
 			playerRow.setName("noname");
 			playerRow.insert(connection);
-			Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, playerAttributeValueSerializer, playerRow);
+			Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
 			player.updateAttributes();
 			return playerRow.getId();
 		}
@@ -100,7 +101,7 @@ public final class PlayerRepository {
 			if (playerRow == null) {
 				throw new IllegalArgumentException("player not found: " + predicate);
 			}
-			return new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, playerAttributeValueSerializer, playerRow);
+			return new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
 		}
 	}
 
@@ -112,7 +113,7 @@ public final class PlayerRepository {
 		try (CloseableIterator<PlayerRow> iterator = connection.query().select(qp).from(qp).iterate()) {
 			while (iterator.hasNext()) {
 				PlayerRow playerRow = iterator.next();
-				Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, playerAttributeValueSerializer, playerRow);
+				Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
 				player.tick(connection);
 			}
 		}

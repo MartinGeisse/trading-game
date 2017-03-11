@@ -8,6 +8,7 @@ import name.martingeisse.trading_game.game.action.ActionQueueRepository;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentRepository;
 import name.martingeisse.trading_game.game.item.Inventory;
+import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.space.PlayerShip;
 import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
@@ -27,19 +28,19 @@ public final class Player {
 	private final Space space;
 	private final ActionQueueRepository actionQueueRepository;
 	private final PlayerShipEquipmentRepository playerShipEquipmentRepository;
-	private final PlayerAttributeValueSerializer playerAttributeValueSerializer;
+	private final JacksonService jacksonService;
 	private final long id;
 	private final long shipId;
 	private final long actionQueueId;
 	private String name;
 
-	Player(PostgresService postgresService, PlayerRepository playerRepository, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, PlayerAttributeValueSerializer playerAttributeValueSerializer, PlayerRow playerRow) {
+	Player(PostgresService postgresService, PlayerRepository playerRepository, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, JacksonService jacksonService, PlayerRow playerRow) {
 		this.postgresService = postgresService;
 		this.playerRepository = playerRepository;
 		this.space = space;
 		this.actionQueueRepository = actionQueueRepository;
 		this.playerShipEquipmentRepository = playerShipEquipmentRepository;
-		this.playerAttributeValueSerializer = playerAttributeValueSerializer;
+		this.jacksonService = jacksonService;
 		this.id = playerRow.getId();
 		this.shipId = playerRow.getShipId();
 		this.actionQueueId = playerRow.getActionQueueId();
@@ -160,7 +161,7 @@ public final class Player {
 	}
 
 	private void insertAttribute(PostgresConnection connection, PlayerAttributeKey key, Object value) {
-		String serializedValue = playerAttributeValueSerializer.serializePlayerAttributeValue(value);
+		String serializedValue = jacksonService.serialize(value);
 		QCachedPlayerAttributeRow qa = QCachedPlayerAttributeRow.CachedPlayerAttribute;
 		connection.insert(qa).set(qa.playerId, id).set(qa.key, key).set(qa.value, serializedValue).execute();
 	}
@@ -180,7 +181,7 @@ public final class Player {
 				throw new IllegalStateException("missing player attribute " + key + " for player ID " + id);
 			}
 		}
-		return playerAttributeValueSerializer.deserializePlayerAttributeValue(serializedValue);
+		return jacksonService.deserialize(serializedValue, Object.class);
 	}
 
 	/**
