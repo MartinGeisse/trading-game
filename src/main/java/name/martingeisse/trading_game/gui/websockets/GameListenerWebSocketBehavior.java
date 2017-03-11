@@ -8,8 +8,8 @@ import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
 
 /**
  * Default web socket behavior that listens to all game events and pushes them as {@link GameEventBatchPushMessage}.
- * The onPush() method handles that message and invokes {@link #onGameEventBatch(ImmutableList)}. Implement the
- * latter to react to game events within a push-request-cycle.
+ * The onPush() method handles that message and invokes {@link #onGameEventBatch(WebSocketRequestHandler, ImmutableList)}.
+ * Implement the latter to react to game events within a push-request-cycle.
  */
 public abstract class GameListenerWebSocketBehavior extends AbstractGameListenerWebSocketBehavior {
 

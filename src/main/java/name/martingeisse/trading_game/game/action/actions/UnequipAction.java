@@ -1,5 +1,7 @@
 package name.martingeisse.trading_game.game.action.actions;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType;
@@ -14,9 +16,30 @@ public final class UnequipAction extends ImmediateAction {
 	private final Player player;
 	private final PlayerShipEquipmentSlotType slotType;
 
-	public UnequipAction(Player player, PlayerShipEquipmentSlotType slotType) {
+	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+	public UnequipAction(
+			@JsonProperty(value = "player", required = true) Player player,
+			@JsonProperty(value = "slotType", required = true) PlayerShipEquipmentSlotType slotType) {
 		this.player = ParameterUtil.ensureNotNull(player, "player");
 		this.slotType = ParameterUtil.ensureNotNull(slotType, "slotType");
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the player
+	 */
+	public Player getPlayer() {
+		return player;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the slotType
+	 */
+	public PlayerShipEquipmentSlotType getSlotType() {
+		return slotType;
 	}
 
 	@Override

@@ -10,8 +10,6 @@ import name.martingeisse.trading_game.game.player.Player;
 
 /**
  *
- * TODO serialization
- *
  */
 public final class EquipAction extends ImmediateAction {
 

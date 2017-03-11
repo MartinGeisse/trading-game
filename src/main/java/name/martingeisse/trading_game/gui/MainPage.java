@@ -6,6 +6,7 @@ import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.actions.EquipAction;
 import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
 import name.martingeisse.trading_game.game.action.actions.UnequipAction;
+import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentChangedEvent;
 import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
@@ -314,9 +315,14 @@ public class MainPage extends AbstractPage {
 						if (selectedSpaceObject instanceof ObjectWithInventory) {
 							long eventInventoryId = ((InventoryChangedEvent)event).getInventoryId();
 							long selectedSpaceObjectInventoryId = ((ObjectWithInventory)selectedSpaceObject).getInventoryId();
-							if (eventInventoryId == selectedSpaceObjectInventoryId) {
+							if (eventInventoryId == selectedSpaceObjectInventoryId || eventInventoryId == getPlayer().getInventory().getId()) {
 								sidebarChanged = true;
 							}
+						}
+					} else if (event instanceof PlayerShipEquipmentChangedEvent) {
+						long playerShipId = ((PlayerShipEquipmentChangedEvent)event).getPlayerShipId();
+						if (playerShipId == getPlayer().getShip().getId()) {
+							sidebarChanged = true;
 						}
 					}
 				}

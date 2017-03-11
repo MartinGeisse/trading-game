@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.gui.websockets;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.protocol.ws.WebSocketSettings;
+import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
 import org.apache.wicket.protocol.ws.api.message.AbstractClientMessage;
 import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
 import org.apache.wicket.protocol.ws.api.registry.IKey;
@@ -30,7 +31,12 @@ public final class PushMessageSender {
 
 	public void send(IWebSocketPushMessage message) {
 		IWebSocketConnectionRegistry registry = WebSocketSettings.Holder.get(application).getConnectionRegistry();
-		registry.getConnection(application, sessionId, key).sendMessage(message);
+		IWebSocketConnection connection = registry.getConnection(application, sessionId, key);
+		if (connection != null) {
+			connection.sendMessage(message);
+		}
+		// TODO else? can only happen if Wicket "forgets" to handle closed connections propertly. Should
+		// clean up the game listener anyway, and probably detect why this happens and file a bug ticket for Wicket
 	}
 
 }

@@ -51,8 +51,12 @@ public final class GameTicker {
 	 * Called once every second to advance the game logic.
 	 */
 	private void tick(PostgresConnection connection) {
-		playerRepository.tick(connection);
-		space.tick(connection);
+		try {
+			playerRepository.tick(connection);
+			space.tick(connection);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

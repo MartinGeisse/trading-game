@@ -13,8 +13,6 @@ import name.martingeisse.trading_game.game.space.PositionProvider;
  * (e.g. per-run JacksonInject).
  * <p>
  * Might also take a SpaceObject (ID) instead of x,y to follow a target object (unclear though what to do when reaching it)
- * <p>
- * TODO serialization
  */
 public final class MoveToPositionAction extends ContinuousAction implements PositionProvider {
 
