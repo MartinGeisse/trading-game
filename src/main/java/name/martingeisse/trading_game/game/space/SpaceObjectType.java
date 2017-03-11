@@ -6,46 +6,18 @@ import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseDataRow;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 /**
  * Distinguishes different types of space objects. This enum corresponds to the subclasses of {@link SpaceObject}.
  */
 public enum SpaceObjectType {
 
-	ASTEROID(Asteroid.class) {
-		@Override
-		public SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row) {
-			return prepareSpaceObject(row, factory.newAsteroid(row.getInventoryId(), row.getLongField1()));
-		}
-	},
-
-	PLANET(Planet.class) {
-		@Override
-		public SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row) {
-			return prepareSpaceObject(row, factory.newPlanet());
-		}
-	},
-
-	PLAYER_SHIP(PlayerShip.class) {
-		@Override
-		public SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row) {
-			return prepareSpaceObject(row, factory.newPlayerShip());
-		}
-	},
-
-	SPACE_STATION(SpaceStation.class) {
-		@Override
-		public SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row) {
-			return prepareSpaceObject(row, factory.newSpaceStation());
-		}
-	},
-
-	STAR(Star.class) {
-		@Override
-		public SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row) {
-			return prepareSpaceObject(row, factory.newStar());
-		}
-	};
+	ASTEROID(Asteroid.class, SpaceObjectFactory::newAsteroid),
+	PLANET(Planet.class, SpaceObjectFactory::newPlanet),
+	PLAYER_SHIP(PlayerShip.class, SpaceObjectFactory::newPlayerShip),
+	SPACE_STATION(SpaceStation.class, SpaceObjectFactory::newSpaceStation),
+	STAR(Star.class, SpaceObjectFactory::newStar);
 
 	private static final ImmutableSet<SpaceObjectType> staticTypes;
 	private static final ImmutableSet<SpaceObjectType> dynamicTypes;
@@ -66,9 +38,11 @@ public enum SpaceObjectType {
 	}
 
 	private final Class<? extends SpaceObject> spaceObjectClass;
+	private final BiFunction<SpaceObjectFactory, SpaceObjectBaseDataRow, SpaceObject> factoryMethod;
 
-	SpaceObjectType(Class<? extends SpaceObject> spaceObjectClass) {
+	SpaceObjectType(Class<? extends SpaceObject> spaceObjectClass, BiFunction<SpaceObjectFactory, SpaceObjectBaseDataRow, SpaceObject> factoryMethod) {
 		this.spaceObjectClass = spaceObjectClass;
+		this.factoryMethod = factoryMethod;
 	}
 
 	/**
@@ -90,16 +64,10 @@ public enum SpaceObjectType {
 	}
 
 	/**
-	 * Creates a new space object of this type from a DB row.
+	 * Creates a new space object of this type from a DB row by calling the appropriate method of the factory.
 	 */
-	public abstract SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row);
-
-	protected final SpaceObject prepareSpaceObject(SpaceObjectBaseDataRow source, SpaceObject destination) {
-		destination.internalSetId(source.getId());
-		destination.internalSetName(source.getName());
-		destination.internalSetX((long)source.getPosition().x);
-		destination.internalSetY((long)source.getPosition().y);
-		return destination;
+	SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row) {
+		return factoryMethod.apply(factory, row);
 	}
 
 	/**

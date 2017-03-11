@@ -32,6 +32,9 @@ public final class SpaceStation extends StaticSpaceObject implements ObjectWithI
 	 */
 	@Override
 	public long getInventoryId() {
+		if (inventoryId < 1) {
+			throw new IllegalStateException("inventoryId not initialized");
+		}
 		return inventoryId;
 	}
 
@@ -42,7 +45,7 @@ public final class SpaceStation extends StaticSpaceObject implements ObjectWithI
 	 */
 	@Override
 	public Inventory getInventory() {
-		return inventoryRepository.getInventory(inventoryId);
+		return inventoryRepository.getInventory(getInventoryId());
 	}
 
 }

@@ -2,11 +2,13 @@ package name.martingeisse.trading_game.game.space;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.definition.MiningYieldInfo;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.InventoryRepository;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseDataRow;
 
 /**
  *
@@ -20,9 +22,9 @@ public final class SpaceObjectFactory {
 
 	@Inject
 	public SpaceObjectFactory(PostgresService postgresService, GameEventEmitter gameEventEmitter, InventoryRepository inventoryRepository) {
-		this.postgresService = postgresService;
-		this.gameEventEmitter = gameEventEmitter;
-		this.inventoryRepository = inventoryRepository;
+		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");;
+		this.gameEventEmitter = ParameterUtil.ensureNotNull(gameEventEmitter, "gameEventEmitter");;
+		this.inventoryRepository = ParameterUtil.ensureNotNull(inventoryRepository, "inventoryRepository");;
 	}
 
 	/**
@@ -30,10 +32,11 @@ public final class SpaceObjectFactory {
 	 *
 	 * @return the new object
 	 */
-	Asteroid newAsteroid(long inventoryId, long yieldCapacity) {
-		ImmutableItemStacks stacks = inventoryRepository.getInventory(inventoryId).getItems();
+	Asteroid newAsteroid(SpaceObjectBaseDataRow row) {
+		ParameterUtil.ensureNotNull(row, "row");
+		ImmutableItemStacks stacks = inventoryRepository.getInventory(row.getInventoryId()).getItems();
 		MiningYieldInfo yieldInfo = stacks::scale;
-		return inject(new Asteroid(gameEventEmitter, yieldInfo, yieldCapacity));
+		return inject(row, new Asteroid(gameEventEmitter, yieldInfo, row.getLongField1()));
 	}
 
 	/**
@@ -41,8 +44,9 @@ public final class SpaceObjectFactory {
 	 *
 	 * @return the new object
 	 */
-	Planet newPlanet() {
-		return inject(new Planet());
+	Planet newPlanet(SpaceObjectBaseDataRow row) {
+		ParameterUtil.ensureNotNull(row, "row");
+		return inject(row, new Planet());
 	}
 
 	/**
@@ -50,8 +54,11 @@ public final class SpaceObjectFactory {
 	 *
 	 * @return the new object
 	 */
-	PlayerShip newPlayerShip() {
-		return inject(new PlayerShip(inventoryRepository));
+	PlayerShip newPlayerShip(SpaceObjectBaseDataRow row) {
+		ParameterUtil.ensureNotNull(row, "row");
+		PlayerShip playerShip = inject(row, new PlayerShip(inventoryRepository));
+		playerShip.internalSetInventoryId(row.getInventoryId());
+		return playerShip;
 	}
 
 	/**
@@ -59,8 +66,11 @@ public final class SpaceObjectFactory {
 	 *
 	 * @return the new object
 	 */
-	SpaceStation newSpaceStation() {
-		return inject(new SpaceStation(inventoryRepository));
+	SpaceStation newSpaceStation(SpaceObjectBaseDataRow row) {
+		ParameterUtil.ensureNotNull(row, "row");
+		SpaceStation spaceStation = inject(row, new SpaceStation(inventoryRepository));
+		spaceStation.internalSetInventoryId(row.getInventoryId());
+		return spaceStation;
 	}
 
 	/**
@@ -68,13 +78,18 @@ public final class SpaceObjectFactory {
 	 *
 	 * @return the new object
 	 */
-	Star newStar() {
-		return inject(new Star());
+	Star newStar(SpaceObjectBaseDataRow row) {
+		ParameterUtil.ensureNotNull(row, "row");
+		return inject(row, new Star());
 	}
 
-	private <T extends SpaceObject> T inject(T spaceObject) {
+	private <T extends SpaceObject> T inject(SpaceObjectBaseDataRow row, T spaceObject) {
 		spaceObject.internalSetPostgresService(postgresService);
 		spaceObject.internalSetGameEventEmitter(gameEventEmitter);
+		spaceObject.internalSetId(row.getId());
+		spaceObject.internalSetName(row.getName());
+		spaceObject.internalSetX((long) row.getPosition().x);
+		spaceObject.internalSetY((long) row.getPosition().y);
 		return spaceObject;
 	}
 

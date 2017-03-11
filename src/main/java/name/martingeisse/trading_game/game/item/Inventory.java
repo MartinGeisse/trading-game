@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.Path;
 import name.martingeisse.trading_game.common.util.WtfException;
+import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
@@ -25,10 +26,10 @@ public final class Inventory {
 
 	// use InventoryRepository to get an instance of this class
 	Inventory(PostgresService postgresService, ItemTypeSerializer itemTypeSerializer, GameEventEmitter gameEventEmitter, long id) {
-		this.postgresService = postgresService;
-		this.itemTypeSerializer = itemTypeSerializer;
-		this.gameEventEmitter = gameEventEmitter;
-		this.id = id;
+		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");
+		this.itemTypeSerializer = ParameterUtil.ensureNotNull(itemTypeSerializer, "itemTypeSerializer");;
+		this.gameEventEmitter = ParameterUtil.ensureNotNull(gameEventEmitter, "gameEventEmitter");;
+		this.id = ParameterUtil.ensurePositive(id, "id");;
 	}
 
 	/**
@@ -93,11 +94,13 @@ public final class Inventory {
 	}
 
 	public Inventory add(ItemType itemType) {
+		ParameterUtil.ensureNotNull(itemType, "itemType");
 		add(itemType, 1);
 		return this;
 	}
 
 	public Inventory add(ImmutableItemStacks items) {
+		ParameterUtil.ensureNotNull(items, "items");
 		for (ImmutableItemStack stack : items.getStacks()) {
 			add(stack);
 		}
@@ -105,13 +108,13 @@ public final class Inventory {
 	}
 
 	public Inventory add(ImmutableItemStack stack) {
+		ParameterUtil.ensureNotNull(stack, "stack");
 		return add(stack.getItemType(), stack.getSize());
 	}
 
 	public Inventory add(ItemType itemType, int amount) {
-		if (amount < 0) {
-			throw new IllegalArgumentException("amount is negative");
-		}
+		ParameterUtil.ensureNotNull(itemType, "itemType");
+		ParameterUtil.ensureNotNegative(amount, "amount");
 		if (amount == 0) {
 			return this;
 		}
@@ -130,11 +133,15 @@ public final class Inventory {
 	}
 
 	public Inventory remove(ItemType itemType) throws NotEnoughItemsException {
+		ParameterUtil.ensureNotNull(itemType, "itemType");
 		remove(itemType, 1);
 		return this;
 	}
 
 	public Inventory remove(ItemType itemType, int amount, int preferredIndex) throws NotEnoughItemsException {
+		ParameterUtil.ensureNotNull(itemType, "itemType");
+		ParameterUtil.ensureNotNegative(amount, "amount");
+		ParameterUtil.ensureNotNegative(preferredIndex, "preferredIndex");
 
 		// TODO implement. For now, just take the items from any slot with the right item type
 		remove(itemType, amount);
@@ -165,6 +172,8 @@ public final class Inventory {
 	}
 
 	public Inventory remove(ItemType itemType, int amount) throws NotEnoughItemsException {
+		ParameterUtil.ensureNotNull(itemType, "itemType");
+		ParameterUtil.ensureNotNegative(amount, "amount");
 
 		// first check if there are enough items, so we don't mess up the item stacks if not
 		if (count(itemType) < amount) {
@@ -198,14 +207,18 @@ public final class Inventory {
 	}
 
 	private Long findSlotId(ItemType itemType) {
+		ParameterUtil.ensureNotNull(itemType, "itemType");
 		return findSlot(itemType, QInventorySlotRow.InventorySlot.id);
 	}
 
 	private InventorySlotRow findSlot(ItemType itemType) {
+		ParameterUtil.ensureNotNull(itemType, "itemType");
 		return findSlot(itemType, QInventorySlotRow.InventorySlot);
 	}
 
 	private <T> T findSlot(ItemType itemType, Path<T> path) {
+		ParameterUtil.ensureNotNull(itemType, "itemType");
+		ParameterUtil.ensureNotNull(path, "path");
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			String serializedItemType = itemTypeSerializer.serializeItemType(itemType);
 			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
@@ -220,6 +233,7 @@ public final class Inventory {
 	 * @throws NotEnoughItemsException if the player doesn't have the required items
 	 */
 	public void removeBillOfMaterials(ImmutableItemStacks billOfMaterials) throws NotEnoughItemsException {
+		ParameterUtil.ensureNotNull(billOfMaterials, "billOfMaterials");
 		for (ImmutableItemStack stack : billOfMaterials.getStacks()) {
 			if (count(stack.getItemType()) < stack.getSize()) {
 				throw new NotEnoughItemsException();
