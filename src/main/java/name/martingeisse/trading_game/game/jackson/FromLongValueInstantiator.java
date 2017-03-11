@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.util.function.Function;
 
 /**
- * Instantiates a value from a long-typed database ID found in JSON.
+ * Instantiates a value from a long-typed value found in JSON (converting int to long if needed).
  */
-public class DatabaseValueInstantiator<T> extends ValueInstantiator.Base {
+public class FromLongValueInstantiator<T> extends ValueInstantiator.Base {
 
 	private final Function<Long, T> actualInstantiator;
 
-	public DatabaseValueInstantiator(Class<T> valueClass, Function<Long, T> actualInstantiator) {
+	public FromLongValueInstantiator(Class<T> valueClass, Function<Long, T> actualInstantiator) {
 		super(valueClass);
 		this.actualInstantiator = actualInstantiator;
 	}
@@ -35,7 +35,11 @@ public class DatabaseValueInstantiator<T> extends ValueInstantiator.Base {
 
 	@Override
 	public Object createFromLong(DeserializationContext ctxt, long value) throws IOException {
-		return actualInstantiator.apply(value);
+		Object instance = actualInstantiator.apply(value);
+		if (instance == null) {
+			throw new RuntimeException("deserialization of value " + value + " resulted in null");
+		}
+		return instance;
 	}
 
 }

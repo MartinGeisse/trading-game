@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.skill;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
 
 /**
@@ -26,6 +27,7 @@ import name.martingeisse.trading_game.game.definition.GameDefinition;
  */
 public interface Skill {
 
+	@JsonValue
 	public String getName();
 
 	public int getRequiredSecondsForLearning();

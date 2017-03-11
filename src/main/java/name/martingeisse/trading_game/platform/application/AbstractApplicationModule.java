@@ -13,7 +13,6 @@ import name.martingeisse.trading_game.game.event.GameEventListener;
 import name.martingeisse.trading_game.game.item.ItemTypeSerializer;
 import name.martingeisse.trading_game.game.player.DefaultPlayerAttributeValueSerializer;
 import name.martingeisse.trading_game.game.player.PlayerAttributeValueSerializer;
-import name.martingeisse.trading_game.game.skill.SkillSerializer;
 import name.martingeisse.trading_game.platform.application.configuration.ConfigurationParticipant;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
@@ -27,7 +26,6 @@ public abstract class AbstractApplicationModule extends AbstractModule {
 
 		// various services
 		bind(ItemTypeSerializer.class).to(GameDefinition.class);
-		bind(SkillSerializer.class).to(GameDefinition.class);
 		bind(PlayerAttributeValueSerializer.class).to(DefaultPlayerAttributeValueSerializer.class);
 
 		// configuration participants

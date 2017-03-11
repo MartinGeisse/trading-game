@@ -10,8 +10,10 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
+import name.martingeisse.trading_game.game.definition.GameDefinition;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
+import name.martingeisse.trading_game.game.skill.Skill;
 import name.martingeisse.trading_game.platform.util.attribute.AttributeKey;
 import name.martingeisse.trading_game.platform.util.attribute.Attributes;
 
@@ -36,7 +38,8 @@ public final class JacksonService {
 		this.injector = injector;
 
 		// helper objects
-		addValueInstantiator(Player.class, id -> injector.getInstance(PlayerRepository.class).getPlayerById(id));
+		addFromLongValueInstantiator(Player.class, id -> injector.getInstance(PlayerRepository.class).getPlayerById(id));
+		addFromStringValueInstantiator(Skill.class, name -> injector.getInstance(GameDefinition.class).getSkillByName(name));
 
 		// create basic object mapper
 		objectMapper = new ObjectMapper();
@@ -91,8 +94,12 @@ public final class JacksonService {
 
 	}
 
-	private <T> void addValueInstantiator(Class<T> klass, Function<Long, T> actualInstantiator) {
-		valueInstantiators.put(klass, new DatabaseValueInstantiator<T>(klass, actualInstantiator));
+	private <T> void addFromLongValueInstantiator(Class<T> klass, Function<Long, T> actualInstantiator) {
+		valueInstantiators.put(klass, new FromLongValueInstantiator<T>(klass, actualInstantiator));
+	}
+
+	private <T> void addFromStringValueInstantiator(Class<T> klass, Function<String, T> actualInstantiator) {
+		valueInstantiators.put(klass, new FromStringValueInstantiator<>(klass, actualInstantiator));
 	}
 
 	public String serialize(Object object) {
