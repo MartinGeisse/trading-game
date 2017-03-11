@@ -11,6 +11,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
+import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
 import name.martingeisse.trading_game.game.skill.Skill;
@@ -40,6 +41,7 @@ public final class JacksonService {
 		// helper objects
 		addFromLongValueInstantiator(Player.class, id -> injector.getInstance(PlayerRepository.class).getPlayerById(id));
 		addFromStringValueInstantiator(Skill.class, name -> injector.getInstance(GameDefinition.class).getSkillByName(name));
+		addFromStringValueInstantiator(ItemType.class, name -> injector.getInstance(GameDefinition.class).getItemTypeByName(name));
 
 		// create basic object mapper
 		objectMapper = new ObjectMapper();

@@ -6,6 +6,7 @@ import com.querydsl.core.types.Path;
 import name.martingeisse.trading_game.common.util.WtfException;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
+import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.InventorySlotRow;
@@ -20,14 +21,14 @@ import java.util.List;
 public final class Inventory {
 
 	private final PostgresService postgresService;
-	private final ItemTypeSerializer itemTypeSerializer;
+	private final JacksonService jacksonService;
 	private final GameEventEmitter gameEventEmitter;
 	private final long id;
 
 	// use InventoryRepository to get an instance of this class
-	Inventory(PostgresService postgresService, ItemTypeSerializer itemTypeSerializer, GameEventEmitter gameEventEmitter, long id) {
+	Inventory(PostgresService postgresService, JacksonService jacksonService, GameEventEmitter gameEventEmitter, long id) {
 		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");
-		this.itemTypeSerializer = ParameterUtil.ensureNotNull(itemTypeSerializer, "itemTypeSerializer");;
+		this.jacksonService = ParameterUtil.ensureNotNull(jacksonService, "jacksonService");;
 		this.gameEventEmitter = ParameterUtil.ensureNotNull(gameEventEmitter, "gameEventEmitter");;
 		this.id = ParameterUtil.ensurePositive(id, "id");;
 	}
@@ -52,7 +53,7 @@ public final class Inventory {
 			try (CloseableIterator<InventorySlotRow> iterator = connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id)).iterate()) {
 				while (iterator.hasNext()) {
 					InventorySlotRow row = iterator.next();
-					stacks.add(new ImmutableItemStack(itemTypeSerializer.deserializeItemType(row.getItemType()), row.getQuantity()));
+					stacks.add(new ImmutableItemStack(jacksonService.deserialize(row.getItemType(), ItemType.class), row.getQuantity()));
 				}
 			}
 		}
@@ -88,7 +89,7 @@ public final class Inventory {
 	public int count(ItemType itemType) {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
-			String serializedItemType = itemTypeSerializer.serializeItemType(itemType);
+			String serializedItemType = jacksonService.serialize(itemType);
 			return (int) connection.query().select(qs.quantity.sum()).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).fetchCount();
 		}
 	}
@@ -122,7 +123,7 @@ public final class Inventory {
 		QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			if (slotId == null) {
-				String serializedItemType = itemTypeSerializer.serializeItemType(itemType);
+				String serializedItemType = jacksonService.serialize(itemType);
 				connection.insert(qs).set(qs.inventoryId, id).set(qs.itemType, serializedItemType).set(qs.quantity, amount).execute();
 			} else {
 				connection.update(qs).set(qs.quantity, qs.quantity.add(amount)).where(qs.id.eq(slotId)).execute();
@@ -220,7 +221,7 @@ public final class Inventory {
 		ParameterUtil.ensureNotNull(itemType, "itemType");
 		ParameterUtil.ensureNotNull(path, "path");
 		try (PostgresConnection connection = postgresService.newConnection()) {
-			String serializedItemType = itemTypeSerializer.serializeItemType(itemType);
+			String serializedItemType = jacksonService.serialize(itemType);
 			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
 			return connection.query().select(path).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).fetchFirst();
 		}

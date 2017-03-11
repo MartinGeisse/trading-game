@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.item;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType;
 
 /**
@@ -30,6 +31,7 @@ public final class ItemType {
 	 *
 	 * @return the name
 	 */
+	@JsonValue
 	public String getName() {
 		return name;
 	}

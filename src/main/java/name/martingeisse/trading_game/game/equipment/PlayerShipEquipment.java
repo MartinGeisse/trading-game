@@ -6,7 +6,7 @@ import com.querydsl.core.QueryException;
 import name.martingeisse.trading_game.common.database.DatabaseUtil;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.item.ItemType;
-import name.martingeisse.trading_game.game.item.ItemTypeSerializer;
+import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
@@ -23,13 +23,13 @@ import java.util.List;
 public final class PlayerShipEquipment {
 
 	private final PostgresService postgresService;
-	private final ItemTypeSerializer itemTypeSerializer;
+	private final JacksonService jacksonService;
 	private final PlayerRepository playerRepository;
 	private final long playerShipId;
 
-	PlayerShipEquipment(PostgresService postgresService, ItemTypeSerializer itemTypeSerializer, PlayerRepository playerRepository, long playerShipId) {
+	PlayerShipEquipment(PostgresService postgresService, JacksonService jacksonService, PlayerRepository playerRepository, long playerShipId) {
 		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");
-		this.itemTypeSerializer = ParameterUtil.ensureNotNull(itemTypeSerializer, "itemTypeSerializer");
+		this.jacksonService = ParameterUtil.ensureNotNull(jacksonService, "jacksonService");
 		this.playerRepository = playerRepository;
 		this.playerShipId = ParameterUtil.ensurePositive(playerShipId, "playerShipId");
 	}
@@ -44,7 +44,7 @@ public final class PlayerShipEquipment {
 			try (CloseableIterator<PlayerShipEquipmentSlotRow> iterator = connection.query().select(qs).from(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId)).orderBy(qs.slotType.asc()).iterate()) {
 				while (iterator.hasNext()) {
 					PlayerShipEquipmentSlotRow row = iterator.next();
-					result.add(new SlotInfo(row.getSlotType(), itemTypeSerializer.deserializeItemType(row.getItemType())));
+					result.add(new SlotInfo(row.getSlotType(), jacksonService.deserialize(row.getItemType(), ItemType.class)));
 				}
 			}
 		}
@@ -58,7 +58,7 @@ public final class PlayerShipEquipment {
 		ParameterUtil.ensureNotNull(slotType, "slotType");
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
-			return itemTypeSerializer.deserializeItemType(connection.query().select(qs.itemType).from(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId), qs.slotType.eq(slotType)).fetchFirst());
+			return jacksonService.deserialize(connection.query().select(qs.itemType).from(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId), qs.slotType.eq(slotType)).fetchFirst(), ItemType.class);
 		}
 	}
 
@@ -75,7 +75,7 @@ public final class PlayerShipEquipment {
 		}
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
-			String serializedItemType = itemTypeSerializer.serializeItemType(itemType);
+			String serializedItemType = jacksonService.serialize(itemType);
 			try {
 				connection.insert(qs).set(qs.spaceObjectBaseDataId, playerShipId).set(qs.slotType, slotType).set(qs.itemType, serializedItemType).execute();
 			} catch (QueryException e) {

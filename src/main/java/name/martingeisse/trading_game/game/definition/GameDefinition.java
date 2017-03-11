@@ -9,7 +9,6 @@ import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.ItemType;
-import name.martingeisse.trading_game.game.item.ItemTypeSerializer;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.skill.Skill;
 
@@ -21,7 +20,7 @@ import java.util.List;
  * definitions.
  */
 @Singleton
-public final class GameDefinition implements ItemTypeSerializer {
+public final class GameDefinition {
 
 	private final JacksonService jacksonService;
 
@@ -140,19 +139,13 @@ public final class GameDefinition implements ItemTypeSerializer {
 		return redPixelAssemblyItemType;
 	}
 
-	@Override
-	public String serializeItemType(ItemType itemType) {
-		return itemType.getName();
-	}
-
-	@Override
-	public ItemType deserializeItemType(String serializedItemType) {
+	public ItemType getItemTypeByName(String itemTypeName) {
 		for (ItemType itemType : itemTypes) {
-			if (itemType.getName().equals(serializedItemType)) {
+			if (itemType.getName().equals(itemTypeName)) {
 				return itemType;
 			}
 		}
-		throw new RuntimeException("cannot deserialize item type: " + serializedItemType);
+		return null;
 	}
 
 	public Skill getSkillByName(String skillName) {

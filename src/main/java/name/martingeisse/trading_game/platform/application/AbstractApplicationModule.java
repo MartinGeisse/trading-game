@@ -10,7 +10,6 @@ import com.google.inject.Inject;
 import com.google.inject.multibindings.Multibinder;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
 import name.martingeisse.trading_game.game.event.GameEventListener;
-import name.martingeisse.trading_game.game.item.ItemTypeSerializer;
 import name.martingeisse.trading_game.game.player.DefaultPlayerAttributeValueSerializer;
 import name.martingeisse.trading_game.game.player.PlayerAttributeValueSerializer;
 import name.martingeisse.trading_game.platform.application.configuration.ConfigurationParticipant;
@@ -25,7 +24,6 @@ public abstract class AbstractApplicationModule extends AbstractModule {
 	protected void configure() {
 
 		// various services
-		bind(ItemTypeSerializer.class).to(GameDefinition.class);
 		bind(PlayerAttributeValueSerializer.class).to(DefaultPlayerAttributeValueSerializer.class);
 
 		// configuration participants
