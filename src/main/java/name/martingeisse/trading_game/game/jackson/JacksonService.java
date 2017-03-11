@@ -12,6 +12,8 @@ import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
+import name.martingeisse.trading_game.platform.util.attribute.AttributeKey;
+import name.martingeisse.trading_game.platform.util.attribute.Attributes;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,6 +29,7 @@ public final class JacksonService {
 	private final Injector injector;
 	private final ObjectMapper objectMapper;
 	private final Map<Class<?>, ValueInstantiator> valueInstantiators = new HashMap<>();
+	private final ThreadLocal<Attributes> contextAttributesHolder = new ThreadLocal();
 
 	@Inject
 	public JacksonService(Injector injector) {
@@ -101,20 +104,24 @@ public final class JacksonService {
 	}
 
 	public <T> T deserialize(String json, Class<T> klass) {
+		return deserialize(json, klass, null);
+	}
+
+	public <T> T deserialize(String json, Class<T> klass, Attributes contextAttributes) {
+		Attributes oldContextAttributes = contextAttributesHolder.get();
 		try {
+			contextAttributesHolder.set(contextAttributes);
 			return objectMapper.readValue(json, klass);
 		} catch (IOException e) {
 			throw new UnexpectedExceptionException(e);
+		} finally {
+			contextAttributesHolder.set(oldContextAttributes);
 		}
 	}
 
-	/**
-	 * Getter method.
-	 *
-	 * @return the objectMapper
-	 */
-	public ObjectMapper getObjectMapper() {
-		return objectMapper;
+	private <T> T getContextAttribute(AttributeKey<T> key) {
+		Attributes contextAttributes = contextAttributesHolder.get();
+		return (contextAttributes == null ? null : contextAttributes.get(key));
 	}
 
 }
