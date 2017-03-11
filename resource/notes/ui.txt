@@ -1,4 +1,7 @@
 
+clear page store on redeploy! Probleme mit stale pages -> UI funktioniert nicht mehr, reload hilft nicht (da es nur die
+kaputte seite reloaded statt eine neue funktionierende zu erstellen)
+
 Mobile-first, Responsive, blablabla:
 - Folgendes sind zwei unabhängige Fragen:
 	- sollen sich Dialoge etc. als neue Seite präsentieren?
