@@ -187,14 +187,14 @@ public final class Player {
 	 * @return the movement speed of the player's ship
 	 */
 	public long getShipMovementSpeed() {
-		return 50000;
+		return ((Number)getAttribute(PlayerAttributeKey.SHIP_MOVEMENT_SPEED)).longValue();
 	}
 
 	/**
 	 * @return the maximum cargo mass that can be loaded into the player's ship
 	 */
 	public int getMaximumCargoMass() {
-		return 10_000;
+		return ((Number)getAttribute(PlayerAttributeKey.MAXIMUM_CARGO_MASS)).intValue();
 	}
 
 }
