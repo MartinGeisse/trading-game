@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.game.definition;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
@@ -10,6 +11,7 @@ import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
+import name.martingeisse.trading_game.game.player.PlayerAttributeKey;
 import name.martingeisse.trading_game.game.skill.Skill;
 
 import java.util.ArrayList;
@@ -37,7 +39,8 @@ public final class GameDefinition {
 	public GameDefinition(JacksonService jacksonService) {
 		this.jacksonService = jacksonService;
 
-		ItemType redPixelItemType = new ItemType("red pixel", "red_pixel.png", 10, PlayerShipEquipmentSlotType.ENGINE);
+		ImmutableMap<PlayerAttributeKey, Integer> redPixelBonus = ImmutableMap.of(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 100_000);
+		ItemType redPixelItemType = new ItemType("red pixel", "red_pixel.png", 10, PlayerShipEquipmentSlotType.ENGINE, redPixelBonus);
 		ItemType redPixelAssemblyItemType = new ItemType("red pixel assembly", "red_pixel_assembly.png", 10);
 		ItemType redPixelLineItemType = new ItemType("red pixel line", "no_icon.png", 10);
 		ItemType redPixelGlueItemType = new ItemType("red pixel glue", "no_icon.png", 10);

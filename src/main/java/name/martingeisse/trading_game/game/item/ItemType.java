@@ -1,7 +1,13 @@
 package name.martingeisse.trading_game.game.item;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.google.common.collect.ImmutableMap;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType;
+import name.martingeisse.trading_game.game.player.PlayerAttributeKey;
+
+import java.util.Map;
 
 /**
  * Item types may provide code for the item behavior (if any) and are referred to by crafting recipes.
@@ -14,16 +20,25 @@ public final class ItemType {
 	private final String icon;
 	private final int mass;
 	private final PlayerShipEquipmentSlotType playerShipEquipmentSlotType;
+	private final ImmutableMap<PlayerAttributeKey, Integer> playerBonus;
 
-	public ItemType(String name, String icon, int mass) {
-		this(name, icon, mass, null);
+	// TODO hotfix to trick Jackson into thinking that this class has no properties, allowing us to use a custom
+	// ValueInstantiator instead of a custom deserializer (or converter?) -- should be done with the latter
+	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+	public ItemType() {
+		throw new UnsupportedOperationException();
 	}
 
-	public ItemType(String name, String icon, int mass, PlayerShipEquipmentSlotType playerShipEquipmentSlotType) {
+	public ItemType(String name, String icon, int mass) {
+		this(name, icon, mass, null, null);
+	}
+
+	public ItemType(String name, String icon, int mass, PlayerShipEquipmentSlotType playerShipEquipmentSlotType, ImmutableMap<PlayerAttributeKey, Integer> playerBonus) {
 		this.name = name;
 		this.icon = icon;
 		this.mass = mass;
 		this.playerShipEquipmentSlotType = playerShipEquipmentSlotType;
+		this.playerBonus = playerBonus;
 	}
 
 	/**
@@ -66,6 +81,17 @@ public final class ItemType {
 	 */
 	public PlayerShipEquipmentSlotType getPlayerShipEquipmentSlotType() {
 		return playerShipEquipmentSlotType;
+	}
+
+	/**
+	 * Returns the bonus for the player when this item is equipped.
+	 *
+	 * @return a mapping of player attribute key to bonus for that attribute, never null map nor null values
+	 */
+	// TODO remove @JsonIgnore
+	@JsonIgnore
+	public ImmutableMap<PlayerAttributeKey, Integer> getPlayerBonus() {
+		return (playerBonus == null ? ImmutableMap.of() : playerBonus);
 	}
 
 }

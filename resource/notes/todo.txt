@@ -1,4 +1,7 @@
 
+code:
+- separate "item" and "inventory" code. Items are used by equipment too.
+
 map:
 - heat map vs. low zoom objects vs. high zoom objects
 - display vs. click
@@ -20,5 +23,3 @@ click (for now handle static/dynamic space objects the same):
 - click(SpaceObject) for map page
 - add side bar to map page
 - show object details in side bar
-
-quadtree for static objects

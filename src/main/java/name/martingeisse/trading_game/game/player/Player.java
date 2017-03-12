@@ -7,6 +7,7 @@ import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.ActionQueueRepository;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentRepository;
+import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.space.PlayerShip;
@@ -17,6 +18,8 @@ import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 import name.martingeisse.trading_game.postgres_entities.QCachedPlayerAttributeRow;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -142,17 +145,27 @@ public final class Player {
 	 */
 	public void updateAttributes() {
 
-		// TODO calculate these based on equipment and skills
-		long shipMovementSpeed = 50_000;
-		long maximumCargoMass = 10_000;
+		// set up base values
+		Map<PlayerAttributeKey, Integer> attributes = new HashMap<>();
+		attributes.put(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 50_000);
+		attributes.put(PlayerAttributeKey.MAXIMUM_CARGO_MASS, 10_000);
+
+		// apply equipment bonus
+		for (SlotInfo slotInfo : getEquipment().getAllSlots()) {
+			for (Map.Entry<PlayerAttributeKey, Integer> bonusEntry : slotInfo.getItemType().getPlayerBonus().entrySet()) {
+				PlayerAttributeKey key = bonusEntry.getKey();
+				attributes.put(key, attributes.get(key) + bonusEntry.getValue());
+			}
+		}
 
 		// update the attributes in the database
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QCachedPlayerAttributeRow qa = QCachedPlayerAttributeRow.CachedPlayerAttribute;
 			connection.getJdbcConnection().setAutoCommit(false);
 			connection.delete(qa).where(qa.playerId.eq(id)).execute();
-			insertAttribute(connection, PlayerAttributeKey.SHIP_MOVEMENT_SPEED, shipMovementSpeed);
-			insertAttribute(connection, PlayerAttributeKey.MAXIMUM_CARGO_MASS, maximumCargoMass);
+			for (Map.Entry<PlayerAttributeKey, Integer> entry : attributes.entrySet()) {
+				insertAttribute(connection, entry.getKey(), entry.getValue());
+			}
 			connection.getJdbcConnection().commit();
 		} catch (SQLException e) {
 			throw new UnexpectedExceptionException(e);
