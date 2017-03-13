@@ -26,3 +26,69 @@ Dialog button order:
 
 
 
+------------------------------------------------------------------------------------------------------------
+GUI arrangement
+------------------------------------------------------------------------------------------------------------
+
+general:
+- windows
+	- dann mit "window manager" für arrangement
+	- alt. mit vielen Browserfenstern -> aber eher nicht, weil die nativen Window Managers bei den meisten systemen
+		nicht toll sind
+- eclipse
+	- map als zentrales element, vgl. Editor in Eclipse? oder lieber ohne "besonderes" zentrales element?
+	- aber dann mit mehreren instances desselben views
+- modal at page level (=multiple pages)
+	- die meisten panels sind aber auf allen Seiten gültig, nur z.B. load/unload nicht
+		-> load/unload sind actions, keine panels! und die inventory panels sowohl vom eigenen Schiff als auch der
+			Raumstation sollten in beiden views da sein
+	- die Karte könnte man ungültig machen während man in einer space station ist, indem man docked/undocked
+		als separate Zustände einführt
+	-> bis jetzt sieht es nicht so aus, als würde sich das alles lohnen
+-->
+Die Karte hat nicht den zentralen Stellenwert wie Editoren in Eclipse. Also geht es im wesentlichen drum, eine Menge
+von Views darzustellen. Ob diese wie bei Eclipse oder in "Fenstern" arranged sind, ist eine Eigenschaft des "Window
+Managers", und da könnte man beide Varianten anbieten.
+
+Wenn man das letzte View schließt, dann sieht man einen Hintergrund ohne weitere Aktionen. Es ist wichtig, dass dieser
+keine Aktionen enthält, damit er nicht wichtig ist -- ansonsten bräuchte man auch einen Weg, immer dort hin zu kommen.
+Oder aber der "Hintergrund" ist ein "Open View" Dialog, den man auch anders holen kann. Aber dann lieber immer "anders"
+(z.B. über eine zentrale Toolbar), sonst ist es blöd, wenn ein Benutzer nur den weg über den "Hintergrund" kennt. Also
+keine "mehreren Wege, dasselbe zu tun"
+
+------
+
+Alternative: http://pozniak.pl/wp/wp-content/uploads/2012/06/IMG_0665.png
+Ist modal auf Page-Level, aber nicht modal nach Spielzuständen (docked, undocked) sondern nach
+Navigation im Menü. Das ist im Sinne von "mobile first" auf jeden Fall sinnvoll, und das ist für ein
+casual game wichtig! Die Karte wäre dann einfach ein Menüpunkt, evtl. der oberste. Menüpunkte sind
+im Grunde genau die wichtigen UI-Elemente. Dabei sind bestimmte Dinge, z.B. Karten-Objekt-Details,
+Unterpunkte von anderen (z.B. der Karte). Dann sollte auf der Karte nur ganz kurz das wichtigste
+erwähnt werden und alles andere auf einem Unterbildschirn angezeigt werden, der nur von dort
+aus erreichbar ist (also nicht als Menüpunkt).
+
+Kartenobjekte: Am besten die "schnellen Details" in einem Popup neben dem Objekt, oder in der
+Ecke rechts unten, oder am rechten Rand, anzeigen. (Rechts, da die Unterseite "rechts liegt").
+
+Top bar:
+	- Titel
+	- ggf. Zusatzinformationen in Klammern hinter dem Titel, kurz(!)
+	- Backbutton (links)
+	 	- Funktion ist gleich der des Browser-backbuttons
+	 	- das sollte gleich in der header-bar-Komponente hardcodiert werden, damit der
+	 		Browser-Backbutton überall sauber unterstützt wird
+	- rechts ggf. ein besonderer Link, der nicht in die normale Liste passt
+-->
+Die wird sich am ehesten zwischen Phone und Tablet unterscheiden!
+
+
+Tablet/Desktop:
+- linkes 1/3 das Hauptmenü
+- rechte 2/3 für Unterpunkte
+- Backbutton geht zurück zum vorherigen Unterpunkt, aber man könnte den auch anklicken
+- Wenn Unter-Unterpunkt selected, dann wird i.A. der komplette Screen ersetzt und man kommt
+	nur noch per Backbutton zurück
+
+
+
+
