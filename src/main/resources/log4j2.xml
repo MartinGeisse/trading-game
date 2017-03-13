@@ -1,7 +1,7 @@
 <?xml version="1.1" encoding="UTF-8"?>
 <!DOCTYPE xml>
 <Configuration status="WARN"
-               packages="name.martingeisse.trading_game.util.logging">
+               packages="name.martingeisse.trading_game.platform.util.logging">
     <Appenders>
 
         <!--
@@ -15,8 +15,8 @@
         <!-- post-hoc debugging logfile -->
         <RollingRandomAccessFile name="debug"
                                  immediateFlush="false"
-                                 fileName="${myweb:initParam.logfilePath}/debug.log"
-                                 filePattern="${myweb:initParam.logfilePath}/debug-%i.log">
+                                 fileName="logs/debug.log"
+                                 filePattern="logs/debug-%i.log">
             <Filters>
                 <ThresholdFilter level="DEBUG"/>
                 <LibraryFilter level="INFO"/>
@@ -30,8 +30,8 @@
 
         <!-- error logfile -->
         <RollingRandomAccessFile name="error"
-                                 immediateFlush="false" fileName="${myweb:initParam.logfilePath}/error.log"
-                                 filePattern="${myweb:initParam.logfilePath}/error-%i.log">
+                                 immediateFlush="false" fileName="logs/error.log"
+                                 filePattern="logs/error-%i.log">
             <Filters>
                 <ThresholdFilter level="WARN"/>
                 <LibraryFilter level="OFF"/>
@@ -46,8 +46,8 @@
         <!-- emergency error logfile -->
         <RollingRandomAccessFile name="emergency"
                                  immediateFlush="false"
-                                 fileName="${myweb:initParam.logfilePath}/emergency.log"
-                                 filePattern="${myweb:initParam.logfilePath}/emergency-%i.log">
+                                 fileName="logs/emergency.log"
+                                 filePattern="logs/emergency-%i.log">
             <Filters>
                 <ThresholdFilter level="FATAL"/>
                 <LibraryFilter level="OFF"/>
@@ -69,9 +69,9 @@
             -->
             <AppenderRef ref="console"/>
         </Root>
+        <Logger name="org.quartz.core.JobRunShell" level="INFO" />
         <!--
-        <Logger name="name.martingeisse.trading_game.Foo" level="INFO"
-                additivity="false">
+        <Logger name="name.martingeisse.trading_game.Foo" level="INFO" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         -->
