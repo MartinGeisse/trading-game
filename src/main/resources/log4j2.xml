@@ -62,12 +62,10 @@
     </Appenders>
     <Loggers>
         <Root level="info">
-            <!--
+            <AppenderRef ref="console"/>
             <AppenderRef ref="debug"/>
             <AppenderRef ref="error"/>
             <AppenderRef ref="emergency"/>
-            -->
-            <AppenderRef ref="console"/>
         </Root>
         <Logger name="org.quartz.core.JobRunShell" level="INFO" />
         <!--
