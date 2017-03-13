@@ -22,13 +22,6 @@ public final class ItemType {
 	private final PlayerShipEquipmentSlotType playerShipEquipmentSlotType;
 	private final ImmutableMap<PlayerAttributeKey, Integer> playerBonus;
 
-	// TODO hotfix to trick Jackson into thinking that this class has no properties, allowing us to use a custom
-	// ValueInstantiator instead of a custom deserializer (or converter?) -- should be done with the latter
-	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-	public ItemType() {
-		throw new UnsupportedOperationException();
-	}
-
 	public ItemType(String name, String icon, int mass) {
 		this(name, icon, mass, null, null);
 	}
@@ -88,8 +81,7 @@ public final class ItemType {
 	 *
 	 * @return a mapping of player attribute key to bonus for that attribute, never null map nor null values
 	 */
-	// TODO remove @JsonIgnore
-	@JsonIgnore
+	@JsonIgnore // needed since Jackson gets confused by ImmutableMap, even though it never maps this property
 	public ImmutableMap<PlayerAttributeKey, Integer> getPlayerBonus() {
 		return (playerBonus == null ? ImmutableMap.of() : playerBonus);
 	}
