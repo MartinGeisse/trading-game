@@ -18,6 +18,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.AbstractStringLayout;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.DateTimeZone;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -33,14 +34,14 @@ public final class MyLayout extends AbstractStringLayout {
 	/**
 	 *
 	 */
-	public static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS");
+	public static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS").withZone(DateTimeZone.UTC);
 
 	/**
 	 * This is a check to prevent log4j from initializing too early.
 	 */
 	public static volatile Exception instanceSource;
 
-	private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+	private final Gson gson = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
 	private final boolean useParagraphSeparator;
 
 	/**
