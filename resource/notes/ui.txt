@@ -89,6 +89,31 @@ Tablet/Desktop:
 - Wenn Unter-Unterpunkt selected, dann wird i.A. der komplette Screen ersetzt und man kommt
 	nur noch per Backbutton zurück
 
+Elemente:
+- Karte (ok)
+	- other object
+		- stats
+		- inventory
+		- player stats
+		- action buttons
+- player
+	- player stats
+	- player ship stats
+	- player skills
+	- player inventory
+	- player action queue
+- player list
+	- other player
+		- ship as other object
+		- trading
+		- action buttons
+- market
+	- buy/sell Preisliste
+	- contracts (=?)
+	- buy orders
+	- sell orders
+- ...?
+- toolbar / menubar für weiteres (= main menu!)
 
 
 
