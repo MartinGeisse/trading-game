@@ -95,11 +95,11 @@ public final class GameEventEmitter {
 			}
 			events.add(event);
 		}
-		ImmutableList<GameEvent> immutableEvents = ImmutableList.copyOf(events);
+		GameEventBatch batch = new GameEventBatch(ImmutableList.copyOf(events));
 		for (GameEventListener listener : staticListeners) {
-			listener.receiveGameEventBatch(immutableEvents);
+			listener.receiveGameEventBatch(batch);
 		}
-		dynamicListeners.receiveGameEventBatch(immutableEvents);
+		dynamicListeners.receiveGameEventBatch(batch);
 	}
 
 }

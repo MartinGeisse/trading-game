@@ -8,11 +8,11 @@ import com.google.common.collect.ImmutableList;
 public interface GameEventListener {
 
 	default public void receiveGameEvent(GameEvent event) {
-		receiveGameEventBatch(ImmutableList.of(event));
+		receiveGameEventBatch(new GameEventBatch(ImmutableList.of(event)));
 	}
 
-	default public void receiveGameEventBatch(ImmutableList<GameEvent> eventBatch) {
-		for (GameEvent event : eventBatch) {
+	default public void receiveGameEventBatch(GameEventBatch eventBatch) {
+		for (GameEvent event : eventBatch.getEvents()) {
 			receiveGameEvent(event);
 		}
 	}

@@ -1,43 +1,135 @@
 package name.martingeisse.trading_game.gui.websockets;
 
-import com.google.common.collect.ImmutableList;
-import name.martingeisse.trading_game.game.event.GameEvent;
+import name.martingeisse.trading_game.game.event.GameEventBatch;
+import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.event.GameEventListener;
+import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
+import org.apache.wicket.Application;
+import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+import org.apache.wicket.protocol.ws.WebSocketSettings;
+import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
+import org.apache.wicket.protocol.ws.api.WebSocketBehavior;
 import org.apache.wicket.protocol.ws.api.WebSocketRequestHandler;
-import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
+import org.apache.wicket.protocol.ws.api.message.*;
+import org.apache.wicket.protocol.ws.api.registry.IKey;
+import org.apache.wicket.protocol.ws.api.registry.IWebSocketConnectionRegistry;
+import org.apache.wicket.util.visit.Visits;
 
 /**
- * Default web socket behavior that listens to all game events and pushes them as {@link GameEventBatchPushMessage}.
- * The onPush() method handles that message and invokes {@link #onGameEventBatch(WebSocketRequestHandler, ImmutableList)}.
- * Implement the latter to react to game events within a push-request-cycle.
+ * This behavior can be added to a page to make all components which implement {@link GuiGameEventListener} receive
+ * game events.
+ * <p>
+ * Only pages can be targeted by this behavior to avoid having two such behaviors, and thus two websocket connections,
+ * within a single page.
+ * <p>
+ * Note that components implementing just {@link GameEventListener} are not supported since there is little point in
+ * doing so -- such a component would not be able to update itsef on the client side in response to events.
  */
-public abstract class GameListenerWebSocketBehavior extends AbstractGameListenerWebSocketBehavior {
+public class GameListenerWebSocketBehavior extends WebSocketBehavior {
+
+	private Page page;
+	private transient SourceListener sourceListener;
 
 	@Override
-	protected GameEventListener createListener(PushMessageSender pushMessageSender) {
-		return new MyListener(pushMessageSender);
+	public void bind(Component component) {
+		super.bind(component);
+		if (!(component instanceof Page)) {
+			throw new RuntimeException("this behavior can only be used with a page");
+		}
+		if (this.page != null) {
+			throw new IllegalStateException("cannot use this behavior for more than one page");
+		}
+		this.page = (Page) component;
 	}
 
 	@Override
-	protected void onPush(WebSocketRequestHandler handler, IWebSocketPushMessage message) {
-		if (message instanceof GameEventBatchPushMessage) {
-			onGameEventBatch(handler, ((GameEventBatchPushMessage) message).getEvents());
+	protected void onConnect(ConnectedMessage message) {
+		discardListener();
+		sourceListener = new SourceListener(message);
+		MyWicketApplication.get().getDependency(GameEventEmitter.class).addListener(sourceListener);
+	}
+
+	@Override
+	protected void onClose(ClosedMessage message) {
+		discardListener();
+	}
+
+	@Override
+	protected void onAbort(AbortedMessage message) {
+		discardListener();
+	}
+
+	private void discardListener() {
+		if (sourceListener != null) {
+			MyWicketApplication.get().getDependency(GameEventEmitter.class).removeListener(sourceListener);
+			sourceListener = null;
 		}
 	}
 
-	protected abstract void onGameEventBatch(WebSocketRequestHandler handler, ImmutableList<GameEvent> eventBatch);
+	@Override
+	protected void onPush(WebSocketRequestHandler partialPageRequestHandler, IWebSocketPushMessage message) {
+		if (message instanceof GameEventBatchPushMessage) {
+			GameEventBatch batch = ((GameEventBatchPushMessage) message).getBatch();
+			Visits.visit(page, (component, visit) -> {
+				if (component instanceof GuiGameEventListener) {
+					((GuiGameEventListener) component).receiveGameEventBatch(partialPageRequestHandler, batch);
+				}
+			});
+		}
+	}
 
-	private static class MyListener implements GameEventListener {
+	/**
+	 * This listener is actually registered with the game logic.
+	 */
+	private static final class SourceListener implements GameEventListener {
 
-		private final PushMessageSender pushMessageSender;
+		private final Application application;
+		private final String sessionId;
+		private final IKey key;
 
-		public MyListener(PushMessageSender pushMessageSender) {
-			this.pushMessageSender = pushMessageSender;
+		public SourceListener(AbstractClientMessage message) {
+			this.application = message.getApplication();
+			this.sessionId = message.getSessionId();
+			this.key = message.getKey();
 		}
 
 		@Override
-		public void receiveGameEventBatch(ImmutableList<GameEvent> eventBatch) {
-			pushMessageSender.send(new GameEventBatchPushMessage(eventBatch));
+		public void receiveGameEventBatch(GameEventBatch eventBatch) {
+			IWebSocketConnectionRegistry registry = WebSocketSettings.Holder.get(application).getConnectionRegistry();
+			IWebSocketConnection connection = registry.getConnection(application, sessionId, key);
+			if (connection != null) {
+				connection.sendMessage(new GameEventBatchPushMessage(eventBatch));
+			}
+			// TODO else? can only happen if Wicket "forgets" to handle closed connections propertly. Should
+			// clean up the game listener anyway, and probably detect why this happens and file a bug ticket for Wicket
+		}
+
+	}
+
+	/**
+	 * Wraps a batch of game events as an {@link IWebSocketPushMessage}.
+	 */
+	private static final class GameEventBatchPushMessage implements IWebSocketPushMessage {
+
+		private final GameEventBatch batch;
+
+		/**
+		 * Constructor.
+		 *
+		 * @param batch the batch
+		 */
+		public GameEventBatchPushMessage(GameEventBatch batch) {
+			this.batch = batch;
+		}
+
+		/**
+		 * Getter method.
+		 *
+		 * @return the batch
+		 */
+		public GameEventBatch getBatch() {
+			return batch;
 		}
 
 	}

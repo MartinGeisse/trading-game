@@ -1,0 +1,150 @@
+<html>
+<wicket:head>
+    <style type="text/css">
+        #context-menu {
+            position: absolute;
+            display: none;
+        }
+    </style>
+    <script type="text/javascript">
+
+        spaceObjectSelectionIndicator = null;
+        leafletMap = null;
+
+        $(function() {
+
+            // use a simple coordinate system with a linear projection
+            L.CRS.SimpleNonInverted = L.extend({}, L.CRS.Simple, {
+                transformation: new L.Transformation(1, 0, 1, 0),
+            });
+
+            // create a map with the tile layer coming from our server
+            leafletMap = L.map('map', {
+                crs: L.CRS.SimpleNonInverted,
+                // maxZoom: 4
+            }).setView([128, 128], 1);
+            L.tileLayer(mapTileBaseUrl + '?x={x}&y={y}&z={z}', {
+                continuousWorld: true,
+                noWrap: true,
+                // maxZoom: 3,
+                bounds: L.latLngBounds(L.latLng(0, 0), L.latLng(256, 256)),
+            }).addTo(leafletMap);
+
+            // show dynamic space objects in an SVG overlay
+            var dynamicSpaceObjectsOverlay = L.d3SvgOverlay(function(selection, projection) {
+
+                function createSpaceObjectsParent(selection, projection) {
+
+                    // create our own main 'g' element as the sole child of D3SvgOverlay's main 'g' element, if missing
+                    // selection.selectAll('g').data([1]).enter().append('g');
+                    selection.selectAll('g').data([1]).enter().append('g');
+
+                    // select that element
+                    var spaceObjectsParentSelection = selection.select('g');
+
+                    // configure the transformation
+                    var originPoint = projection.latLngToLayerPoint(L.latLng(0, 0));
+                    var latLngUnitPoint = projection.latLngToLayerPoint(L.latLng(1, 1));
+                    var latLngUnit = latLngUnitPoint.x - originPoint.x;
+                    spaceObjectsParentSelection.attr('transform', 'translate(' + originPoint.x + ',' + originPoint.y + ') scale(' + latLngUnit + ')');
+
+                    return spaceObjectsParentSelection;
+                }
+
+                var spaceObjectsParentSelection = createSpaceObjectsParent(selection, projection);
+                var updateSelection = spaceObjectsParentSelection.selectAll('*').data(dynamicSpaceObjectsData);
+                updateSelection.enter().append('circle').attr("style", "stroke-width: 0px")
+                    .merge(updateSelection)
+                    .attr("cx", function(d) {return d.x;})
+                    .attr("cy", function(d) {return d.y;})
+                    .attr("r", function(d) {return d.r;})
+                    .style("fill", function(d) {return d.c;});
+
+            });
+            dynamicSpaceObjectsOverlay.addTo(leafletMap);
+            redrawDynamicSpaceObjects = function() {
+                dynamicSpaceObjectsOverlay.draw();
+            };
+
+            // clicking selects an object. Finding the object is done on the server.
+            leafletMap.on('click', function(e) {
+                sendMapClickCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom());
+            });
+
+            // right-clicking (long-press on mobile) opens a context menu, but again we must first search for the object
+            leafletMap.on('contextmenu', function(e) {
+                sendMapMenuCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom(), e.originalEvent.pageX, e.originalEvent.pageY);
+            });
+
+            changeSpaceObjectSelectionIndicator = function(lat, lng, radius) {
+                if (spaceObjectSelectionIndicator != null) {
+                    spaceObjectSelectionIndicator.remove();
+                }
+                spaceObjectSelectionIndicator = L.circle(L.latLng(lat, lng), {radius: radius});
+                spaceObjectSelectionIndicator.addTo(leafletMap);
+                // console.log(lat + ", " + lng);
+            };
+
+            $(document).on('click', '#selectOwnShipLink', function() {
+                sendSelectOwnShipCommand(leafletMap.getZoom()); // TODO currently needs the zoom level to size the indicator, but that's the wrong approach anyway
+            });
+            $(document).on('click', '#centerSelectedObjectLink', function() {
+                if (spaceObjectSelectionIndicator != null) {
+                    leafletMap.flyTo(spaceObjectSelectionIndicator.getLatLng());
+                }
+            });
+            $(document).on('click contextmenu', '#map, #sidebar', function() {
+                $('#context-menu').css('display', 'none');
+            });
+
+        });
+    </script>
+</wicket:head>
+<body>
+    <wicket:panel>
+        <div id="map" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 400px; cursor: initial; "></div>
+        <ul class="dropdown-menu" id="context-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+        </ul>
+        <div id="sidebar" wicket:id="sidebar" style="position: fixed; width: 400px; top: 0px; bottom: 0px; right: 0px; ">
+            <h2>Properties</h2>
+            <div>Name: <span wicket:id="name"></span></div>
+            <div>Type: <span wicket:id="type"></span></div>
+            <div>Location: <span wicket:id="x"></span>, <span wicket:id="y"></span></div>
+            <div>Distance: <span wicket:id="distance"></span></div>
+            <h2>Actions</h2>
+            <div wicket:id="actions">
+                <a wicket:id="link"><span wicket:id="name"></span></a>
+            </div>
+            <div wicket:id="remoteItemsContainer">
+                <h2>Remote Items</h2>
+                <li wicket:id="itemStacks">
+                    <span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon"> <a wicket:id="loadLink">load</a>
+                </li>
+            </div>
+            <div wicket:id="localItemsContainer">
+                <h2>Local Items</h2>
+                <li wicket:id="itemStacks">
+                    <span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon"> <a wicket:id="unloadLink">unload</a> <a wicket:id="equipLink">equip</a>
+                </li>
+            </div>
+            <div style="position: absolute; left: 0px; right: 0px; bottom: 0px; height: 100px; ">
+                <div><a href="#" id="selectOwnShipLink">select own ship</a></div>
+                <div><a href="#" id="centerSelectedObjectLink">center selected object</a></div>
+            </div>
+            <hr />
+            <div wicket:id="equipmentContainer">
+                <h2>Equipment</h2>
+                <li wicket:id="slots">
+                    <span wicket:id="slotType"></span>: <span wicket:id="itemType"></span> <img wicket:id="icon"> <a wicket:id="unequipLink">unequip</a>
+                </li>
+            </div>
+
+        </div>
+    </wicket:panel>
+</body>
+</html>

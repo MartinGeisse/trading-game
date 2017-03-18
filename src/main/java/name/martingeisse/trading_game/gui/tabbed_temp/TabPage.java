@@ -1,4 +1,6 @@
+package name.martingeisse.trading_game.gui.tabbed_temp;
 
+import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -11,7 +13,7 @@ import java.util.Arrays;
 /**
  *
  */
-public class TabPage extends AbstractApplicationPage {
+public class TabPage extends AbstractPage {
 
 	public TabPage() {
 		SimpleTab tab1 = new SimpleTab("Eins", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam cursus risus ante, eget ultrices erat suscipit ut. Vestibulum libero dui, euismod ut suscipit non, cursus non diam. Vestibulum at vulputate sem. Vestibulum ac turpis commodo, venenatis lorem finibus, facilisis eros. Mauris laoreet bibendum diam ut interdum. Nullam mattis sem sed leo suscipit, vitae facilisis nisi congue. Vivamus ac tellus diam. Phasellus ultrices risus eu ligula congue fringilla. Nunc porttitor purus vitae est feugiat congue. Nunc ornare vitae lorem a dictum. Integer mollis tristique nibh, vitae sollicitudin ligula. Praesent consequat, mauris sit amet elementum finibus, justo turpis sollicitudin nisi, a volutpat ipsum lorem vel arcu. Integer egestas accumsan tortor. Vestibulum ligula lorem, luctus et imperdiet eget, tempus sit amet quam. Morbi ultricies est eu sollicitudin dictum.");
