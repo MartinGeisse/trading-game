@@ -7,11 +7,11 @@
         }
     </style>
     <script type="text/javascript">
+        initializeMapSectionPanel = function() {
 
-        spaceObjectSelectionIndicator = null;
-        leafletMap = null;
-
-        $(function() {
+            // set defaults for global variables
+            spaceObjectSelectionIndicator = null;
+            leafletMap = null;
 
             // use a simple coordinate system with a linear projection
             L.CRS.SimpleNonInverted = L.extend({}, L.CRS.Simple, {
@@ -97,12 +97,12 @@
                 $('#context-menu').css('display', 'none');
             });
 
-        });
+        };
     </script>
 </wicket:head>
 <body>
     <wicket:panel>
-        <div id="map" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 400px; cursor: initial; "></div>
+        <div id="map" style="position: absolute; top: 0px; bottom: 0px; left: 0px; right: 400px; cursor: initial; "></div>
         <ul class="dropdown-menu" id="context-menu">
             <li><a href="#">Action</a></li>
             <li><a href="#">Another action</a></li>
@@ -110,7 +110,7 @@
             <li role="separator" class="divider"></li>
             <li><a href="#">Separated link</a></li>
         </ul>
-        <div id="sidebar" wicket:id="sidebar" style="position: fixed; width: 400px; top: 0px; bottom: 0px; right: 0px; ">
+        <div id="sidebar" wicket:id="sidebar" style="position: absolute; width: 400px; top: 0px; bottom: 0px; right: 0px; ">
             <h2>Properties</h2>
             <div>Name: <span wicket:id="name"></span></div>
             <div>Type: <span wicket:id="type"></span></div>

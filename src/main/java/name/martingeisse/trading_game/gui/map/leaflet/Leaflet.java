@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.gui.leaflet;
+package name.martingeisse.trading_game.gui.map.leaflet;
 
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;

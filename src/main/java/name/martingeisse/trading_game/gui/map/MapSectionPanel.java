@@ -17,9 +17,9 @@ import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.space.*;
 import name.martingeisse.trading_game.gui.MapCoordinates;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
-import name.martingeisse.trading_game.gui.leaflet.D3;
-import name.martingeisse.trading_game.gui.leaflet.Leaflet;
-import name.martingeisse.trading_game.gui.leaflet.LeafletD3SvgOverlay;
+import name.martingeisse.trading_game.gui.map.leaflet.D3;
+import name.martingeisse.trading_game.gui.map.leaflet.Leaflet;
+import name.martingeisse.trading_game.gui.map.leaflet.LeafletD3SvgOverlay;
 import name.martingeisse.trading_game.gui.websockets.GuiGameEventListener;
 import name.martingeisse.trading_game.platform.wicket.AbstractPanel;
 import org.apache.wicket.Component;
@@ -30,6 +30,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
@@ -314,6 +315,12 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 		builder.append("mapTileBaseUrl = '").append(getAbsoluteUrlFor(new SharedResourceReference("MapTile"))).append("';\n");
 		buildDynamicSpaceObjectsData(builder);
 		response.render(JavaScriptHeaderItem.forScript(builder.toString(), null));
+		response.render(new OnDomReadyHeaderItem("initializeMapSectionPanel();") {
+			@Override
+			public Iterable<?> getRenderTokens() {
+				return ImmutableList.of();
+			}
+		});
 
 	}
 
