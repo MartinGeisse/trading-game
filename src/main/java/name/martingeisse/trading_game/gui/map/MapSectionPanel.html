@@ -104,6 +104,10 @@
             } else {
                 leafletMap.setView([128, 128], 1);
             }
+            oldSelectedId = getStateCookie('mapSelection');
+            if (oldSelectedId) {
+                sendSelectByIdCommand(oldSelectedId, oldState ? oldState.zoom : leafletMap.getZoom());
+            }
 
             // save position/zoom changes from here
             leafletMap.on('moveend', function (e) {

@@ -234,9 +234,19 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 					{
 						CallbackParameter[] parameters = {
 								CallbackParameter.resolved("command", "'selectOwnShip'"),
-								CallbackParameter.explicit("zoom"),
+								CallbackParameter.explicit("zoom"), // TODO used to size the indicator, but that's wrong anyway
 						};
 						builder.append("sendSelectOwnShipCommand = ").append(getCallbackFunction(parameters)).append(';');
+					}
+
+					// directly selecting any object by ID
+					{
+						CallbackParameter[] parameters = {
+								CallbackParameter.resolved("command", "'selectById'"),
+								CallbackParameter.explicit("id"),
+								CallbackParameter.explicit("zoom"), // TODO used to size the indicator, but that's wrong anyway
+						};
+						builder.append("sendSelectByIdCommand = ").append(getCallbackFunction(parameters)).append(';');
 					}
 
 					response.render(JavaScriptHeaderItem.forScript(builder, null));
@@ -268,8 +278,10 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 							double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
 							double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
 							target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorRadius + ");");
+							target.appendJavaScript("setStateCookie('mapSelection', " + selectedSpaceObjectId + ")"); // TODO prevent conversion from long to float in JS
 						} else {
 							selectedSpaceObjectId = -1;
+							target.appendJavaScript("setStateCookie('mapSelection', null)");
 						}
 						target.add(sidebar);
 						if (command.equals("menu")) {
@@ -284,15 +296,31 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 					case "selectOwnShip": {
 						int zoom = parameters.getParameterValue("zoom").toInt();
 						SpaceObject spaceObject = getPlayer().getShip();
-						System.out.println("-> " + spaceObject);
 						selectedSpaceObjectId = spaceObject.getId();
 						double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
 						double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
 						double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
 						target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorRadius + ");");
+						target.appendJavaScript("setStateCookie('mapSelection', " + selectedSpaceObjectId + ")"); // TODO prevent conversion from long to float in JS
 						target.add(sidebar);
 						break;
 					}
+
+					case "selectById": {
+						int zoom = parameters.getParameterValue("zoom").toInt();
+						SpaceObject spaceObject = getSpace().get(parameters.getParameterValue("id").toLong());
+						if (spaceObject != null) {
+							selectedSpaceObjectId = spaceObject.getId();
+							double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
+							double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
+							double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
+							target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorRadius + ");");
+							target.appendJavaScript("setStateCookie('mapSelection', " + selectedSpaceObjectId + ")"); // TODO prevent conversion from long to float in JS
+							target.add(sidebar);
+						}
+						break;
+					}
+
 				}
 			}
 
