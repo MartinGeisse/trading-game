@@ -22,7 +22,7 @@
             leafletMap = L.map('map', {
                 crs: L.CRS.SimpleNonInverted,
                 // maxZoom: 4
-            }).setView([128, 128], 1);
+            });
             L.tileLayer(mapTileBaseUrl + '?x={x}&y={y}&z={z}', {
                 continuousWorld: true,
                 noWrap: true,
@@ -96,6 +96,26 @@
             $(document).on('click contextmenu', '#map, #sidebar', function() {
                 $('#context-menu').css('display', 'none');
             });
+
+            // restore previous position and zoom
+            oldState = getStateCookie('mapState');
+            if (oldState) {
+                leafletMap.setView(L.latLng(oldState.lat, oldState.lng), oldState.zoom);
+            } else {
+                leafletMap.setView([128, 128], 1);
+            }
+
+            // save position/zoom changes from here
+            leafletMap.on('moveend', function (e) {
+                if (this._loaded) {
+                    setStateCookie('mapState', {
+                        lat: this.getCenter().lat,
+                        lng: this.getCenter().lng,
+                        zoom: this.getZoom()
+                    });
+                }
+            }, leafletMap);
+
 
         };
     </script>

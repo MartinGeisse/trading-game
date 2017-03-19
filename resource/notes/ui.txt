@@ -115,5 +115,39 @@ Elemente:
 - ...?
 - toolbar / menubar für weiteres (= main menu!)
 
+------------------------------------------------------
+Weitere Notizen:
+
+- Aktuell gibt es das Problem, dass das Map-Tab seinen Zustand (Position, Zoom, Auswahl) verliert, wenn man ein anderes
+	Tab anwählt. Das ist gerade bei der Karte gefühlt schlecht. con: Andererseits ist gerade die Karte teuer
+	im up-to-date halten (con-con: Performance bekommt man auch anders hin, z.B. seltenere batch-Updates, wenn die
+	Karte gerade unsichtbar ist; nimmt gerade bei sich bewegenden Objekten, die nur Nx die Position updaten, viel Last
+	raus). Außerdem ist unklar, ob alle Tabs ihren Zustand behalten sollen. Falls das aber so ist, wären reine
+	JS-Tabs dafür sinnvoll, wobei die auch immer noch keinen Reload überleben (con-con: Ein Reload passiert nur
+	explizit durch den Benutzer. Keine Komponente macht das, weil es die Websockets stört. Soll ich den Reload
+	überhaupt unterstützen?)
+	-->
+	Das meiste wird ja serverseitig gespeichert, z.B. das aktuell ausgewählte Element. Position/Zoom ist von der
+	Sache her ein "persistent client-side state" und sollte auch so behandelt werden, damit keine ständigen Requests
+	gesendet werden, was Serverlast erzeugt, die Verbindung blockiert und ggf. Datenvolumen aufbraucht. Solchen state
+	speichert man am besten in Cookies und/oder local storage.
+
+- NNG (Nielsen Norman Group) empfiehlt: Bei Tab-Panels keine Tabs, die "aus der Reihe Fallen". Sie sagen auch, keine
+	Tabs zur Navigation, sondern für verschiedene Ansichten desselben, was ich noch nicht ganz verstehe, aber vermutlich
+	geht es in die gleiche Richtung.
+
+- NNG: Bei nur 2 Tabs muss deutlich werden, welches selected ist. Bei 3+ ist das unabhängig von der Darstellungsart
+	eindeutig. Beispiel: aktuelles Tab auf dem Bildschirm mit dem Tab-Content "verbinden", so dass tab+content wie
+	ein Objekt aussehen.
+
+- "Drop down menus are annoying, according to usability studies from the NN Group. This is because as visitors, we move
+	our eyes much faster than we move the mouse. When we move the mouse to a menu item, we’ve already decided to
+	click…and then the drop down gives us more options. It’s a moment of friction in our minds as visitors."
+	(betrifft vermutlich erst mal nur dropdowns in Navbars, nicht als Formularelement)
+
+- "Mistake #4: Too many items in your navigation" ... "But even eight may be too many. This is because short term
+	memory holds only seven items. That means that, eight is a LOT more than seven."
+
+- "Items that appear first or last on any list are most effective. Navigation is no exception. "
 
 
