@@ -11,8 +11,8 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
-import name.martingeisse.trading_game.gui.MapTileResource;
-import name.martingeisse.trading_game.gui.tabbed_temp.TabPage;
+import name.martingeisse.trading_game.gui.map.MapTileResource;
+import name.martingeisse.trading_game.gui.main.MainPage;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
@@ -170,7 +170,7 @@ public class MyWicketApplication extends WebApplication {
 	 */
 	@Override
 	public Class<? extends Page> getHomePage() {
-		return TabPage.class;
+		return MainPage.class;
 	}
 
 	/* (non-Javadoc)

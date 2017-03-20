@@ -102,6 +102,7 @@ Elemente:
 	- player skills
 	- player inventory
 	- player action queue
+	- rename
 - player list
 	- other player
 		- ship as other object

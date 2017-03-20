@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.gui.tabbed_temp;
+package name.martingeisse.trading_game.gui.main;
 
 import org.apache.wicket.extensions.ajax.markup.html.tabs.AjaxTabbedPanel;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;

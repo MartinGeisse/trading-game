@@ -15,7 +15,6 @@ import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
 import name.martingeisse.trading_game.game.item.ObjectWithInventory;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.space.*;
-import name.martingeisse.trading_game.gui.MapCoordinates;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.map.leaflet.D3;
 import name.martingeisse.trading_game.gui.map.leaflet.Leaflet;

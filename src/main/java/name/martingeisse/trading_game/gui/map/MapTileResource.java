@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.gui;
+package name.martingeisse.trading_game.gui.map;
 
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.generate.SpectrumNoise;

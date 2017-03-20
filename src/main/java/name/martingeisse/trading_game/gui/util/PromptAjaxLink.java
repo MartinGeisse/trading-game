@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.gui;
+package name.martingeisse.trading_game.gui.util;
 
 import name.martingeisse.trading_game.platform.util.JavascriptAssemblerUtil;
 import org.apache.wicket.ajax.AjaxRequestTarget;

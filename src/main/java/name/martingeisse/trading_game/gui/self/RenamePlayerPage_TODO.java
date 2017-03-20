@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.trading_game.gui;
+package name.martingeisse.trading_game.gui.self;
 
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
@@ -14,15 +14,15 @@ import org.apache.wicket.model.Model;
 /**
  * This is the main page for controlling the game.
  */
-public class RenamePlayerPage extends AbstractPage {
+public class RenamePlayerPage_TODO extends AbstractPage {
 
 	private String newName;
 
 	/**
 	 * Constructor
 	 */
-	public RenamePlayerPage() {
-		SimpleFormPanel formPanel = new SimpleFormPanel<RenamePlayerPage>("formPanel", Model.of(this)) {
+	public RenamePlayerPage_TODO() {
+		SimpleFormPanel formPanel = new SimpleFormPanel<RenamePlayerPage_TODO>("formPanel", Model.of(this)) {
 			@Override
 			protected void onSubmit() {
 				try {
