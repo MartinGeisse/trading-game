@@ -91,15 +91,23 @@ public final class PlayerRepository {
 	 */
 	public boolean isRenamePossible(long id, String newName) {
 		QPlayerRow qp = QPlayerRow.Player;
-		return getPlayer(qp.id.ne(id).and(qp.name.eq(newName))) == null;
+		return getPlayer(qp.id.ne(id).and(qp.name.eq(newName)), false) == null;
 	}
 
 	private Player getPlayer(BooleanExpression predicate) {
+		return getPlayer(predicate, true);
+	}
+
+	private Player getPlayer(BooleanExpression predicate, boolean isRequired) {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QPlayerRow qp = QPlayerRow.Player;
 			PlayerRow playerRow = connection.query().select(qp).from(qp).where(predicate).fetchFirst();
 			if (playerRow == null) {
-				throw new IllegalArgumentException("player not found: " + predicate);
+				if (isRequired) {
+					throw new IllegalArgumentException("player not found: " + predicate);
+				} else {
+					return null;
+				}
 			}
 			return new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
 		}

@@ -16,6 +16,8 @@ import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 import name.martingeisse.trading_game.postgres_entities.QCachedPlayerAttributeRow;
+import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
+import name.martingeisse.trading_game.postgres_entities.QSpaceObjectBaseDataRow;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -82,6 +84,10 @@ public final class Player {
 			throw new NameAlreadyUsedException();
 		}
 		String oldName = this.name;
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QPlayerRow qp = QPlayerRow.Player;
+			connection.update(qp).set(qp.name, name).where(qp.id.eq(id)).execute();
+		}
 		this.name = name;
 		if (getShip().getName().equals(generateName(oldName))) {
 			setShipName();
