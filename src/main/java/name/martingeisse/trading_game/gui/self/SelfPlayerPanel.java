@@ -10,7 +10,7 @@ import org.apache.wicket.model.PropertyModel;
 /**
  * Shows the player's own stats.
  */
-public class SelfPlayerPanel extends AbstractPanel implements GuiGameEventListener {
+public class SelfPlayerPanel extends AbstractPanel {
 
 	public SelfPlayerPanel(String id) {
 		super(id);

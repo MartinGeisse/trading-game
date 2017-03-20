@@ -11,15 +11,5 @@ import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
  * passed as a parameter.
  */
 public interface GuiGameEventListener {
-
-	default public void receiveGameEvent(IPartialPageRequestHandler partialPageRequestHandler, GameEvent event) {
-		receiveGameEventBatch(partialPageRequestHandler, new GameEventBatch(ImmutableList.of(event)));
-	}
-
-	default public void receiveGameEventBatch(IPartialPageRequestHandler partialPageRequestHandler, GameEventBatch eventBatch) {
-		for (GameEvent event : eventBatch.getEvents()) {
-			receiveGameEvent(partialPageRequestHandler, event);
-		}
-	}
-
+	public void receiveGameEventBatch(IPartialPageRequestHandler partialPageRequestHandler, GameEventBatch eventBatch);
 }
