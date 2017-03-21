@@ -7,15 +7,12 @@
 package name.martingeisse.trading_game.gui.self;
 
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
-import name.martingeisse.trading_game.gui.main.MainMenuTabbedPanel;
+import name.martingeisse.trading_game.gui.gamepage.MainMenuTabbedPanel;
 import name.martingeisse.trading_game.gui.util.AjaxRequestUtil;
 import name.martingeisse.trading_game.platform.wicket.AbstractPanel;
-import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import name.martingeisse.wicket.simpleform.SimpleFormPanel;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
-import org.apache.wicket.extensions.markup.html.tabs.TabbedPanel;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 
 /**

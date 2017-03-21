@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.gui.main;
+package name.martingeisse.trading_game.gui.gamepage;
 
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import org.apache.wicket.Component;
@@ -7,7 +7,6 @@ import org.apache.wicket.extensions.ajax.markup.html.tabs.AjaxTabbedPanel;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.extensions.markup.html.tabs.TabbedPanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import java.util.List;

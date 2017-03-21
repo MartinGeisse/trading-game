@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.gui.self;
 
-import name.martingeisse.trading_game.gui.main.TabPanelReplacementLink;
-import name.martingeisse.trading_game.gui.websockets.GuiGameEventListener;
+import name.martingeisse.trading_game.gui.gamepage.TabPanelReplacementLink;
 import name.martingeisse.trading_game.platform.wicket.AbstractPanel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;

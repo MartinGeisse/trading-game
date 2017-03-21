@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.gui.main;
+package name.martingeisse.trading_game.gui.gamepage;
 
 import name.martingeisse.trading_game.gui.map.MapSectionPanel;
 import name.martingeisse.trading_game.gui.players.PlayerListPanel;
@@ -18,9 +18,9 @@ import java.util.Arrays;
 /**
  *
  */
-public class MainPage extends AbstractPage {
+public class GamePage extends AbstractPage {
 
-	public MainPage(PageParameters pageParameters) {
+	public GamePage(PageParameters pageParameters) {
 		super(pageParameters);
 		add(new GameListenerWebSocketBehavior());
 
@@ -61,7 +61,7 @@ public class MainPage extends AbstractPage {
 
 		@Override
 		public WebMarkupContainer getPanel(String panelId) {
-			Fragment fragment = new Fragment(panelId, "textFragment", MainPage.this);
+			Fragment fragment = new Fragment(panelId, "textFragment", GamePage.this);
 			fragment.add(new Label("text", Model.of(content)));
 			return fragment;
 		}
