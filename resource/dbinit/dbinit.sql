@@ -72,7 +72,8 @@ CREATE TYPE "game"."PlayerAttributeKey" AS ENUM ('SHIP_MOVEMENT_SPEED', 'MAXIMUM
 
 CREATE TABLE "game"."Player" (
 	"id" bigserial NOT NULL PRIMARY KEY,
-	"name" character varying(2000) NOT NULL,
+	"name" character varying(500) NOT NULL,
+	"loginToken" character varying(500),
 	"shipId" bigint NOT NULL REFERENCES "game"."SpaceObjectBaseData",
 	"actionQueueId" bigint NOT NULL REFERENCES "game"."ActionQueue"
 );

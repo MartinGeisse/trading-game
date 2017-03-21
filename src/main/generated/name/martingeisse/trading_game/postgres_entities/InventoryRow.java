@@ -13,66 +13,66 @@ import java.io.Serializable;
  */
 public class InventoryRow implements Serializable {
 
-    /**
-     * Constructor.
-     */
-    public InventoryRow() {
-    }
+	/**
+	 * Constructor.
+	 */
+	public InventoryRow() {
+	}
 
-    /**
-     * the id
-     */
-    private Long id;
+	/**
+	 * the id
+	 */
+	private Long id;
 
-    /**
-     * Getter method for the id.
-     * 
-     * @return the id
-     */
-    public Long getId() {
-        return id;
-    }
+	/**
+	 * Getter method for the id.
+	 *
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
 
-    /**
-     * Setter method for the id.
-     * 
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
+	/**
+	 * Setter method for the id.
+	 *
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    /**
-     * Loads the instance with the specified ID.
-     * 
-     * @param connection the database connection
-     * @param id the ID of the instance to load
-     * @return the loaded instance
-     */
-    public static InventoryRow loadById(PostgresConnection connection, Long id) {
-        QInventoryRow q = QInventoryRow.Inventory;
-        return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
-    }
+	/**
+	 * Loads the instance with the specified ID.
+	 *
+	 * @param connection the database connection
+	 * @param id         the ID of the instance to load
+	 * @return the loaded instance
+	 */
+	public static InventoryRow loadById(PostgresConnection connection, Long id) {
+		QInventoryRow q = QInventoryRow.Inventory;
+		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	}
 
-    /**
-     * Inserts this instance into the database. This object must not have an ID yet.
-     */
-    public void insert(PostgresConnection connection) {
-        if (id != null) {
-        	throw new IllegalStateException("this object already has an id: " + id);
-        }
-        QInventoryRow q = QInventoryRow.Inventory;
-        SQLInsertClause insert = connection.insert(q);
-        id = insert.executeWithKey(Long.class);
-    }
+	/**
+	 * Inserts this instance into the database. This object must not have an ID yet.
+	 */
+	public void insert(PostgresConnection connection) {
+		if (id != null) {
+			throw new IllegalStateException("this object already has an id: " + id);
+		}
+		QInventoryRow q = QInventoryRow.Inventory;
+		SQLInsertClause insert = connection.insert(q);
+		id = insert.executeWithKey(Long.class);
+	}
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "{InventoryRow. id = " + id + "}";
-    }
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "{InventoryRow. id = " + id + "}";
+	}
 
 }
 

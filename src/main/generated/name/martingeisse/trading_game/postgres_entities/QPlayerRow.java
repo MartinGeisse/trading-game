@@ -12,8 +12,6 @@ import java.sql.Types;
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
-
-
 /**
  * QPlayerRow is a Querydsl query type for PlayerRow
  */
@@ -21,56 +19,59 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 
-    private static final long serialVersionUID = -1042415446;
+	private static final long serialVersionUID = -1042415446;
 
-    public static final QPlayerRow Player = new QPlayerRow("Player");
+	public static final QPlayerRow Player = new QPlayerRow("Player");
 
-    public final NumberPath<Long> actionQueueId = createNumber("actionQueueId", Long.class);
+	public final NumberPath<Long> actionQueueId = createNumber("actionQueueId", Long.class);
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+	public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final StringPath name = createString("name");
+	public final StringPath loginToken = createString("loginToken");
 
-    public final NumberPath<Long> shipId = createNumber("shipId", Long.class);
+	public final StringPath name = createString("name");
 
-    public final com.querydsl.sql.PrimaryKey<PlayerRow> playerPkey = createPrimaryKey(id);
+	public final NumberPath<Long> shipId = createNumber("shipId", Long.class);
 
-    public final com.querydsl.sql.ForeignKey<ActionQueueRow> playerActionQueueIdFkey = createForeignKey(actionQueueId, "id");
+	public final com.querydsl.sql.PrimaryKey<PlayerRow> playerPkey = createPrimaryKey(id);
 
-    public final com.querydsl.sql.ForeignKey<SpaceObjectBaseDataRow> playerShipIdFkey = createForeignKey(shipId, "id");
+	public final com.querydsl.sql.ForeignKey<ActionQueueRow> playerActionQueueIdFkey = createForeignKey(actionQueueId, "id");
 
-    public final com.querydsl.sql.ForeignKey<PlayerSkillRow> _playerSkillPlayerIdFkey = createInvForeignKey(id, "playerId");
+	public final com.querydsl.sql.ForeignKey<SpaceObjectBaseDataRow> playerShipIdFkey = createForeignKey(shipId, "id");
 
-    public final com.querydsl.sql.ForeignKey<PlayerSkillLearningQueueSlotRow> _playerSkillLearningQueueSlotPlayerIdFkey = createInvForeignKey(id, "playerId");
+	public final com.querydsl.sql.ForeignKey<PlayerSkillRow> _playerSkillPlayerIdFkey = createInvForeignKey(id, "playerId");
 
-    public final com.querydsl.sql.ForeignKey<CachedPlayerAttributeRow> _cachedPlayerAttributePlayerIdFkey = createInvForeignKey(id, "playerId");
+	public final com.querydsl.sql.ForeignKey<PlayerSkillLearningQueueSlotRow> _playerSkillLearningQueueSlotPlayerIdFkey = createInvForeignKey(id, "playerId");
 
-    public QPlayerRow(String variable) {
-        super(PlayerRow.class, forVariable(variable), "game", "Player");
-        addMetadata();
-    }
+	public final com.querydsl.sql.ForeignKey<CachedPlayerAttributeRow> _cachedPlayerAttributePlayerIdFkey = createInvForeignKey(id, "playerId");
 
-    public QPlayerRow(String variable, String schema, String table) {
-        super(PlayerRow.class, forVariable(variable), schema, table);
-        addMetadata();
-    }
+	public QPlayerRow(String variable) {
+		super(PlayerRow.class, forVariable(variable), "game", "Player");
+		addMetadata();
+	}
 
-    public QPlayerRow(Path<? extends PlayerRow> path) {
-        super(path.getType(), path.getMetadata(), "game", "Player");
-        addMetadata();
-    }
+	public QPlayerRow(String variable, String schema, String table) {
+		super(PlayerRow.class, forVariable(variable), schema, table);
+		addMetadata();
+	}
 
-    public QPlayerRow(PathMetadata metadata) {
-        super(PlayerRow.class, metadata, "game", "Player");
-        addMetadata();
-    }
+	public QPlayerRow(Path<? extends PlayerRow> path) {
+		super(path.getType(), path.getMetadata(), "game", "Player");
+		addMetadata();
+	}
 
-    public void addMetadata() {
-        addMetadata(actionQueueId, ColumnMetadata.named("actionQueueId").withIndex(4).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(name, ColumnMetadata.named("name").withIndex(2).ofType(Types.VARCHAR).withSize(2000).notNull());
-        addMetadata(shipId, ColumnMetadata.named("shipId").withIndex(3).ofType(Types.BIGINT).withSize(19).notNull());
-    }
+	public QPlayerRow(PathMetadata metadata) {
+		super(PlayerRow.class, metadata, "game", "Player");
+		addMetadata();
+	}
+
+	public void addMetadata() {
+		addMetadata(actionQueueId, ColumnMetadata.named("actionQueueId").withIndex(5).ofType(Types.BIGINT).withSize(19).notNull());
+		addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
+		addMetadata(loginToken, ColumnMetadata.named("loginToken").withIndex(3).ofType(Types.VARCHAR).withSize(500));
+		addMetadata(name, ColumnMetadata.named("name").withIndex(2).ofType(Types.VARCHAR).withSize(500).notNull());
+		addMetadata(shipId, ColumnMetadata.named("shipId").withIndex(4).ofType(Types.BIGINT).withSize(19).notNull());
+	}
 
 }
 

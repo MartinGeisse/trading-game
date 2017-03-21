@@ -12,8 +12,6 @@ import java.sql.Types;
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
-
-
 /**
  * QInventorySlotRow is a Querydsl query type for InventorySlotRow
  */
@@ -21,48 +19,48 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QInventorySlotRow extends com.querydsl.sql.RelationalPathBase<InventorySlotRow> {
 
-    private static final long serialVersionUID = -20640913;
+	private static final long serialVersionUID = -20640913;
 
-    public static final QInventorySlotRow InventorySlot = new QInventorySlotRow("InventorySlot");
+	public static final QInventorySlotRow InventorySlot = new QInventorySlotRow("InventorySlot");
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+	public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Long> inventoryId = createNumber("inventoryId", Long.class);
+	public final NumberPath<Long> inventoryId = createNumber("inventoryId", Long.class);
 
-    public final StringPath itemType = createString("itemType");
+	public final StringPath itemType = createString("itemType");
 
-    public final NumberPath<Integer> quantity = createNumber("quantity", Integer.class);
+	public final NumberPath<Integer> quantity = createNumber("quantity", Integer.class);
 
-    public final com.querydsl.sql.PrimaryKey<InventorySlotRow> inventorySlotPkey = createPrimaryKey(id);
+	public final com.querydsl.sql.PrimaryKey<InventorySlotRow> inventorySlotPkey = createPrimaryKey(id);
 
-    public final com.querydsl.sql.ForeignKey<InventoryRow> inventorySlotInventoryIdFkey = createForeignKey(inventoryId, "id");
+	public final com.querydsl.sql.ForeignKey<InventoryRow> inventorySlotInventoryIdFkey = createForeignKey(inventoryId, "id");
 
-    public QInventorySlotRow(String variable) {
-        super(InventorySlotRow.class, forVariable(variable), "game", "InventorySlot");
-        addMetadata();
-    }
+	public QInventorySlotRow(String variable) {
+		super(InventorySlotRow.class, forVariable(variable), "game", "InventorySlot");
+		addMetadata();
+	}
 
-    public QInventorySlotRow(String variable, String schema, String table) {
-        super(InventorySlotRow.class, forVariable(variable), schema, table);
-        addMetadata();
-    }
+	public QInventorySlotRow(String variable, String schema, String table) {
+		super(InventorySlotRow.class, forVariable(variable), schema, table);
+		addMetadata();
+	}
 
-    public QInventorySlotRow(Path<? extends InventorySlotRow> path) {
-        super(path.getType(), path.getMetadata(), "game", "InventorySlot");
-        addMetadata();
-    }
+	public QInventorySlotRow(Path<? extends InventorySlotRow> path) {
+		super(path.getType(), path.getMetadata(), "game", "InventorySlot");
+		addMetadata();
+	}
 
-    public QInventorySlotRow(PathMetadata metadata) {
-        super(InventorySlotRow.class, metadata, "game", "InventorySlot");
-        addMetadata();
-    }
+	public QInventorySlotRow(PathMetadata metadata) {
+		super(InventorySlotRow.class, metadata, "game", "InventorySlot");
+		addMetadata();
+	}
 
-    public void addMetadata() {
-        addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(inventoryId, ColumnMetadata.named("inventoryId").withIndex(2).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(itemType, ColumnMetadata.named("itemType").withIndex(3).ofType(Types.VARCHAR).withSize(2000).notNull());
-        addMetadata(quantity, ColumnMetadata.named("quantity").withIndex(4).ofType(Types.INTEGER).withSize(10).notNull());
-    }
+	public void addMetadata() {
+		addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
+		addMetadata(inventoryId, ColumnMetadata.named("inventoryId").withIndex(2).ofType(Types.BIGINT).withSize(19).notNull());
+		addMetadata(itemType, ColumnMetadata.named("itemType").withIndex(3).ofType(Types.VARCHAR).withSize(2000).notNull());
+		addMetadata(quantity, ColumnMetadata.named("quantity").withIndex(4).ofType(Types.INTEGER).withSize(10).notNull());
+	}
 
 }
 
