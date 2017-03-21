@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.player;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.mysema.commons.lang.CloseableIterator;
@@ -12,6 +13,9 @@ import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -50,6 +54,25 @@ public final class PlayerRepository {
 			player.updateAttributes();
 			return playerRow.getId();
 		}
+	}
+
+	/**
+	 * Gets a list of all players.
+	 *
+	 * @return the players
+	 */
+	public ImmutableList<Player> getAllPlayers() {
+		List<Player> players = new ArrayList<>();
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QPlayerRow qp = QPlayerRow.Player;
+			try (CloseableIterator<PlayerRow> iterator = connection.query().select(qp).from(qp).iterate()) {
+				while (iterator.hasNext()) {
+					PlayerRow playerRow = iterator.next();
+					players.add(new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow));
+				}
+			}
+		}
+		return ImmutableList.copyOf(players);
 	}
 
 	/**
