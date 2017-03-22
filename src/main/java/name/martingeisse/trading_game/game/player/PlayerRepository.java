@@ -13,6 +13,7 @@ import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public final class PlayerRepository {
 			playerRow.setShipId(space.createPlayerShip("noname's ship", 0, 0));
 			playerRow.setActionQueueId(actionQueueRepository.createActionQueue());
 			playerRow.setName("noname");
+			playerRow.setLoginToken(RandomStringUtils.randomAlphanumeric(20));
 			playerRow.insert(connection);
 			Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
 			player.updateAttributes();
