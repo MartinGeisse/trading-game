@@ -68,6 +68,7 @@ public final class Player {
 	 * @return the name
 	 */
 	public String getName() {
+		// TODO possibly outdated value (if changed in the database by other means)
 		return name;
 	}
 
@@ -100,6 +101,13 @@ public final class Player {
 
 	private static String generateName(String playerName) {
 		return playerName + "'s ship";
+	}
+
+	public String getLoginToken() {
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QPlayerRow qp = QPlayerRow.Player;
+			return connection.query().select(qp.loginToken).from(qp).where(qp.id.eq(id)).fetchFirst();
+		}
 	}
 
 	/**
