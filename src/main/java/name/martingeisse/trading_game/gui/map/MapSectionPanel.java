@@ -307,7 +307,12 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 
 					case "selectById": {
 						int zoom = parameters.getParameterValue("zoom").toInt();
-						SpaceObject spaceObject = getSpace().get(parameters.getParameterValue("id").toLong());
+						SpaceObject spaceObject;
+						try {
+							spaceObject = getSpace().get(parameters.getParameterValue("id").toLong());
+						} catch (IllegalArgumentException e) {
+							spaceObject = null;
+						}
 						if (spaceObject != null) {
 							selectedSpaceObjectId = spaceObject.getId();
 							double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());

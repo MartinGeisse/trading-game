@@ -22,6 +22,9 @@ public class GamePage extends AbstractPage {
 
 	public GamePage(PageParameters pageParameters) {
 		super(pageParameters);
+		if (getPlayer() == null) {
+			throw new IllegalStateException("no player");
+		}
 		add(new GameListenerWebSocketBehavior());
 
 		ITab mapTab = new AbstractTab(Model.of("Map")) {
