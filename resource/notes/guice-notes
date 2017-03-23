@@ -1,0 +1,6 @@
+@Provides in Module-Methoden, im innere Provider-Klassen zu sparen
+@Provides, um eine Dependency auf eine "enthaltene" Dependency zu mappen -> in der Anwendungslogik nur die Klassen injecten
+	lassen, die man wirklich braucht, und nicht deren "umschließenden" Container, da dieser sonst eine unnötige Dependency
+	wird und die Tests verkompliziert. Notfalls mit Scopes und Annotations eingrenzen, *welche* enthaltene Dependency man will.
+Dependency A->B->A statt durch Provider lieber durch eine gemeinsame Dependency C mit A->C, B->C, aber nicht A<->B oder C->irgendwas
+Konstruktor muss nicht Public sein, wenn die Module-Klasse im selben Package steht
