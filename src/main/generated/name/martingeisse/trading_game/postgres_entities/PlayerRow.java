@@ -25,6 +25,11 @@ public class PlayerRow implements Serializable {
 	private Long actionQueueId;
 
 	/**
+	 * the emailAddress
+	 */
+	private String emailAddress;
+
+	/**
 	 * the id
 	 */
 	private Long id;
@@ -60,6 +65,24 @@ public class PlayerRow implements Serializable {
 	 */
 	public void setActionQueueId(Long actionQueueId) {
 		this.actionQueueId = actionQueueId;
+	}
+
+	/**
+	 * Getter method for the emailAddress.
+	 *
+	 * @return the emailAddress
+	 */
+	public String getEmailAddress() {
+		return emailAddress;
+	}
+
+	/**
+	 * Setter method for the emailAddress.
+	 *
+	 * @param emailAddress the emailAddress to set
+	 */
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
 	}
 
 	/**
@@ -156,6 +179,7 @@ public class PlayerRow implements Serializable {
 		QPlayerRow q = QPlayerRow.Player;
 		SQLInsertClause insert = connection.insert(q);
 		insert.set(q.actionQueueId, actionQueueId);
+		insert.set(q.emailAddress, emailAddress);
 		insert.set(q.loginToken, loginToken);
 		insert.set(q.name, name);
 		insert.set(q.shipId, shipId);
@@ -167,7 +191,7 @@ public class PlayerRow implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "{PlayerRow. actionQueueId = " + actionQueueId + ", id = " + id + ", loginToken = " + loginToken + ", name = " + name + ", shipId = " + shipId + "}";
+		return "{PlayerRow. actionQueueId = " + actionQueueId + ", emailAddress = " + emailAddress + ", id = " + id + ", loginToken = " + loginToken + ", name = " + name + ", shipId = " + shipId + "}";
 	}
 
 }

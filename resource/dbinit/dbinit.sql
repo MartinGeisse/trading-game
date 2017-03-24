@@ -74,6 +74,7 @@ CREATE TABLE "game"."Player" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"name" character varying(500) NOT NULL,
 	"loginToken" character varying(500),
+	"emailAddress" character varying(500),
 	"shipId" bigint NOT NULL REFERENCES "game"."SpaceObjectBaseData",
 	"actionQueueId" bigint NOT NULL REFERENCES "game"."ActionQueue"
 );
@@ -81,6 +82,7 @@ CREATE INDEX "Player_nameIndex" ON "game"."Player" ("name");
 CREATE INDEX "Player_shipIdIndex" ON "game"."Player" ("shipId");
 CREATE INDEX "Player_actionQueueId" ON "game"."Player" ("actionQueueId");
 CREATE UNIQUE INDEX "Player_loginToken" ON "game"."Player" ("loginToken");
+CREATE INDEX "Player_emailAddress" ON "game"."Player" ("emailAddress");
 
 CREATE TABLE "game"."PlayerSkill" (
 	"id" bigserial NOT NULL PRIMARY KEY,
