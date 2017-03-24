@@ -43,8 +43,7 @@ public class HomePage extends AbstractPage {
 
 			@Override
 			public void onClick() {
-				// TODO
-				throw new UnsupportedOperationException("not yet implemented");
+				setResponsePage(EnterLoginTokenPage.class);
 			}
 
 		});
