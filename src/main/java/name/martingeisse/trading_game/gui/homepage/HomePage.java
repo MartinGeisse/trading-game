@@ -19,9 +19,14 @@ public class HomePage extends AbstractPage {
 
 			@Override
 			public void onClick() {
-				MyWicketSession.get().createPlayer();
-				LoginCookieUtil.sendCookie(MyWicketSession.get().getPlayer().getLoginToken());
-				redirectToGame();
+				Player existingPlayer = MyWicketSession.get().getPlayer();
+				if (existingPlayer == null) {
+					MyWicketSession.get().createPlayer();
+					LoginCookieUtil.sendCookie(MyWicketSession.get().getPlayer().getLoginToken());
+					setResponsePage(GamePage.class);
+				} else {
+					setResponsePage(new CreatePlayerOverwriteWarningPage(existingPlayer.getId()));
+				}
 			}
 
 		});
@@ -35,7 +40,9 @@ public class HomePage extends AbstractPage {
 
 			@Override
 			public void onClick() {
-				redirectToGame();
+				if (getCurrentPlayer() != null) {
+					setResponsePage(GamePage.class);
+				}
 			}
 
 		}.add(new Label("name", new PropertyModel<>(this, "currentPlayer.name"))));
@@ -47,13 +54,6 @@ public class HomePage extends AbstractPage {
 			}
 
 		});
-	}
-
-	private void redirectToGame() {
-		if (getCurrentPlayer() == null) {
-			throw new IllegalStateException("no current player");
-		}
-		setResponsePage(GamePage.class);
 	}
 
 	public Player getCurrentPlayer() {

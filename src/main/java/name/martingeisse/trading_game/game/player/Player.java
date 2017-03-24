@@ -110,6 +110,19 @@ public final class Player {
 		}
 	}
 
+	public String getEmailAddress() {
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QPlayerRow qp = QPlayerRow.Player;
+			return connection.query().select(qp.emailAddress).from(qp).where(qp.id.eq(id)).fetchFirst();
+		}
+	}
+
+	public void setEmailAddress(String emailAddress) {
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QPlayerRow qp = QPlayerRow.Player;
+			connection.update(qp).set(qp.emailAddress, emailAddress).where(qp.id.eq(id)).execute();
+		}
+	}
 	/**
 	 * Getter method.
 	 *

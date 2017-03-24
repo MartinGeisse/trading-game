@@ -22,17 +22,22 @@ public class EnterLoginTokenPage extends AbstractPage {
 		SimpleFormPanel<EnterLoginTokenPage> formPanel = new SimpleFormPanel<EnterLoginTokenPage>("formPanel", Model.of(this)) {
 			@Override
 			protected void onSubmit() {
-				Player player;
+				Player selectedPlayer;
 				try {
-					player = MyWicketApplication.get().getDependency(PlayerRepository.class).getPlayerByLoginToken(loginToken);
+					selectedPlayer = MyWicketApplication.get().getDependency(PlayerRepository.class).getPlayerByLoginToken(loginToken);
 				} catch (IllegalArgumentException e) {
 					FormComponent<?> formComponent = (FormComponent<?>)get("form:formBlocks:1:decoratedBody:textField");
 					formComponent.error("invalid login token");
 					return;
 				}
-				MyWicketSession.get().setPlayerId(player.getId());
-				LoginCookieUtil.sendCookie(loginToken);
-				setResponsePage(GamePage.class);
+				Player existingPlayer = MyWicketSession.get().getPlayer();
+				if (existingPlayer == null) {
+					MyWicketSession.get().setPlayerId(selectedPlayer.getId());
+					LoginCookieUtil.sendCookie(loginToken);
+					setResponsePage(GamePage.class);
+				} else {
+					setResponsePage(new LoginOverwriteWarningPage(existingPlayer.getId(), selectedPlayer.getId()));
+				}
 			}
 		};
 		formPanel.prepareDecorator().withLabel("Login Token").withModel("loginToken").withRequiredness(true).addTextField();
