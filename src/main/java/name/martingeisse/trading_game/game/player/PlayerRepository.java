@@ -50,7 +50,7 @@ public final class PlayerRepository {
 			playerRow.setShipId(space.createPlayerShip("noname's ship", 0, 0));
 			playerRow.setActionQueueId(actionQueueRepository.createActionQueue());
 			playerRow.setName("noname");
-			playerRow.setLoginToken(RandomStringUtils.randomAlphanumeric(20));
+			playerRow.setLoginToken(RandomStringUtils.randomAlphanumeric(50));
 			playerRow.insert(connection);
 			Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
 			player.updateAttributes();
@@ -105,6 +105,16 @@ public final class PlayerRepository {
 	 */
 	public Player getPlayerByShipId(long shipId) {
 		return getPlayer(QPlayerRow.Player.shipId.eq(shipId));
+	}
+
+	/**
+	 * Gets player by login token.
+	 *
+	 * @param loginToken the login token
+	 * @return the player
+	 */
+	public Player getPlayerByLoginToken(String loginToken) {
+		return getPlayer(QPlayerRow.Player.loginToken.eq(loginToken));
 	}
 
 	/**

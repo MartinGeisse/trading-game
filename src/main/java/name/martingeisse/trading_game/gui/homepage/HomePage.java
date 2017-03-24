@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.gui.homepage;
 
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.gui.gamepage.GamePage;
+import name.martingeisse.trading_game.platform.wicket.LoginCookieUtil;
 import name.martingeisse.trading_game.platform.wicket.MyWicketSession;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -19,6 +20,7 @@ public class HomePage extends AbstractPage {
 			@Override
 			public void onClick() {
 				MyWicketSession.get().createPlayer();
+				LoginCookieUtil.sendCookie(MyWicketSession.get().getPlayer().getLoginToken());
 				redirectToGame();
 			}
 
@@ -57,6 +59,12 @@ public class HomePage extends AbstractPage {
 
 	public Player getCurrentPlayer() {
 		return MyWicketSession.get().getPlayer();
+	}
+
+	@Override
+	protected void onConfigure() {
+		MyWicketSession.get().setPlayerId(LoginCookieUtil.getPlayerIdFromCookie());
+		super.onConfigure();
 	}
 
 }
