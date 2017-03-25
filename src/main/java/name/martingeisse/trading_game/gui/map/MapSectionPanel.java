@@ -144,7 +144,6 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 					{
 						CallbackParameter[] parameters = {
 								CallbackParameter.resolved("command", "'selectOwnShip'"),
-								CallbackParameter.explicit("zoom"), // TODO used to size the indicator, but that's wrong anyway
 						};
 						builder.append("sendSelectOwnShipCommand = ").append(getCallbackFunction(parameters)).append(';');
 					}
@@ -154,7 +153,6 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 						CallbackParameter[] parameters = {
 								CallbackParameter.resolved("command", "'selectById'"),
 								CallbackParameter.explicit("id"),
-								CallbackParameter.explicit("zoom"), // TODO used to size the indicator, but that's wrong anyway
 						};
 						builder.append("sendSelectByIdCommand = ").append(getCallbackFunction(parameters)).append(';');
 					}
@@ -186,7 +184,6 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 							selectedSpaceObjectId = spaceObject.getId();
 							double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
 							double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
-							// TODO double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
 							double indicatorLatLngRadius = MapCoordinates.convertGameDistanceToMapDistance(getGameCoordinateRadius(spaceObject));
 							target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorLatLngRadius + ");");
 							target.appendJavaScript("setStateCookie('mapSelection', " + selectedSpaceObjectId + ")"); // TODO prevent conversion from long to float in JS
@@ -206,12 +203,10 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 					}
 
 					case "selectOwnShip": {
-						int zoom = parameters.getParameterValue("zoom").toInt();
 						SpaceObject spaceObject = getPlayer().getShip();
 						selectedSpaceObjectId = spaceObject.getId();
 						double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
 						double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
-						// double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
 						double indicatorLatLngRadius = MapCoordinates.convertGameDistanceToMapDistance(getGameCoordinateRadius(spaceObject));
 						target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorLatLngRadius + ");");
 						target.appendJavaScript("setStateCookie('mapSelection', " + selectedSpaceObjectId + ")"); // TODO prevent conversion from long to float in JS
@@ -220,7 +215,6 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 					}
 
 					case "selectById": {
-						int zoom = parameters.getParameterValue("zoom").toInt();
 						SpaceObject spaceObject;
 						try {
 							spaceObject = getSpace().get(parameters.getParameterValue("id").toLong());
@@ -231,7 +225,6 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 							selectedSpaceObjectId = spaceObject.getId();
 							double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
 							double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
-							// TODO double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
 							double indicatorLatLngRadius = MapCoordinates.convertGameDistanceToMapDistance(getGameCoordinateRadius(spaceObject));
 							target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorLatLngRadius + ");");
 							target.appendJavaScript("setStateCookie('mapSelection', " + selectedSpaceObjectId + ")"); // TODO prevent conversion from long to float in JS

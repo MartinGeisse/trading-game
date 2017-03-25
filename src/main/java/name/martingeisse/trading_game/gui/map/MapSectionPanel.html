@@ -155,7 +155,7 @@
             };
 
             $(document).on('click', '#selectOwnShipLink', function() {
-                sendSelectOwnShipCommand(leafletMap.getZoom()); // TODO currently needs the zoom level to size the indicator, but that's the wrong approach anyway
+                sendSelectOwnShipCommand();
             });
             $(document).on('click', '#centerSelectedObjectLink', function() {
                 if (spaceObjectSelectionIndicator != null) {
@@ -175,7 +175,7 @@
             }
             oldSelectedId = getStateCookie('mapSelection');
             if (oldSelectedId) {
-                sendSelectByIdCommand(oldSelectedId, oldState ? oldState.zoom : leafletMap.getZoom());
+                sendSelectByIdCommand(oldSelectedId);
             }
 
             // save position/zoom changes from here
