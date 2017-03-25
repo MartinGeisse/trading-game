@@ -43,6 +43,7 @@ import org.apache.wicket.request.Url;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.SharedResourceReference;
 
+import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 
@@ -185,8 +186,9 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 							selectedSpaceObjectId = spaceObject.getId();
 							double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
 							double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
-							double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
-							target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorRadius + ");");
+							// TODO double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
+							double indicatorLatLngRadius = MapCoordinates.convertGameDistanceToMapDistance(getGameCoordinateRadius(spaceObject));
+							target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorLatLngRadius + ");");
 							target.appendJavaScript("setStateCookie('mapSelection', " + selectedSpaceObjectId + ")"); // TODO prevent conversion from long to float in JS
 						} else {
 							selectedSpaceObjectId = -1;
@@ -209,8 +211,9 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 						selectedSpaceObjectId = spaceObject.getId();
 						double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
 						double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
-						double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
-						target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorRadius + ");");
+						// double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
+						double indicatorLatLngRadius = MapCoordinates.convertGameDistanceToMapDistance(getGameCoordinateRadius(spaceObject));
+						target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorLatLngRadius + ");");
 						target.appendJavaScript("setStateCookie('mapSelection', " + selectedSpaceObjectId + ")"); // TODO prevent conversion from long to float in JS
 						target.add(propertiesBox);
 						break;
@@ -228,8 +231,9 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 							selectedSpaceObjectId = spaceObject.getId();
 							double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
 							double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
-							double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
-							target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorRadius + ");");
+							// TODO double indicatorRadius = MapCoordinates.convertGameDistanceToMapDistance(5000) + 4 * Math.pow(0.5, zoom);
+							double indicatorLatLngRadius = MapCoordinates.convertGameDistanceToMapDistance(getGameCoordinateRadius(spaceObject));
+							target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorLatLngRadius + ");");
 							target.appendJavaScript("setStateCookie('mapSelection', " + selectedSpaceObjectId + ")"); // TODO prevent conversion from long to float in JS
 							target.add(propertiesBox);
 						} else {
@@ -276,10 +280,24 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 		for (DynamicSpaceObject spaceObject : getSpace().getDynamicSpaceObjects()) {
 			builder.append("\t{x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
 			builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
-			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(500));
+			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(getGameCoordinateRadius(spaceObject)));
 			builder.append(", c: '").append(spaceObject instanceof PlayerShip ? "#00ffff" : "#0000ff").append("'},");
 		}
 		builder.append("];\n");
+	}
+
+	private long getGameCoordinateRadius(SpaceObject spaceObject) {
+		if (spaceObject instanceof DynamicSpaceObject) {
+			return 500;
+		} else if (spaceObject instanceof Asteroid) {
+			return 2000;
+		} else if (spaceObject instanceof Planet) {
+			return 5000;
+		} else if (spaceObject instanceof SpaceStation) {
+			return 707;
+		} else {
+			return 100;
+		}
 	}
 
 	private String getAbsoluteUrlFor(ResourceReference reference) {

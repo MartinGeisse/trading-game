@@ -28,6 +28,62 @@
                 transformation: new L.Transformation(1, 0, 1, 0),
             });
 
+            // support circles with a hybrid (game / pixel coordinate) radius
+            HybridCircle = L.CircleMarker.extend({
+
+                initialize: function (latlng, options) {
+                    L.setOptions(this, options);
+                    this._latlng = L.latLng(latlng);
+                    this._latLngRadius = this.options.latLngRadius;
+                    this._pixelRadius = this.options.pixelRadius;
+                },
+
+                // sets the latLng coordinate radius in lat/lng units
+                setLatLngRadius: function (radius) {
+                    this._latLngRadius = radius;
+                    return this.redraw();
+                },
+
+                // gets the latLng coordinate radius in lat/lng units
+                getLatLngRadius: function () {
+                    return this._latLngRadius;
+                },
+
+                // sets the pixel coordinate radius in pixels
+                setPixelRadius: function (radius) {
+                    this._pixelRadius = radius;
+                    return this.redraw();
+                },
+
+                // gets the pixel coordinate radius in pixels
+                getPixelRadius: function () {
+                    return this._pixelRadius;
+                },
+
+                // ...
+                getBounds: function () {
+                    var half = [this._radius, this._radiusY || this._radius];
+                    return new L.LatLngBounds(
+                        this._map.layerPointToLatLng(this._point.subtract(half)),
+                        this._map.layerPointToLatLng(this._point.add(half)));
+                },
+
+                // ...
+                setStyle: L.Path.prototype.setStyle,
+
+                // ...
+                _project: function () {
+                    var map = this._map;
+                    var crs = map.options.crs;
+                    var latlng2 = crs.unproject(crs.project(this._latlng).subtract([this._latLngRadius, 0]));
+                    this._point = map.latLngToLayerPoint(this._latlng);
+                    this._radius = this._point.x - map.latLngToLayerPoint(latlng2).x + this._pixelRadius;
+                    this._updateBounds();
+                }
+
+            });
+
+
             // create a map with the tile layer coming from our server
             leafletMap = L.map('map', {
                 crs: L.CRS.SimpleNonInverted,
@@ -93,7 +149,7 @@
             };
             changeSpaceObjectSelectionIndicator = function(lat, lng, radius) {
                 removeSpaceObjectSelectionIndicator();
-                spaceObjectSelectionIndicator = L.circle(L.latLng(lat, lng), {radius: radius});
+                spaceObjectSelectionIndicator = new HybridCircle(L.latLng(lat, lng), {latLngRadius: radius, pixelRadius: 10});
                 spaceObjectSelectionIndicator.addTo(leafletMap);
                 // console.log(lat + ", " + lng);
             };
