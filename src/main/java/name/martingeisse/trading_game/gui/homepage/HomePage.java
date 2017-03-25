@@ -6,6 +6,7 @@ import name.martingeisse.trading_game.platform.wicket.LoginCookieUtil;
 import name.martingeisse.trading_game.platform.wicket.MyWicketSession;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.StatelessLink;
 import org.apache.wicket.model.PropertyModel;
 
@@ -46,14 +47,8 @@ public class HomePage extends AbstractPage {
 			}
 
 		}.add(new Label("name", new PropertyModel<>(this, "currentPlayer.name"))));
-		add(new StatelessLink<Void>("continueExplicitLink") {
-
-			@Override
-			public void onClick() {
-				setResponsePage(EnterLoginTokenPage.class);
-			}
-
-		});
+		add(new BookmarkablePageLink<>("continueExplicitLink", EnterLoginTokenPage.class));
+		add(new BookmarkablePageLink<>("resendLoginEmailLink", ResendLoginMailPage.class));
 	}
 
 	public Player getCurrentPlayer() {

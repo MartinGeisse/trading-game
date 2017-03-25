@@ -20,6 +20,12 @@ public class SelfPlayerPanel extends AbstractPanel {
 				return new RenamePlayerPanel(panelId);
 			}
 		});
+		add(new TabPanelReplacementLink<Void>("bindLink") {
+			@Override
+			protected Panel getPanel(String panelId) {
+				return new BindPlayerToEmailAddressPanel(panelId);
+			}
+		});
 	}
 
 }

@@ -7,6 +7,7 @@
 package name.martingeisse.trading_game.gui.util;
 
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
+import name.martingeisse.wicket.serializable.SerializablePredicate;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 
 import java.util.HashSet;
@@ -29,7 +30,7 @@ public class DependencySetModel<T> extends AbstractReadOnlyModel<Set<T>> {
 	 * @param type the dependency type
 	 * @param filter the filter to use, or null to accept all dependency objects
 	 */
-	public DependencySetModel(final Class<T> type, Predicate<? super T> filter) {
+	public DependencySetModel(final Class<T> type, SerializablePredicate<? super T> filter) {
 		this.type = type;
 		this.filter = (filter == null ? (x -> true) : filter);
 	}

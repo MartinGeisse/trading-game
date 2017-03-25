@@ -7,6 +7,9 @@
 package name.martingeisse.trading_game.gui.util;
 
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
+import name.martingeisse.wicket.serializable.SerializableComparator;
+import name.martingeisse.wicket.serializable.SerializableFunction;
+import name.martingeisse.wicket.serializable.SerializablePredicate;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 
 import java.util.*;
@@ -31,8 +34,8 @@ import java.util.stream.Collectors;
 public class DependencyListModel<T> extends AbstractReadOnlyModel<List<T>> {
 
 	private final Class<T> type;
-	private final Comparator<? super T> comparator;
-	private final Predicate<? super T> filter;
+	private final SerializableComparator<? super T> comparator;
+	private final SerializablePredicate<? super T> filter;
 
 	/**
 	 * Constructor.
@@ -40,7 +43,7 @@ public class DependencyListModel<T> extends AbstractReadOnlyModel<List<T>> {
 	 * @param comparator the comparator that determines the list order
 	 * @param filter the filter to use, or null to accept all dependency objects
 	 */
-	public DependencyListModel(final Class<T> type, final Comparator<? super T> comparator, Predicate<? super T> filter) {
+	public DependencyListModel(final Class<T> type, final SerializableComparator<? super T> comparator, SerializablePredicate<? super T> filter) {
 		this.type = type;
 		this.comparator = comparator;
 		this.filter = (filter == null ? (x -> true) : filter);
@@ -51,7 +54,7 @@ public class DependencyListModel<T> extends AbstractReadOnlyModel<List<T>> {
 	 * @param type the dependency type
 	 * @param comparator the comparator that determines the list order
 	 */
-	public DependencyListModel(final Class<T> type, final Comparator<? super T> comparator) {
+	public DependencyListModel(final Class<T> type, final SerializableComparator<? super T> comparator) {
 		this(type, comparator, null);
 	}
 
@@ -61,7 +64,7 @@ public class DependencyListModel<T> extends AbstractReadOnlyModel<List<T>> {
 	 * @param mapper a function that maps the dependency object to a comparable value
 	 * @param filter the filter to use, or null to accept all dependency objects
 	 */
-	public <C extends Comparable<C>> DependencyListModel(final Class<T> type, final Function<? super T, C> mapper, Predicate<? super T> filter) {
+	public <C extends Comparable<C>> DependencyListModel(final Class<T> type, final SerializableFunction<? super T, C> mapper, SerializablePredicate<? super T> filter) {
 		this(type, (x, y) -> mapper.apply(x).compareTo(mapper.apply(y)), filter);
 	}
 	
@@ -70,7 +73,7 @@ public class DependencyListModel<T> extends AbstractReadOnlyModel<List<T>> {
 	 * @param type the dependency type
 	 * @param mapper a function that maps the dependency object to a comparable value
 	 */
-	public <C extends Comparable<C>> DependencyListModel(final Class<T> type, final Function<? super T, C> mapper) {
+	public <C extends Comparable<C>> DependencyListModel(final Class<T> type, final SerializableFunction<? super T, C> mapper) {
 		this(type, mapper, null);
 	}
 

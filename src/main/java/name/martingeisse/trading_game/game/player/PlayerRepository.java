@@ -78,6 +78,16 @@ public final class PlayerRepository {
 	}
 
 	/**
+	 * Gets a list of login tokens for a specific email address.
+	 */
+	public ImmutableList<String> getLoginTokensByEmailAddress(String emailAddress) {
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QPlayerRow qp = QPlayerRow.Player;
+			return ImmutableList.copyOf(connection.query().select(qp.loginToken).from(qp).where(qp.emailAddress.eq(emailAddress), qp.loginToken.isNotNull()).fetch());
+		}
+	}
+
+	/**
 	 * Gets player by id.
 	 *
 	 * @param id the id
