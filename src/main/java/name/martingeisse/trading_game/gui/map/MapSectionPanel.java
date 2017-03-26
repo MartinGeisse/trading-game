@@ -3,19 +3,11 @@ package name.martingeisse.trading_game.gui.map;
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.ActionQueue;
-import name.martingeisse.trading_game.game.action.actions.EquipAction;
-import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
-import name.martingeisse.trading_game.game.action.actions.UnequipAction;
-import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentChangedEvent;
-import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.event.GameEventBatch;
-import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
 import name.martingeisse.trading_game.game.item.ObjectWithInventory;
-import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.space.*;
-import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.map.leaflet.D3;
 import name.martingeisse.trading_game.gui.map.leaflet.Leaflet;
 import name.martingeisse.trading_game.gui.map.leaflet.LeafletD3SvgOverlay;
@@ -33,24 +25,19 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.SharedResourceReference;
 
-import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 
 /**
  * Encapsulates the actual map view and the properties box.
- *
- * TODO remove unneeded methods and game event listeners
  */
 public class MapSectionPanel extends AbstractPanel implements GuiGameEventListener {
 
@@ -218,7 +205,7 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 			selectedSpaceObjectId = spaceObject.getId();
 			double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
 			double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
-			double indicatorLatLngRadius = MapCoordinates.convertGameDistanceToMapDistance(getGameCoordinateRadius(spaceObject));
+			double indicatorLatLngRadius = MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius());
 			target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorLatLngRadius + ");");
 			target.appendJavaScript("setStateCookie('mapSelection', " + selectedSpaceObjectId + ")"); // TODO prevent conversion from long to float in JS
 		} else {
@@ -262,24 +249,10 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 		for (DynamicSpaceObject spaceObject : getSpace().getDynamicSpaceObjects()) {
 			builder.append("\t{x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
 			builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
-			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(getGameCoordinateRadius(spaceObject)));
+			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius()));
 			builder.append(", c: '").append(spaceObject instanceof PlayerShip ? "#00ffff" : "#0000ff").append("'},");
 		}
 		builder.append("];\n");
-	}
-
-	private long getGameCoordinateRadius(SpaceObject spaceObject) {
-		if (spaceObject instanceof DynamicSpaceObject) {
-			return 500;
-		} else if (spaceObject instanceof Asteroid) {
-			return 2000;
-		} else if (spaceObject instanceof Planet) {
-			return 5000;
-		} else if (spaceObject instanceof SpaceStation) {
-			return 707;
-		} else {
-			return 100;
-		}
 	}
 
 	private String getAbsoluteUrlFor(ResourceReference reference) {
@@ -317,29 +290,6 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 		}
 	}
 
-	public List<ImmutableItemStack> getRemoteItems() {
-		SpaceObject selectedSpaceObject = getSelectedSpaceObject();
-		if (selectedSpaceObject instanceof SpaceStation) {
-			return ((SpaceStation) selectedSpaceObject).getInventory().getItems().getStacks();
-		} else {
-			return null;
-		}
-	}
-
-	public List<ImmutableItemStack> getLocalItems() {
-		SpaceObject selectedSpaceObject = getSelectedSpaceObject();
-		Player player = getPlayer();
-		if (selectedSpaceObject instanceof SpaceStation || selectedSpaceObject == player.getShip()) {
-			return player.getInventory().getItems().getStacks();
-		} else {
-			return null;
-		}
-	}
-
-	public List<SlotInfo> getEquipmentSlots() {
-		return getPlayer().getEquipment().getAllSlots();
-	}
-
 	@Override
 	public void receiveGameEventBatch(IPartialPageRequestHandler partialPageRequestHandler, GameEventBatch eventBatch) {
 		ImmutableList<GameEvent> events = eventBatch.getEvents();
@@ -361,11 +311,6 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 					if (eventInventoryId == selectedSpaceObjectInventoryId || eventInventoryId == getPlayer().getInventory().getId()) {
 						propertiesBoxChanged = true;
 					}
-				}
-			} else if (event instanceof PlayerShipEquipmentChangedEvent) {
-				long playerShipId = ((PlayerShipEquipmentChangedEvent) event).getPlayerShipId();
-				if (playerShipId == getPlayer().getShip().getId()) {
-					propertiesBoxChanged = true;
 				}
 			}
 		}

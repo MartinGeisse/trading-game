@@ -80,4 +80,9 @@ public final class Asteroid extends StaticSpaceObject {
 		return yieldCapacity;
 	}
 
+	@Override
+	public long getRadius() {
+		return 2000;
+	}
+
 }

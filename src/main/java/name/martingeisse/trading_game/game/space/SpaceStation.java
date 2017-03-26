@@ -48,4 +48,9 @@ public final class SpaceStation extends StaticSpaceObject implements ObjectWithI
 		return inventoryRepository.getInventory(getInventoryId());
 	}
 
+	@Override
+	public long getRadius() {
+		return 707;
+	}
+
 }

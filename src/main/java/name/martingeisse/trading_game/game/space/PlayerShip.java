@@ -48,4 +48,9 @@ public final class PlayerShip extends DynamicSpaceObject implements ObjectWithIn
 		return inventoryRepository.getInventory(getInventoryId());
 	}
 
+	@Override
+	public long getRadius() {
+		return 500;
+	}
+
 }
