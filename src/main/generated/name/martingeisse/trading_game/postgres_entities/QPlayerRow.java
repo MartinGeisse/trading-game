@@ -31,6 +31,8 @@ public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 
 	public final StringPath loginToken = createString("loginToken");
 
+	public final NumberPath<Long> money = createNumber("money", Long.class);
+
 	public final StringPath name = createString("name");
 
 	public final NumberPath<Long> shipId = createNumber("shipId", Long.class);
@@ -40,6 +42,8 @@ public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 	public final com.querydsl.sql.ForeignKey<ActionQueueRow> playerActionQueueIdFkey = createForeignKey(actionQueueId, "id");
 
 	public final com.querydsl.sql.ForeignKey<SpaceObjectBaseDataRow> playerShipIdFkey = createForeignKey(shipId, "id");
+
+	public final com.querydsl.sql.ForeignKey<InventorySlotRow> _inventorySlotPlayerIdFkey = createInvForeignKey(id, "playerId");
 
 	public final com.querydsl.sql.ForeignKey<PlayerSkillRow> _playerSkillPlayerIdFkey = createInvForeignKey(id, "playerId");
 
@@ -72,6 +76,7 @@ public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 		addMetadata(emailAddress, ColumnMetadata.named("emailAddress").withIndex(4).ofType(Types.VARCHAR).withSize(500));
 		addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
 		addMetadata(loginToken, ColumnMetadata.named("loginToken").withIndex(3).ofType(Types.VARCHAR).withSize(500));
+		addMetadata(money, ColumnMetadata.named("money").withIndex(7).ofType(Types.BIGINT).withSize(19).notNull());
 		addMetadata(name, ColumnMetadata.named("name").withIndex(2).ofType(Types.VARCHAR).withSize(500).notNull());
 		addMetadata(shipId, ColumnMetadata.named("shipId").withIndex(5).ofType(Types.BIGINT).withSize(19).notNull());
 	}

@@ -40,6 +40,11 @@ public class PlayerRow implements Serializable {
 	private String loginToken;
 
 	/**
+	 * the money
+	 */
+	private Long money;
+
+	/**
 	 * the name
 	 */
 	private String name;
@@ -122,6 +127,24 @@ public class PlayerRow implements Serializable {
 	}
 
 	/**
+	 * Getter method for the money.
+	 *
+	 * @return the money
+	 */
+	public Long getMoney() {
+		return money;
+	}
+
+	/**
+	 * Setter method for the money.
+	 *
+	 * @param money the money to set
+	 */
+	public void setMoney(Long money) {
+		this.money = money;
+	}
+
+	/**
 	 * Getter method for the name.
 	 *
 	 * @return the name
@@ -181,6 +204,7 @@ public class PlayerRow implements Serializable {
 		insert.set(q.actionQueueId, actionQueueId);
 		insert.set(q.emailAddress, emailAddress);
 		insert.set(q.loginToken, loginToken);
+		insert.set(q.money, money);
 		insert.set(q.name, name);
 		insert.set(q.shipId, shipId);
 		id = insert.executeWithKey(Long.class);
@@ -191,7 +215,7 @@ public class PlayerRow implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "{PlayerRow. actionQueueId = " + actionQueueId + ", emailAddress = " + emailAddress + ", id = " + id + ", loginToken = " + loginToken + ", name = " + name + ", shipId = " + shipId + "}";
+		return "{PlayerRow. actionQueueId = " + actionQueueId + ", emailAddress = " + emailAddress + ", id = " + id + ", loginToken = " + loginToken + ", money = " + money + ", name = " + name + ", shipId = " + shipId + "}";
 	}
 
 }

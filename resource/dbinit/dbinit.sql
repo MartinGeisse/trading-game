@@ -13,10 +13,12 @@ CREATE TABLE "game"."Inventory" (
 CREATE TABLE "game"."InventorySlot" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"inventoryId" bigint NOT NULL REFERENCES "game"."Inventory" ON DELETE CASCADE,
+	"playerId" bigint NOT NULL, -- foreign key defined below; for player ship inventories this must be the ship's owner, but for space station inventories it can be any player
 	"itemType" character varying(2000) NOT NULL,
 	"quantity" int NOT NULL
 );
 CREATE INDEX "InventorySlot_inventoryIdItemTypeIndex" ON "game"."InventorySlot" ("inventoryId", "itemType");
+CREATE INDEX "InventorySlot_playerIdinventoryIdItemTypeIndex" ON "game"."InventorySlot" ("playerId", "inventoryId", "itemType");
 
 
 -----------------------------------------------------------------------------------------------------------------------
@@ -76,7 +78,8 @@ CREATE TABLE "game"."Player" (
 	"loginToken" character varying(500),
 	"emailAddress" character varying(500),
 	"shipId" bigint NOT NULL REFERENCES "game"."SpaceObjectBaseData",
-	"actionQueueId" bigint NOT NULL REFERENCES "game"."ActionQueue"
+	"actionQueueId" bigint NOT NULL REFERENCES "game"."ActionQueue",
+	"money" bigint NOT NULL
 );
 CREATE INDEX "Player_nameIndex" ON "game"."Player" ("name");
 CREATE INDEX "Player_shipIdIndex" ON "game"."Player" ("shipId");
@@ -108,3 +111,9 @@ CREATE TABLE "game"."CachedPlayerAttribute" (
 	"value" text NOT NULL
 );
 CREATE UNIQUE INDEX "CachedPlayerAttribute_playerIdKeyIndex" ON "game"."CachedPlayerAttribute" ("playerId", "key");
+
+-----------------------------------------------------------------------------------------------------------------------
+-- more foreign keys which could not be defined above due to table creation order, or because they are circular
+-----------------------------------------------------------------------------------------------------------------------
+
+ALTER TABLE "game"."InventorySlot" ADD FOREIGN KEY ("playerId") REFERENCES "game"."Player";

@@ -35,6 +35,11 @@ public class InventorySlotRow implements Serializable {
 	private String itemType;
 
 	/**
+	 * the playerId
+	 */
+	private Long playerId;
+
+	/**
 	 * the quantity
 	 */
 	private Integer quantity;
@@ -94,6 +99,24 @@ public class InventorySlotRow implements Serializable {
 	}
 
 	/**
+	 * Getter method for the playerId.
+	 *
+	 * @return the playerId
+	 */
+	public Long getPlayerId() {
+		return playerId;
+	}
+
+	/**
+	 * Setter method for the playerId.
+	 *
+	 * @param playerId the playerId to set
+	 */
+	public void setPlayerId(Long playerId) {
+		this.playerId = playerId;
+	}
+
+	/**
 	 * Getter method for the quantity.
 	 *
 	 * @return the quantity
@@ -134,6 +157,7 @@ public class InventorySlotRow implements Serializable {
 		SQLInsertClause insert = connection.insert(q);
 		insert.set(q.inventoryId, inventoryId);
 		insert.set(q.itemType, itemType);
+		insert.set(q.playerId, playerId);
 		insert.set(q.quantity, quantity);
 		id = insert.executeWithKey(Long.class);
 	}
@@ -143,7 +167,7 @@ public class InventorySlotRow implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "{InventorySlotRow. id = " + id + ", inventoryId = " + inventoryId + ", itemType = " + itemType + ", quantity = " + quantity + "}";
+		return "{InventorySlotRow. id = " + id + ", inventoryId = " + inventoryId + ", itemType = " + itemType + ", playerId = " + playerId + ", quantity = " + quantity + "}";
 	}
 
 }
