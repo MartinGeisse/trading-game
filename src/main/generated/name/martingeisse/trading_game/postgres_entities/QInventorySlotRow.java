@@ -63,7 +63,7 @@ public class QInventorySlotRow extends com.querydsl.sql.RelationalPathBase<Inven
 		addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
 		addMetadata(inventoryId, ColumnMetadata.named("inventoryId").withIndex(2).ofType(Types.BIGINT).withSize(19).notNull());
 		addMetadata(itemType, ColumnMetadata.named("itemType").withIndex(4).ofType(Types.VARCHAR).withSize(2000).notNull());
-		addMetadata(playerId, ColumnMetadata.named("playerId").withIndex(3).ofType(Types.BIGINT).withSize(19).notNull());
+		addMetadata(playerId, ColumnMetadata.named("playerId").withIndex(3).ofType(Types.BIGINT).withSize(19));
 		addMetadata(quantity, ColumnMetadata.named("quantity").withIndex(5).ofType(Types.INTEGER).withSize(10).notNull());
 	}
 

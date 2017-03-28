@@ -13,7 +13,10 @@ CREATE TABLE "game"."Inventory" (
 CREATE TABLE "game"."InventorySlot" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"inventoryId" bigint NOT NULL REFERENCES "game"."Inventory" ON DELETE CASCADE,
-	"playerId" bigint NOT NULL, -- foreign key defined below; for player ship inventories this must be the ship's owner, but for space station inventories it can be any player
+	-- foreign key defined below; for player ship inventories this must be the ship's owner, but for space station
+	-- inventories it can be any player. For asteroids it is NULL since they use the inventory structure to store
+	-- mining yield, but that doesn't belong to anyone (and is actually a template that is cloned to create mined items)
+	"playerId" bigint,
 	"itemType" character varying(2000) NOT NULL,
 	"quantity" int NOT NULL
 );
