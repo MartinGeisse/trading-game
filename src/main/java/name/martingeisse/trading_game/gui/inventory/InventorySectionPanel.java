@@ -7,6 +7,7 @@ import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.event.GameEventBatch;
 import name.martingeisse.trading_game.game.item.*;
 import name.martingeisse.trading_game.game.space.*;
+import name.martingeisse.trading_game.gui.gamepage.MainMenuTabbedPanel;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.map.MapCoordinates;
 import name.martingeisse.trading_game.gui.map.leaflet.D3;
@@ -31,6 +32,7 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
@@ -94,6 +96,14 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 						item.add(new Label("size", item.getModelObject().getSize()));
 						item.add(new Label("itemType", item.getModelObject().getItemType().getName()));
 						item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
+						item.add(new AjaxLink<Void>("transferOwnershipLink") {
+							@Override
+							public void onClick(AjaxRequestTarget target) {
+								MainMenuTabbedPanel.replaceTabPanel(this, id -> {
+									return new TransferOwnershipPlayerListPanel(id, item.getModelObject());
+								}, target);
+							}
+						});
 					}
 				});
 			}
