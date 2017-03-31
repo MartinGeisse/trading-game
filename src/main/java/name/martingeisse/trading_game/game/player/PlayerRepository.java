@@ -51,6 +51,7 @@ public final class PlayerRepository {
 			playerRow.setActionQueueId(actionQueueRepository.createActionQueue());
 			playerRow.setName("noname");
 			playerRow.setLoginToken(RandomStringUtils.randomAlphanumeric(50));
+			playerRow.setMoney(0L);
 			playerRow.insert(connection);
 			Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
 			player.updateAttributes();
