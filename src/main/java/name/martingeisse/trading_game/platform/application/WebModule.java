@@ -6,6 +6,7 @@
 
 package name.martingeisse.trading_game.platform.application;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
@@ -48,6 +49,7 @@ public class WebModule extends ServletModule {
 
 		private final PostgresThreadContextService postgresThreadContextService;
 
+		@Inject
 		public PostgresContextFilter(PostgresThreadContextService postgresThreadContextService) {
 			this.postgresThreadContextService = postgresThreadContextService;
 		}

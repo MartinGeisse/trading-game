@@ -92,8 +92,9 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 						item.add(new AjaxLink<Void>("transferOwnershipLink") {
 							@Override
 							public void onClick(AjaxRequestTarget target) {
+								// TODO do not allow to transfer ownership of items in the player's ship!
 								MainMenuTabbedPanel.replaceTabPanel(this, id -> {
-									return new TransferOwnershipPlayerListPanel(id, item.getModelObject());
+									return new TransferOwnershipPlayerListPanel(id, inventoryId, item.getModelObject());
 								}, target);
 							}
 						});

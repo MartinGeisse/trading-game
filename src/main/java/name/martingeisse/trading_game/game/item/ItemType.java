@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableMap;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType;
 import name.martingeisse.trading_game.game.player.PlayerAttributeKey;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Map;
  *
  * Each item stack refers to its item type.
  */
-public final class ItemType {
+public final class ItemType implements Serializable {
 
 	private final String name;
 	private final String icon;

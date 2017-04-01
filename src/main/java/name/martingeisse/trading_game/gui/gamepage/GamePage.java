@@ -5,6 +5,8 @@ import name.martingeisse.trading_game.gui.map.MapSectionPanel;
 import name.martingeisse.trading_game.gui.players.PlayerListPanel;
 import name.martingeisse.trading_game.gui.self.SelfPlayerPanel;
 import name.martingeisse.trading_game.gui.websockets.GameListenerWebSocketBehavior;
+import name.martingeisse.trading_game.platform.wicket.LoginCookieUtil;
+import name.martingeisse.trading_game.platform.wicket.MyWicketSession;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
@@ -21,9 +23,11 @@ public class GamePage extends AbstractPage {
 
 	public GamePage(PageParameters pageParameters) {
 		super(pageParameters);
+
 		if (getPlayer() == null) {
-			throw new IllegalStateException("no player");
+			MyWicketSession.get().setPlayerId(LoginCookieUtil.getPlayerIdFromCookie());
 		}
+
 		add(new GameListenerWebSocketBehavior());
 
 		ITab mapTab = new AbstractTab(Model.of("Map")) {

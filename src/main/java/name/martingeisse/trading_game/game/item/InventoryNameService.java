@@ -47,8 +47,7 @@ public class InventoryNameService {
 		queries.
 
 		Quick idea: a database service will be huge and contain most to all database queries. A custom DSL comes to
-		mind to write those down in a concise way. To avoid parameter-passing overhead in the code, the "database
-		connections vs. threads" problem must be solved first.
+		mind to write those down in a concise way.
 
 		Note that this solution does NOT demand that every query for the whole application is listed in a central class.
 		It rather suggests that whenever a set of queries can be moved out of that class easily, they probably

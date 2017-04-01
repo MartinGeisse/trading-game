@@ -3,8 +3,12 @@ package name.martingeisse.trading_game.game.item;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.sql.SQLQuery;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import name.martingeisse.trading_game.common.util.WtfException;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
+import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
@@ -17,6 +21,8 @@ import java.util.List;
 
 /**
  * Holds a mutable, persistent collection of item stacks.
+ * <p>
+ * Note: This class should be split: item storage location; items at one location belonging to a single player; mining yield template
  */
 public final class Inventory {
 
@@ -24,13 +30,20 @@ public final class Inventory {
 	private final JacksonService jacksonService;
 	private final GameEventEmitter gameEventEmitter;
 	private final long id;
+	private final Long playerIdFilter;
 
 	// use InventoryRepository to get an instance of this class
 	Inventory(PostgresService postgresService, JacksonService jacksonService, GameEventEmitter gameEventEmitter, long id) {
+		this(postgresService, jacksonService, gameEventEmitter, id, null);
+	}
+
+	// use InventoryRepository to get an instance of this class
+	Inventory(PostgresService postgresService, JacksonService jacksonService, GameEventEmitter gameEventEmitter, long id, Long playerIdFilter) {
 		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");
-		this.jacksonService = ParameterUtil.ensureNotNull(jacksonService, "jacksonService");;
-		this.gameEventEmitter = ParameterUtil.ensureNotNull(gameEventEmitter, "gameEventEmitter");;
-		this.id = ParameterUtil.ensurePositive(id, "id");;
+		this.jacksonService = ParameterUtil.ensureNotNull(jacksonService, "jacksonService");
+		this.gameEventEmitter = ParameterUtil.ensureNotNull(gameEventEmitter, "gameEventEmitter");
+		this.id = ParameterUtil.ensurePositive(id, "id");
+		this.playerIdFilter = playerIdFilter;
 	}
 
 	/**
@@ -44,13 +57,33 @@ public final class Inventory {
 	}
 
 	/**
+	 * Getter method.
+	 *
+	 * @return the playerIdFilter
+	 */
+	public Long getPlayerIdFilter() {
+		return playerIdFilter;
+	}
+
+	public Inventory getFilteredByPlayerId(long playerIdFilter) {
+		if (this.playerIdFilter != null) {
+			throw new IllegalStateException("this inventory is already filtered by player id");
+		}
+		return new Inventory(postgresService, jacksonService, gameEventEmitter, id, playerIdFilter);
+	}
+
+	/**
 	 * @return all items
 	 */
 	public ImmutableItemStacks getItems() {
 		List<ImmutableItemStack> stacks = new ArrayList<>();
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
-			try (CloseableIterator<InventorySlotRow> iterator = connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id)).iterate()) {
+			PostgreSQLQuery<InventorySlotRow> query = connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id));
+			if (playerIdFilter != null) {
+				query.where(qs.playerId.eq(playerIdFilter));
+			}
+			try (CloseableIterator<InventorySlotRow> iterator = query.iterate()) {
 				while (iterator.hasNext()) {
 					InventorySlotRow row = iterator.next();
 					stacks.add(new ImmutableItemStack(jacksonService.deserialize(row.getItemType(), ItemType.class), row.getQuantity()));
@@ -66,7 +99,11 @@ public final class Inventory {
 	public int getNumberOfStacks() {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
-			return (int) connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id)).fetchCount();
+			PostgreSQLQuery<InventorySlotRow> query = connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id));
+			if (playerIdFilter != null) {
+				query.where(qs.playerId.eq(playerIdFilter));
+			}
+			return (int) query.fetchCount();
 		}
 	}
 
@@ -90,7 +127,11 @@ public final class Inventory {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
 			String serializedItemType = jacksonService.serialize(itemType);
-			return (int) connection.query().select(qs.quantity.sum()).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).fetchCount();
+			PostgreSQLQuery<Integer> query = connection.query().select(qs.quantity.sum()).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).groupBy(Expressions.constant(0));
+			if (playerIdFilter != null) {
+				query.where(qs.playerId.eq(playerIdFilter));
+			}
+			return query.fetchFirst();
 		}
 	}
 
@@ -116,6 +157,9 @@ public final class Inventory {
 	public Inventory add(ItemType itemType, int amount) {
 		ParameterUtil.ensureNotNull(itemType, "itemType");
 		ParameterUtil.ensureNotNegative(amount, "amount");
+		if (playerIdFilter == null) {
+			throw new IllegalStateException("can only add items to an inventory with a playerId filter");
+		}
 		if (amount == 0) {
 			return this;
 		}
@@ -124,7 +168,7 @@ public final class Inventory {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			if (slotId == null) {
 				String serializedItemType = jacksonService.serialize(itemType);
-				connection.insert(qs).set(qs.inventoryId, id).set(qs.itemType, serializedItemType).set(qs.quantity, amount).execute();
+				connection.insert(qs).set(qs.inventoryId, id).set(qs.playerId, playerIdFilter).set(qs.itemType, serializedItemType).set(qs.quantity, amount).execute();
 			} else {
 				connection.update(qs).set(qs.quantity, qs.quantity.add(amount)).where(qs.id.eq(slotId)).execute();
 			}
@@ -175,6 +219,9 @@ public final class Inventory {
 	public Inventory remove(ItemType itemType, int amount) throws NotEnoughItemsException {
 		ParameterUtil.ensureNotNull(itemType, "itemType");
 		ParameterUtil.ensureNotNegative(amount, "amount");
+		if (playerIdFilter == null) {
+			throw new IllegalStateException("can only remove items from an inventory with a playerId filter");
+		}
 
 		// first check if there are enough items, so we don't mess up the item stacks if not
 		if (count(itemType) < amount) {
@@ -223,7 +270,11 @@ public final class Inventory {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			String serializedItemType = jacksonService.serialize(itemType);
 			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
-			return connection.query().select(path).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).fetchFirst();
+			PostgreSQLQuery<T> query = connection.query().select(path).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType));
+			if (playerIdFilter != null) {
+				query.where(qs.playerId.eq(playerIdFilter));
+			}
+			return query.fetchFirst();
 		}
 	}
 

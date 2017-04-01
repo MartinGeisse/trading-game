@@ -1,7 +1,10 @@
 package name.martingeisse.trading_game.gui.inventory;
 
+import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.Inventory;
+import name.martingeisse.trading_game.game.item.InventoryRepository;
+import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
 import name.martingeisse.trading_game.gui.gamepage.MainMenuTabbedPanel;
@@ -26,10 +29,12 @@ import java.util.List;
  */
 public class TransferOwnershipPlayerListPanel extends AbstractPanel {
 
+	private final long inventoryId;
 	private final ImmutableItemStack items;
 
-	public TransferOwnershipPlayerListPanel(String id, ImmutableItemStack items) {
+	public TransferOwnershipPlayerListPanel(String id, long inventoryId, ImmutableItemStack items) {
 		super(id);
+		this.inventoryId = inventoryId;
 		this.items = items;
 		add(new TabPanelReplacementLink<Void>("backLink") {
 			@Override
@@ -49,9 +54,15 @@ public class TransferOwnershipPlayerListPanel extends AbstractPanel {
 				AbstractLink link = new AjaxLink<Void>("link") {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						Inventory sourceInventory = getPlayer().getInventory();
-						Inventory destinationInventory = item.getModelObject().getInventory();
-						// TODO NO!! Don't move from one inventory to another. Only change the playerId!
+						Inventory inventory = MyWicketApplication.get().getDependency(InventoryRepository.class).getInventory(inventoryId);
+						Inventory sourceInventory = inventory.getFilteredByPlayerId(getPlayer().getId());
+						Inventory destinationInventory = inventory.getFilteredByPlayerId(item.getModelObject().getId());
+						try {
+							sourceInventory.remove(items.getItemType(), items.getSize());
+						} catch (NotEnoughItemsException e) {
+							throw new UnexpectedExceptionException(e);
+						}
+						destinationInventory.add(items);
 						MainMenuTabbedPanel.replaceTabPanel(this, InventorySectionPanel::new, target);
 					}
 				};

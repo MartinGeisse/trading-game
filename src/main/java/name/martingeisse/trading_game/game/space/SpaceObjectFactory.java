@@ -1,12 +1,14 @@
 package name.martingeisse.trading_game.game.space;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.definition.MiningYieldInfo;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.InventoryRepository;
+import name.martingeisse.trading_game.game.player.PlayerRepository;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseDataRow;
 
@@ -19,12 +21,14 @@ public final class SpaceObjectFactory {
 	private final PostgresService postgresService;
 	private final GameEventEmitter gameEventEmitter;
 	private final InventoryRepository inventoryRepository;
+	private final Provider<PlayerRepository> playerRepositoryProvider;
 
 	@Inject
-	public SpaceObjectFactory(PostgresService postgresService, GameEventEmitter gameEventEmitter, InventoryRepository inventoryRepository) {
-		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");;
-		this.gameEventEmitter = ParameterUtil.ensureNotNull(gameEventEmitter, "gameEventEmitter");;
-		this.inventoryRepository = ParameterUtil.ensureNotNull(inventoryRepository, "inventoryRepository");;
+	public SpaceObjectFactory(PostgresService postgresService, GameEventEmitter gameEventEmitter, InventoryRepository inventoryRepository, Provider<PlayerRepository> playerRepositoryProvider) {
+		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");
+		this.gameEventEmitter = ParameterUtil.ensureNotNull(gameEventEmitter, "gameEventEmitter");
+		this.inventoryRepository = ParameterUtil.ensureNotNull(inventoryRepository, "inventoryRepository");
+		this.playerRepositoryProvider = ParameterUtil.ensureNotNull(playerRepositoryProvider, "playerRepositoryProvider");
 	}
 
 	/**
@@ -56,7 +60,7 @@ public final class SpaceObjectFactory {
 	 */
 	PlayerShip newPlayerShip(SpaceObjectBaseDataRow row) {
 		ParameterUtil.ensureNotNull(row, "row");
-		PlayerShip playerShip = inject(row, new PlayerShip(inventoryRepository));
+		PlayerShip playerShip = inject(row, new PlayerShip(inventoryRepository, playerRepositoryProvider));
 		playerShip.internalSetInventoryId(row.getInventoryId());
 		return playerShip;
 	}

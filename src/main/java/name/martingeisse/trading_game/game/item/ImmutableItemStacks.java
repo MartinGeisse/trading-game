@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.game.item;
 
 import com.google.common.collect.ImmutableList;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -14,7 +15,7 @@ import java.util.List;
  * to {@link #isValidBillOfMaterials()}. This method ensures that no two item stacks with the same item type exist
  * in this object.
  */
-public final class ImmutableItemStacks implements Iterable<ImmutableItemStack> {
+public final class ImmutableItemStacks implements Iterable<ImmutableItemStack>, Serializable {
 
 	public static final ImmutableItemStacks EMPTY = new ImmutableItemStacks(ImmutableList.of());
 

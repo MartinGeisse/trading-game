@@ -14,9 +14,6 @@ import java.util.List;
 
 /**
  * Allows to access cross-inventory belongings of a player.
- *
- * TODO this class suggests "player belongings" as a first-class concept, with a corresponding entity-like class
- * and repository.
  */
 @Singleton
 public class PlayerBelongingsService {

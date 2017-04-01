@@ -37,6 +37,17 @@ public class InventoryRepository {
 	}
 
 	/**
+	 * Creates a new instance based by the specified database ID, filtered by player ID. This constructor does not
+	 * ensure that the ID actually exists in the database.
+	 *
+	 * @param id             the inventory ID
+	 * @param playerIdFilter the player ID ot filter by
+	 */
+	public Inventory getInventory(long id, long playerIdFilter) {
+		return new Inventory(postgresService, jacksonService, gameEventEmitter, id, playerIdFilter);
+	}
+
+	/**
 	 * Creates a new, empty inventory
 	 *
 	 * @return the ID of the new inventory

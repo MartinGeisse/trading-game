@@ -1,9 +1,11 @@
 package name.martingeisse.trading_game.game.item;
 
+import java.io.Serializable;
+
 /**
  * An immutable stack of items that has an item type and stack size.
  */
-public final class ImmutableItemStack {
+public final class ImmutableItemStack implements Serializable {
 
 	private final ItemType itemType;
 	private final int size;
