@@ -56,6 +56,19 @@ public class InventoryNameService {
 		moved into their own microservice because of logical (data-)dependencies, they are probably not independent
 		enough to justify moving their queries out of the central query service.
 
+		---
+
+		What's the advantage of all this?
+		- unit testing
+
+		Unit testing might as well be supported by defining, per-package, a sepcified database service interface.
+		The default implementation uses QueryDSL (and might be defined in a central package or even be implemented by
+		a single service class for all interfaces). So we then have Player, PlayerRepository and PlayerDatabaseService
+		(or PlayerDatabase). This is a role interface, so InventoryDatabase is used for InventoryNameService. Since
+		that class would be too huge for testing, InventoryNameDatabase could be separated and used by InventoryNameService
+		(though in this case, the service would be very thin). For players it makes more sense to separate them, but
+		a consistent code structure has its pros.
+
 		 */
 		try (PostgresConnection connection = MyWicketApplication.get().getDependency(PostgresService.class).newConnection()) {
 			QSpaceObjectBaseDataRow qr = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
