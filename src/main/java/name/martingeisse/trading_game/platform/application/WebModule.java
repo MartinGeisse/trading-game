@@ -8,11 +8,15 @@ package name.martingeisse.trading_game.platform.application;
 
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
+import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
+import name.martingeisse.trading_game.platform.postgres.PostgresThreadContextService;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.platform.wicket.MyWicketFilter;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WicketFilter;
 
+import javax.servlet.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +29,9 @@ public class WebModule extends ServletModule {
 	@Override
 	protected void configureServlets() {
 
+		// associate a (light-weight) PostgresContext with each request-handling thread
+		filterRegex("/.*").through(PostgresContextFilter.class);
+
 		// bind Wicket
 		{
 			bind(WebApplication.class).to(MyWicketApplication.class);
@@ -34,6 +41,36 @@ public class WebModule extends ServletModule {
 			filterRegex("/.*").through(MyWicketFilter.class, initParams);
 		}
 		
+	}
+
+	@Singleton
+	public static class PostgresContextFilter implements Filter {
+
+		private final PostgresThreadContextService postgresThreadContextService;
+
+		public PostgresContextFilter(PostgresThreadContextService postgresThreadContextService) {
+			this.postgresThreadContextService = postgresThreadContextService;
+		}
+
+		@Override
+		public void init(FilterConfig filterConfig) throws ServletException {
+		}
+
+		@Override
+		public void destroy() {
+		}
+
+		@Override
+		public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+			postgresThreadContextService.withNewContext(() -> {
+				try {
+					chain.doFilter(request, response);
+				} catch (Exception e) {
+					throw new UnexpectedExceptionException(e);
+				}
+			});
+		}
+
 	}
 
 }
