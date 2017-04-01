@@ -1,0 +1,78 @@
+
+Scheinbar kommt hier keine Abstraktion von der Datenbank zustande. Das Problem ist der Versuch, die Datenbank in
+mehrere getrennte Bereiche zu splitten -- letztendlich hängt doch alles zu sehr zusammen, und zwar vom Prinzip her,
+nicht nur in der Implementierung.
+
+Also bietet sich der Versuch an, stattdessen die Speicherschicht von der Spielelogik zu trennen. Dazu müssen ähnlich
+benannte Klassen her wie jetzt auch schon: Player, Inventory, SpaceObject. Anders als bisher:
+- enthalten diese aber keine Spielelogik, sondern bilden nur die Spiele-Datenstruktur ab (Antipattern ?)
+- sind diese als Interfaces losgelöst von den Tabellen in der DB definiert. So gibt es z.B. ein Interface Inventory
+	und ein MultiInventory (Map<PlayerId, Inventory), aber in der DB könnte das ganz anders aussehen.
+
+Was genau ist der Nachteil dieser Lösung?
+- man weiß nicht, wo genau die Grenze gezogen werden soll zwischen Spiele-Datenstruktur und Spiele-Logik
+
+Was sind die Vorteile?
+- der Code liest sich auf dieser Ebene besser als mit DataLinks
+
+Alternativen?
+- DataLinks bevorzugen Komposition vor Vererbung. Lässt man das aber wegfallen, könnte die Spielelogik auch als
+	abstrakte Basisklassen implementiert sein, und die Datenbankschicht verfeinert diese.
+
+	Abstrakt: inventory.getTitle() -> inventory.getOwner().getName()
+	Konkret: implementiert getOwner()
+
+	Eine Lösung mit DataLinks könnte hier den DataLink für den Owner ermitteln. Dann müsste aber immer noch das
+	Objekt außenrum erzeugt werden. Und wie sieht es aus, wenn die Datenbankschicht einerseits DataLinks bereitstellt,
+	andererseits die Konstruktoren der Domain-Objekte selbst aufruft? Die DB-Schicht ist dann direkt von der Logik
+	abhängig, aber das ist sie bei Subklassen auch.
+
+	Siehe unten für ein Gesamtbild.
+
+---
+
+Unschön ist, dass die Daten von der Logik getrennt sind, da hier der Vorteil von OOP verworfen wird. Eine Lösung dafür
+wäre es, o.g. Lösung zwar zu benutzen, aber die "Spiele-Objekte" werden stattdessen -DataLink genannt. Dann gibt es
+zu jedem Interface XYZDataLink eine Klasse XYZ, welche den XYZDataLink kapselt und die Spielelogik drumrum baut.
+Zum XYZDataLink kann es in der Datenbankabstraktion mehrere Implementierungen geben, z.B. für InventoryDataLink,
+je nachdem ob dieses Teil eines MultiInventory ist oder nicht. Oder auch je nachdem, wo es liegt.
+
+Ausgangspunkt dieser Überlegungen war es, dass DDD eigentlich vorsieht, Spielelogik direkt als Klassen zu schreiben
+und Repositories zum Laden und Speichern zu benutzen. Dadurch sollten die Domainklassen selbst keine DB-Zugriffe
+enthalten. Um eine Methode wie player.getInventory() zu implementieren, müsste die Klasse Player demnach keine
+inventoryId speichern, sondern die DB-Abstraktion anfragen, für sich (den Player) das passende Inventory zu holen.
+Dazu müsste der Player aber wiederum eine Art "Token" speichern, worüber die DB-Abstraktion weiß, welcher Spieler das
+ist und wie man an das Inventory kommt -- das "Token" ist also eine DB-ID, nur dass der Player das nicht weiß und es
+als Blackbox behandelt. Der o.g. DataLink ist eine objektorientierte Neuformulierung desselben.
+
+---
+
+Gesamtbild:
+
+Spiele-Datenstrukturen und Spielelogik stehen in denselben klassen. Diese werden im Spielepackage definiert, sind
+von nichts sonst abhängig und konkret, nicht abstrakt. Sie benutzen entsprechende DataLinks, die als Interfaces im
+Spielepackage definiert werden und somit abstrakt sind. Die Spieleklassen stellen Konstruktoren bereit, welche die
+DataLinks entgegennehmen.
+
+Die Datenbankschicht ist gesondert definiert und direkt von der Spiele-Schicht abhängig. (Oder beide von den DataLinks,
+siehe unten). Sie führt Queries aus und liefert Werte und andere DataLinks, alternativ Spieleobjekte.
+
+
+
+
+
+Muss die Abhängigkeit DB->Game wirklich sein? Doch nur, wenn die Game-Schicht zu einem DataLink nicht weiß, welche
+Spiele-Klasse sie daraus bauen soll. Das kann natürlich bei Subklassen so sein. Eine Factory würde hier aber kein
+Problem lösen. Nur wenn Subklassen gar kein Problem machen, könnte man Game und DB komplett trennen und beide nur
+von den DataLink-Interfaces abhängig machen. Einen Versuch wäre es Wert.
+->
+Konkretes Beispiel: SpaceObjects. Das SpaceObjectRepository ("Space") liefert für eine gegebene ID ein SpaceObject.
+Dazu fragt es im Hintergrund den SpaceObjectRepositoryDataLink an. Dieser liefert einen SpaceObjectDataLink. Entweder
+muss jetzt per Typecast ein entsprechendes SpaceObject gebaut werden, oder der ..RepositoryDataLink liefert gleich ein
+passendes SpaceObject. Letzteres klingt besser, denn dann führen die DataLinks kein Doppelleben zu den Spieleobjekten,
+sondern abstrahieren nur von den Datenbankzugriffen. Dann sieht auch der Spiele-Code viel schöner aus und ist nicht
+ständig damit beschäftigt, DataLinks zu wrappen.
+
+Um den Aufwand mit den Repositories zu drücken, bietet sich ein GameRepository an, über welches man alle Root-Spiele-
+Objekte beziehen kann. Das sind aktuell Players und SpaceObjects. Außerdem könnte dieses noch Hilfsmethoden anbieten,
+um an "vergrabene" Objekte in den Roots zu kommen, z.B. ActionQueues. Letzteres entspricht "Massen-Queries".
