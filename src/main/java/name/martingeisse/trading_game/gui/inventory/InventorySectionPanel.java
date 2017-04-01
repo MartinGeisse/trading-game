@@ -81,14 +81,7 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 			@Override
 			protected void populateItem(ListItem<PlayerBelongingsService.InventoryEntry> item) {
 				long inventoryId = item.getModelObject().getInventoryId();
-
-				// TODO this should be cleaner
-				String title;
-				try (PostgresConnection connection = MyWicketApplication.get().getDependency(PostgresService.class).newConnection()) {
-					QSpaceObjectBaseDataRow qr = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
-					title = connection.query().select(qr.name).from(qr).where(qr.inventoryId.eq(inventoryId)).fetchFirst();
-				}
-
+				String title = MyWicketApplication.get().getDependency(InventoryNameService.class).getNameForInventoryId(inventoryId);
 				item.add(new Label("inventoryTitle", title));
 				item.add(new ListView<ImmutableItemStack>("itemStacks", item.getModelObject().getItemStacks().getStacks()) {
 					@Override
