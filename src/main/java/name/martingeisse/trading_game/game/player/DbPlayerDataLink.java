@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.game.datalink;
+package name.martingeisse.trading_game.game.player;
 
 import com.querydsl.core.types.Path;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
