@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import name.martingeisse.trading_game.game.action.ActionQueueRepository;
+import name.martingeisse.trading_game.game.datalink.DbPlayerDataLink;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentRepository;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.space.Space;
@@ -53,7 +54,8 @@ public final class PlayerRepository {
 			playerRow.setLoginToken(RandomStringUtils.randomAlphanumeric(50));
 			playerRow.setMoney(0L);
 			playerRow.insert(connection);
-			Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
+			PlayerDataLink dataLink = new DbPlayerDataLink(postgresService, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
+			Player player = new Player(this, dataLink);
 			player.updateAttributes();
 			return playerRow.getId();
 		}
@@ -71,7 +73,8 @@ public final class PlayerRepository {
 			try (CloseableIterator<PlayerRow> iterator = connection.query().select(qp).from(qp).iterate()) {
 				while (iterator.hasNext()) {
 					PlayerRow playerRow = iterator.next();
-					players.add(new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow));
+					PlayerDataLink dataLink = new DbPlayerDataLink(postgresService, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
+					players.add(new Player(this, dataLink));
 				}
 			}
 		}
@@ -155,7 +158,8 @@ public final class PlayerRepository {
 					return null;
 				}
 			}
-			return new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
+			PlayerDataLink dataLink = new DbPlayerDataLink(postgresService, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
+			return new Player(this, dataLink);
 		}
 	}
 
@@ -167,7 +171,8 @@ public final class PlayerRepository {
 		try (CloseableIterator<PlayerRow> iterator = connection.query().select(qp).from(qp).iterate()) {
 			while (iterator.hasNext()) {
 				PlayerRow playerRow = iterator.next();
-				Player player = new Player(postgresService, this, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
+				PlayerDataLink dataLink = new DbPlayerDataLink(postgresService, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, playerRow);
+				Player player = new Player(this, dataLink);
 				player.tick(connection);
 			}
 		}

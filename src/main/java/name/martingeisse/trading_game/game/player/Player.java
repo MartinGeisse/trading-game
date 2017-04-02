@@ -1,25 +1,14 @@
 package name.martingeisse.trading_game.game.player;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
 import name.martingeisse.trading_game.game.action.ActionQueue;
-import name.martingeisse.trading_game.game.action.ActionQueueRepository;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
-import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentRepository;
 import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.item.Inventory;
-import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.space.PlayerShip;
-import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
-import name.martingeisse.trading_game.postgres_entities.PlayerRow;
-import name.martingeisse.trading_game.postgres_entities.QCachedPlayerAttributeRow;
-import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
-import name.martingeisse.trading_game.postgres_entities.QSpaceObjectBaseDataRow;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,28 +17,12 @@ import java.util.Map;
  */
 public final class Player {
 
-	private final PostgresService postgresService;
 	private final PlayerRepository playerRepository;
-	private final Space space;
-	private final ActionQueueRepository actionQueueRepository;
-	private final PlayerShipEquipmentRepository playerShipEquipmentRepository;
-	private final JacksonService jacksonService;
-	private final long id;
-	private final long shipId;
-	private final long actionQueueId;
-	private String name;
+	private final PlayerDataLink dataLink;
 
-	Player(PostgresService postgresService, PlayerRepository playerRepository, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, JacksonService jacksonService, PlayerRow playerRow) {
-		this.postgresService = postgresService;
+	Player(PlayerRepository playerRepository, PlayerDataLink dataLink) {
 		this.playerRepository = playerRepository;
-		this.space = space;
-		this.actionQueueRepository = actionQueueRepository;
-		this.playerShipEquipmentRepository = playerShipEquipmentRepository;
-		this.jacksonService = jacksonService;
-		this.id = playerRow.getId();
-		this.shipId = playerRow.getShipId();
-		this.actionQueueId = playerRow.getActionQueueId();
-		this.name = playerRow.getName();
+		this.dataLink = dataLink;
 	}
 
 	/**
@@ -59,7 +32,7 @@ public final class Player {
 	 */
 	@JsonValue
 	public long getId() {
-		return id;
+		return dataLink.getId();
 	}
 
 	/**
@@ -68,8 +41,7 @@ public final class Player {
 	 * @return the name
 	 */
 	public String getName() {
-		// TODO possibly outdated value (if changed in the database by other means)
-		return name;
+		return dataLink.getName();
 	}
 
 	/**
@@ -81,55 +53,39 @@ public final class Player {
 		if (name == null) {
 			throw new IllegalArgumentException("name cannot be null");
 		}
-		if (!playerRepository.isRenamePossible(id, name)) {
+		if (!playerRepository.isRenamePossible(getId(), name)) {
 			throw new NameAlreadyUsedException();
 		}
-		String oldName = this.name;
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerRow qp = QPlayerRow.Player;
-			connection.update(qp).set(qp.name, name).where(qp.id.eq(id)).execute();
-		}
-		this.name = name;
-		if (getShip().getName().equals(generateName(oldName))) {
-			setShipName();
+		boolean updateShipName = getShip().getName().equals(generateShipName(getName()));
+		dataLink.setName(name);
+		if (updateShipName) {
+			getShip().setName(generateShipName(name));
 		}
 	}
 
-	private void setShipName() {
-		getShip().setName(generateName(name));
-	}
-
-	private static String generateName(String playerName) {
+	private static String generateShipName(String playerName) {
 		return playerName + "'s ship";
 	}
 
 	public String getLoginToken() {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerRow qp = QPlayerRow.Player;
-			return connection.query().select(qp.loginToken).from(qp).where(qp.id.eq(id)).fetchFirst();
-		}
+		return dataLink.getLoginToken();
 	}
 
 	public String getEmailAddress() {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerRow qp = QPlayerRow.Player;
-			return connection.query().select(qp.emailAddress).from(qp).where(qp.id.eq(id)).fetchFirst();
-		}
+		return dataLink.getEmailAddress();
 	}
 
 	public void setEmailAddress(String emailAddress) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerRow qp = QPlayerRow.Player;
-			connection.update(qp).set(qp.emailAddress, emailAddress).where(qp.id.eq(id)).execute();
-		}
+		dataLink.setEmailAddress(emailAddress);
 	}
+
 	/**
 	 * Getter method.
 	 *
 	 * @return the ship
 	 */
 	public PlayerShip getShip() {
-		return (PlayerShip) space.get(shipId);
+		return dataLink.getShip();
 	}
 
 	/**
@@ -147,7 +103,7 @@ public final class Player {
 	 * @return the action queue
 	 */
 	public ActionQueue getActionQueue() {
-		return actionQueueRepository.getActionQueue(actionQueueId);
+		return dataLink.getActionQueue();
 	}
 
 	/**
@@ -156,7 +112,7 @@ public final class Player {
 	 * @return the player ship equipment
 	 */
 	public PlayerShipEquipment getEquipment() {
-		return playerShipEquipmentRepository.getPlayerShipEquipment(shipId);
+		return dataLink.getEquipment();
 	}
 
 	/**
@@ -186,24 +142,8 @@ public final class Player {
 		}
 
 		// update the attributes in the database
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QCachedPlayerAttributeRow qa = QCachedPlayerAttributeRow.CachedPlayerAttribute;
-			connection.getJdbcConnection().setAutoCommit(false);
-			connection.delete(qa).where(qa.playerId.eq(id)).execute();
-			for (Map.Entry<PlayerAttributeKey, Integer> entry : attributes.entrySet()) {
-				insertAttribute(connection, entry.getKey(), entry.getValue());
-			}
-			connection.getJdbcConnection().commit();
-		} catch (SQLException e) {
-			throw new UnexpectedExceptionException(e);
-		}
+		dataLink.replacePlayerAttributes(attributes);
 
-	}
-
-	private void insertAttribute(PostgresConnection connection, PlayerAttributeKey key, Object value) {
-		String serializedValue = jacksonService.serialize(value);
-		QCachedPlayerAttributeRow qa = QCachedPlayerAttributeRow.CachedPlayerAttribute;
-		connection.insert(qa).set(qa.playerId, id).set(qa.key, key).set(qa.value, serializedValue).execute();
 	}
 
 	/**
@@ -213,15 +153,7 @@ public final class Player {
 	 * @return the attribute value
 	 */
 	public Object getAttribute(PlayerAttributeKey key) {
-		String serializedValue;
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QCachedPlayerAttributeRow qa = QCachedPlayerAttributeRow.CachedPlayerAttribute;
-			serializedValue = connection.query().select(qa.value).from(qa).where(qa.playerId.eq(id), qa.key.eq(key)).fetchFirst();
-			if (serializedValue == null) {
-				throw new IllegalStateException("missing player attribute " + key + " for player ID " + id);
-			}
-		}
-		return jacksonService.deserialize(serializedValue, Object.class);
+		return dataLink.getAttribute(key);
 	}
 
 	/**
