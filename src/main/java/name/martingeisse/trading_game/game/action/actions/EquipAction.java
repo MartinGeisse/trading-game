@@ -51,14 +51,14 @@ public final class EquipAction extends ImmediateAction {
 	protected boolean onExecute() {
 		// TODO transaction
 		try {
-			player.getInventory().remove(itemType);
+			player.getInventory().remove(player.getId(), itemType);
 		} catch (NotEnoughItemsException e) {
 			return false;
 		}
 		try {
 			player.getEquipment().equip(itemType);
 		} catch (RuntimeException e) {
-			player.getInventory().add(itemType);
+			player.getInventory().add(player.getId(), itemType);
 			return false;
 		}
 		return true;

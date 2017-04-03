@@ -56,7 +56,7 @@ public final class UnequipAction extends ImmediateAction {
 		} catch (RuntimeException e) {
 			return false;
 		}
-		player.getInventory().add(itemType);
+		player.getInventory().add(player.getId(), itemType);
 		return true;
 	}
 

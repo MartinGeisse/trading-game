@@ -1,10 +1,8 @@
 package name.martingeisse.trading_game.game.space;
 
-import com.google.inject.Provider;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.item.InventoryRepository;
 import name.martingeisse.trading_game.game.item.ObjectWithInventory;
-import name.martingeisse.trading_game.game.player.PlayerRepository;
 
 /**
  *
@@ -12,12 +10,10 @@ import name.martingeisse.trading_game.game.player.PlayerRepository;
 public final class PlayerShip extends DynamicSpaceObject implements ObjectWithInventory {
 
 	private final InventoryRepository inventoryRepository;
-	private final Provider<PlayerRepository> playerRepositoryProvider;
 	private long inventoryId;
 
-	public PlayerShip(InventoryRepository inventoryRepository, Provider<PlayerRepository> playerRepositoryProvider) {
+	public PlayerShip(InventoryRepository inventoryRepository) {
 		this.inventoryRepository = inventoryRepository;
-		this.playerRepositoryProvider = playerRepositoryProvider;
 	}
 
 	/**
@@ -49,9 +45,7 @@ public final class PlayerShip extends DynamicSpaceObject implements ObjectWithIn
 	 */
 	@Override
 	public Inventory getInventory() {
-		// TODO see InventoryNameService for a long discussion; here's another example of how we can't seem to abstract from the database
-		long playerId = playerRepositoryProvider.get().getPlayerByShipId(getId()).getId();
-		return inventoryRepository.getInventory(getInventoryId(), playerId);
+		return inventoryRepository.getInventory(getInventoryId());
 	}
 
 	@Override

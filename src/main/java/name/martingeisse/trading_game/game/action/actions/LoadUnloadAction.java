@@ -52,7 +52,7 @@ public final class LoadUnloadAction extends ImmediateAction {
 
 	@Override
 	protected boolean onExecute() {
-		if (type == Type.LOAD && player.getInventory().getMass() + items.getMass() > player.getMaximumCargoMass()) {
+		if (type == Type.LOAD && player.getInventory().getMass(player.getId()) + items.getMass() > player.getMaximumCargoMass()) {
 			return false;
 		}
 		Inventory sourceInventory, destinationInventory;
@@ -64,11 +64,11 @@ public final class LoadUnloadAction extends ImmediateAction {
 			destinationInventory = spaceStation.getInventory();
 		}
 		try {
-			sourceInventory.remove(items.getItemType(), items.getSize(), preferredSoruceInventoryIndex);
+			sourceInventory.remove(player.getId(), items.getItemType(), items.getSize(), preferredSoruceInventoryIndex);
 		} catch (NotEnoughItemsException e) {
 			return false;
 		}
-		destinationInventory.add(items);
+		destinationInventory.add(player.getId(), items);
 		return true;
 	}
 

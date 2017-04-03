@@ -9,6 +9,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.multibindings.Multibinder;
 import name.martingeisse.trading_game.game.event.GameEventListener;
+import name.martingeisse.trading_game.game.player.DbPlayerRepositoryDataLink;
+import name.martingeisse.trading_game.game.player.PlayerRepositoryDataLink;
 import name.martingeisse.trading_game.platform.application.configuration.ConfigurationParticipant;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
@@ -26,6 +28,9 @@ public abstract class AbstractApplicationModule extends AbstractModule {
 
 		// game listeners
 		defineExtensionPoint(GameEventListener.class);
+
+		// DataLink implementations
+		bind(PlayerRepositoryDataLink.class).to(DbPlayerRepositoryDataLink.class);
 
 	}
 

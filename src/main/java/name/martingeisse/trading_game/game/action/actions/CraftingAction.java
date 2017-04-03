@@ -41,7 +41,7 @@ public final class CraftingAction extends FixedEffortAction {
 	@Override
 	protected boolean onStart() {
 		try {
-			player.getInventory().removeBillOfMaterials(recipe.getBillOfMaterials());
+			player.getInventory().removeBillOfMaterials(player.getId(), recipe.getBillOfMaterials());
 			return true;
 		} catch (NotEnoughItemsException e) {
 			return false;
@@ -50,13 +50,13 @@ public final class CraftingAction extends FixedEffortAction {
 
 	@Override
 	protected void onCancel() {
-		player.getInventory().add(recipe.getBillOfMaterials());
+		player.getInventory().add(player.getId(), recipe.getBillOfMaterials());
 	}
 
 	@Override
 	protected boolean onFinish() {
 		// TODO check inventory space
-		player.getInventory().add(recipe.getYield());
+		player.getInventory().add(player.getId(), recipe.getYield());
 		return true;
 	}
 

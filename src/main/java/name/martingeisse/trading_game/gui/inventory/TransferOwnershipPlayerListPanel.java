@@ -55,14 +55,12 @@ public class TransferOwnershipPlayerListPanel extends AbstractPanel {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						Inventory inventory = MyWicketApplication.get().getDependency(InventoryRepository.class).getInventory(inventoryId);
-						Inventory sourceInventory = inventory.getFilteredByPlayerId(getPlayer().getId());
-						Inventory destinationInventory = inventory.getFilteredByPlayerId(item.getModelObject().getId());
 						try {
-							sourceInventory.remove(items.getItemType(), items.getSize());
+							inventory.remove(getPlayer().getId(), items.getItemType(), items.getSize());
 						} catch (NotEnoughItemsException e) {
 							throw new UnexpectedExceptionException(e);
 						}
-						destinationInventory.add(items);
+						inventory.add(item.getModelObject().getId(), items);
 						MainMenuTabbedPanel.replaceTabPanel(this, InventorySectionPanel::new, target);
 					}
 				};
