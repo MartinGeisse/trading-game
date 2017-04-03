@@ -4,11 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.action.ActionQueueRepository;
-import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentRepository;
-import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -18,20 +15,14 @@ import org.apache.commons.lang3.RandomStringUtils;
 @Singleton
 public final class PlayerRepository {
 
-	private final PostgresService postgresService;
 	private final Space space;
 	private final ActionQueueRepository actionQueueRepository;
-	private final PlayerShipEquipmentRepository playerShipEquipmentRepository;
-	private final JacksonService jacksonService;
 	private final PlayerRepositoryDataLink datalink;
 
 	@Inject
-	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, JacksonService jacksonService, PlayerRepositoryDataLink datalink) {
-		this.postgresService = postgresService;
+	public PlayerRepository(Space space, ActionQueueRepository actionQueueRepository, PlayerRepositoryDataLink datalink) {
 		this.space = space;
 		this.actionQueueRepository = actionQueueRepository;
-		this.playerShipEquipmentRepository = playerShipEquipmentRepository;
-		this.jacksonService = jacksonService;
 		this.datalink = datalink;
 	}
 

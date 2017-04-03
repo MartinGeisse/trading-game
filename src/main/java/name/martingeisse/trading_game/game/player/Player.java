@@ -47,6 +47,8 @@ public final class Player {
 	/**
 	 * Setter method.
 	 *
+	 * TODO rename method to "rename"
+	 *
 	 * @param name the name
 	 */
 	public void setName(String name) throws NameAlreadyUsedException {
