@@ -20,7 +20,7 @@ public final class Player {
 	private final PlayerRepository playerRepository;
 	private final PlayerDataLink dataLink;
 
-	Player(PlayerRepository playerRepository, PlayerDataLink dataLink) {
+	public Player(PlayerRepository playerRepository, PlayerDataLink dataLink) {
 		this.playerRepository = playerRepository;
 		this.dataLink = dataLink;
 	}
