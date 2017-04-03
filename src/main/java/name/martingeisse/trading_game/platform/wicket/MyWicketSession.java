@@ -51,7 +51,7 @@ public class MyWicketSession extends WebSession {
 	 * Creates a new player and sets that new player's ID as the current player ID.
 	 */
 	public void createPlayer() {
-		setPlayerId(MyWicketApplication.get().getDependency(PlayerRepository.class).createPlayer());
+		setPlayerId(MyWicketApplication.get().getDependency(PlayerRepository.class).createPlayer().getId());
 	}
 
 	/**

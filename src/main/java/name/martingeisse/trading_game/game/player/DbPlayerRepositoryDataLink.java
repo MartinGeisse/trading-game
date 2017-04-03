@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.game.player;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -13,35 +14,37 @@ import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  *
  */
 @Singleton
-public final class DbPlayerRepositoryDataLink {
+public final class DbPlayerRepositoryDataLink implements PlayerRepositoryDataLink {
 
 	private final PostgresService postgresService;
 	private final Space space;
 	private final ActionQueueRepository actionQueueRepository;
 	private final PlayerShipEquipmentRepository playerShipEquipmentRepository;
 	private final JacksonService jacksonService;
+	private final Provider<PlayerRepository> playerRepositoryProvider;
 
 	@Inject
-	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, JacksonService jacksonService) {
+	public DbPlayerRepositoryDataLink(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, JacksonService jacksonService, Provider<PlayerRepository> playerRepositoryProvider) {
 		this.postgresService = postgresService;
 		this.space = space;
 		this.actionQueueRepository = actionQueueRepository;
 		this.playerShipEquipmentRepository = playerShipEquipmentRepository;
 		this.jacksonService = jacksonService;
+		this.playerRepositoryProvider = playerRepositoryProvider;
 	}
 
 	private Player instantiate(PlayerRow data) {
 		PlayerDataLink dataLink = new DbPlayerDataLink(postgresService, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, data);
-		return new Player(this, dataLink);
+		return new Player(playerRepositoryProvider.get(), dataLink);
 	}
 
 	/**
@@ -155,7 +158,8 @@ public final class DbPlayerRepositoryDataLink {
 		}
 	}
 
-	public void forEachPlayer(Consumer<Player> body) {
+	// TODO remove connection parameter
+	public void forEachPlayer(PostgresConnection connection, Consumer<Player> body) {
 		QPlayerRow qp = QPlayerRow.Player;
 		try (CloseableIterator<PlayerRow> iterator = connection.query().select(qp).from(qp).iterate()) {
 			while (iterator.hasNext()) {

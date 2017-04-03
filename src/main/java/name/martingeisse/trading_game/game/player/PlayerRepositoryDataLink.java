@@ -1,7 +1,10 @@
 package name.martingeisse.trading_game.game.player;
 
 import com.google.common.collect.ImmutableList;
+import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
+
+import java.util.function.Consumer;
 
 /**
  *
@@ -16,6 +19,6 @@ public interface PlayerRepositoryDataLink {
 	public Player getPlayerByShipId(long shipId);
 	public Player getPlayerByLoginToken(String loginToken);
 	public boolean isRenamePossible(long id, String newName);
-	public void forEachPlayer(Consumer<Player> body);
+	public void forEachPlayer(PostgresConnection connection, Consumer<Player> body);
 
 }

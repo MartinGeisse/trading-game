@@ -17,13 +17,13 @@ public final class PlayerRepository {
 
 	private final Space space;
 	private final ActionQueueRepository actionQueueRepository;
-	private final PlayerRepositoryDataLink datalink;
+	private final PlayerRepositoryDataLink dataLink;
 
 	@Inject
-	public PlayerRepository(Space space, ActionQueueRepository actionQueueRepository, PlayerRepositoryDataLink datalink) {
+	public PlayerRepository(Space space, ActionQueueRepository actionQueueRepository, PlayerRepositoryDataLink dataLink) {
 		this.space = space;
 		this.actionQueueRepository = actionQueueRepository;
-		this.datalink = datalink;
+		this.dataLink = dataLink;
 	}
 
 	/**
@@ -38,7 +38,7 @@ public final class PlayerRepository {
 		data.setName("noname");
 		data.setLoginToken(RandomStringUtils.randomAlphanumeric(50));
 		data.setMoney(0L);
-		Player player = dataLink.create(data);
+		Player player = dataLink.createPlayer(data);
 		player.updateAttributes();
 		return player;
 	}
@@ -114,7 +114,7 @@ public final class PlayerRepository {
 	 * Called once every second to advance the game logic.
 	 */
 	public void tick(PostgresConnection connection) {
-		dataLink.forEachPlayer(p -> p.tick(connection));
+		dataLink.forEachPlayer(connection, p -> p.tick(connection));
 	}
 
 }
