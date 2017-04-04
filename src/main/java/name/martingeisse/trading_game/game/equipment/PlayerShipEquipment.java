@@ -29,7 +29,7 @@ public final class PlayerShipEquipment {
 	private final GameEventEmitter gameEventEmitter;
 	private final long playerShipId;
 
-	PlayerShipEquipment(PostgresService postgresService, JacksonService jacksonService, PlayerRepository playerRepository, GameEventEmitter gameEventEmitter, long playerShipId) {
+	public PlayerShipEquipment(PostgresService postgresService, JacksonService jacksonService, PlayerRepository playerRepository, GameEventEmitter gameEventEmitter, long playerShipId) {
 		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");
 		this.jacksonService = ParameterUtil.ensureNotNull(jacksonService, "jacksonService");
 		this.playerRepository = playerRepository;

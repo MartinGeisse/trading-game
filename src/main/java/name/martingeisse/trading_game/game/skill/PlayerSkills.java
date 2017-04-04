@@ -10,7 +10,7 @@ public final class PlayerSkills {
 	private final PostgresService postgresService;
 	private final long playerId;
 
-	PlayerSkills(PostgresService postgresService, long playerId) {
+	public PlayerSkills(PostgresService postgresService, long playerId) {
 		this.postgresService = postgresService;
 		this.playerId = playerId;
 	}

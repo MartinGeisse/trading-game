@@ -21,7 +21,7 @@ public final class ActionQueue {
 	private final ActionQueueHelper helper;
 
 	// use ActionQueueRepository to get an instance of this class
-	ActionQueue(PostgresService postgresService, JacksonService jacksonService, long id) {
+	public ActionQueue(PostgresService postgresService, JacksonService jacksonService, long id) {
 		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");;
 		this.jacksonService = ParameterUtil.ensureNotNull(jacksonService, "jacksonService");;
 		this.id = ParameterUtil.ensurePositive(id, "id");;

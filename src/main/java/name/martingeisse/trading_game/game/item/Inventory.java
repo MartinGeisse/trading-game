@@ -30,7 +30,7 @@ public final class Inventory {
 	private final long id;
 
 	// use InventoryRepository to get an instance of this class
-	Inventory(PostgresService postgresService, JacksonService jacksonService, GameEventEmitter gameEventEmitter, long id) {
+	public Inventory(PostgresService postgresService, JacksonService jacksonService, GameEventEmitter gameEventEmitter, long id) {
 		this.postgresService = postgresService;
 		this.jacksonService = jacksonService;
 		this.gameEventEmitter = gameEventEmitter;
