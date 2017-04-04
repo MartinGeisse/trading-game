@@ -1,7 +1,5 @@
 package name.martingeisse.trading_game.gui.websockets;
 
-import com.google.common.collect.ImmutableList;
-import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.event.GameEventBatch;
 import name.martingeisse.trading_game.game.event.GameEventListener;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;

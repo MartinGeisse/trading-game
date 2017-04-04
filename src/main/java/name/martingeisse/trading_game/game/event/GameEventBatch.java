@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.game.event;
 
 import com.google.common.collect.ImmutableList;
-import name.martingeisse.trading_game.game.event.GameEvent;
 
 /**
  *

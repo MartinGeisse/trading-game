@@ -1,6 +1,5 @@
 package name.martingeisse.trading_game.game.item;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.ImmutableMap;
@@ -8,7 +7,6 @@ import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType
 import name.martingeisse.trading_game.game.player.PlayerAttributeKey;
 
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * Item types may provide code for the item behavior (if any) and are referred to by crafting recipes.

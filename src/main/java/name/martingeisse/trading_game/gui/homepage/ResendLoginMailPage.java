@@ -1,15 +1,10 @@
 package name.martingeisse.trading_game.gui.homepage;
 
 import com.google.common.collect.ImmutableList;
-import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
-import name.martingeisse.trading_game.gui.gamepage.GamePage;
-import name.martingeisse.trading_game.platform.wicket.LoginCookieUtil;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
-import name.martingeisse.trading_game.platform.wicket.MyWicketSession;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import name.martingeisse.wicket.simpleform.SimpleFormPanel;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.Model;
 
 /**

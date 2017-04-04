@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.game.space;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.definition.MiningYieldInfo;

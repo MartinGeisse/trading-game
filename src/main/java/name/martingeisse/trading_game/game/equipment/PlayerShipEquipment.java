@@ -6,7 +6,6 @@ import com.querydsl.core.QueryException;
 import name.martingeisse.trading_game.common.database.DatabaseUtil;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
-import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
