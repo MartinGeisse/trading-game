@@ -2,12 +2,23 @@ package name.martingeisse.trading_game.game.player;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import com.mysema.commons.lang.CloseableIterator;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import name.martingeisse.trading_game.game.action.ActionQueueRepository;
+import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentRepository;
+import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
+import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
+import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 import org.apache.commons.lang3.RandomStringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  *
@@ -15,15 +26,25 @@ import org.apache.commons.lang3.RandomStringUtils;
 @Singleton
 public final class PlayerRepository {
 
+	private final PostgresService postgresService;
 	private final Space space;
 	private final ActionQueueRepository actionQueueRepository;
-	private final PlayerRepositoryDataLink dataLink;
+	private final PlayerShipEquipmentRepository playerShipEquipmentRepository;
+	private final JacksonService jacksonService;
+	private final Provider<PlayerRepository> playerRepositoryProvider;
 
 	@Inject
-	public PlayerRepository(Space space, ActionQueueRepository actionQueueRepository, PlayerRepositoryDataLink dataLink) {
+	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, JacksonService jacksonService, Provider<PlayerRepository> playerRepositoryProvider) {
+		this.postgresService = postgresService;
 		this.space = space;
 		this.actionQueueRepository = actionQueueRepository;
-		this.dataLink = dataLink;
+		this.playerShipEquipmentRepository = playerShipEquipmentRepository;
+		this.jacksonService = jacksonService;
+		this.playerRepositoryProvider = playerRepositoryProvider;
+	}
+
+	private Player instantiate(PlayerRow data) {
+		return new Player(playerRepositoryProvider.get(), postgresService, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, data);
 	}
 
 	/**
@@ -38,7 +59,10 @@ public final class PlayerRepository {
 		data.setName("noname");
 		data.setLoginToken(RandomStringUtils.randomAlphanumeric(50));
 		data.setMoney(0L);
-		Player player = dataLink.createPlayer(data);
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			data.insert(connection);
+		}
+		Player player = instantiate(data);
 		player.updateAttributes();
 		return player;
 	}
@@ -49,14 +73,26 @@ public final class PlayerRepository {
 	 * @return the players
 	 */
 	public ImmutableList<Player> getAllPlayers() {
-		return dataLink.getAllPlayers();
+		List<Player> players = new ArrayList<>();
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QPlayerRow qp = QPlayerRow.Player;
+			try (CloseableIterator<PlayerRow> iterator = connection.query().select(qp).from(qp).iterate()) {
+				while (iterator.hasNext()) {
+					players.add(instantiate(iterator.next()));
+				}
+			}
+		}
+		return ImmutableList.copyOf(players);
 	}
 
 	/**
 	 * Gets a list of login tokens for a specific email address.
 	 */
 	public ImmutableList<String> getLoginTokensByEmailAddress(String emailAddress) {
-		return dataLink.getLoginTokensByEmailAddress(emailAddress);
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QPlayerRow qp = QPlayerRow.Player;
+			return ImmutableList.copyOf(connection.query().select(qp.loginToken).from(qp).where(qp.emailAddress.eq(emailAddress), qp.loginToken.isNotNull()).fetch());
+		}
 	}
 
 	/**
@@ -66,7 +102,7 @@ public final class PlayerRepository {
 	 * @return the player
 	 */
 	public Player getPlayerById(long id) {
-		return dataLink.getPlayerById(id);
+		return getPlayer(QPlayerRow.Player.id.eq(id));
 	}
 
 	/**
@@ -76,7 +112,7 @@ public final class PlayerRepository {
 	 * @return the player
 	 */
 	public Player getPlayerByName(String name) {
-		return dataLink.getPlayerByName(name);
+		return getPlayer(QPlayerRow.Player.name.eq(name));
 	}
 
 	/**
@@ -86,7 +122,7 @@ public final class PlayerRepository {
 	 * @return the player
 	 */
 	public Player getPlayerByShipId(long shipId) {
-		return dataLink.getPlayerByShipId(shipId);
+		return getPlayer(QPlayerRow.Player.shipId.eq(shipId));
 	}
 
 	/**
@@ -96,7 +132,7 @@ public final class PlayerRepository {
 	 * @return the player
 	 */
 	public Player getPlayerByLoginToken(String loginToken) {
-		return dataLink.getPlayerByLoginToken(loginToken);
+		return getPlayer(QPlayerRow.Player.loginToken.eq(loginToken));
 	}
 
 	/**
@@ -107,14 +143,44 @@ public final class PlayerRepository {
 	 * @return true if renaming to that name is possible (i.e. no other player uses that name), false if not possible
 	 */
 	public boolean isRenamePossible(long id, String newName) {
-		return dataLink.isRenamePossible(id, newName);
+		QPlayerRow qp = QPlayerRow.Player;
+		return getPlayer(qp.id.ne(id).and(qp.name.eq(newName)), false) == null;
+	}
+
+	private Player getPlayer(BooleanExpression predicate) {
+		return getPlayer(predicate, true);
+	}
+
+	private Player getPlayer(BooleanExpression predicate, boolean isRequired) {
+		try (PostgresConnection connection = postgresService.newConnection()) {
+			QPlayerRow qp = QPlayerRow.Player;
+			PlayerRow playerRow = connection.query().select(qp).from(qp).where(predicate).fetchFirst();
+			if (playerRow == null) {
+				if (isRequired) {
+					throw new IllegalArgumentException("player not found: " + predicate);
+				} else {
+					return null;
+				}
+			}
+			return instantiate(playerRow);
+		}
+	}
+
+	// TODO remove connection parameter
+	public void forEachPlayer(PostgresConnection connection, Consumer<Player> body) {
+		QPlayerRow qp = QPlayerRow.Player;
+		try (CloseableIterator<PlayerRow> iterator = connection.query().select(qp).from(qp).iterate()) {
+			while (iterator.hasNext()) {
+				body.accept(instantiate(iterator.next()));
+			}
+		}
 	}
 
 	/**
 	 * Called once every second to advance the game logic.
 	 */
 	public void tick(PostgresConnection connection) {
-		dataLink.forEachPlayer(connection, p -> p.tick(connection));
+		forEachPlayer(connection, p -> p.tick(connection));
 	}
 
 }
