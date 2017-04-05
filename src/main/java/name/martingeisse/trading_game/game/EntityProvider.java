@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.game;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.action.ActionQueue;
@@ -15,7 +16,7 @@ import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 
 /**
- * Allows to get arbitrary game entities by ID.
+ * Allows to get arbitrary game entities by ID, injecting their dependencies.
  *
  * This class was introduced as an improvement over the previous repository-based system. In that previous system,
  * a separate repository was used for each entity type. This runs contrary to the idea that non-root entities can be
@@ -23,7 +24,7 @@ import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
  * numerous repositories as dependencies.
  */
 @Singleton
-public class EntityStorage {
+public class EntityProvider {
 
 	private final Provider<PostgresService> postgresServiceProvider;
 	private final Provider<JacksonService> jacksonServiceProvider;
@@ -31,7 +32,7 @@ public class EntityStorage {
 	private final Provider<PlayerRepository> playerRepositoryProvider;
 
 	@Inject
-	public EntityStorage(Provider<PostgresService> postgresServiceProvider, Provider<JacksonService> jacksonServiceProvider, Provider<GameEventEmitter> gameEventEmitterProvider, Provider<PlayerRepository> playerRepositoryProvider) {
+	public EntityProvider(Provider<PostgresService> postgresServiceProvider, Provider<JacksonService> jacksonServiceProvider, Provider<GameEventEmitter> gameEventEmitterProvider, Provider<PlayerRepository> playerRepositoryProvider) {
 		this.postgresServiceProvider = postgresServiceProvider;
 		this.jacksonServiceProvider = jacksonServiceProvider;
 		this.gameEventEmitterProvider = gameEventEmitterProvider;
@@ -46,7 +47,7 @@ public class EntityStorage {
 		return new Inventory(postgresServiceProvider.get(), jacksonServiceProvider.get(), gameEventEmitterProvider.get(), id);
 	}
 
-	public Player getPlayerById(long id) {
+	public Player getPlayer(long id) {
 		return playerRepositoryProvider.get().getPlayerById(id);
 	}
 

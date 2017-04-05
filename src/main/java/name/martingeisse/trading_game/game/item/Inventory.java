@@ -55,6 +55,9 @@ public final class Inventory {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
 			PostgreSQLQuery<InventorySlotRow> query = connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id));
+			if (playerIdFilter != null) {
+				query.where(qs.playerId.eq(playerIdFilter));
+			}
 			try (CloseableIterator<InventorySlotRow> iterator = query.iterate()) {
 				while (iterator.hasNext()) {
 					InventorySlotRow row = iterator.next();

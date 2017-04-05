@@ -3,11 +3,10 @@ package name.martingeisse.trading_game.game.player;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.querydsl.core.types.Path;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
 import name.martingeisse.trading_game.game.action.ActionQueue;
-import name.martingeisse.trading_game.game.action.ActionQueueRepository;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
-import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentRepository;
 import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
@@ -31,20 +30,18 @@ public final class Player {
 	private final PlayerRepository playerRepository;
 	private final PostgresService postgresService;
 	private final Space space;
-	private final ActionQueueRepository actionQueueRepository;
-	private final PlayerShipEquipmentRepository playerShipEquipmentRepository;
 	private final JacksonService jacksonService;
+	private final EntityProvider entityProvider;
 	private final long id;
 	private final long shipId;
 	private final long actionQueueId;
 
-	public Player(PlayerRepository playerRepository, PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, JacksonService jacksonService, PlayerRow playerRow) {
+	public Player(PlayerRepository playerRepository, PostgresService postgresService, Space space, JacksonService jacksonService, EntityProvider entityProvider, PlayerRow playerRow) {
 		this.playerRepository = playerRepository;
 		this.postgresService = postgresService;
 		this.space = space;
-		this.actionQueueRepository = actionQueueRepository;
-		this.playerShipEquipmentRepository = playerShipEquipmentRepository;
 		this.jacksonService = jacksonService;
+		this.entityProvider = entityProvider;
 		this.id = playerRow.getId();
 		this.shipId = playerRow.getShipId();
 		this.actionQueueId = playerRow.getActionQueueId();
@@ -143,7 +140,7 @@ public final class Player {
 	 * @return the action queue
 	 */
 	public ActionQueue getActionQueue() {
-		return actionQueueRepository.getActionQueue(actionQueueId);
+		return entityProvider.getActionQueue(actionQueueId);
 	}
 
 	/**
@@ -152,7 +149,7 @@ public final class Player {
 	 * @return the player ship equipment
 	 */
 	public PlayerShipEquipment getEquipment() {
-		return playerShipEquipmentRepository.getPlayerShipEquipment(shipId);
+		return entityProvider.getPlayerShipEquipment(shipId);
 	}
 
 	/**
