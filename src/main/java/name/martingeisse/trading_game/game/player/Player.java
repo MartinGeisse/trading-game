@@ -11,7 +11,6 @@ import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.space.PlayerShip;
-import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
@@ -29,17 +28,15 @@ public final class Player {
 
 	private final PlayerRepository playerRepository;
 	private final PostgresService postgresService;
-	private final Space space;
 	private final JacksonService jacksonService;
 	private final EntityProvider entityProvider;
 	private final long id;
 	private final long shipId;
 	private final long actionQueueId;
 
-	public Player(PlayerRepository playerRepository, PostgresService postgresService, Space space, JacksonService jacksonService, EntityProvider entityProvider, PlayerRow playerRow) {
+	public Player(PlayerRepository playerRepository, PostgresService postgresService, JacksonService jacksonService, EntityProvider entityProvider, PlayerRow playerRow) {
 		this.playerRepository = playerRepository;
 		this.postgresService = postgresService;
-		this.space = space;
 		this.jacksonService = jacksonService;
 		this.entityProvider = entityProvider;
 		this.id = playerRow.getId();
@@ -122,7 +119,7 @@ public final class Player {
 	 * @return the ship
 	 */
 	public PlayerShip getShip() {
-		return (PlayerShip) space.get(shipId);
+		return (PlayerShip) entityProvider.getSpaceObject(shipId);
 	}
 
 	/**

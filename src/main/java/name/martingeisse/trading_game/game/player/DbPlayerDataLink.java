@@ -6,7 +6,6 @@ import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.space.PlayerShip;
-import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
@@ -18,19 +17,15 @@ import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
  */
 public final class DbPlayerDataLink {
 
-	private final PlayerRepository playerRepository;
 	private final PostgresService postgresService;
-	private final Space space;
 	private final EntityProvider entityProvider;
 	private final JacksonService jacksonService;
 	private final long id;
 	private final long shipId;
 	private final long actionQueueId;
 
-	public DbPlayerDataLink(PlayerRepository playerRepository, PostgresService postgresService, Space space, EntityProvider entityProvider, JacksonService jacksonService, PlayerRow playerRow) {
-		this.playerRepository = playerRepository;
+	public DbPlayerDataLink(PostgresService postgresService, EntityProvider entityProvider, JacksonService jacksonService, PlayerRow playerRow) {
 		this.postgresService = postgresService;
-		this.space = space;
 		this.entityProvider = entityProvider;
 		this.jacksonService = jacksonService;
 		this.id = playerRow.getId();
@@ -56,32 +51,14 @@ public final class DbPlayerDataLink {
 		}
 	}
 
-	// TODO playerRepository.isRenamePossible ?
-
-	/**
-	 * Getter method.
-	 *
-	 * @return the ship
-	 */
 	public PlayerShip getShip() {
-		// TODO EntityProvider?
-		return (PlayerShip) space.get(shipId);
+		return (PlayerShip) entityProvider.getSpaceObject(shipId);
 	}
 
-	/**
-	 * Getter method.
-	 *
-	 * @return the action queue
-	 */
 	public ActionQueue getActionQueue() {
 		return entityProvider.getActionQueue(actionQueueId);
 	}
 
-	/**
-	 * Getter method.
-	 *
-	 * @return the player ship equipment
-	 */
 	public PlayerShipEquipment getEquipment() {
 		return entityProvider.getPlayerShipEquipment(shipId);
 	}
@@ -97,7 +74,6 @@ public final class DbPlayerDataLink {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			String serializedValue = jacksonService.serialize(value);
 			QCachedPlayerAttributeRow qa = QCachedPlayerAttributeRow.CachedPlayerAttribute;
-			// TODO handle serialization here?
 			connection.insert(qa).set(qa.playerId, id).set(qa.key, key).set(qa.value, serializedValue).execute();
 		}
 	}
