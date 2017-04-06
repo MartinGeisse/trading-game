@@ -10,7 +10,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
-import name.martingeisse.trading_game.platform.postgres.PostgresThreadContextService;
+import name.martingeisse.trading_game.platform.postgres.PostgresContext;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.platform.wicket.MyWicketFilter;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -47,11 +47,8 @@ public class WebModule extends ServletModule {
 	@Singleton
 	public static class PostgresContextFilter implements Filter {
 
-		private final PostgresThreadContextService postgresThreadContextService;
-
 		@Inject
-		public PostgresContextFilter(PostgresThreadContextService postgresThreadContextService) {
-			this.postgresThreadContextService = postgresThreadContextService;
+		public PostgresContextFilter() {
 		}
 
 		@Override
@@ -64,13 +61,11 @@ public class WebModule extends ServletModule {
 
 		@Override
 		public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-			postgresThreadContextService.withNewContext(() -> {
-				try {
-					chain.doFilter(request, response);
-				} catch (Exception e) {
-					throw new UnexpectedExceptionException(e);
-				}
-			});
+			try {
+				chain.doFilter(request, response);
+			} finally {
+				PostgresContext.reset();
+			}
 		}
 
 	}

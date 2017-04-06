@@ -9,6 +9,8 @@ package name.martingeisse.trading_game.platform.application;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
+import name.martingeisse.trading_game.platform.postgres.PostgresContext;
+import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.platform.util.logging.JulToLog4jBridge;
 import name.martingeisse.trading_game.platform.util.logging.MyLayout;
 import org.apache.logging.log4j.LogManager;
@@ -61,6 +63,7 @@ public class ServerApplicationBootstrapper extends GuiceServletContextListener {
 	@Override
 	protected Injector getInjector() {
 		Injector injector = Guice.createInjector(new ServerApplicationModule(), new WebModule());
+		PostgresContext.initialize(injector.getInstance(PostgresService.class));
 		injector.getInstance(ServerApplicationInitializer.class).run();
 		return injector;
 	}
