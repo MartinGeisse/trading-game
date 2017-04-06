@@ -1,23 +1,15 @@
 package name.martingeisse.trading_game.game.player;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.querydsl.core.types.Path;
-import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
-import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
 import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
 import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.item.Inventory;
-import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.space.PlayerShip;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
-import name.martingeisse.trading_game.postgres_entities.PlayerRow;
-import name.martingeisse.trading_game.postgres_entities.QCachedPlayerAttributeRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,21 +19,11 @@ import java.util.Map;
 public final class Player {
 
 	private final PlayerRepository playerRepository;
-	private final PostgresService postgresService;
-	private final JacksonService jacksonService;
-	private final EntityProvider entityProvider;
-	private final long id;
-	private final long shipId;
-	private final long actionQueueId;
+	private final PlayerDataLink dataLink;
 
-	public Player(PlayerRepository playerRepository, PostgresService postgresService, JacksonService jacksonService, EntityProvider entityProvider, PlayerRow playerRow) {
+	public Player(PlayerRepository playerRepository, PlayerDataLink dataLink) {
 		this.playerRepository = playerRepository;
-		this.postgresService = postgresService;
-		this.jacksonService = jacksonService;
-		this.entityProvider = entityProvider;
-		this.id = playerRow.getId();
-		this.shipId = playerRow.getShipId();
-		this.actionQueueId = playerRow.getActionQueueId();
+		this.dataLink = dataLink;
 	}
 
 	/**
@@ -51,25 +33,11 @@ public final class Player {
 	 */
 	@JsonValue
 	public long getId() {
-		return id;
-	}
-
-	private <T> T fetchField(Path<T> path) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerRow qp = QPlayerRow.Player;
-			return connection.query().select(path).from(qp).where(qp.id.eq(id)).fetchFirst();
-		}
-	}
-
-	private <T> void updateField(Path<T> path, T newValue) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerRow qp = QPlayerRow.Player;
-			connection.update(qp).set(path, newValue).where(qp.id.eq(id)).execute();
-		}
+		return dataLink.getId();
 	}
 
 	public String getName() {
-		return fetchField(QPlayerRow.Player.name);
+		return dataLink.getField(QPlayerRow.Player.name);
 	}
 
 	/**
@@ -85,7 +53,7 @@ public final class Player {
 			throw new NameAlreadyUsedException();
 		}
 		boolean updateShipName = getShip().getName().equals(generateShipName(getName()));
-		updateField(QPlayerRow.Player.name, name);
+		dataLink.setField(QPlayerRow.Player.name, name);
 		if (updateShipName) {
 			getShip().setName(generateShipName(name));
 		}
@@ -96,19 +64,19 @@ public final class Player {
 	}
 
 	public String getLoginToken() {
-		return fetchField(QPlayerRow.Player.loginToken);
+		return dataLink.getField(QPlayerRow.Player.loginToken);
 	}
 
 	public void setLoginToken(String loginToken) {
-		updateField(QPlayerRow.Player.loginToken, loginToken);
+		dataLink.setField(QPlayerRow.Player.loginToken, loginToken);
 	}
 
 	public String getEmailAddress() {
-		return fetchField(QPlayerRow.Player.emailAddress);
+		return dataLink.getField(QPlayerRow.Player.emailAddress);
 	}
 
 	public void setEmailAddress(String emailAddress) {
-		updateField(QPlayerRow.Player.emailAddress, emailAddress);
+		dataLink.setField(QPlayerRow.Player.emailAddress, emailAddress);
 	}
 
 	/**
@@ -117,7 +85,7 @@ public final class Player {
 	 * @return the ship
 	 */
 	public PlayerShip getShip() {
-		return (PlayerShip) entityProvider.getSpaceObject(shipId);
+		return dataLink.getShip();
 	}
 
 	/**
@@ -135,7 +103,7 @@ public final class Player {
 	 * @return the action queue
 	 */
 	public ActionQueue getActionQueue() {
-		return entityProvider.getActionQueue(actionQueueId);
+		return dataLink.getActionQueue();
 	}
 
 	/**
@@ -144,7 +112,7 @@ public final class Player {
 	 * @return the player ship equipment
 	 */
 	public PlayerShipEquipment getEquipment() {
-		return entityProvider.getPlayerShipEquipment(shipId);
+		return dataLink.getEquipment();
 	}
 
 	/**
@@ -174,25 +142,12 @@ public final class Player {
 		}
 
 		// update the attributes in the database
-		// TODO consider moving transaction control to a central class because it affects all domain objects anyway
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QCachedPlayerAttributeRow qa = QCachedPlayerAttributeRow.CachedPlayerAttribute;
-			connection.getJdbcConnection().setAutoCommit(false);
-			connection.delete(qa).where(qa.playerId.eq(id)).execute();
-			for (Map.Entry<PlayerAttributeKey, ?> entry : attributes.entrySet()) {
-				insertAttribute(connection, entry.getKey(), entry.getValue());
-			}
-			connection.getJdbcConnection().commit();
-		} catch (SQLException e) {
-			throw new UnexpectedExceptionException(e);
+		// TODO wrap in transaction
+		dataLink.clearCachedAttributes();
+		for (Map.Entry<PlayerAttributeKey, ?> entry : attributes.entrySet()) {
+			dataLink.insertCachedAttribute(entry.getKey(), entry.getValue());
 		}
 
-	}
-
-	private void insertAttribute(PostgresConnection connection, PlayerAttributeKey key, Object value) {
-		String serializedValue = jacksonService.serialize(value);
-		QCachedPlayerAttributeRow qa = QCachedPlayerAttributeRow.CachedPlayerAttribute;
-		connection.insert(qa).set(qa.playerId, id).set(qa.key, key).set(qa.value, serializedValue).execute();
 	}
 
 	/**
@@ -202,15 +157,7 @@ public final class Player {
 	 * @return the attribute value
 	 */
 	public Object getAttribute(PlayerAttributeKey key) {
-		String serializedValue;
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QCachedPlayerAttributeRow qa = QCachedPlayerAttributeRow.CachedPlayerAttribute;
-			serializedValue = connection.query().select(qa.value).from(qa).where(qa.playerId.eq(id), qa.key.eq(key)).fetchFirst();
-			if (serializedValue == null) {
-				throw new IllegalStateException("missing player attribute " + key + " for player ID " + id);
-			}
-		}
-		return jacksonService.deserialize(serializedValue, Object.class);
+		return dataLink.getCachedAttribute(key);
 	}
 
 	/**

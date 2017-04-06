@@ -30,7 +30,7 @@ public final class PlayerLoginRepository {
 	}
 
 	private Player instantiate(PlayerRow data) {
-		return new Player(playerRepository, postgresService, jacksonService, entityProvider, data);
+		return new Player(playerRepository, new PlayerDataLink(postgresService, entityProvider, jacksonService, data));
 	}
 
 	/**

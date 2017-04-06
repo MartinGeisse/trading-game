@@ -15,7 +15,7 @@ import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 /**
  *
  */
-public final class DbPlayerDataLink {
+public final class PlayerDataLink {
 
 	private final PostgresService postgresService;
 	private final EntityProvider entityProvider;
@@ -24,7 +24,7 @@ public final class DbPlayerDataLink {
 	private final long shipId;
 	private final long actionQueueId;
 
-	public DbPlayerDataLink(PostgresService postgresService, EntityProvider entityProvider, JacksonService jacksonService, PlayerRow playerRow) {
+	public PlayerDataLink(PostgresService postgresService, EntityProvider entityProvider, JacksonService jacksonService, PlayerRow playerRow) {
 		this.postgresService = postgresService;
 		this.entityProvider = entityProvider;
 		this.jacksonService = jacksonService;

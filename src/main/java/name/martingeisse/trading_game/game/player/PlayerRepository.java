@@ -34,7 +34,7 @@ public final class PlayerRepository {
 	}
 
 	private Player instantiate(PlayerRow data) {
-		return new Player(this, postgresService, jacksonService, entityProvider, data);
+		return new Player(this, new PlayerDataLink(postgresService, entityProvider, jacksonService, data));
 	}
 
 	/**
@@ -83,16 +83,6 @@ public final class PlayerRepository {
 	 */
 	public Player getPlayerByShipId(long shipId) {
 		return getPlayer(QPlayerRow.Player.shipId.eq(shipId));
-	}
-
-	/**
-	 * Gets player by login token.
-	 *
-	 * @param loginToken the login token
-	 * @return the player
-	 */
-	public Player getPlayerByLoginToken(String loginToken) {
-		return getPlayer(QPlayerRow.Player.loginToken.eq(loginToken));
 	}
 
 	/**
