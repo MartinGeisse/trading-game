@@ -6,8 +6,6 @@ import com.google.inject.Singleton;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import name.martingeisse.trading_game.game.EntityProvider;
-import name.martingeisse.trading_game.game.action.ActionQueueRepository;
-import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentRepository;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
@@ -27,17 +25,13 @@ public final class PlayerRepository {
 
 	private final PostgresService postgresService;
 	private final Space space;
-	private final ActionQueueRepository actionQueueRepository;
-	private final PlayerShipEquipmentRepository playerShipEquipmentRepository;
 	private final JacksonService jacksonService;
 	private final EntityProvider entityProvider;
 
 	@Inject
-	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, JacksonService jacksonService, EntityProvider entityProvider) {
+	public PlayerRepository(PostgresService postgresService, Space space, JacksonService jacksonService, EntityProvider entityProvider) {
 		this.postgresService = postgresService;
 		this.space = space;
-		this.actionQueueRepository = actionQueueRepository;
-		this.playerShipEquipmentRepository = playerShipEquipmentRepository;
 		this.jacksonService = jacksonService;
 		this.entityProvider = entityProvider;
 	}
