@@ -1,7 +1,7 @@
 package name.martingeisse.trading_game.game.space;
 
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.item.Inventory;
-import name.martingeisse.trading_game.game.item.InventoryRepository;
 import name.martingeisse.trading_game.game.item.ObjectWithInventory;
 
 /**
@@ -9,11 +9,11 @@ import name.martingeisse.trading_game.game.item.ObjectWithInventory;
  */
 public final class PlayerShip extends DynamicSpaceObject implements ObjectWithInventory {
 
-	private final InventoryRepository inventoryRepository;
+	private final EntityProvider entityProvider;
 	private long inventoryId;
 
-	public PlayerShip(InventoryRepository inventoryRepository) {
-		this.inventoryRepository = inventoryRepository;
+	public PlayerShip(EntityProvider entityProvider) {
+		this.entityProvider = entityProvider;
 	}
 
 	/**
@@ -45,7 +45,7 @@ public final class PlayerShip extends DynamicSpaceObject implements ObjectWithIn
 	 */
 	@Override
 	public Inventory getInventory() {
-		return inventoryRepository.getInventory(getInventoryId());
+		return entityProvider.getInventory(getInventoryId());
 	}
 
 	@Override

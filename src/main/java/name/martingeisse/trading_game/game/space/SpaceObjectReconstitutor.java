@@ -3,10 +3,10 @@ package name.martingeisse.trading_game.game.space;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.definition.MiningYieldInfo;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
-import name.martingeisse.trading_game.game.item.InventoryRepository;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseDataRow;
 
@@ -18,13 +18,13 @@ public final class SpaceObjectReconstitutor {
 
 	private final PostgresService postgresService;
 	private final GameEventEmitter gameEventEmitter;
-	private final InventoryRepository inventoryRepository;
+	private final EntityProvider entityProvider;
 
 	@Inject
-	public SpaceObjectReconstitutor(PostgresService postgresService, GameEventEmitter gameEventEmitter, InventoryRepository inventoryRepository) {
+	public SpaceObjectReconstitutor(PostgresService postgresService, GameEventEmitter gameEventEmitter, EntityProvider entityProvider) {
 		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");
 		this.gameEventEmitter = ParameterUtil.ensureNotNull(gameEventEmitter, "gameEventEmitter");
-		this.inventoryRepository = ParameterUtil.ensureNotNull(inventoryRepository, "inventoryRepository");
+		this.entityProvider = ParameterUtil.ensureNotNull(entityProvider, "entityProvider");
 	}
 
 	/**
@@ -34,7 +34,7 @@ public final class SpaceObjectReconstitutor {
 	 */
 	Asteroid newAsteroid(SpaceObjectBaseDataRow row) {
 		ParameterUtil.ensureNotNull(row, "row");
-		ImmutableItemStacks stacks = inventoryRepository.getInventory(row.getInventoryId()).getItems(null);
+		ImmutableItemStacks stacks = entityProvider.getInventory(row.getInventoryId()).getItems(null);
 		MiningYieldInfo yieldInfo = stacks::scale;
 		return inject(row, new Asteroid(gameEventEmitter, yieldInfo, row.getLongField1()));
 	}
@@ -56,7 +56,7 @@ public final class SpaceObjectReconstitutor {
 	 */
 	PlayerShip newPlayerShip(SpaceObjectBaseDataRow row) {
 		ParameterUtil.ensureNotNull(row, "row");
-		PlayerShip playerShip = inject(row, new PlayerShip(inventoryRepository));
+		PlayerShip playerShip = inject(row, new PlayerShip(entityProvider));
 		playerShip.internalSetInventoryId(row.getInventoryId());
 		return playerShip;
 	}
@@ -68,7 +68,7 @@ public final class SpaceObjectReconstitutor {
 	 */
 	SpaceStation newSpaceStation(SpaceObjectBaseDataRow row) {
 		ParameterUtil.ensureNotNull(row, "row");
-		SpaceStation spaceStation = inject(row, new SpaceStation(inventoryRepository));
+		SpaceStation spaceStation = inject(row, new SpaceStation(entityProvider));
 		spaceStation.internalSetInventoryId(row.getInventoryId());
 		return spaceStation;
 	}

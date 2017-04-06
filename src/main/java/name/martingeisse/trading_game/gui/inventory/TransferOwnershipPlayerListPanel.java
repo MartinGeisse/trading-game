@@ -1,9 +1,9 @@
 package name.martingeisse.trading_game.gui.inventory;
 
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.Inventory;
-import name.martingeisse.trading_game.game.item.InventoryRepository;
 import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
@@ -54,7 +54,7 @@ public class TransferOwnershipPlayerListPanel extends AbstractPanel {
 				AbstractLink link = new AjaxLink<Void>("link") {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						Inventory inventory = MyWicketApplication.get().getDependency(InventoryRepository.class).getInventory(inventoryId);
+						Inventory inventory = MyWicketApplication.get().getDependency(EntityProvider.class).getInventory(inventoryId);
 						try {
 							inventory.remove(getPlayer().getId(), items.getItemType(), items.getSize());
 						} catch (NotEnoughItemsException e) {
@@ -69,6 +69,5 @@ public class TransferOwnershipPlayerListPanel extends AbstractPanel {
 			}
 		});
 	}
-
 
 }
