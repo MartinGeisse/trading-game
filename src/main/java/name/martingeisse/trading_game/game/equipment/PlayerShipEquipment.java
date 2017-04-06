@@ -9,7 +9,6 @@ import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
-import name.martingeisse.trading_game.game.player.PlayerRepository;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerShipEquipmentSlotRow;

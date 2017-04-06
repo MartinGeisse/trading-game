@@ -3,9 +3,7 @@ package name.martingeisse.trading_game.game.action;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
-import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
-import name.martingeisse.trading_game.postgres_entities.ActionQueueRow;
 
 /**
  *
