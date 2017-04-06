@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.platform.wicket;
 
 import name.martingeisse.trading_game.game.player.Player;
+import name.martingeisse.trading_game.game.player.PlayerFactory;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.Request;
@@ -51,7 +52,7 @@ public class MyWicketSession extends WebSession {
 	 * Creates a new player and sets that new player's ID as the current player ID.
 	 */
 	public void createPlayer() {
-		setPlayerId(MyWicketApplication.get().getDependency(PlayerRepository.class).createPlayer().getId());
+		setPlayerId(MyWicketApplication.get().getDependency(PlayerFactory.class).createPlayer().getId());
 	}
 
 	/**
