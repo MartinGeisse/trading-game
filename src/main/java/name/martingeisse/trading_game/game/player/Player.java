@@ -75,11 +75,9 @@ public final class Player {
 	/**
 	 * Setter method.
 	 *
-	 * TODO rename method to "rename"
-	 *
 	 * @param name the name
 	 */
-	public void setName(String name) throws NameAlreadyUsedException {
+	public void renameTo(String name) throws NameAlreadyUsedException {
 		if (name == null) {
 			throw new IllegalArgumentException("name cannot be null");
 		}

@@ -33,7 +33,7 @@ public class RenamePlayerPanel extends AbstractPanel {
 			@Override
 			protected void onSubmit() {
 				try {
-					getPlayer().setName(newName);
+					getPlayer().renameTo(newName);
 					MainMenuTabbedPanel.replaceTabPanel(this, SelfPlayerPanel::new, AjaxRequestUtil.getAjaxRequestTarget());
 				} catch (NameAlreadyUsedException e) {
 					get("form:formBlocks:1:decoratedBody:textField").error("This name is already taken.");
