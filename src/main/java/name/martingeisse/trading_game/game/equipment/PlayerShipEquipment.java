@@ -5,6 +5,7 @@ import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.QueryException;
 import name.martingeisse.trading_game.common.database.DatabaseUtil;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
@@ -25,14 +26,14 @@ public final class PlayerShipEquipment {
 
 	private final PostgresService postgresService;
 	private final JacksonService jacksonService;
-	private final PlayerRepository playerRepository;
+	private final EntityProvider entityProvider;
 	private final GameEventEmitter gameEventEmitter;
 	private final long playerShipId;
 
-	public PlayerShipEquipment(PostgresService postgresService, JacksonService jacksonService, PlayerRepository playerRepository, GameEventEmitter gameEventEmitter, long playerShipId) {
+	public PlayerShipEquipment(PostgresService postgresService, JacksonService jacksonService, EntityProvider entityProvider, GameEventEmitter gameEventEmitter, long playerShipId) {
 		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");
 		this.jacksonService = ParameterUtil.ensureNotNull(jacksonService, "jacksonService");
-		this.playerRepository = playerRepository;
+		this.entityProvider = entityProvider;
 		this.gameEventEmitter = gameEventEmitter;
 		this.playerShipId = ParameterUtil.ensurePositive(playerShipId, "playerShipId");
 	}
@@ -111,7 +112,7 @@ public final class PlayerShipEquipment {
 	}
 
 	private void updateAttributes() {
-		playerRepository.getPlayerByShipId(playerShipId).updateAttributes();
+		entityProvider.getPlayerByShipId(playerShipId).updateAttributes();
 	}
 
 }

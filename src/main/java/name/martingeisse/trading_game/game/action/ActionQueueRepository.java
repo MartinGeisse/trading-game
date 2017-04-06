@@ -23,19 +23,6 @@ public class ActionQueueRepository {
 	}
 
 	/**
-	 * Creates a new, empty action queue
-	 *
-	 * @return the ID of the new action queue
-	 */
-	public long createActionQueue() {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			ActionQueueRow actionQueueRow = new ActionQueueRow();
-			actionQueueRow.insert(connection);
-			return actionQueueRow.getId();
-		}
-	}
-
-	/**
 	 * Gets an action queue from the database as a new {@link ActionQueue} instance. This constructor does not ensure
 	 * that the ID actually exists in the database.
 	 *

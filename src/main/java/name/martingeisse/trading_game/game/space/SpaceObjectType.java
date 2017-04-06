@@ -13,11 +13,11 @@ import java.util.function.BiFunction;
  */
 public enum SpaceObjectType {
 
-	ASTEROID(Asteroid.class, SpaceObjectFactory::newAsteroid),
-	PLANET(Planet.class, SpaceObjectFactory::newPlanet),
-	PLAYER_SHIP(PlayerShip.class, SpaceObjectFactory::newPlayerShip),
-	SPACE_STATION(SpaceStation.class, SpaceObjectFactory::newSpaceStation),
-	STAR(Star.class, SpaceObjectFactory::newStar);
+	ASTEROID(Asteroid.class, SpaceObjectReconstitutor::newAsteroid),
+	PLANET(Planet.class, SpaceObjectReconstitutor::newPlanet),
+	PLAYER_SHIP(PlayerShip.class, SpaceObjectReconstitutor::newPlayerShip),
+	SPACE_STATION(SpaceStation.class, SpaceObjectReconstitutor::newSpaceStation),
+	STAR(Star.class, SpaceObjectReconstitutor::newStar);
 
 	private static final ImmutableSet<SpaceObjectType> staticTypes;
 	private static final ImmutableSet<SpaceObjectType> dynamicTypes;
@@ -38,9 +38,9 @@ public enum SpaceObjectType {
 	}
 
 	private final Class<? extends SpaceObject> spaceObjectClass;
-	private final BiFunction<SpaceObjectFactory, SpaceObjectBaseDataRow, SpaceObject> factoryMethod;
+	private final BiFunction<SpaceObjectReconstitutor, SpaceObjectBaseDataRow, SpaceObject> factoryMethod;
 
-	SpaceObjectType(Class<? extends SpaceObject> spaceObjectClass, BiFunction<SpaceObjectFactory, SpaceObjectBaseDataRow, SpaceObject> factoryMethod) {
+	SpaceObjectType(Class<? extends SpaceObject> spaceObjectClass, BiFunction<SpaceObjectReconstitutor, SpaceObjectBaseDataRow, SpaceObject> factoryMethod) {
 		this.spaceObjectClass = spaceObjectClass;
 		this.factoryMethod = factoryMethod;
 	}
@@ -66,7 +66,7 @@ public enum SpaceObjectType {
 	/**
 	 * Creates a new space object of this type from a DB row by calling the appropriate method of the factory.
 	 */
-	SpaceObject newInstance(SpaceObjectFactory factory, SpaceObjectBaseDataRow row) {
+	SpaceObject newInstance(SpaceObjectReconstitutor factory, SpaceObjectBaseDataRow row) {
 		return factoryMethod.apply(factory, row);
 	}
 

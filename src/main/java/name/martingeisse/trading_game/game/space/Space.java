@@ -8,7 +8,6 @@ import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import name.martingeisse.trading_game.common.database.GeometricExpressions;
-import name.martingeisse.trading_game.game.item.InventoryRepository;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.QSpaceObjectBaseDataRow;
@@ -32,18 +31,16 @@ public final class Space {
 	private static final QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
 
 	private final PostgresService postgresService;
-	private final InventoryRepository inventoryRepository;
-	private final SpaceObjectFactory spaceObjectFactory;
+	private final SpaceObjectReconstitutor spaceObjectReconstitutor;
 
 	@Inject
-	public Space(PostgresService postgresService, InventoryRepository inventoryRepository, SpaceObjectFactory spaceObjectFactory) {
+	public Space(PostgresService postgresService, SpaceObjectReconstitutor spaceObjectReconstitutor) {
 		this.postgresService = postgresService;
-		this.inventoryRepository = inventoryRepository;
-		this.spaceObjectFactory = spaceObjectFactory;
+		this.spaceObjectReconstitutor = spaceObjectReconstitutor;
 	}
 
 	private SpaceObject reconstructSpaceObject(SpaceObjectBaseDataRow baseData) {
-		return baseData.getType().newInstance(spaceObjectFactory, baseData);
+		return baseData.getType().newInstance(spaceObjectReconstitutor, baseData);
 	}
 
 	/**
@@ -92,7 +89,7 @@ public final class Space {
 	/**
 	 * Gets a subset of static space objects in a newly created list. This method selects all objects that overlap a
 	 * selection rectangle.
-	 *
+	 * <p>
 	 * Note that for now, all objects are represented by a maximal bounding circle. This should use the actual object
 	 * size instead.
 	 */
@@ -123,7 +120,7 @@ public final class Space {
 	/**
 	 * Finds a space object by position and matching radius. If multiple objects match then the nearest one is returned.
 	 * Returns null if no object lies within the radius.
-	 *
+	 * <p>
 	 * Note that this method ignores the radius of space objects for now and treats them all as points.
 	 * This should be fixed in the future, so the selection radius argument can be an object-independent
 	 * user interface based radius. (Currently, that radius is a workaround for the point-based search).
@@ -138,11 +135,11 @@ public final class Space {
 			try (CloseableIterator<SpaceObjectBaseDataRow> iterator = query.iterate()) {
 				while (iterator.hasNext()) {
 					SpaceObjectBaseDataRow baseData = iterator.next();
-					long dx = (long)baseData.getPosition().x - x;
+					long dx = (long) baseData.getPosition().x - x;
 					if (dx > radius || dx < -radius) {
 						continue;
 					}
-					long dy = (long)baseData.getPosition().y - y;
+					long dy = (long) baseData.getPosition().y - y;
 					if (dy > radius || dy < -radius) {
 						continue;
 					}
@@ -168,22 +165,6 @@ public final class Space {
 			}
 		}
 		return matchingObject;
-	}
-
-	/**
-	 * Creates a new player ship and returns its ID.
-	 */
-	public long createPlayerShip(String name, long x, long y) {
-		long inventoryId = inventoryRepository.createInventory();
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			SpaceObjectBaseDataRow baseData = new SpaceObjectBaseDataRow();
-			baseData.setType(SpaceObjectType.PLAYER_SHIP);
-			baseData.setName(name);
-			baseData.setPosition(new PGpoint(x, y));
-			baseData.setInventoryId(inventoryId);
-			baseData.insert(connection);
-			return baseData.getId();
-		}
 	}
 
 	/**

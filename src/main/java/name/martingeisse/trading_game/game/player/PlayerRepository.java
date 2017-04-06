@@ -2,10 +2,10 @@ package name.martingeisse.trading_game.game.player;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.action.ActionQueueRepository;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentRepository;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
@@ -14,7 +14,6 @@ import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,40 +30,20 @@ public final class PlayerRepository {
 	private final ActionQueueRepository actionQueueRepository;
 	private final PlayerShipEquipmentRepository playerShipEquipmentRepository;
 	private final JacksonService jacksonService;
-	private final Provider<PlayerRepository> playerRepositoryProvider;
+	private final EntityProvider entityProvider;
 
 	@Inject
-	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, JacksonService jacksonService, Provider<PlayerRepository> playerRepositoryProvider) {
+	public PlayerRepository(PostgresService postgresService, Space space, ActionQueueRepository actionQueueRepository, PlayerShipEquipmentRepository playerShipEquipmentRepository, JacksonService jacksonService, EntityProvider entityProvider) {
 		this.postgresService = postgresService;
 		this.space = space;
 		this.actionQueueRepository = actionQueueRepository;
 		this.playerShipEquipmentRepository = playerShipEquipmentRepository;
 		this.jacksonService = jacksonService;
-		this.playerRepositoryProvider = playerRepositoryProvider;
+		this.entityProvider = entityProvider;
 	}
 
 	private Player instantiate(PlayerRow data) {
-		return new Player(playerRepositoryProvider.get(), postgresService, space, actionQueueRepository, playerShipEquipmentRepository, jacksonService, data);
-	}
-
-	/**
-	 * Creates a new player.
-	 *
-	 * @return the ID of the newly created player
-	 */
-	public Player createPlayer() {
-		PlayerRow data = new PlayerRow();
-		data.setShipId(space.createPlayerShip("noname's ship", 0, 0));
-		data.setActionQueueId(actionQueueRepository.createActionQueue());
-		data.setName("noname");
-		data.setLoginToken(RandomStringUtils.randomAlphanumeric(50));
-		data.setMoney(0L);
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			data.insert(connection);
-		}
-		Player player = instantiate(data);
-		player.updateAttributes();
-		return player;
+		return new Player(this, postgresService, jacksonService, entityProvider, data);
 	}
 
 	/**

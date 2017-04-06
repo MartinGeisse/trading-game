@@ -4,10 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
-import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
-import name.martingeisse.trading_game.postgres_entities.InventoryRow;
-import name.martingeisse.trading_game.postgres_entities.InventorySlotRow;
 
 /**
  * Helper class to handle mixed injection / id parameters in class {@link Inventory}.
@@ -34,41 +31,6 @@ public class InventoryRepository {
 	 */
 	public Inventory getInventory(long id) {
 		return new Inventory(postgresService, jacksonService, gameEventEmitter, id);
-	}
-
-	/**
-	 * Creates a new, empty inventory
-	 *
-	 * @return the ID of the new inventory
-	 */
-	public long createInventory() {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			InventoryRow inventory = new InventoryRow();
-			inventory.insert(connection);
-			gameEventEmitter.emit(new InventoryChangedEvent(inventory.getId()));
-			return inventory.getId();
-		}
-	}
-
-	/**
-	 * Creates a new inventory with the specified contents
-	 *
-	 * @return the ID of the new inventory
-	 */
-	public long createInventory(ImmutableItemStacks itemStacks) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			InventoryRow inventory = new InventoryRow();
-			inventory.insert(connection);
-			for (ImmutableItemStack stack : itemStacks.getStacks()) {
-				InventorySlotRow slot = new InventorySlotRow();
-				slot.setInventoryId(inventory.getId());
-				slot.setItemType(jacksonService.serialize(stack.getItemType()));
-				slot.setQuantity(stack.getSize());
-				slot.insert(connection);
-			}
-			gameEventEmitter.emit(new InventoryChangedEvent(inventory.getId()));
-			return inventory.getId();
-		}
 	}
 
 }

@@ -53,6 +53,10 @@ public class EntityProvider {
 		return playerRepositoryProvider.get().getPlayerById(id);
 	}
 
+	public Player getPlayerByShipId(long shipId) {
+		return playerRepositoryProvider.get().getPlayerByShipId(shipId);
+	}
+
 	public PlayerShipEquipment getPlayerShipEquipment(long playerShipId) {
 		return new PlayerShipEquipment(postgresServiceProvider.get(), jacksonServiceProvider.get(), playerRepositoryProvider.get(), gameEventEmitterProvider.get(), playerShipId);
 	}
