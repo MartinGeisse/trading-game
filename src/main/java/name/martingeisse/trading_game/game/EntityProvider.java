@@ -17,7 +17,7 @@ import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
 /**
  * Allows to get arbitrary game entities by ID, injecting their dependencies.
- *
+ * <p>
  * This class was introduced as an improvement over the previous repository-based system. In that previous system,
  * a separate repository was used for each entity type. This runs contrary to the idea that non-root entities can be
  * obtained via relationships, starting from other entities. The practical consequence was that all entities had
@@ -58,7 +58,7 @@ public class EntityProvider {
 	}
 
 	public PlayerShipEquipment getPlayerShipEquipment(long playerShipId) {
-		return new PlayerShipEquipment(postgresServiceProvider.get(), jacksonServiceProvider.get(), playerRepositoryProvider.get(), gameEventEmitterProvider.get(), playerShipId);
+		return new PlayerShipEquipment(postgresServiceProvider.get(), jacksonServiceProvider.get(), this, gameEventEmitterProvider.get(), playerShipId);
 	}
 
 	public PlayerSkills getPlayerSkills(long playerId) {
