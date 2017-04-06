@@ -1,7 +1,7 @@
 package name.martingeisse.trading_game.gui.homepage;
 
 import name.martingeisse.trading_game.game.player.Player;
-import name.martingeisse.trading_game.game.player.PlayerRepository;
+import name.martingeisse.trading_game.game.player.PlayerLoginRepository;
 import name.martingeisse.trading_game.gui.gamepage.GamePage;
 import name.martingeisse.trading_game.platform.wicket.LoginCookieUtil;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
@@ -24,7 +24,7 @@ public class EnterLoginTokenPage extends AbstractPage {
 			protected void onSubmit() {
 				Player selectedPlayer;
 				try {
-					selectedPlayer = MyWicketApplication.get().getDependency(PlayerRepository.class).getPlayerByLoginToken(loginToken);
+					selectedPlayer = MyWicketApplication.get().getDependency(PlayerLoginRepository.class).getPlayerByLoginToken(loginToken);
 				} catch (IllegalArgumentException e) {
 					FormComponent<?> formComponent = (FormComponent<?>)get("form:formBlocks:1:decoratedBody:textField");
 					formComponent.error("invalid login token");

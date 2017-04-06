@@ -1,7 +1,7 @@
 package name.martingeisse.trading_game.gui.homepage;
 
 import com.google.common.collect.ImmutableList;
-import name.martingeisse.trading_game.game.player.PlayerRepository;
+import name.martingeisse.trading_game.game.player.PlayerLoginRepository;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import name.martingeisse.wicket.simpleform.SimpleFormPanel;
@@ -18,7 +18,7 @@ public class ResendLoginMailPage extends AbstractPage {
 		SimpleFormPanel<ResendLoginMailPage> formPanel = new SimpleFormPanel<ResendLoginMailPage>("formPanel", Model.of(this)) {
 			@Override
 			protected void onSubmit() {
-				ImmutableList<String> loginTokens = MyWicketApplication.get().getDependency(PlayerRepository.class).getLoginTokensByEmailAddress(emailAddress);
+				ImmutableList<String> loginTokens = MyWicketApplication.get().getDependency(PlayerLoginRepository.class).getLoginTokensByEmailAddress(emailAddress);
 				System.out.println("* send email to " + emailAddress + " with the following tokens:");
 				if (loginTokens.isEmpty()) {
 					System.out.println("** message explaining that no player were bound to that address, via email (not on screen!)");

@@ -1,7 +1,7 @@
 package name.martingeisse.trading_game.platform.wicket;
 
 import name.martingeisse.trading_game.game.player.Player;
-import name.martingeisse.trading_game.game.player.PlayerRepository;
+import name.martingeisse.trading_game.game.player.PlayerLoginRepository;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -41,7 +41,7 @@ public final class LoginCookieUtil {
 		}
 		Player player;
 		try {
-			player = MyWicketApplication.get().getDependency(PlayerRepository.class).getPlayerByLoginToken(providedLoginToken);
+			player = MyWicketApplication.get().getDependency(PlayerLoginRepository.class).getPlayerByLoginToken(providedLoginToken);
 		} catch (IllegalArgumentException e) {
 			return null;
 		}

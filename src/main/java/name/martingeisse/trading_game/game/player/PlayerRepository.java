@@ -7,7 +7,6 @@ import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
-import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
@@ -24,14 +23,12 @@ import java.util.function.Consumer;
 public final class PlayerRepository {
 
 	private final PostgresService postgresService;
-	private final Space space;
 	private final JacksonService jacksonService;
 	private final EntityProvider entityProvider;
 
 	@Inject
-	public PlayerRepository(PostgresService postgresService, Space space, JacksonService jacksonService, EntityProvider entityProvider) {
+	public PlayerRepository(PostgresService postgresService, JacksonService jacksonService, EntityProvider entityProvider) {
 		this.postgresService = postgresService;
-		this.space = space;
 		this.jacksonService = jacksonService;
 		this.entityProvider = entityProvider;
 	}
@@ -56,16 +53,6 @@ public final class PlayerRepository {
 			}
 		}
 		return ImmutableList.copyOf(players);
-	}
-
-	/**
-	 * Gets a list of login tokens for a specific email address.
-	 */
-	public ImmutableList<String> getLoginTokensByEmailAddress(String emailAddress) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerRow qp = QPlayerRow.Player;
-			return ImmutableList.copyOf(connection.query().select(qp.loginToken).from(qp).where(qp.emailAddress.eq(emailAddress), qp.loginToken.isNotNull()).fetch());
-		}
 	}
 
 	/**
