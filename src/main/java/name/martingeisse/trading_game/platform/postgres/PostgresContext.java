@@ -1,5 +1,9 @@
 package name.martingeisse.trading_game.platform.postgres;
 
+import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
+
+import java.sql.SQLException;
+
 /**
  * Wraps a {@link PostgresConnection} and adds per-context caching capabilities. Note that no caching is done
  * implicitly since it might impact correctness. Per-thread contexts are managed by {@link PostgresThreadContextService}
@@ -41,6 +45,30 @@ public final class PostgresContext implements AutoCloseable {
 			connection = postgresService.newConnection();
 		}
 		return connection;
+	}
+
+	public void setAutoCommit(boolean autoCommit) {
+		try {
+			connection.getJdbcConnection().setAutoCommit(autoCommit);
+		} catch (SQLException e) {
+			throw new UnexpectedExceptionException(e);
+		}
+	}
+
+	public void commit() {
+		try {
+			connection.getJdbcConnection().commit();
+		} catch (SQLException e) {
+			throw new UnexpectedExceptionException(e);
+		}
+	}
+
+	public void rollback() {
+		try {
+			connection.getJdbcConnection().rollback();
+		} catch (SQLException e) {
+			throw new UnexpectedExceptionException(e);
+		}
 	}
 
 	/**
