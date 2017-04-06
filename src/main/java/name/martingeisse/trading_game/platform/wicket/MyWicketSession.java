@@ -1,8 +1,8 @@
 package name.martingeisse.trading_game.platform.wicket;
 
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.player.PlayerFactory;
-import name.martingeisse.trading_game.game.player.PlayerRepository;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.Request;
 
@@ -62,7 +62,7 @@ public class MyWicketSession extends WebSession {
 		if (playerId == null) {
 			return null;
 		} else {
-			return MyWicketApplication.get().getDependency(PlayerRepository.class).getPlayerById(playerId);
+			return MyWicketApplication.get().getDependency(EntityProvider.class).getPlayer(playerId);
 		}
 	}
 

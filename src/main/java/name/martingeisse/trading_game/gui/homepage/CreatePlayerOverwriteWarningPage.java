@@ -1,7 +1,7 @@
 package name.martingeisse.trading_game.gui.homepage;
 
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.player.Player;
-import name.martingeisse.trading_game.game.player.PlayerRepository;
 import name.martingeisse.trading_game.gui.gamepage.GamePage;
 import name.martingeisse.trading_game.platform.wicket.LoginCookieUtil;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
@@ -49,7 +49,7 @@ public class CreatePlayerOverwriteWarningPage extends AbstractPage {
 
 		@Override
 		protected Player load() {
-			return MyWicketApplication.get().getDependency(PlayerRepository.class).getPlayerById(playerId);
+			return MyWicketApplication.get().getDependency(EntityProvider.class).getPlayer(playerId);
 		}
 
 	}
