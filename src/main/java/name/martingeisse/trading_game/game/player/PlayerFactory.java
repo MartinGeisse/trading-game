@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.game.player;
 
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.action.ActionQueueFactory;
 import name.martingeisse.trading_game.game.space.SpaceObjectFactory;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
@@ -15,6 +16,14 @@ public class PlayerFactory {
 	private final PostgresService postgresService;
 	private final ActionQueueFactory actionQueueFactory;
 	private final SpaceObjectFactory spaceObjectFactory;
+	private final EntityProvider entityProvider;
+
+	public PlayerFactory(PostgresService postgresService, ActionQueueFactory actionQueueFactory, SpaceObjectFactory spaceObjectFactory, EntityProvider entityProvider) {
+		this.postgresService = postgresService;
+		this.actionQueueFactory = actionQueueFactory;
+		this.spaceObjectFactory = spaceObjectFactory;
+		this.entityProvider = entityProvider;
+	}
 
 	/**
 	 * Creates a new player.
@@ -31,7 +40,7 @@ public class PlayerFactory {
 		try (PostgresConnection connection = postgresService.newConnection()) {
 			data.insert(connection);
 		}
-		Player player = instantiate(data);
+		Player player = entityProvider.getPlayer(data.getId());
 		player.updateAttributes();
 		return player;
 	}
