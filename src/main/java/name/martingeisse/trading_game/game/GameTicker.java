@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
 import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
 import java.util.Timer;
@@ -19,13 +20,13 @@ public final class GameTicker {
 	// debugging switch to speed up the game
 	private static final int TICK_MULTIPLIER = 1;
 
-	private final PostgresService postgresService;
+	private final PostgresContextService postgresContextService;
 	private final Space space;
 	private final PlayerRepository playerRepository;
 
 	@Inject
-	public GameTicker(PostgresService postgresService, Space space, PlayerRepository playerRepository) {
-		this.postgresService = postgresService;
+	public GameTicker(PostgresContextService postgresContextService, Space space, PlayerRepository playerRepository) {
+		this.postgresContextService = postgresContextService;
 		this.space = space;
 		this.playerRepository = playerRepository;
 	}
@@ -37,12 +38,13 @@ public final class GameTicker {
 		new Timer(true).schedule(new TimerTask() {
 			@Override
 			public void run() {
-				try (PostgresConnection connection = postgresService.newConnection()) {
-					for (int i = 0; i < TICK_MULTIPLIER; i++) {
-						tick(connection);
+				for (int i = 0; i < TICK_MULTIPLIER; i++) {
+					try {
+						tick(postgresContextService.getConnection());
+					} finally {
+						postgresContextService.reset();
 					}
 				}
-
 			}
 		}, 0, 1000);
 	}

@@ -61,11 +61,11 @@ public class EntityProvider {
 	}
 
 	public PlayerShipEquipment getPlayerShipEquipment(long playerShipId) {
-		return new PlayerShipEquipment(postgresServiceProvider.get(), jacksonServiceProvider.get(), this, gameEventEmitterProvider.get(), playerShipId);
+		return new PlayerShipEquipment(postgresContextServiceProvider.get(), jacksonServiceProvider.get(), this, gameEventEmitterProvider.get(), playerShipId);
 	}
 
 	public PlayerSkills getPlayerSkills(long playerId) {
-		return new PlayerSkills(postgresServiceProvider.get(), playerId);
+		return new PlayerSkills(postgresContextServiceProvider.get(), playerId);
 	}
 
 	public SpaceObject getSpaceObject(long id) {

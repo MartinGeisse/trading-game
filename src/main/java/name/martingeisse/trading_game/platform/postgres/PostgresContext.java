@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.sql.RelationalPath;
-import com.querydsl.sql.SQLSerializer;
 import com.querydsl.sql.dml.SQLDeleteClause;
 import com.querydsl.sql.dml.SQLInsertClause;
 import com.querydsl.sql.dml.SQLUpdateClause;

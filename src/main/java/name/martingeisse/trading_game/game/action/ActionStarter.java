@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.game.action;
 
 import name.martingeisse.trading_game.common.util.SwitchCaseWtfException;
-import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.postgres_entities.ActionQueueSlotRow;
 
 /**

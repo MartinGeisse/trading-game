@@ -1,17 +1,17 @@
 package name.martingeisse.trading_game.game.skill;
 
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 
 /**
  * Represents the skills of a player.
  */
 public final class PlayerSkills {
 
-	private final PostgresService postgresService;
+	private final PostgresContextService postgresContextService;
 	private final long playerId;
 
-	public PlayerSkills(PostgresService postgresService, long playerId) {
-		this.postgresService = postgresService;
+	public PlayerSkills(PostgresContextService postgresContextService, long playerId) {
+		this.postgresContextService = postgresContextService;
 		this.playerId = playerId;
 	}
 

@@ -9,8 +9,7 @@ import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
-import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.PlayerShipEquipmentSlotRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerShipEquipmentSlotRow;
 
@@ -23,14 +22,14 @@ import java.util.List;
  */
 public final class PlayerShipEquipment {
 
-	private final PostgresService postgresService;
+	private final PostgresContextService postgresContextService;
 	private final JacksonService jacksonService;
 	private final EntityProvider entityProvider;
 	private final GameEventEmitter gameEventEmitter;
 	private final long playerShipId;
 
-	public PlayerShipEquipment(PostgresService postgresService, JacksonService jacksonService, EntityProvider entityProvider, GameEventEmitter gameEventEmitter, long playerShipId) {
-		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");
+	public PlayerShipEquipment(PostgresContextService postgresContextService, JacksonService jacksonService, EntityProvider entityProvider, GameEventEmitter gameEventEmitter, long playerShipId) {
+		this.postgresContextService = ParameterUtil.ensureNotNull(postgresContextService, "postgresContextService");
 		this.jacksonService = ParameterUtil.ensureNotNull(jacksonService, "jacksonService");
 		this.entityProvider = entityProvider;
 		this.gameEventEmitter = gameEventEmitter;
@@ -42,13 +41,11 @@ public final class PlayerShipEquipment {
 	 */
 	public ImmutableList<SlotInfo> getAllSlots() {
 		List<SlotInfo> result = new ArrayList<>();
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
-			try (CloseableIterator<PlayerShipEquipmentSlotRow> iterator = connection.query().select(qs).from(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId)).orderBy(qs.slotType.asc()).iterate()) {
-				while (iterator.hasNext()) {
-					PlayerShipEquipmentSlotRow row = iterator.next();
-					result.add(new SlotInfo(row.getSlotType(), jacksonService.deserialize(row.getItemType(), ItemType.class)));
-				}
+		QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
+		try (CloseableIterator<PlayerShipEquipmentSlotRow> iterator = postgresContextService.select(qs).from(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId)).orderBy(qs.slotType.asc()).iterate()) {
+			while (iterator.hasNext()) {
+				PlayerShipEquipmentSlotRow row = iterator.next();
+				result.add(new SlotInfo(row.getSlotType(), jacksonService.deserialize(row.getItemType(), ItemType.class)));
 			}
 		}
 		return ImmutableList.copyOf(result);
@@ -59,10 +56,8 @@ public final class PlayerShipEquipment {
 	 */
 	public ItemType getSlotItem(PlayerShipEquipmentSlotType slotType) {
 		ParameterUtil.ensureNotNull(slotType, "slotType");
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
-			return jacksonService.deserialize(connection.query().select(qs.itemType).from(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId), qs.slotType.eq(slotType)).fetchFirst(), ItemType.class);
-		}
+		QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
+		return jacksonService.deserialize(postgresContextService.select(qs.itemType).from(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId), qs.slotType.eq(slotType)).fetchFirst(), ItemType.class);
 	}
 
 	/**
@@ -76,17 +71,15 @@ public final class PlayerShipEquipment {
 		if (slotType == null) {
 			throw new RuntimeException("cannot equip item: " + itemType);
 		}
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
-			String serializedItemType = jacksonService.serialize(itemType);
-			try {
-				connection.insert(qs).set(qs.spaceObjectBaseDataId, playerShipId).set(qs.slotType, slotType).set(qs.itemType, serializedItemType).execute();
-			} catch (QueryException e) {
-				if (DatabaseUtil.isDuplicateKeyViolation(e)) {
-					throw new RuntimeException("this player already has an item of type " + slotType + " equipped");
-				} else {
-					throw e;
-				}
+		QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
+		String serializedItemType = jacksonService.serialize(itemType);
+		try {
+			postgresContextService.insert(qs).set(qs.spaceObjectBaseDataId, playerShipId).set(qs.slotType, slotType).set(qs.itemType, serializedItemType).execute();
+		} catch (QueryException e) {
+			if (DatabaseUtil.isDuplicateKeyViolation(e)) {
+				throw new RuntimeException("this player already has an item of type " + slotType + " equipped");
+			} else {
+				throw e;
 			}
 		}
 		updateAttributes();
@@ -100,11 +93,9 @@ public final class PlayerShipEquipment {
 	 * Throws an {@link IllegalStateException} if the slot is empty.
 	 */
 	public void unequip(PlayerShipEquipmentSlotType slotType) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
-			if (connection.delete(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId), qs.slotType.eq(slotType)).execute() == 0) {
-				throw new RuntimeException("this player has no item of type " + slotType + " equipped");
-			}
+		QPlayerShipEquipmentSlotRow qs = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
+		if (postgresContextService.delete(qs).where(qs.spaceObjectBaseDataId.eq(playerShipId), qs.slotType.eq(slotType)).execute() == 0) {
+			throw new RuntimeException("this player has no item of type " + slotType + " equipped");
 		}
 		updateAttributes();
 		gameEventEmitter.emit(new PlayerShipEquipmentChangedEvent(playerShipId));
