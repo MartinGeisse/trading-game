@@ -6,8 +6,7 @@ import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
-import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 
@@ -17,35 +16,31 @@ import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 @Singleton
 public final class PlayerRepositoryDataLink {
 
-	private final PostgresService postgresService;
+	private final PostgresContextService postgresContextService;
 	private final JacksonService jacksonService;
 	private final EntityProvider entityProvider;
 
 	@Inject
-	public PlayerRepositoryDataLink(PostgresService postgresService, JacksonService jacksonService, EntityProvider entityProvider) {
-		this.postgresService = postgresService;
+	public PlayerRepositoryDataLink(PostgresContextService postgresContextService, JacksonService jacksonService, EntityProvider entityProvider) {
+		this.postgresContextService = postgresContextService;
 		this.jacksonService = jacksonService;
 		this.entityProvider = entityProvider;
 	}
 
 	public PlayerDataLink createPlayerDataLink(PlayerRow data) {
-		return new PlayerDataLink(postgresService, entityProvider, jacksonService, data);
+		return new PlayerDataLink(postgresContextService, entityProvider, jacksonService, data);
 	}
 
 	// TODO won't work unit postgres contexts work. With the code below, the connection gets closed before any rows have
 	// been fetched.
 	public CloseableIterator<PlayerRow> getAllPlayerRows() {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerRow qp = QPlayerRow.Player;
-			return connection.query().select(qp).from(qp).iterate();
-		}
+		QPlayerRow qp = QPlayerRow.Player;
+		return postgresContextService.select(qp).from(qp).iterate();
 	}
 
 	public PlayerRow getPlayerRow(BooleanExpression predicate) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerRow qp = QPlayerRow.Player;
-			return connection.query().select(qp).from(qp).where(predicate).fetchFirst();
-		}
+		QPlayerRow qp = QPlayerRow.Player;
+		return postgresContextService.select(qp).from(qp).where(predicate).fetchFirst();
 	}
 
 }

@@ -6,8 +6,7 @@ import com.google.inject.Singleton;
 import com.querydsl.core.Tuple;
 import name.martingeisse.trading_game.common.util.CollectionUtils;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
-import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.QInventorySlotRow;
 
 import java.util.List;
@@ -18,12 +17,12 @@ import java.util.List;
 @Singleton
 public class PlayerBelongingsService {
 
-	private final PostgresService postgresService;
+	private final PostgresContextService postgresContextService;
 	private final JacksonService jacksonService;
 
 	@Inject
-	public PlayerBelongingsService(PostgresService postgresService, JacksonService jacksonService) {
-		this.postgresService = postgresService;
+	public PlayerBelongingsService(PostgresContextService postgresContextService, JacksonService jacksonService) {
+		this.postgresContextService = postgresContextService;
 		this.jacksonService = jacksonService;
 	}
 
@@ -34,17 +33,15 @@ public class PlayerBelongingsService {
 	 * The returned outer list is newly created.
 	 */
 	public List<InventoryEntry> getBelongingsForPlayerId(long playerId) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QInventorySlotRow qr = QInventorySlotRow.InventorySlot;
-			List<Tuple> inventorySlotRows = connection.query().select(qr.inventoryId, qr.itemType, qr.quantity).from(qr).where(qr.playerId.eq(playerId)).fetch();
-			List<InventoryEntry> inventoryEntries = CollectionUtils.createGroups(inventorySlotRows, r -> r.get(qr.inventoryId), (inventoryId, slotRows) -> {
-				ImmutableList<ImmutableItemStack> stacks = ImmutableList.copyOf(CollectionUtils.map(slotRows, slotRow -> {
-					return new ImmutableItemStack(jacksonService.deserialize(slotRow.get(qr.itemType), ItemType.class), slotRow.get(qr.quantity));
-				}));
-				return new InventoryEntry(inventoryId, new ImmutableItemStacks(stacks));
-			});
-			return inventoryEntries;
-		}
+		QInventorySlotRow qr = QInventorySlotRow.InventorySlot;
+		List<Tuple> inventorySlotRows = postgresContextService.select(qr.inventoryId, qr.itemType, qr.quantity).from(qr).where(qr.playerId.eq(playerId)).fetch();
+		List<InventoryEntry> inventoryEntries = CollectionUtils.createGroups(inventorySlotRows, r -> r.get(qr.inventoryId), (inventoryId, slotRows) -> {
+			ImmutableList<ImmutableItemStack> stacks = ImmutableList.copyOf(CollectionUtils.map(slotRows, slotRow -> {
+				return new ImmutableItemStack(jacksonService.deserialize(slotRow.get(qr.itemType), ItemType.class), slotRow.get(qr.quantity));
+			}));
+			return new InventoryEntry(inventoryId, new ImmutableItemStacks(stacks));
+		});
+		return inventoryEntries;
 	}
 
 	/**

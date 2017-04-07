@@ -5,8 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
-import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 
@@ -17,20 +16,20 @@ import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 public final class PlayerLoginRepository {
 
 	private final PlayerRepository playerRepository;
-	private final PostgresService postgresService;
+	private final PostgresContextService postgresContextService;
 	private final JacksonService jacksonService;
 	private final EntityProvider entityProvider;
 
 	@Inject
-	public PlayerLoginRepository(PlayerRepository playerRepository, PostgresService postgresService, JacksonService jacksonService, EntityProvider entityProvider) {
+	public PlayerLoginRepository(PlayerRepository playerRepository, PostgresContextService postgresContextService, JacksonService jacksonService, EntityProvider entityProvider) {
 		this.playerRepository = playerRepository;
-		this.postgresService = postgresService;
+		this.postgresContextService = postgresContextService;
 		this.jacksonService = jacksonService;
 		this.entityProvider = entityProvider;
 	}
 
 	private Player instantiate(PlayerRow data) {
-		return new Player(playerRepository, new PlayerDataLink(postgresService, entityProvider, jacksonService, data));
+		return new Player(playerRepository, new PlayerDataLink(postgresContextService, entityProvider, jacksonService, data));
 	}
 
 	/**
@@ -40,24 +39,20 @@ public final class PlayerLoginRepository {
 	 * @return the player
 	 */
 	public Player getPlayerByLoginToken(String loginToken) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerRow qp = QPlayerRow.Player;
-			PlayerRow playerRow = connection.query().select(qp).from(qp).where(qp.loginToken.eq(loginToken)).fetchFirst();
-			if (playerRow == null) {
-				throw new IllegalArgumentException("player not found for that login token");
-			}
-			return instantiate(playerRow);
+		QPlayerRow qp = QPlayerRow.Player;
+		PlayerRow playerRow = postgresContextService.select(qp).from(qp).where(qp.loginToken.eq(loginToken)).fetchFirst();
+		if (playerRow == null) {
+			throw new IllegalArgumentException("player not found for that login token");
 		}
+		return instantiate(playerRow);
 	}
 
 	/**
 	 * Gets a list of login tokens for a specific email address.
 	 */
 	public ImmutableList<String> getLoginTokensByEmailAddress(String emailAddress) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QPlayerRow qp = QPlayerRow.Player;
-			return ImmutableList.copyOf(connection.query().select(qp.loginToken).from(qp).where(qp.emailAddress.eq(emailAddress), qp.loginToken.isNotNull()).fetch());
-		}
+		QPlayerRow qp = QPlayerRow.Player;
+		return ImmutableList.copyOf(postgresContextService.select(qp.loginToken).from(qp).where(qp.emailAddress.eq(emailAddress), qp.loginToken.isNotNull()).fetch());
 	}
 
 }

@@ -9,7 +9,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import name.martingeisse.trading_game.common.database.GeometricExpressions;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.QSpaceObjectBaseDataRow;
 import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseDataRow;
 import org.postgresql.geometric.PGpoint;
@@ -30,12 +30,12 @@ public final class Space {
 
 	private static final QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
 
-	private final PostgresService postgresService;
+	private final PostgresContextService postgresContextService;
 	private final SpaceObjectReconstitutor spaceObjectReconstitutor;
 
 	@Inject
-	public Space(PostgresService postgresService, SpaceObjectReconstitutor spaceObjectReconstitutor) {
-		this.postgresService = postgresService;
+	public Space(PostgresContextService postgresContextService, SpaceObjectReconstitutor spaceObjectReconstitutor) {
+		this.postgresContextService = postgresContextService;
 		this.spaceObjectReconstitutor = spaceObjectReconstitutor;
 	}
 
@@ -50,13 +50,11 @@ public final class Space {
 	 * @return the loaded object
 	 */
 	public SpaceObject get(long id) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			SpaceObjectBaseDataRow row = SpaceObjectBaseDataRow.loadById(connection, id);
-			if (row == null) {
-				throw new IllegalArgumentException("invalid space object ID: " + id);
-			}
-			return reconstructSpaceObject(row);
+		SpaceObjectBaseDataRow row = SpaceObjectBaseDataRow.loadById(postgresContextService.getConnection(), id);
+		if (row == null) {
+			throw new IllegalArgumentException("invalid space object ID: " + id);
 		}
+		return reconstructSpaceObject(row);
 	}
 
 	/**
@@ -67,13 +65,11 @@ public final class Space {
 	 */
 	public List<SpaceObject> get(Consumer<PostgreSQLQuery<SpaceObjectBaseDataRow>> queryConfigurator) {
 		List<SpaceObject> result = new ArrayList<>();
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			PostgreSQLQuery<SpaceObjectBaseDataRow> query = connection.query().select(qbd).from(qbd);
-			queryConfigurator.accept(query);
-			try (CloseableIterator<SpaceObjectBaseDataRow> iterator = query.iterate()) {
-				while (iterator.hasNext()) {
-					result.add(reconstructSpaceObject(iterator.next()));
-				}
+		PostgreSQLQuery<SpaceObjectBaseDataRow> query = postgresContextService.select(qbd).from(qbd);
+		queryConfigurator.accept(query);
+		try (CloseableIterator<SpaceObjectBaseDataRow> iterator = query.iterate()) {
+			while (iterator.hasNext()) {
+				result.add(reconstructSpaceObject(iterator.next()));
 			}
 		}
 		return result;
@@ -129,38 +125,36 @@ public final class Space {
 		SpaceObject matchingObject = null;
 		long matchingSquaredDistance = Long.MAX_VALUE;
 		long squaredRadius = radius * radius;
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			PostgreSQLQuery<SpaceObjectBaseDataRow> query = connection.query().select(qbd).from(qbd);
-			query.where(GeometricExpressions.pointInsideBoundingBox(qbd.position, x, y, radius));
-			try (CloseableIterator<SpaceObjectBaseDataRow> iterator = query.iterate()) {
-				while (iterator.hasNext()) {
-					SpaceObjectBaseDataRow baseData = iterator.next();
-					long dx = (long) baseData.getPosition().x - x;
-					if (dx > radius || dx < -radius) {
-						continue;
-					}
-					long dy = (long) baseData.getPosition().y - y;
-					if (dy > radius || dy < -radius) {
-						continue;
-					}
-					long squaredDistance = dx * dx + dy * dy;
-					if (squaredDistance > squaredRadius) {
-						continue;
-					}
-					SpaceObject spaceObject = reconstructSpaceObject(baseData);
-					int priorityOrder = priorityComparator.compare(spaceObject, matchingObject);
-					boolean replaceMatching;
-					if (priorityOrder > 0) {
-						replaceMatching = true;
-					} else if (priorityOrder < 0) {
-						replaceMatching = false;
-					} else {
-						replaceMatching = squaredDistance < matchingSquaredDistance;
-					}
-					if (replaceMatching) {
-						matchingSquaredDistance = squaredDistance;
-						matchingObject = spaceObject;
-					}
+		PostgreSQLQuery<SpaceObjectBaseDataRow> query = postgresContextService.select(qbd).from(qbd);
+		query.where(GeometricExpressions.pointInsideBoundingBox(qbd.position, x, y, radius));
+		try (CloseableIterator<SpaceObjectBaseDataRow> iterator = query.iterate()) {
+			while (iterator.hasNext()) {
+				SpaceObjectBaseDataRow baseData = iterator.next();
+				long dx = (long) baseData.getPosition().x - x;
+				if (dx > radius || dx < -radius) {
+					continue;
+				}
+				long dy = (long) baseData.getPosition().y - y;
+				if (dy > radius || dy < -radius) {
+					continue;
+				}
+				long squaredDistance = dx * dx + dy * dy;
+				if (squaredDistance > squaredRadius) {
+					continue;
+				}
+				SpaceObject spaceObject = reconstructSpaceObject(baseData);
+				int priorityOrder = priorityComparator.compare(spaceObject, matchingObject);
+				boolean replaceMatching;
+				if (priorityOrder > 0) {
+					replaceMatching = true;
+				} else if (priorityOrder < 0) {
+					replaceMatching = false;
+				} else {
+					replaceMatching = squaredDistance < matchingSquaredDistance;
+				}
+				if (replaceMatching) {
+					matchingSquaredDistance = squaredDistance;
+					matchingObject = spaceObject;
 				}
 			}
 		}
