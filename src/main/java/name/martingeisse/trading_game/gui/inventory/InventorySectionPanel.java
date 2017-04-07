@@ -56,25 +56,25 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 		};
 		add(new ListView<PlayerBelongingsService.InventoryEntry>("inventories", model) {
 			@Override
-			protected void populateItem(ListItem<PlayerBelongingsService.InventoryEntry> item) {
-				long inventoryId = item.getModelObject().getInventoryId();
+			protected void populateItem(ListItem<PlayerBelongingsService.InventoryEntry> inventoryEntryItem) {
+				long inventoryId = inventoryEntryItem.getModelObject().getInventoryId();
 				String title = MyWicketApplication.get().getDependency(InventoryNameService.class).getNameForInventoryId(inventoryId);
-				item.add(new Label("inventoryTitle", title));
-				item.add(new ListView<ImmutableItemStack>("itemStacks", item.getModelObject().getItemStacks().getStacks()) {
+				inventoryEntryItem.add(new Label("inventoryTitle", title));
+				inventoryEntryItem.add(new ListView<ImmutableItemStack>("itemStacks", inventoryEntryItem.getModelObject().getItemStacks().getStacks()) {
 					@Override
-					protected void populateItem(ListItem<ImmutableItemStack> item) {
-						item.add(new Label("size", item.getModelObject().getSize()));
-						item.add(new Label("itemType", item.getModelObject().getItemType().getName()));
-						item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
-						item.add(new AjaxLink<Void>("transferOwnershipLink") {
+					protected void populateItem(ListItem<ImmutableItemStack> itemStackItem) {
+						itemStackItem.add(new Label("size", itemStackItem.getModelObject().getSize()));
+						itemStackItem.add(new Label("itemType", itemStackItem.getModelObject().getItemType().getName()));
+						itemStackItem.add(new Image("icon", ItemIcons.get(itemStackItem.getModelObject().getItemType())));
+						itemStackItem.add(new AjaxLink<Void>("transferOwnershipLink") {
 							@Override
 							public void onClick(AjaxRequestTarget target) {
 								// TODO do not allow to transfer ownership of items in the player's ship!
 								MainMenuTabbedPanel.replaceTabPanel(this, id -> {
-									return new TransferOwnershipPlayerListPanel(id, inventoryId, item.getModelObject());
+									return new TransferOwnershipPlayerListPanel(id, inventoryId, itemStackItem.getModelObject());
 								}, target);
 							}
-						});
+						}.setVisible(!inventoryEntryItem.getModelObject().isPlayerExclusive()));
 					}
 				});
 			}
