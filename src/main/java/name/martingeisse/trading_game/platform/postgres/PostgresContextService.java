@@ -29,6 +29,7 @@ public final class PostgresContextService {
 		PostgresContext context = contexts.get();
 		if (context == null) {
 			context = new PostgresContext(postgresService);
+			contexts.set(context);
 		}
 		return context;
 	}
