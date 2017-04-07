@@ -13,6 +13,7 @@ import name.martingeisse.trading_game.game.player.PlayerRepository;
 import name.martingeisse.trading_game.game.skill.PlayerSkills;
 import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.game.space.SpaceObject;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
 /**
@@ -27,14 +28,16 @@ import name.martingeisse.trading_game.platform.postgres.PostgresService;
 public class EntityProvider {
 
 	private final Provider<PostgresService> postgresServiceProvider;
+	private final Provider<PostgresContextService> postgresContextServiceProvider;
 	private final Provider<JacksonService> jacksonServiceProvider;
 	private final Provider<GameEventEmitter> gameEventEmitterProvider;
 	private final Provider<PlayerRepository> playerRepositoryProvider;
 	private final Provider<Space> spaceProvider;
 
 	@Inject
-	public EntityProvider(Provider<PostgresService> postgresServiceProvider, Provider<JacksonService> jacksonServiceProvider, Provider<GameEventEmitter> gameEventEmitterProvider, Provider<PlayerRepository> playerRepositoryProvider, Provider<Space> spaceProvider) {
+	public EntityProvider(Provider<PostgresService> postgresServiceProvider, Provider<PostgresContextService> postgresContextServiceProvider, Provider<JacksonService> jacksonServiceProvider, Provider<GameEventEmitter> gameEventEmitterProvider, Provider<PlayerRepository> playerRepositoryProvider, Provider<Space> spaceProvider) {
 		this.postgresServiceProvider = postgresServiceProvider;
+		this.postgresContextServiceProvider = postgresContextServiceProvider;
 		this.jacksonServiceProvider = jacksonServiceProvider;
 		this.gameEventEmitterProvider = gameEventEmitterProvider;
 		this.playerRepositoryProvider = playerRepositoryProvider;
@@ -46,7 +49,7 @@ public class EntityProvider {
 	}
 
 	public Inventory getInventory(long id) {
-		return new Inventory(postgresServiceProvider.get(), jacksonServiceProvider.get(), gameEventEmitterProvider.get(), id);
+		return new Inventory(postgresContextServiceProvider.get(), jacksonServiceProvider.get(), gameEventEmitterProvider.get(), id);
 	}
 
 	public Player getPlayer(long id) {

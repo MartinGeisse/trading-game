@@ -1,6 +1,14 @@
 package name.martingeisse.trading_game.platform.postgres;
 
 import com.google.inject.Inject;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
+import com.querydsl.sql.RelationalPath;
+import com.querydsl.sql.SQLSerializer;
+import com.querydsl.sql.dml.SQLDeleteClause;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 
 import java.io.Closeable;
@@ -76,6 +84,30 @@ public final class PostgresContext implements Closeable {
 		} catch (SQLException e) {
 			throw new UnexpectedExceptionException(e);
 		}
+	}
+
+	public <T> PostgreSQLQuery<T> query() {
+		return getConnection().query();
+	}
+
+	public <T> PostgreSQLQuery<T> select(Expression<T> expr) {
+		return query().select(expr);
+	}
+
+	public PostgreSQLQuery<Tuple> select(Expression<?>... exprs) {
+		return query().select(exprs);
+	}
+
+	public SQLInsertClause insert(RelationalPath<?> entity) {
+		return getConnection().insert(entity);
+	}
+
+	public SQLUpdateClause update(RelationalPath<?> entity) {
+		return getConnection().update(entity);
+	}
+
+	public SQLDeleteClause delete(RelationalPath<?> entity) {
+		return getConnection().delete(entity);
 	}
 
 }

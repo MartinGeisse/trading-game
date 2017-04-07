@@ -2,6 +2,13 @@ package name.martingeisse.trading_game.platform.postgres;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
+import com.querydsl.sql.RelationalPath;
+import com.querydsl.sql.dml.SQLDeleteClause;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
 
 /**
  * This class gives access to a per-thread {@link PostgresContext}. It also provides the same
@@ -46,6 +53,30 @@ public final class PostgresContextService {
 
 	public void rollback() {
 		getContext().rollback();
+	}
+
+	public <T> PostgreSQLQuery<T> query() {
+		return getContext().query();
+	}
+
+	public <T> PostgreSQLQuery<T> select(Expression<T> expr) {
+		return getContext().select(expr);
+	}
+
+	public PostgreSQLQuery<Tuple> select(Expression<?>... exprs) {
+		return getContext().select(exprs);
+	}
+
+	public SQLInsertClause insert(RelationalPath<?> entity) {
+		return getContext().insert(entity);
+	}
+
+	public SQLUpdateClause update(RelationalPath<?> entity) {
+		return getContext().update(entity);
+	}
+
+	public SQLDeleteClause delete(RelationalPath<?> entity) {
+		return getContext().delete(entity);
 	}
 
 }

@@ -10,6 +10,7 @@ import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.InventorySlotRow;
 import name.martingeisse.trading_game.postgres_entities.QInventorySlotRow;
@@ -24,14 +25,14 @@ import java.util.List;
  */
 public final class Inventory {
 
-	private final PostgresService postgresService;
+	private final PostgresContextService postgresContextService;
 	private final JacksonService jacksonService;
 	private final GameEventEmitter gameEventEmitter;
 	private final long id;
 
 	// use InventoryRepository to get an instance of this class
-	public Inventory(PostgresService postgresService, JacksonService jacksonService, GameEventEmitter gameEventEmitter, long id) {
-		this.postgresService = postgresService;
+	public Inventory(PostgresContextService postgresContextService, JacksonService jacksonService, GameEventEmitter gameEventEmitter, long id) {
+		this.postgresContextService = postgresContextService;
 		this.jacksonService = jacksonService;
 		this.gameEventEmitter = gameEventEmitter;
 		this.id = id;
@@ -52,17 +53,15 @@ public final class Inventory {
 	 */
 	public ImmutableItemStacks getItems(Long playerIdFilter) {
 		List<ImmutableItemStack> stacks = new ArrayList<>();
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
-			PostgreSQLQuery<InventorySlotRow> query = connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id));
-			if (playerIdFilter != null) {
-				query.where(qs.playerId.eq(playerIdFilter));
-			}
-			try (CloseableIterator<InventorySlotRow> iterator = query.iterate()) {
-				while (iterator.hasNext()) {
-					InventorySlotRow row = iterator.next();
-					stacks.add(new ImmutableItemStack(jacksonService.deserialize(row.getItemType(), ItemType.class), row.getQuantity()));
-				}
+		QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
+		PostgreSQLQuery<InventorySlotRow> query = postgresContextService.select(qs).from(qs).where(qs.inventoryId.eq(id));
+		if (playerIdFilter != null) {
+			query.where(qs.playerId.eq(playerIdFilter));
+		}
+		try (CloseableIterator<InventorySlotRow> iterator = query.iterate()) {
+			while (iterator.hasNext()) {
+				InventorySlotRow row = iterator.next();
+				stacks.add(new ImmutableItemStack(jacksonService.deserialize(row.getItemType(), ItemType.class), row.getQuantity()));
 			}
 		}
 		return ImmutableItemStacks.fromFixedItemStacks(stacks);
@@ -72,14 +71,12 @@ public final class Inventory {
 	 * @return the number of item stacks
 	 */
 	public int getNumberOfStacks(Long playerIdFilter) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
-			PostgreSQLQuery<InventorySlotRow> query = connection.query().select(qs).from(qs).where(qs.inventoryId.eq(id));
-			if (playerIdFilter != null) {
-				query.where(qs.playerId.eq(playerIdFilter));
-			}
-			return (int) query.fetchCount();
+		QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
+		PostgreSQLQuery<InventorySlotRow> query = postgresContextService.select(qs).from(qs).where(qs.inventoryId.eq(id));
+		if (playerIdFilter != null) {
+			query.where(qs.playerId.eq(playerIdFilter));
 		}
+		return (int) query.fetchCount();
 	}
 
 	/**
@@ -99,15 +96,13 @@ public final class Inventory {
 	 * Counts the items of the specified type.
 	 */
 	public int count(ItemType itemType, Long playerIdFilter) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
-			String serializedItemType = jacksonService.serialize(itemType);
-			PostgreSQLQuery<Integer> query = connection.query().select(qs.quantity.sum()).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).groupBy(Expressions.constant(0));
-			if (playerIdFilter != null) {
-				query.where(qs.playerId.eq(playerIdFilter));
-			}
-			return query.fetchFirst();
+		QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
+		String serializedItemType = jacksonService.serialize(itemType);
+		PostgreSQLQuery<Integer> query = postgresContextService.select(qs.quantity.sum()).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType)).groupBy(Expressions.constant(0));
+		if (playerIdFilter != null) {
+			query.where(qs.playerId.eq(playerIdFilter));
 		}
+		return query.fetchFirst();
 	}
 
 	public Inventory add(long playerId, ItemType itemType) {
@@ -137,13 +132,11 @@ public final class Inventory {
 		}
 		Long slotId = findSlotId(playerId, itemType);
 		QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			if (slotId == null) {
-				String serializedItemType = jacksonService.serialize(itemType);
-				connection.insert(qs).set(qs.inventoryId, id).set(qs.playerId, playerId).set(qs.itemType, serializedItemType).set(qs.quantity, amount).execute();
-			} else {
-				connection.update(qs).set(qs.quantity, qs.quantity.add(amount)).where(qs.id.eq(slotId)).execute();
-			}
+		if (slotId == null) {
+			String serializedItemType = jacksonService.serialize(itemType);
+			postgresContextService.insert(qs).set(qs.inventoryId, id).set(qs.playerId, playerId).set(qs.itemType, serializedItemType).set(qs.quantity, amount).execute();
+		} else {
+			postgresContextService.update(qs).set(qs.quantity, qs.quantity.add(amount)).where(qs.id.eq(slotId)).execute();
 		}
 		gameEventEmitter.emit(new InventoryChangedEvent(id));
 		return this;
@@ -204,17 +197,15 @@ public final class Inventory {
 				throw new WtfException("did not find enough items despite checking first");
 			}
 			InventorySlotRow slot = findSlot(playerId, itemType);
-			try (PostgresConnection connection = postgresService.newConnection()) {
-				QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
-				if (slot.getQuantity() > amount) {
-					connection.update(qs).set(qs.quantity, qs.quantity.subtract(amount)).where(qs.id.eq(slot.getId())).execute();
+			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
+			if (slot.getQuantity() > amount) {
+				postgresContextService.update(qs).set(qs.quantity, qs.quantity.subtract(amount)).where(qs.id.eq(slot.getId())).execute();
+				break;
+			} else {
+				amount -= slot.getQuantity();
+				postgresContextService.delete(qs).where(qs.id.eq(slot.getId())).execute();
+				if (amount <= 0) {
 					break;
-				} else {
-					amount -= slot.getQuantity();
-					connection.delete(qs).where(qs.id.eq(slot.getId())).execute();
-					if (amount <= 0) {
-						break;
-					}
 				}
 			}
 		}
@@ -236,12 +227,10 @@ public final class Inventory {
 	private <T> T findSlot(long playerId, ItemType itemType, Path<T> path) {
 		ParameterUtil.ensureNotNull(itemType, "itemType");
 		ParameterUtil.ensureNotNull(path, "path");
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			String serializedItemType = jacksonService.serialize(itemType);
-			QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
-			PostgreSQLQuery<T> query = connection.query().select(path).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType), qs.playerId.eq(playerId));
-			return query.fetchFirst();
-		}
+		String serializedItemType = jacksonService.serialize(itemType);
+		QInventorySlotRow qs = QInventorySlotRow.InventorySlot;
+		PostgreSQLQuery<T> query = postgresContextService.select(path).from(qs).where(qs.inventoryId.eq(id), qs.itemType.eq(serializedItemType), qs.playerId.eq(playerId));
+		return query.fetchFirst();
 	}
 
 	/**
