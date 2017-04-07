@@ -7,7 +7,6 @@ import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
-import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
@@ -112,10 +111,9 @@ public final class PlayerRepository {
 		return instantiate(playerRow);
 	}
 
-	// TODO remove connection parameter
-	public void forEachPlayer(PostgresConnection connection, Consumer<Player> body) {
+	public void forEachPlayer(Consumer<Player> body) {
 		QPlayerRow qp = QPlayerRow.Player;
-		try (CloseableIterator<PlayerRow> iterator = connection.query().select(qp).from(qp).iterate()) {
+		try (CloseableIterator<PlayerRow> iterator = postgresContextService.query().select(qp).from(qp).iterate()) {
 			while (iterator.hasNext()) {
 				body.accept(instantiate(iterator.next()));
 			}
@@ -125,8 +123,8 @@ public final class PlayerRepository {
 	/**
 	 * Called once every second to advance the game logic.
 	 */
-	public void tick(PostgresConnection connection) {
-		forEachPlayer(connection, p -> p.tick(connection));
+	public void tick() {
+		forEachPlayer(Player::tick);
 	}
 
 }

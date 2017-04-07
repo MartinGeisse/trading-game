@@ -7,7 +7,7 @@ import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.definition.MiningYieldInfo;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseDataRow;
 
 /**
@@ -16,13 +16,13 @@ import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseDataRow;
 @Singleton
 public final class SpaceObjectReconstitutor {
 
-	private final PostgresService postgresService;
+	private final PostgresContextService postgresContextService;
 	private final GameEventEmitter gameEventEmitter;
 	private final EntityProvider entityProvider;
 
 	@Inject
-	public SpaceObjectReconstitutor(PostgresService postgresService, GameEventEmitter gameEventEmitter, EntityProvider entityProvider) {
-		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");
+	public SpaceObjectReconstitutor(PostgresContextService postgresContextService, GameEventEmitter gameEventEmitter, EntityProvider entityProvider) {
+		this.postgresContextService = ParameterUtil.ensureNotNull(postgresContextService, "postgresContextService");
 		this.gameEventEmitter = ParameterUtil.ensureNotNull(gameEventEmitter, "gameEventEmitter");
 		this.entityProvider = ParameterUtil.ensureNotNull(entityProvider, "entityProvider");
 	}
@@ -84,7 +84,7 @@ public final class SpaceObjectReconstitutor {
 	}
 
 	private <T extends SpaceObject> T inject(SpaceObjectBaseDataRow row, T spaceObject) {
-		spaceObject.internalSetPostgresService(postgresService);
+		spaceObject.internalSetPostgresContextService(postgresContextService);
 		spaceObject.internalSetGameEventEmitter(gameEventEmitter);
 		spaceObject.internalSetId(row.getId());
 		spaceObject.internalSetName(row.getName());

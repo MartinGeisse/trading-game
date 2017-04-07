@@ -14,7 +14,6 @@ import name.martingeisse.trading_game.game.skill.PlayerSkills;
 import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
 /**
  * Allows to get arbitrary game entities by ID, injecting their dependencies.
@@ -27,7 +26,6 @@ import name.martingeisse.trading_game.platform.postgres.PostgresService;
 @Singleton
 public class EntityProvider {
 
-	private final Provider<PostgresService> postgresServiceProvider;
 	private final Provider<PostgresContextService> postgresContextServiceProvider;
 	private final Provider<JacksonService> jacksonServiceProvider;
 	private final Provider<GameEventEmitter> gameEventEmitterProvider;
@@ -35,8 +33,7 @@ public class EntityProvider {
 	private final Provider<Space> spaceProvider;
 
 	@Inject
-	public EntityProvider(Provider<PostgresService> postgresServiceProvider, Provider<PostgresContextService> postgresContextServiceProvider, Provider<JacksonService> jacksonServiceProvider, Provider<GameEventEmitter> gameEventEmitterProvider, Provider<PlayerRepository> playerRepositoryProvider, Provider<Space> spaceProvider) {
-		this.postgresServiceProvider = postgresServiceProvider;
+	public EntityProvider(Provider<PostgresContextService> postgresContextServiceProvider, Provider<JacksonService> jacksonServiceProvider, Provider<GameEventEmitter> gameEventEmitterProvider, Provider<PlayerRepository> playerRepositoryProvider, Provider<Space> spaceProvider) {
 		this.postgresContextServiceProvider = postgresContextServiceProvider;
 		this.jacksonServiceProvider = jacksonServiceProvider;
 		this.gameEventEmitterProvider = gameEventEmitterProvider;

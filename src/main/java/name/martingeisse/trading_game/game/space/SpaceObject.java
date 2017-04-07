@@ -7,8 +7,7 @@ import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.action.actions.MoveToPositionAction;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.player.Player;
-import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.QSpaceObjectBaseDataRow;
 import org.postgresql.geometric.PGpoint;
 
@@ -19,7 +18,7 @@ public abstract class SpaceObject implements PositionProvider {
 
 	public static final String DEFAULT_NAME = "unnamed";
 
-	private PostgresService postgresService;
+	private PostgresContextService postgresContextService;
 	private GameEventEmitter gameEventEmitter;
 	private long id;
 	private String name = DEFAULT_NAME;
@@ -29,11 +28,11 @@ public abstract class SpaceObject implements PositionProvider {
 	/**
 	 * Setter method.
 	 *
-	 * @param postgresService the postgresService
+	 * @param postgresContextService the postgresContextService
 	 */
 	@Inject
-	public void internalSetPostgresService(PostgresService postgresService) {
-		this.postgresService = postgresService;
+	public void internalSetPostgresContextService(PostgresContextService postgresContextService) {
+		this.postgresContextService = postgresContextService;
 	}
 
 	/**
@@ -127,10 +126,8 @@ public abstract class SpaceObject implements PositionProvider {
 	 * @param name the new name
 	 */
 	public void setName(String name) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
-			connection.update(qbd).set(qbd.name, name).where(qbd.id.eq(id)).execute();
-		}
+		QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
+		postgresContextService.update(qbd).set(qbd.name, name).where(qbd.id.eq(id)).execute();
 		internalSetName(name);
 	}
 
@@ -141,10 +138,8 @@ public abstract class SpaceObject implements PositionProvider {
 	 * @param y the new y coordinate
 	 */
 	public void setPosition(long x, long y) {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
-			connection.update(qbd).set(qbd.position, new PGpoint(x, y)).where(qbd.id.eq(id)).execute();
-		}
+		QSpaceObjectBaseDataRow qbd = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
+		postgresContextService.update(qbd).set(qbd.position, new PGpoint(x, y)).where(qbd.id.eq(id)).execute();
 		internalSetX(x);
 		internalSetY(y);
 		gameEventEmitter.emit(new SpaceObjectPositionChangedEvent(id));
@@ -154,7 +149,7 @@ public abstract class SpaceObject implements PositionProvider {
 	 * Called once every second to advance game logic. Whether this method is supported can be checked by
 	 * {@link SpaceObjectType#getTypesThatSupportTick()}.
 	 */
-	public void tick(PostgresConnection connection) {
+	public void tick() {
 		throw new UnsupportedOperationException("tick() not supported");
 	}
 

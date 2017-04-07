@@ -7,7 +7,6 @@ import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
 import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.space.PlayerShip;
-import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 
 import java.util.HashMap;
@@ -118,8 +117,8 @@ public final class Player {
 	/**
 	 * Called once every second to advance game logic.
 	 */
-	public void tick(PostgresConnection connection) {
-		getActionQueue().tick(connection);
+	public void tick() {
+		getActionQueue().tick();
 	}
 
 	/**

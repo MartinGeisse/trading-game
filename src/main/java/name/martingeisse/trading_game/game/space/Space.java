@@ -8,7 +8,6 @@ import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import name.martingeisse.trading_game.common.database.GeometricExpressions;
-import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.QSpaceObjectBaseDataRow;
 import name.martingeisse.trading_game.postgres_entities.SpaceObjectBaseDataRow;
@@ -164,16 +163,16 @@ public final class Space {
 	/**
 	 * Called once every second to advance game logic.
 	 */
-	public void tick(PostgresConnection connection) {
+	public void tick() {
 		ImmutableSet<SpaceObjectType> typesThatSupportTick = SpaceObjectType.getTypesThatSupportTick();
 		if (typesThatSupportTick.isEmpty()) {
 			return;
 		}
-		try (CloseableIterator<SpaceObjectBaseDataRow> iterator = connection.query().select(qbd).from(qbd).where(qbd.type.in(typesThatSupportTick)).iterate()) {
+		try (CloseableIterator<SpaceObjectBaseDataRow> iterator = postgresContextService.query().select(qbd).from(qbd).where(qbd.type.in(typesThatSupportTick)).iterate()) {
 			while (iterator.hasNext()) {
 				SpaceObjectBaseDataRow baseData = iterator.next();
 				SpaceObject spaceObject = reconstructSpaceObject(baseData);
-				spaceObject.tick(connection);
+				spaceObject.tick();
 			}
 		}
 	}

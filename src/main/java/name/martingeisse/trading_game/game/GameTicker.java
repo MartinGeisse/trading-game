@@ -4,9 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
 import name.martingeisse.trading_game.game.space.Space;
-import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,7 +38,7 @@ public final class GameTicker {
 			public void run() {
 				for (int i = 0; i < TICK_MULTIPLIER; i++) {
 					try {
-						tick(postgresContextService.getConnection());
+						tick();
 					} finally {
 						postgresContextService.reset();
 					}
@@ -52,10 +50,10 @@ public final class GameTicker {
 	/**
 	 * Called once every second to advance the game logic.
 	 */
-	private void tick(PostgresConnection connection) {
+	private void tick() {
 		try {
-			playerRepository.tick(connection);
-			space.tick(connection);
+			playerRepository.tick();
+			space.tick();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
