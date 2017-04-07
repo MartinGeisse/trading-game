@@ -9,8 +9,7 @@ package name.martingeisse.trading_game.platform.application;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
-import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
-import name.martingeisse.trading_game.platform.postgres.PostgresContext;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.platform.wicket.MyWicketFilter;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -30,7 +29,7 @@ public class WebModule extends ServletModule {
 	@Override
 	protected void configureServlets() {
 
-		// associate a (light-weight) PostgresContext with each request-handling thread
+		// reset the per-thread PostgresContext after each request, so the next request uses a fresh state
 		filterRegex("/.*").through(PostgresContextFilter.class);
 
 		// bind Wicket
@@ -47,8 +46,11 @@ public class WebModule extends ServletModule {
 	@Singleton
 	public static class PostgresContextFilter implements Filter {
 
+		private final PostgresContextService postgresContextService;
+
 		@Inject
-		public PostgresContextFilter() {
+		public PostgresContextFilter(PostgresContextService postgresContextService) {
+			this.postgresContextService = postgresContextService;
 		}
 
 		@Override
@@ -64,7 +66,7 @@ public class WebModule extends ServletModule {
 			try {
 				chain.doFilter(request, response);
 			} finally {
-				PostgresContext.reset();
+				postgresContextService.reset();
 			}
 		}
 

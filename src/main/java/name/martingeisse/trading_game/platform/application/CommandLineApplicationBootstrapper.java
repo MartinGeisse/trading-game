@@ -7,8 +7,6 @@ package name.martingeisse.trading_game.platform.application;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import name.martingeisse.trading_game.platform.postgres.PostgresContext;
-import name.martingeisse.trading_game.platform.postgres.PostgresService;
 
 /**
  * This class is used for simple command-line applications to initialize Guice. This class does not
@@ -27,7 +25,6 @@ public final class CommandLineApplicationBootstrapper {
 	 */
 	public static Injector bootstrap() {
 		Injector injector = Guice.createInjector(new CommandLineApplicationModule());
-		PostgresContext.initialize(injector.getInstance(PostgresService.class));
 		injector.getInstance(CommandLineApplicationInitializer.class).run();
 		return injector;
 	}

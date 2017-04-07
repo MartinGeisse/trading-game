@@ -1,47 +1,60 @@
 package name.martingeisse.trading_game.platform.postgres;
 
+import com.google.inject.Inject;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.sql.SQLException;
 
 /**
- * This class gives access to a per-thread lazily initialized {@link PostgresConnection} and adds caching
- * capabilities. Note that no caching is done implicitly since it might impact correctness. Per-thread connection
- * management is important for controlling serial/parallel execution of queries and transaction management.
+ * Wraps a {@link PostgresConnection} and adds caching capabilities. Note that no caching is done implicitly since it
+ * might impact correctness.
  * <p>
  * This context initializes its properties lazily. It gets disposed by calling reset(), which returns it to its
  * initial state.
+ * <p>
+ * Closing this context is the same as resetting it. This is done to support try-with-resource. The close() method is
+ * therefore not idempotent when other calls happen in between, since the second close() call will reset the context
+ * again instead of having no effect. This behavior is allowed by {@link AutoCloseable} and seems obvious in this case.
+ * <p>
+ * This class is NOT thread-safe! The typical usage pattern is to create, use and dispose of a context within a single
+ * thread. If a context must be used by multiple threads, e.g. to share a database transaction, then the calling code
+ * must ensure thread safety itself.
  */
-public final class PostgresContext {
+public final class PostgresContext implements Closeable {
 
-	private static final ThreadLocal<PostgresConnection> connections = new ThreadLocal<>();
-	private static PostgresService postgresService;
+	private final PostgresService postgresService;
+	private PostgresConnection connection;
 
-	public static void initialize(PostgresService postgresService) {
-		PostgresContext.postgresService = postgresService;
+	@Inject
+	public PostgresContext(PostgresService postgresService) {
+		this.postgresService = postgresService;
 	}
 
-	public static PostgresConnection getConnection() {
-		PostgresConnection connection = connections.get();
+	public PostgresConnection getConnection() {
 		if (connection == null) {
 			connection = postgresService.newConnection();
-			connections.set(connection);
 		}
 		return connection;
 	}
 
-	public static void reset() {
-		PostgresConnection connection = connections.get();
+	public void reset() {
 		if (connection != null) {
 			try {
 				connection.close();
 			} finally {
-				connections.set(null);
+				connection = null;
 			}
 		}
 	}
 
-	public static void setAutoCommit(boolean autoCommit) {
+	@Override
+	public void close() throws IOException {
+		reset();
+	}
+
+	public void setAutoCommit(boolean autoCommit) {
 		try {
 			getConnection().getJdbcConnection().setAutoCommit(autoCommit);
 		} catch (SQLException e) {
@@ -49,7 +62,7 @@ public final class PostgresContext {
 		}
 	}
 
-	public static void commit() {
+	public void commit() {
 		try {
 			getConnection().getJdbcConnection().commit();
 		} catch (SQLException e) {
@@ -57,7 +70,7 @@ public final class PostgresContext {
 		}
 	}
 
-	public static void rollback() {
+	public void rollback() {
 		try {
 			getConnection().getJdbcConnection().rollback();
 		} catch (SQLException e) {
