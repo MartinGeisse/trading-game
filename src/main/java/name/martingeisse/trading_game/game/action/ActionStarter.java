@@ -9,15 +9,13 @@ import name.martingeisse.trading_game.postgres_entities.ActionQueueSlotRow;
  */
 final class ActionStarter {
 
-	private final PostgresConnection connection;
 	private final ActionQueueHelper helper;
 	private boolean prerequisiteSuccess;
 	private boolean prerequisiteFailure;
 	private ActionQueueSlotRow runningSlot;
 	private Action runningAction;
 
-	ActionStarter(PostgresConnection connection, ActionQueueHelper helper) {
-		this.connection = connection;
+	ActionStarter(ActionQueueHelper helper) {
 		this.helper = helper;
 	}
 
@@ -25,7 +23,7 @@ final class ActionStarter {
 		runningSlot = null;
 		runningAction = null;
 		while (true) {
-			ActionQueueSlotRow slot = helper.fetchPendingSlot(connection, 0);
+			ActionQueueSlotRow slot = helper.fetchPendingSlot(0);
 			if (slot == null) {
 				// queue is empty
 				return;
@@ -38,7 +36,7 @@ final class ActionStarter {
 				break;
 			} else if (prerequisiteFailure) {
 				// a prerequisite failed, so we cannot execute the action itself -- remove it and skip to the next one
-				helper.deleteSlot(connection, slot);
+				helper.deleteSlot(slot);
 			} else {
 				// no prerequisite found, so start the action itself
 				Action.Status status = action.start();
@@ -49,7 +47,7 @@ final class ActionStarter {
 					return;
 				} else {
 					// failed or finished, so continue with the next action
-					helper.deleteSlot(connection, slot);
+					helper.deleteSlot(slot);
 				}
 			}
 		}
@@ -83,7 +81,7 @@ final class ActionStarter {
 			case RUNNING:
 				// the current prerequisite was started successfully and is running now, so add it to the queue
 				prerequisiteSuccess = true;
-				runningSlot = helper.insertSlot(connection, prerequisite, true, true);
+				runningSlot = helper.insertSlot(prerequisite, true, true);
 				runningAction = prerequisite;
 				break;
 

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.platform.postgres.PostgresConnection;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
 import name.martingeisse.trading_game.postgres_entities.ActionQueueSlotRow;
 
@@ -15,17 +16,11 @@ import java.util.List;
  */
 public final class ActionQueue {
 
-	private final PostgresService postgresService;
-	private final JacksonService jacksonService;
-	private final long id;
 	private final ActionQueueHelper helper;
 
 	// use ActionQueueRepository to get an instance of this class
-	public ActionQueue(PostgresService postgresService, JacksonService jacksonService, long id) {
-		this.postgresService = ParameterUtil.ensureNotNull(postgresService, "postgresService");;
-		this.jacksonService = ParameterUtil.ensureNotNull(jacksonService, "jacksonService");;
-		this.id = ParameterUtil.ensurePositive(id, "id");;
-		this.helper = new ActionQueueHelper(jacksonService, id);
+	public ActionQueue(PostgresContextService postgresContextService, JacksonService jacksonService, long id) {
+		this.helper = new ActionQueueHelper(postgresContextService, jacksonService, id);
 	}
 
 	/**
@@ -35,9 +30,7 @@ public final class ActionQueue {
 	 */
 	public void scheduleAction(Action action) {
 		ParameterUtil.ensureNotNull(action, "action");
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			helper.insertSlot(connection, action, false, false);
-		}
+		helper.insertSlot(action, false, false);
 	}
 
 	/**
@@ -47,9 +40,7 @@ public final class ActionQueue {
 	 */
 	public ImmutableList<ActionQueueEntry> getEntries() {
 		List<ActionQueueSlotRow> rows;
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			rows = helper.fetchAllSlots(connection);
-		}
+		rows = helper.fetchAllSlots();
 		List<ActionQueueEntry> entries = new ArrayList<>();
 		for (ActionQueueSlotRow row : rows) {
 			entries.add(new ActionQueueEntry(helper.extractAction(row), row.getPrerequisite()));
@@ -62,10 +53,10 @@ public final class ActionQueue {
 	 */
 	public void tick(PostgresConnection connection) {
 		ParameterUtil.ensureNotNull(connection, "connection");
-		ActionQueueSlotRow runningSlot = helper.fetchStartedSlot(connection);
+		ActionQueueSlotRow runningSlot = helper.fetchStartedSlot();
 		Action runningAction;
 		if (runningSlot == null) {
-			ActionStarter starter = new ActionStarter(connection, helper);
+			ActionStarter starter = new ActionStarter(helper);
 			starter.startAction();
 			runningSlot = starter.getRunningSlot();
 			runningAction = starter.getRunningAction();
@@ -75,7 +66,7 @@ public final class ActionQueue {
 		if (runningSlot != null) {
 			Action.Status status = runningAction.tick();
 			if (status != Action.Status.RUNNING) {
-				helper.deleteSlot(connection, runningSlot);
+				helper.deleteSlot(runningSlot);
 			}
 		}
 	}
@@ -84,13 +75,11 @@ public final class ActionQueue {
 	 * Cancels the currently executed action (if any).
 	 */
 	public void cancelCurrentAction() {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			ActionQueueSlotRow row = helper.fetchStartedSlot(connection);
-			if (row != null) {
-				Action action = helper.extractAction(row);
-				action.cancel();
-				helper.deleteSlot(connection, row);
-			}
+		ActionQueueSlotRow row = helper.fetchStartedSlot();
+		if (row != null) {
+			Action action = helper.extractAction(row);
+			action.cancel();
+			helper.deleteSlot(row);
 		}
 	}
 
@@ -101,11 +90,9 @@ public final class ActionQueue {
 	 */
 	public void cancelPendingAction(int index) {
 		ParameterUtil.ensureNotNegative(index, "index");
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			ActionQueueSlotRow row = helper.fetchPendingSlot(connection, index);
-			if (row != null) {
-				helper.deleteSlot(connection, row);
-			}
+		ActionQueueSlotRow row = helper.fetchPendingSlot(index);
+		if (row != null) {
+			helper.deleteSlot(row);
 		}
 	}
 
@@ -113,9 +100,7 @@ public final class ActionQueue {
 	 * Cancels all pending actions (but not the current action).
 	 */
 	public void cancelAllPendingActions() {
-		try (PostgresConnection connection = postgresService.newConnection()) {
-			helper.deleteAllPendingSlots(connection);
-		}
+		helper.deleteAllPendingSlots();
 	}
 
 }

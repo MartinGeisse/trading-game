@@ -45,7 +45,7 @@ public class EntityProvider {
 	}
 
 	public ActionQueue getActionQueue(long id) {
-		return new ActionQueue(postgresServiceProvider.get(), jacksonServiceProvider.get(), id);
+		return new ActionQueue(postgresContextServiceProvider.get(), jacksonServiceProvider.get(), id);
 	}
 
 	public Inventory getInventory(long id) {
