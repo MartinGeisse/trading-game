@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.game.player;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import name.martingeisse.trading_game.game.GameLogicException;
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
 import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
@@ -76,6 +77,34 @@ public final class Player {
 
 	public void setEmailAddress(String emailAddress) {
 		dataLink.setField(QPlayerRow.Player.emailAddress, emailAddress);
+	}
+
+	public long getMoney() {
+		return dataLink.getField(QPlayerRow.Player.money);
+	}
+
+	public void addMoney(long amount) {
+		if (amount < 0) {
+			throw new IllegalArgumentException("amount is negative");
+		}
+		if (amount == 0) {
+			return;
+		}
+		dataLink.setField(QPlayerRow.Player.money, dataLink.getField(QPlayerRow.Player.money) + amount);
+	}
+
+	public void subtractMoney(long amount) throws GameLogicException {
+		if (amount < 0) {
+			throw new IllegalArgumentException("amount is negative");
+		}
+		if (amount == 0) {
+			return;
+		}
+		long currentMoney = dataLink.getField(QPlayerRow.Player.money);
+		if (amount > currentMoney) {
+			throw new GameLogicException("not enough money");
+		}
+		dataLink.setField(QPlayerRow.Player.money, currentMoney - amount);
 	}
 
 	/**
@@ -171,6 +200,11 @@ public final class Player {
 	 */
 	public int getMaximumCargoMass() {
 		return ((Number)getAttribute(PlayerAttributeKey.MAXIMUM_CARGO_MASS)).intValue();
+	}
+
+	public void transferMoneyTo(Player destination, long amount) throws GameLogicException {
+		subtractMoney(amount); // throws GameLogicException if the player doesn't have enough money
+		destination.addMoney(amount);
 	}
 
 }

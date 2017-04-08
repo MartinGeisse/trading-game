@@ -1,5 +1,7 @@
 package name.martingeisse.trading_game.game.player;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.action.ActionQueueFactory;
 import name.martingeisse.trading_game.game.space.SpaceObjectFactory;
@@ -10,6 +12,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 /**
  *
  */
+@Singleton
 public class PlayerFactory {
 
 	private final PostgresContextService postgresContextService;
@@ -17,6 +20,7 @@ public class PlayerFactory {
 	private final SpaceObjectFactory spaceObjectFactory;
 	private final EntityProvider entityProvider;
 
+	@Inject
 	public PlayerFactory(PostgresContextService postgresContextService, ActionQueueFactory actionQueueFactory, SpaceObjectFactory spaceObjectFactory, EntityProvider entityProvider) {
 		this.postgresContextService = postgresContextService;
 		this.actionQueueFactory = actionQueueFactory;

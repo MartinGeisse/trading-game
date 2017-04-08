@@ -14,6 +14,7 @@ public class SelfPlayerPanel extends AbstractPanel {
 	public SelfPlayerPanel(String id) {
 		super(id);
 		add(new Label("name", new PropertyModel<>(this, "player.name")));
+		add(new Label("money", new PropertyModel<>(this, "player.money")));
 		add(new TabPanelReplacementLink<Void>("renameLink") {
 			@Override
 			protected Panel getPanel(String panelId) {
