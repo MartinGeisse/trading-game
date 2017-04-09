@@ -8,6 +8,7 @@ import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
+import name.martingeisse.trading_game.game.market.MarketOrder;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
 import name.martingeisse.trading_game.game.skill.PlayerSkills;
@@ -67,6 +68,10 @@ public class EntityProvider {
 
 	public SpaceObject getSpaceObject(long id) {
 		return spaceProvider.get().get(id);
+	}
+
+	public MarketOrder getMarketOrder(long id) {
+		return new MarketOrder(id);
 	}
 
 }
