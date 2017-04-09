@@ -25,6 +25,8 @@ public class QMarketOrderRow extends com.querydsl.sql.RelationalPathBase<MarketO
 
 	public final NumberPath<Long> id = createNumber("id", Long.class);
 
+	public final StringPath itemType = createString("itemType");
+
 	public final NumberPath<Long> locationSpaceObjectBaseDataId = createNumber("locationSpaceObjectBaseDataId", Long.class);
 
 	public final NumberPath<Long> principalPlayerId = createNumber("principalPlayerId", Long.class);
@@ -63,11 +65,12 @@ public class QMarketOrderRow extends com.querydsl.sql.RelationalPathBase<MarketO
 
 	public void addMetadata() {
 		addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
+		addMetadata(itemType, ColumnMetadata.named("itemType").withIndex(5).ofType(Types.VARCHAR).withSize(2000).notNull());
 		addMetadata(locationSpaceObjectBaseDataId, ColumnMetadata.named("locationSpaceObjectBaseDataId").withIndex(3).ofType(Types.BIGINT).withSize(19).notNull());
 		addMetadata(principalPlayerId, ColumnMetadata.named("principalPlayerId").withIndex(2).ofType(Types.BIGINT).withSize(19).notNull());
-		addMetadata(quantity, ColumnMetadata.named("quantity").withIndex(5).ofType(Types.INTEGER).withSize(10).notNull());
+		addMetadata(quantity, ColumnMetadata.named("quantity").withIndex(6).ofType(Types.INTEGER).withSize(10).notNull());
 		addMetadata(type, ColumnMetadata.named("type").withIndex(4).ofType(Types.VARCHAR).withSize(2147483647).notNull());
-		addMetadata(unitPrice, ColumnMetadata.named("unitPrice").withIndex(6).ofType(Types.BIGINT).withSize(19).notNull());
+		addMetadata(unitPrice, ColumnMetadata.named("unitPrice").withIndex(7).ofType(Types.BIGINT).withSize(19).notNull());
 	}
 
 }

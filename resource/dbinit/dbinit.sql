@@ -130,6 +130,7 @@ CREATE TABLE "game"."MarketOrder" (
 	"principalPlayerId" bigint NOT NULL REFERENCES "game"."Player" ON DELETE CASCADE,
 	"locationSpaceObjectBaseDataId" bigint NOT NULL REFERENCES "game"."SpaceObjectBaseData" ON DELETE CASCADE,
 	"type" "game"."MarketOrderType" NOT NULL,
+	"itemType" character varying(2000) NOT NULL,
 	"quantity" int NOT NULL CHECK ("quantity" > 0),
 	"unitPrice" bigint NOT NULL CHECK ("unitPrice" >= 0)
 );

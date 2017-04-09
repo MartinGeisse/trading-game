@@ -25,6 +25,11 @@ public class MarketOrderRow implements Serializable {
 	private Long id;
 
 	/**
+	 * the itemType
+	 */
+	private String itemType;
+
+	/**
 	 * the locationSpaceObjectBaseDataId
 	 */
 	private Long locationSpaceObjectBaseDataId;
@@ -65,6 +70,24 @@ public class MarketOrderRow implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	/**
+	 * Getter method for the itemType.
+	 *
+	 * @return the itemType
+	 */
+	public String getItemType() {
+		return itemType;
+	}
+
+	/**
+	 * Setter method for the itemType.
+	 *
+	 * @param itemType the itemType to set
+	 */
+	public void setItemType(String itemType) {
+		this.itemType = itemType;
 	}
 
 	/**
@@ -178,6 +201,7 @@ public class MarketOrderRow implements Serializable {
 		}
 		QMarketOrderRow q = QMarketOrderRow.MarketOrder;
 		SQLInsertClause insert = connection.insert(q);
+		insert.set(q.itemType, itemType);
 		insert.set(q.locationSpaceObjectBaseDataId, locationSpaceObjectBaseDataId);
 		insert.set(q.principalPlayerId, principalPlayerId);
 		insert.set(q.quantity, quantity);
@@ -191,7 +215,7 @@ public class MarketOrderRow implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "{MarketOrderRow. id = " + id + ", locationSpaceObjectBaseDataId = " + locationSpaceObjectBaseDataId + ", principalPlayerId = " + principalPlayerId + ", quantity = " + quantity + ", type = " + type + ", unitPrice = " + unitPrice + "}";
+		return "{MarketOrderRow. id = " + id + ", itemType = " + itemType + ", locationSpaceObjectBaseDataId = " + locationSpaceObjectBaseDataId + ", principalPlayerId = " + principalPlayerId + ", quantity = " + quantity + ", type = " + type + ", unitPrice = " + unitPrice + "}";
 	}
 
 }
