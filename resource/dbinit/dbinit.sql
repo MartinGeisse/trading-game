@@ -2,6 +2,7 @@
 DROP SCHEMA IF EXISTS "game" CASCADE;
 CREATE SCHEMA "game";
 
+
 -----------------------------------------------------------------------------------------------------------------------
 -- inventories
 -----------------------------------------------------------------------------------------------------------------------
@@ -18,7 +19,7 @@ CREATE TABLE "game"."InventorySlot" (
 	-- mining yield, but that doesn't belong to anyone (and is actually a template that is cloned to create mined items)
 	"playerId" bigint,
 	"itemType" character varying(2000) NOT NULL,
-	"quantity" int NOT NULL
+	"quantity" int NOT NULL CHECK ("quantity" > 0)
 );
 CREATE INDEX "InventorySlot_inventoryIdItemTypeIndex" ON "game"."InventorySlot" ("inventoryId", "itemType");
 CREATE INDEX "InventorySlot_playerIdinventoryIdItemTypeIndex" ON "game"."InventorySlot" ("playerId", "inventoryId", "itemType");
@@ -33,7 +34,7 @@ CREATE TYPE "game"."SpaceObjectType" AS ENUM ('ASTEROID', 'PLANET', 'PLAYER_SHIP
 CREATE TABLE "game"."SpaceObjectBaseData" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"type" "game"."SpaceObjectType" NOT NULL,
-	"name" character varying(2000) NOT NULL,
+	"name" character varying(2000) NOT NULL CHECK ("name" != ''),
 	"position" point NOT NULL,
 	"inventoryId" bigint REFERENCES "game"."Inventory",
 	"longField1" bigint
@@ -52,6 +53,7 @@ CREATE TABLE "game"."PlayerShipEquipmentSlot" (
 );
 CREATE UNIQUE INDEX "PlayerShipEquipmentSlot_spaceObjectBaseDataIdSlotTypeIndex" ON "game"."PlayerShipEquipmentSlot" ("spaceObjectBaseDataId", "slotType");
 
+
 -----------------------------------------------------------------------------------------------------------------------
 -- actions
 -----------------------------------------------------------------------------------------------------------------------
@@ -69,6 +71,7 @@ CREATE TABLE "game"."ActionQueueSlot" (
 );
 CREATE INDEX "ActionQueueSlot_mainIndex" ON "game"."ActionQueueSlot" ("actionQueueId" ASC, "prerequisite" DESC, "id" ASC);
 
+
 -----------------------------------------------------------------------------------------------------------------------
 -- players
 -----------------------------------------------------------------------------------------------------------------------
@@ -77,12 +80,12 @@ CREATE TYPE "game"."PlayerAttributeKey" AS ENUM ('SHIP_MOVEMENT_SPEED', 'MAXIMUM
 
 CREATE TABLE "game"."Player" (
 	"id" bigserial NOT NULL PRIMARY KEY,
-	"name" character varying(500) NOT NULL,
-	"loginToken" character varying(500),
-	"emailAddress" character varying(500),
+	"name" character varying(500) NOT NULL CHECK ("name" != ''),
+	"loginToken" character varying(500) CHECK (LENGTH("loginToken") > 10), -- TODO include (IS NULL OR) in the check?
+	"emailAddress" character varying(500) CHECK (LENGTH("loginToken") >= 5),
 	"shipId" bigint NOT NULL REFERENCES "game"."SpaceObjectBaseData",
 	"actionQueueId" bigint NOT NULL REFERENCES "game"."ActionQueue",
-	"money" bigint NOT NULL
+	"money" bigint NOT NULL CHECK ("money" >= 0)
 );
 CREATE INDEX "Player_nameIndex" ON "game"."Player" ("name");
 CREATE INDEX "Player_shipIdIndex" ON "game"."Player" ("shipId");
@@ -101,7 +104,7 @@ CREATE TABLE "game"."PlayerSkillLearningQueueSlot" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"playerId" bigint NOT NULL REFERENCES "game"."Player" ON DELETE CASCADE,
 	"skillType" character varying(2000) NOT NULL,
-	"learningPoints" integer NOT NULL,
+	"learningPoints" integer NOT NULL CHECK ("learningPoints" >= 0),
 	"learningOrderIndex" integer -- entries with learningOrderIndex null aren't actively part of the queue, but
 		-- have acquired learning points that should not be dropped
 );
@@ -114,6 +117,24 @@ CREATE TABLE "game"."CachedPlayerAttribute" (
 	"value" text NOT NULL
 );
 CREATE UNIQUE INDEX "CachedPlayerAttribute_playerIdKeyIndex" ON "game"."CachedPlayerAttribute" ("playerId", "key");
+
+
+-----------------------------------------------------------------------------------------------------------------------
+-- trading
+-----------------------------------------------------------------------------------------------------------------------
+
+CREATE TYPE "game"."MarketOrderType" AS ENUM ('BUY', 'SELL');
+
+CREATE TABLE "game"."MarketOrder" (
+	"id" bigserial NOT NULL PRIMARY KEY,
+	"principalPlayerId" bigint NOT NULL REFERENCES "game"."Player" ON DELETE CASCADE,
+	"locationSpaceObjectBaseDataId" bigint NOT NULL REFERENCES "game"."SpaceObjectBaseData" ON DELETE CASCADE,
+	"type" "game"."MarketOrderType" NOT NULL,
+	"quantity" int NOT NULL CHECK ("quantity" > 0),
+	"unitPrice" bigint NOT NULL CHECK ("unitPrice" >= 0)
+)
+CREATE INDEX "MarketOrder_principalPlayerId" ON "game"."MarketOrder" ("principalPlayerId");
+CREATE INDEX "MarketOrder_locationSpaceObjectBaseDataId" ON "game"."MarketOrder" ("locationSpaceObjectBaseDataId");
 
 -----------------------------------------------------------------------------------------------------------------------
 -- more foreign keys which could not be defined above due to table creation order, or because they are circular
