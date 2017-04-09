@@ -132,7 +132,7 @@ CREATE TABLE "game"."MarketOrder" (
 	"type" "game"."MarketOrderType" NOT NULL,
 	"quantity" int NOT NULL CHECK ("quantity" > 0),
 	"unitPrice" bigint NOT NULL CHECK ("unitPrice" >= 0)
-)
+);
 CREATE INDEX "MarketOrder_principalPlayerId" ON "game"."MarketOrder" ("principalPlayerId");
 CREATE INDEX "MarketOrder_locationSpaceObjectBaseDataId" ON "game"."MarketOrder" ("locationSpaceObjectBaseDataId");
 
