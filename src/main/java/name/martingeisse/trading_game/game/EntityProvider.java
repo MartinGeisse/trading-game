@@ -71,7 +71,7 @@ public class EntityProvider {
 	}
 
 	public MarketOrder getMarketOrder(long id) {
-		return new MarketOrder(id);
+		return new MarketOrder(postgresContextServiceProvider.get(), id);
 	}
 
 }

@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.postgres_entities;
 
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
@@ -33,7 +34,7 @@ public class QMarketOrderRow extends com.querydsl.sql.RelationalPathBase<MarketO
 
 	public final NumberPath<Integer> quantity = createNumber("quantity", Integer.class);
 
-	public final StringPath type = createString("type");
+	public final EnumPath<name.martingeisse.trading_game.game.market.MarketOrderType> type = createEnum("type", name.martingeisse.trading_game.game.market.MarketOrderType.class);
 
 	public final NumberPath<Long> unitPrice = createNumber("unitPrice", Long.class);
 

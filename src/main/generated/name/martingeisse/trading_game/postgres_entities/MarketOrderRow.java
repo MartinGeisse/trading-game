@@ -47,7 +47,7 @@ public class MarketOrderRow implements Serializable {
 	/**
 	 * the type
 	 */
-	private String type;
+	private name.martingeisse.trading_game.game.market.MarketOrderType type;
 
 	/**
 	 * the unitPrice
@@ -149,7 +149,7 @@ public class MarketOrderRow implements Serializable {
 	 *
 	 * @return the type
 	 */
-	public String getType() {
+	public name.martingeisse.trading_game.game.market.MarketOrderType getType() {
 		return type;
 	}
 
@@ -158,7 +158,7 @@ public class MarketOrderRow implements Serializable {
 	 *
 	 * @param type the type to set
 	 */
-	public void setType(String type) {
+	public void setType(name.martingeisse.trading_game.game.market.MarketOrderType type) {
 		this.type = type;
 	}
 
