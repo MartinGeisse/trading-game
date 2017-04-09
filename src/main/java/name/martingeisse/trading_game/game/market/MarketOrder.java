@@ -5,7 +5,10 @@ import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.QMarketOrderRow;
 
 /**
- *
+ * TODO:
+ * - must the money be paid up-front?
+ * - must the items be provided up-front?
+ * - what is the actual unit price -- the buyer or seller price?
  */
 public final class MarketOrder {
 
