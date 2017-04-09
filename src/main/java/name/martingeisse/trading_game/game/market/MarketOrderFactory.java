@@ -1,8 +1,12 @@
 package name.martingeisse.trading_game.game.market;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.mysema.commons.lang.CloseableIterator;
+import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import name.martingeisse.trading_game.common.database.DatabaseUtil;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.player.Player;
@@ -12,13 +16,15 @@ import name.martingeisse.trading_game.postgres_entities.MarketOrderRow;
 import name.martingeisse.trading_game.postgres_entities.QMarketOrderRow;
 
 /**
- * TODO install a job to remove market orders with quantity = 0
+ *
  */
+@Singleton
 public class MarketOrderFactory {
 
 	private final PostgresContextService postgresContextService;
 	private final JacksonService jacksonService;
 
+	@Inject
 	public MarketOrderFactory(PostgresContextService postgresContextService, JacksonService jacksonService) {
 		this.postgresContextService = postgresContextService;
 		this.jacksonService = jacksonService;
@@ -69,6 +75,9 @@ public class MarketOrderFactory {
 			data.insert(postgresContextService.getConnection());
 		}
 
+		// remove fully matched orders in a race condition free way
+		postgresContextService.delete(qmo).where(qmo.quantity.eq(0)).execute();
+
 	}
 
 	private int reduceOrderQuantity(long id, int reduction) {
@@ -76,11 +85,20 @@ public class MarketOrderFactory {
 		int retries = 100;
 		while (retries > 0) {
 			try {
-				// TODO check the "updated rows" count to avoid race conditions
-				postgresContextService.update(qmo).set(qmo.quantity, qmo.quantity.subtract(reduction)).execute();
-				return reduction;
-			} catch (Exception e) { // TODO check for the correct exception type and fields
-				reduction = postgresContextService.select(qmo.quantity).from(qmo).where(qmo.id.eq(id)).fetchFirst();
+				if (reduction == 0) {
+					return 0;
+				}
+				if (postgresContextService.update(qmo).set(qmo.quantity, qmo.quantity.subtract(reduction)).execute() == 0) {
+					return 0;
+				} else {
+					return reduction;
+				}
+			} catch (QueryException e) {
+				if (DatabaseUtil.isCheckConstraintViolation(e, "MarketOrder_quantity_check")) {
+					reduction = postgresContextService.select(qmo.quantity).from(qmo).where(qmo.id.eq(id)).fetchFirst();
+				} else {
+					throw e;
+				}
 			}
 			retries--;
 		}
