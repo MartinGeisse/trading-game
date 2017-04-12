@@ -1,6 +1,8 @@
 package name.martingeisse.trading_game.game.market;
 
 import com.querydsl.core.types.Path;
+import name.martingeisse.trading_game.game.item.ItemType;
+import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.QMarketOrderRow;
 
@@ -13,11 +15,22 @@ import name.martingeisse.trading_game.postgres_entities.QMarketOrderRow;
 public final class MarketOrder {
 
 	private final PostgresContextService postgresContextService;
+	private final JacksonService jacksonService;
 	private final long id;
 
-	public MarketOrder(PostgresContextService postgresContextService, long id) {
+	public MarketOrder(PostgresContextService postgresContextService, JacksonService jacksonService, long id) {
 		this.postgresContextService = postgresContextService;
+		this.jacksonService = jacksonService;
 		this.id = id;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the id
+	 */
+	public long getId() {
+		return id;
 	}
 
 	private <T> T getField(Path<T> path) {
@@ -30,8 +43,12 @@ public final class MarketOrder {
 		postgresContextService.update(qmo).set(path, newValue).where(qmo.id.eq(id)).execute();
 	}
 
-	public String getItemType() {
+	public String getSerializedItemType() {
 		return getField(QMarketOrderRow.MarketOrder.itemType);
+	}
+
+	public ItemType getItemType() {
+		return jacksonService.deserialize(getSerializedItemType(), ItemType.class);
 	}
 
 	public Long getLocationSpaceObjectBaseDataId() {

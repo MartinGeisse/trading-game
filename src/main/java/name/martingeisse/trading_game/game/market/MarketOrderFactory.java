@@ -52,7 +52,7 @@ public class MarketOrderFactory {
 		data.insert(postgresContextService.getConnection());
 
 		// match the new market order against existing ones
-		MarketOrder marketOrder = new MarketOrder(postgresContextService, data.getId());
+		MarketOrder marketOrder = new MarketOrder(postgresContextService, jacksonService, data.getId());
 		marketOrderMatchingService.match(marketOrder);
 
 	}
