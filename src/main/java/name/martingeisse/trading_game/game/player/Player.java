@@ -7,6 +7,7 @@ import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
 import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.item.Inventory;
+import name.martingeisse.trading_game.game.market.NotEnoughMoneyException;
 import name.martingeisse.trading_game.game.space.PlayerShip;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 
@@ -93,7 +94,7 @@ public final class Player {
 		dataLink.setField(QPlayerRow.Player.money, dataLink.getField(QPlayerRow.Player.money) + amount);
 	}
 
-	public void subtractMoney(long amount) throws GameLogicException {
+	public void subtractMoney(long amount) throws NotEnoughMoneyException {
 		if (amount < 0) {
 			throw new IllegalArgumentException("amount is negative");
 		}
@@ -102,7 +103,7 @@ public final class Player {
 		}
 		long currentMoney = dataLink.getField(QPlayerRow.Player.money);
 		if (amount > currentMoney) {
-			throw new GameLogicException("not enough money");
+			throw new NotEnoughMoneyException();
 		}
 		dataLink.setField(QPlayerRow.Player.money, currentMoney - amount);
 	}
