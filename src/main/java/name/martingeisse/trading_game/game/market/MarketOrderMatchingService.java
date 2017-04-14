@@ -3,6 +3,7 @@ package name.martingeisse.trading_game.game.market;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import name.martingeisse.trading_game.common.database.DatabaseUtil;
 import name.martingeisse.trading_game.game.EntityProvider;
@@ -38,12 +39,15 @@ public class MarketOrderMatchingService {
 			.and(qmo.locationSpaceObjectBaseDataId.eq(marketOrder.getLocationSpaceObjectBaseDataId()))
 			.and(qmo.type.eq(marketOrder.getType().getOpposite()))
 			.and(qmo.itemType.eq(marketOrder.getSerializedItemType()));
+		OrderSpecifier<?> order;
 		if (marketOrder.getType() == MarketOrderType.BUY) {
 			predicate = predicate.and(qmo.unitPrice.loe(marketOrder.getUnitPrice()));
+			order = qmo.unitPrice.asc();
 		} else {
 			predicate = predicate.and(qmo.unitPrice.goe(marketOrder.getUnitPrice()));
+			order = qmo.unitPrice.desc();
 		}
-		try (CloseableIterator<Tuple> iterator = postgresContextService.select(qmo.id, qmo.quantity, qmo.unitPrice).from(qmo).where(predicate).iterate()) {
+		try (CloseableIterator<Tuple> iterator = postgresContextService.select(qmo.id, qmo.quantity, qmo.unitPrice).from(qmo).where(predicate).orderBy(order).iterate()) {
 			while (iterator.hasNext()) {
 				int quantity = marketOrder.getQuantity();
 				if (quantity < 1) {
@@ -58,8 +62,11 @@ public class MarketOrderMatchingService {
 				if (matchQuantity > 0) {
 					// TODO transaction
 
-					// determine matched quantity
-					long matchUnitPrice = (marketOrder.getUnitPrice() + tuple.get(qmo.unitPrice)) / 2;
+					// The price is that of the existing order. This is totally arbitrary, but simplifies the
+					// common case that a newly created order should match multiple existing orders. By using the
+					// existing order's price, we spare the creating player the necessity of creating multiple
+					// orders with different prices for maximum profit.
+					long matchUnitPrice = tuple.get(qmo.unitPrice);
 					long matchPrice = matchQuantity * matchUnitPrice;
 
 					// reduce orders TODO rollback if reduction fails, especially for the second one
