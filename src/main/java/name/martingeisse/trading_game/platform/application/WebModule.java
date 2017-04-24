@@ -10,7 +10,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
-import name.martingeisse.trading_game.platform.util.profiling.ThreadProfiling;
+import name.martingeisse.trading_game.common.util.profiling.ThreadProfiling;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.platform.wicket.MyWicketFilter;
 import org.apache.wicket.protocol.http.WebApplication;

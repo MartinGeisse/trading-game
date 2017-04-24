@@ -2,23 +2,18 @@ package name.martingeisse.trading_game.gui.map;
 
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.space.*;
-import name.martingeisse.trading_game.platform.util.profiling.ThreadProfiling;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.util.time.Duration;
 
-import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageOutputStream;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
@@ -37,7 +32,6 @@ public class MapTileResource extends DynamicImageResource {
 
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
-		ThreadProfiling.measure("getImageData() start");
 
 		// evaluate querystring parameters
 		int x = attributes.getParameters().get("x").toInt(0);
@@ -67,10 +61,8 @@ public class MapTileResource extends DynamicImageResource {
 		}
 
 		// serialize the image to the output file format
-		ThreadProfiling.measure("getImageData() before serializing the image");
 		byte[] result = toImageData(image);
 
-		ThreadProfiling.measure("getImageData() end");
 		return result;
 	}
 
@@ -129,7 +121,6 @@ public class MapTileResource extends DynamicImageResource {
 	}
 
 	private void renderDetailTile(int x, int y, int z, Graphics2D g) {
-		ThreadProfiling.measure("renderDetailTile() start");
 
 		// fill background
 		g.setColor(Color.BLACK);
@@ -147,15 +138,12 @@ public class MapTileResource extends DynamicImageResource {
 		g.scale(1 << z, 1 << z); // apply zoom
 
 		// draw space objects
-		ThreadProfiling.measure("renderDetailTile() just before getting space objects");
 		ImmutableList<StaticSpaceObject> spaceObjects = getRelevantStaticSpaceObjects(x, y, z);
 		g.setFont(g.getFont().deriveFont((float) (MapCoordinates.convertGameDistanceToMapDistance(5000))));
-		ThreadProfiling.measure("renderDetailTile() just before drawing space objects");
 		for (SpaceObject spaceObject : spaceObjects) {
 			draw(spaceObject, g);
 		}
 
-		ThreadProfiling.measure("renderDetailTile() end");
 	}
 
 	private static void draw(SpaceObject spaceObject, Graphics2D g) {

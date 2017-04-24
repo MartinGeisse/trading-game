@@ -66,10 +66,9 @@ public final class Space {
 		List<SpaceObject> result = new ArrayList<>();
 		PostgreSQLQuery<SpaceObjectBaseDataRow> query = postgresContextService.select(qbd).from(qbd);
 		queryConfigurator.accept(query);
-		try (CloseableIterator<SpaceObjectBaseDataRow> iterator = query.iterate()) {
-			while (iterator.hasNext()) {
-				result.add(reconstructSpaceObject(iterator.next()));
-			}
+		// this is faster than query.iterate()
+		for (SpaceObjectBaseDataRow row : query.fetch()) {
+			result.add(reconstructSpaceObject(row));
 		}
 		return result;
 	}

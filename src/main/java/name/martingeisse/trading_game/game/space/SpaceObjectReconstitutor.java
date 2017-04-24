@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.EntityProvider;
+import name.martingeisse.trading_game.game.action.actions.MiningYield;
 import name.martingeisse.trading_game.game.definition.MiningYieldInfo;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
@@ -34,8 +35,10 @@ public final class SpaceObjectReconstitutor {
 	 */
 	Asteroid newAsteroid(SpaceObjectBaseDataRow row) {
 		ParameterUtil.ensureNotNull(row, "row");
-		ImmutableItemStacks stacks = entityProvider.getInventory(row.getInventoryId()).getItems(null);
-		MiningYieldInfo yieldInfo = stacks::scale;
+		MiningYieldInfo yieldInfo = minedRockAmount -> {
+			ImmutableItemStacks stacks = entityProvider.getInventory(row.getInventoryId()).getItems(null);
+			return stacks.scale(minedRockAmount);
+		};
 		return inject(row, new Asteroid(gameEventEmitter, yieldInfo, row.getLongField1()));
 	}
 

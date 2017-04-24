@@ -1,4 +1,4 @@
-package name.martingeisse.trading_game.platform.util.profiling;
+package name.martingeisse.trading_game.common.util.profiling;
 
 import java.text.NumberFormat;
 
