@@ -5,14 +5,21 @@ import name.martingeisse.trading_game.game.space.*;
 import name.martingeisse.trading_game.platform.util.profiling.ThreadProfiling;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.util.time.Duration;
 
+import javax.imageio.IIOException;
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  *
@@ -60,6 +67,7 @@ public class MapTileResource extends DynamicImageResource {
 		}
 
 		// serialize the image to the output file format
+		ThreadProfiling.measure("getImageData() before serializing the image");
 		byte[] result = toImageData(image);
 
 		ThreadProfiling.measure("getImageData() end");
@@ -70,8 +78,8 @@ public class MapTileResource extends DynamicImageResource {
 		WritableRaster raster = image.getRaster();
 
 		// fill background
-		for (int x=0; x<256; x++) {
-			for (int y=0; y<256; y++) {
+		for (int x = 0; x < 256; x++) {
+			for (int y = 0; y < 256; y++) {
 				raster.setSample(x, y, 0, 0);
 				raster.setSample(x, y, 1, 0);
 				raster.setSample(x, y, 2, 0);
@@ -96,7 +104,7 @@ public class MapTileResource extends DynamicImageResource {
 
 		// add space objects to the heat map
 		int shift = zoomLevel + 8; // TODO wrong, should be (8 - shiftLevel), but hits the same problem: pixels != latLng != gameCoords
-									// -- must be solved first
+		// -- must be solved first
 		// ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Space.class).getStaticSpaceObjects();
 		ImmutableList<StaticSpaceObject> spaceObjects = getRelevantStaticSpaceObjects(tileX, tileY, zoomLevel);
 		for (SpaceObject spaceObject : spaceObjects) {
@@ -111,8 +119,8 @@ public class MapTileResource extends DynamicImageResource {
 			double dy = MapCoordinates.convertYToLatitude(spaceObject.getY()) * zoomFactor - (tileY << 8);
 
 			if (dx >= 0 && dx < 256 && dy >= 0 && dy < 256) {
-				int x = (int)dx;
-				int y = (int)dy;
+				int x = (int) dx;
+				int y = (int) dy;
 				int value = raster.getSample(x, y, 0);
 				raster.setSample(x, y, 0, value == 255 ? value : (value + 85));
 			}
@@ -141,7 +149,7 @@ public class MapTileResource extends DynamicImageResource {
 		// draw space objects
 		ThreadProfiling.measure("renderDetailTile() just before getting space objects");
 		ImmutableList<StaticSpaceObject> spaceObjects = getRelevantStaticSpaceObjects(x, y, z);
-		g.setFont(g.getFont().deriveFont((float)(MapCoordinates.convertGameDistanceToMapDistance(5000))));
+		g.setFont(g.getFont().deriveFont((float) (MapCoordinates.convertGameDistanceToMapDistance(5000))));
 		ThreadProfiling.measure("renderDetailTile() just before drawing space objects");
 		for (SpaceObject spaceObject : spaceObjects) {
 			draw(spaceObject, g);
@@ -166,7 +174,7 @@ public class MapTileResource extends DynamicImageResource {
 			drawBox(g, x, y, MapCoordinates.convertGameDistanceToMapDistance(500));
 		} else {
 			g.setColor(Color.RED);
-			g.drawString("?", (int)x - 5, (int)y - 5);
+			g.drawString("?", (int) x - 5, (int) y - 5);
 		}
 	}
 
@@ -191,6 +199,18 @@ public class MapTileResource extends DynamicImageResource {
 		long minY = Math.min(y1, y2);
 		long maxY = Math.max(y1, y2);
 		return MyWicketApplication.get().getDependency(Space.class).getStaticSpaceObjects(minX, minY, maxX, maxY);
+	}
+
+	@Override
+	protected byte[] toImageData(BufferedImage image) {
+		try {
+			ByteArrayImageOutputStream imageOutputStream = new ByteArrayImageOutputStream(1024);
+			ImageIO.write(image, getFormat(), imageOutputStream);
+			imageOutputStream.close();
+			return imageOutputStream.toByteArray();
+		} catch (IOException e) {
+			throw new WicketRuntimeException("Unable to convert dynamic image to stream", e);
+		}
 	}
 
 }
