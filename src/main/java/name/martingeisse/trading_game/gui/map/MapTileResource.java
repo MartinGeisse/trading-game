@@ -1,9 +1,10 @@
 package name.martingeisse.trading_game.gui.map;
 
 import com.google.common.collect.ImmutableList;
-import name.martingeisse.trading_game.game.generate.SpectrumNoise;
 import name.martingeisse.trading_game.game.space.*;
+import name.martingeisse.trading_game.platform.util.profiling.ThreadProfiling;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.util.time.Duration;
 
@@ -20,9 +21,7 @@ public class MapTileResource extends DynamicImageResource {
 
 	private static final boolean DRAW_GRID = false;
 
-	// private static ThreadLocal<Long> timer = new ThreadLocal<>();
-
-	private final SpectrumNoise noise = new SpectrumNoise(4, 2.0);
+	private static final ThreadLocal<Pair<BufferedImage, Graphics2D>> imageAndGraphicsPerThread = new ThreadLocal<>();
 
 	@Override
 	protected void configureResponse(ResourceResponse response, Attributes attributes) {
@@ -31,40 +30,40 @@ public class MapTileResource extends DynamicImageResource {
 
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
-		// timer.set(System.currentTimeMillis());
+		ThreadProfiling.measure("getImageData() start");
+
+		// evaluate querystring parameters
 		int x = attributes.getParameters().get("x").toInt(0);
 		int y = attributes.getParameters().get("y").toInt(0);
 		int z = attributes.getParameters().get("z").toInt(0);
-		if (z <= MapCoordinates.HEAT_MAP_ZOOM_THRESHOLD) {
-			BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_GRAY);
-			renderHeatMapTile(x, y, z, image);
-			// renderNoiseMapTile(x, y, z, image);
-			// System.out.println("done heatmap: " + (System.currentTimeMillis() - timer.get()));
-			return toImageData(image);
-		} else {
-			BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
-			Graphics2D g = image.createGraphics();
-			try {
-				renderDetailTile(x, y, z, g);
-			} finally {
-				g.dispose();
-			}
-			// System.out.println("done detail: " + (System.currentTimeMillis() - timer.get()));
-			return toImageData(image);
-		}
-	}
 
-	private void renderNoiseMapTile(int tileX, int tileY, int zoomLevel, BufferedImage image) {
-		double zoomFactor = Math.pow(0.5, zoomLevel);
-		WritableRaster raster = image.getRaster();
-		for (int x=0; x<256; x++) {
-			for (int y=0; y<256; y++) {
-				double x2 = zoomFactor * (x + 256 * tileX) / 256.0;
-				double y2 = zoomFactor * (y + 256 * tileY) / 256.0;
-				double value = noise.get(x2, y2);
-				raster.setSample(x, y, 0, 128 + (int)(value * 128));
+		// prepare drawing resources
+		BufferedImage image;
+		Graphics2D graphics;
+		{
+			Pair<BufferedImage, Graphics2D> pair = imageAndGraphicsPerThread.get();
+			if (pair == null) {
+				image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+				graphics = image.createGraphics();
+				imageAndGraphicsPerThread.set(Pair.of(image, graphics));
+			} else {
+				image = pair.getLeft();
+				graphics = pair.getRight();
 			}
 		}
+
+		// draw the image
+		if (z <= MapCoordinates.HEAT_MAP_ZOOM_THRESHOLD) {
+			renderHeatMapTile(x, y, z, image);
+		} else {
+			renderDetailTile(x, y, z, graphics);
+		}
+
+		// serialize the image to the output file format
+		byte[] result = toImageData(image);
+
+		ThreadProfiling.measure("getImageData() end");
+		return result;
 	}
 
 	private void renderHeatMapTile(int tileX, int tileY, int zoomLevel, BufferedImage image) {
@@ -74,6 +73,8 @@ public class MapTileResource extends DynamicImageResource {
 		for (int x=0; x<256; x++) {
 			for (int y=0; y<256; y++) {
 				raster.setSample(x, y, 0, 0);
+				raster.setSample(x, y, 1, 0);
+				raster.setSample(x, y, 2, 0);
 			}
 		}
 
@@ -120,6 +121,7 @@ public class MapTileResource extends DynamicImageResource {
 	}
 
 	private void renderDetailTile(int x, int y, int z, Graphics2D g) {
+		ThreadProfiling.measure("renderDetailTile() start");
 
 		// fill background
 		g.setColor(Color.BLACK);
@@ -137,12 +139,15 @@ public class MapTileResource extends DynamicImageResource {
 		g.scale(1 << z, 1 << z); // apply zoom
 
 		// draw space objects
+		ThreadProfiling.measure("renderDetailTile() just before getting space objects");
 		ImmutableList<StaticSpaceObject> spaceObjects = getRelevantStaticSpaceObjects(x, y, z);
 		g.setFont(g.getFont().deriveFont((float)(MapCoordinates.convertGameDistanceToMapDistance(5000))));
+		ThreadProfiling.measure("renderDetailTile() just before drawing space objects");
 		for (SpaceObject spaceObject : spaceObjects) {
 			draw(spaceObject, g);
 		}
 
+		ThreadProfiling.measure("renderDetailTile() end");
 	}
 
 	private static void draw(SpaceObject spaceObject, Graphics2D g) {

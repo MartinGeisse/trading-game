@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
+import name.martingeisse.trading_game.platform.util.profiling.ThreadProfiling;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.platform.wicket.MyWicketFilter;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -68,9 +69,11 @@ public class WebModule extends ServletModule {
 		public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 			try {
 				Thread.currentThread().setName(THREAD_NAME_PREFIX + '-' + getThreadNameSuffix(request));
+				ThreadProfiling.start();
 				chain.doFilter(request, response);
 			} finally {
 				postgresContextService.reset();
+				ThreadProfiling.measure("MyFilter, end of request");
 				Thread.currentThread().setName(THREAD_NAME_PREFIX);
 			}
 		}
@@ -80,17 +83,24 @@ public class WebModule extends ServletModule {
 	private static String getThreadNameSuffix(ServletRequest untypedRequest) {
 		if (untypedRequest instanceof HttpServletRequest) {
 			HttpServletRequest request = (HttpServletRequest) untypedRequest;
-			String requestUri = request.getRequestURI();
 			StringBuilder builder = new StringBuilder();
-			for (int i=0; i<requestUri.length(); i++) {
-				char c = requestUri.charAt(i);
-				if (c == '/' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
-					builder.append(c);
-				}
+			appendForThreadNameSuffix(request.getRequestURI(), builder);
+			if (request.getQueryString() != null) {
+				builder.append('?');
+				appendForThreadNameSuffix(request.getQueryString(), builder);
 			}
 			return builder.toString();
 		}
 		return "unknown";
+	}
+
+	private static void appendForThreadNameSuffix(CharSequence what, StringBuilder builder) {
+		for (int i = 0; i < what.length(); i++) {
+			char c = what.charAt(i);
+			if (c == '/' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
+				builder.append(c);
+			}
+		}
 	}
 
 }
