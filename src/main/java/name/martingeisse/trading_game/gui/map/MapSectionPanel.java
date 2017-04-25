@@ -11,6 +11,7 @@ import name.martingeisse.trading_game.game.space.*;
 import name.martingeisse.trading_game.gui.map.leaflet.D3;
 import name.martingeisse.trading_game.gui.map.leaflet.Leaflet;
 import name.martingeisse.trading_game.gui.map.leaflet.LeafletD3SvgOverlay;
+import name.martingeisse.trading_game.gui.map.leaflet.LeafletEdgeBuffer;
 import name.martingeisse.trading_game.gui.websockets.GuiGameEventListener;
 import name.martingeisse.trading_game.platform.wicket.AbstractPanel;
 import org.apache.wicket.Component;
@@ -229,6 +230,7 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 		Leaflet.renderHead(response);
 		D3.renderHead(response);
 		LeafletD3SvgOverlay.renderHead(response);
+		LeafletEdgeBuffer.renderHead(response);
 
 		// render initialization script
 		StringBuilder builder = new StringBuilder();

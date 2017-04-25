@@ -87,6 +87,9 @@
             // create a map with the tile layer coming from our server
             leafletMap = L.map('map', {
                 crs: L.CRS.SimpleNonInverted,
+                fadeAnimation: false,
+                updateInterval: 0,
+                edgeBufferTiles: 1,
                 // maxZoom: 4
             });
             L.tileLayer(mapTileBaseUrl + '?x={x}&y={y}&z={z}', {
