@@ -26,6 +26,26 @@ public final class Launcher {
 
 	public static void launch() throws Exception {
 
+		//
+		// TODO support HTTP/2. Right now, this is a nightmare because you need to include alpn-boot-XXX.jar in the
+		// BOOT classpath, and the version of that jar has to match the version of the JRE *down to the individual build*.
+		// Until the Jetty devs get this sorted out, HTTP/2 support isn't worth the hassle.
+		// "With Java 9, ALPN will become part of the Java SE standard, i.e. Java 9 will provide native support for ALPN"
+		//
+		// Once ALPN is ready, this site shows how to enable HTTP/2:
+		//
+		//   https://github.com/fstab/http2-examples/blob/master/jetty-http2-server-example/src/main/java/de/consol/labs/h2c/examples/server/Http2Server.java
+		//   https://github.com/fstab/http2-examples/blob/master/jetty-http2-echo-server/src/main/java/de/consol/labs/h2c/Http2EchoServer.java
+		//
+		// Jetty integration of JDK 9 ALPN support:
+		//
+		//   https://github.com/eclipse/jetty.project/issues/486
+		//
+		// If Java 9 takes too long, this project may be able to help:
+		//
+		//   https://github.com/jetty-project/jetty-alpn-agent
+		//
+
 		Log.setLog(new NoLogging());
 
 		ServletHandler servletHandler = new ServletHandler();
