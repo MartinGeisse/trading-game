@@ -3,7 +3,6 @@ package name.martingeisse.trading_game.gui.map;
 import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.game.space.*;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.util.time.Duration;
@@ -23,7 +22,10 @@ public class MapTileResource extends DynamicImageResource {
 
 	private static final boolean DRAW_GRID = false;
 
-	private static final ThreadLocal<Pair<BufferedImage, Graphics2D>> imageAndGraphicsPerThread = new ThreadLocal<>();
+	// note: the Graphics2D cannot be stored since it somehow loses connection to its target image. That stuff happens
+	// in native code, so I can't really debug it. The overhead of creating the Graphics2D again and disposing of it
+	// is not measurable, though.
+	private static final ThreadLocal<BufferedImage> imagePerThread = new ThreadLocal<>();
 
 	@Override
 	protected void configureResponse(ResourceResponse response, Attributes attributes) {
@@ -39,25 +41,19 @@ public class MapTileResource extends DynamicImageResource {
 		int z = attributes.getParameters().get("z").toInt(0);
 
 		// prepare drawing resources
-		BufferedImage image;
-		Graphics2D graphics;
-		{
-			Pair<BufferedImage, Graphics2D> pair = imageAndGraphicsPerThread.get();
-			if (pair == null) {
-				image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
-				graphics = image.createGraphics();
-				imageAndGraphicsPerThread.set(Pair.of(image, graphics));
-			} else {
-				image = pair.getLeft();
-				graphics = pair.getRight();
-			}
+		BufferedImage image = imagePerThread.get();
+		if (image == null) {
+			image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+			imagePerThread.set(image);
 		}
 
 		// draw the image
 		if (z <= MapCoordinates.HEAT_MAP_ZOOM_THRESHOLD) {
 			renderHeatMapTile(x, y, z, image);
 		} else {
+			Graphics2D graphics = image.createGraphics();
 			renderDetailTile(x, y, z, graphics);
+			graphics.dispose();
 		}
 
 		// serialize the image to the output file format
