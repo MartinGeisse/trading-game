@@ -12,8 +12,10 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  *
@@ -72,14 +74,10 @@ public class MapTileResource extends DynamicImageResource {
 	}
 
 	private void renderHeatMapTile(int tileX, int tileY, int zoomLevel, BufferedImage image) {
-		WritableRaster raster = image.getRaster();
+		byte[] data = ((DataBufferByte)image.getRaster().getDataBuffer()).getData();
 
-		// fill background
-		for (int x = 0; x < HEAT_MAP_RESOLUTION; x++) {
-			for (int y = 0; y < HEAT_MAP_RESOLUTION; y++) {
-				raster.setSample(x, y, 0, 0);
-			}
-		}
+		// clear the image buffer to black
+		Arrays.fill(data, (byte)0);
 
 		// draw tile grid
 		if (DRAW_GRID) {
@@ -92,36 +90,20 @@ public class MapTileResource extends DynamicImageResource {
 			}
 		}
 
-		//
-		// note: the sequence .scale(a) .translate(b) .drawAt(c) results in the coordinate (c + b) * a, so .scale()
-		// also scales the translation amount for a subsequent .translate()
-		//
-
-		// add space objects to the heat map
-		// int shift = zoomLevel + 8; // TODO wrong, should be (8 - shiftLevel), but hits the same problem: pixels != latLng != gameCoords
-		// -- must be solved first
-		// ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Space.class).getStaticSpaceObjects();
 		ImmutableList<StaticSpaceObject> spaceObjects = getRelevantStaticSpaceObjects(tileX, tileY, zoomLevel);
 		int valueIncrement = (20 << zoomLevel);
 		for (SpaceObject spaceObject : spaceObjects) {
-			// long lx = spaceObject.getX() - (tileX << shift); // TODO see above
-			// long ly = spaceObject.getY() - (tileY << shift); // TODO see above
-
-			// double dx = (spaceObject.getX() << zoomLevel) / 1000 - (tileX << 8);
-			// double dy = (spaceObject.getY() << zoomLevel) / 1000 - (tileY << 8);
-
 			double zoomFactor = (1L << (zoomLevel + HEAT_MAP_RESOLUTION_SHIFT)) / 256.0;
 			double dx = MapCoordinates.convertXToLongitude(spaceObject.getX()) * zoomFactor - (tileX << HEAT_MAP_RESOLUTION_SHIFT);
 			double dy = MapCoordinates.convertYToLatitude(spaceObject.getY()) * zoomFactor - (tileY << HEAT_MAP_RESOLUTION_SHIFT);
-
 			if (dx >= 0 && dx < HEAT_MAP_RESOLUTION && dy >= 0 && dy < HEAT_MAP_RESOLUTION) {
 				int x = (int) dx;
 				int y = (int) dy;
-				int value = raster.getSample(x, y, 0) + valueIncrement;
+				int value = data[(y << HEAT_MAP_RESOLUTION_SHIFT) + x] + valueIncrement;
 				if (value > 255) {
 					value = 255;
 				}
-				raster.setSample(x, y, 0, value);
+				data[(y << HEAT_MAP_RESOLUTION_SHIFT) + x] = (byte)value;
 			}
 		}
 
