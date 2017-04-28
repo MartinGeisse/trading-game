@@ -30,35 +30,8 @@ Dialog button order:
 GUI arrangement
 ------------------------------------------------------------------------------------------------------------
 
-general:
-- windows
-	- dann mit "window manager" für arrangement
-	- alt. mit vielen Browserfenstern -> aber eher nicht, weil die nativen Window Managers bei den meisten systemen
-		nicht toll sind
-- eclipse
-	- map als zentrales element, vgl. Editor in Eclipse? oder lieber ohne "besonderes" zentrales element?
-	- aber dann mit mehreren instances desselben views
-- modal at page level (=multiple pages)
-	- die meisten panels sind aber auf allen Seiten gültig, nur z.B. load/unload nicht
-		-> load/unload sind actions, keine panels! und die inventory panels sowohl vom eigenen Schiff als auch der
-			Raumstation sollten in beiden views da sein
-	- die Karte könnte man ungültig machen während man in einer space station ist, indem man docked/undocked
-		als separate Zustände einführt
-	-> bis jetzt sieht es nicht so aus, als würde sich das alles lohnen
--->
-Die Karte hat nicht den zentralen Stellenwert wie Editoren in Eclipse. Also geht es im wesentlichen drum, eine Menge
-von Views darzustellen. Ob diese wie bei Eclipse oder in "Fenstern" arranged sind, ist eine Eigenschaft des "Window
-Managers", und da könnte man beide Varianten anbieten.
+http://pozniak.pl/wp/wp-content/uploads/2012/06/IMG_0665.png
 
-Wenn man das letzte View schließt, dann sieht man einen Hintergrund ohne weitere Aktionen. Es ist wichtig, dass dieser
-keine Aktionen enthält, damit er nicht wichtig ist -- ansonsten bräuchte man auch einen Weg, immer dort hin zu kommen.
-Oder aber der "Hintergrund" ist ein "Open View" Dialog, den man auch anders holen kann. Aber dann lieber immer "anders"
-(z.B. über eine zentrale Toolbar), sonst ist es blöd, wenn ein Benutzer nur den weg über den "Hintergrund" kennt. Also
-keine "mehreren Wege, dasselbe zu tun"
-
-------
-
-Alternative: http://pozniak.pl/wp/wp-content/uploads/2012/06/IMG_0665.png
 Ist modal auf Page-Level, aber nicht modal nach Spielzuständen (docked, undocked) sondern nach
 Navigation im Menü. Das ist im Sinne von "mobile first" auf jeden Fall sinnvoll, und das ist für ein
 casual game wichtig! Die Karte wäre dann einfach ein Menüpunkt, evtl. der oberste. Menüpunkte sind
@@ -119,20 +92,6 @@ Elemente:
 ------------------------------------------------------
 Weitere Notizen:
 
-- Aktuell gibt es das Problem, dass das Map-Tab seinen Zustand (Position, Zoom, Auswahl) verliert, wenn man ein anderes
-	Tab anwählt. Das ist gerade bei der Karte gefühlt schlecht. con: Andererseits ist gerade die Karte teuer
-	im up-to-date halten (con-con: Performance bekommt man auch anders hin, z.B. seltenere batch-Updates, wenn die
-	Karte gerade unsichtbar ist; nimmt gerade bei sich bewegenden Objekten, die nur Nx die Position updaten, viel Last
-	raus). Außerdem ist unklar, ob alle Tabs ihren Zustand behalten sollen. Falls das aber so ist, wären reine
-	JS-Tabs dafür sinnvoll, wobei die auch immer noch keinen Reload überleben (con-con: Ein Reload passiert nur
-	explizit durch den Benutzer. Keine Komponente macht das, weil es die Websockets stört. Soll ich den Reload
-	überhaupt unterstützen?)
-	-->
-	Das meiste wird ja serverseitig gespeichert, z.B. das aktuell ausgewählte Element. Position/Zoom ist von der
-	Sache her ein "persistent client-side state" und sollte auch so behandelt werden, damit keine ständigen Requests
-	gesendet werden, was Serverlast erzeugt, die Verbindung blockiert und ggf. Datenvolumen aufbraucht. Solchen state
-	speichert man am besten in Cookies und/oder local storage.
-
 - NNG (Nielsen Norman Group) empfiehlt: Bei Tab-Panels keine Tabs, die "aus der Reihe Fallen". Sie sagen auch, keine
 	Tabs zur Navigation, sondern für verschiedene Ansichten desselben, was ich noch nicht ganz verstehe, aber vermutlich
 	geht es in die gleiche Richtung.
@@ -150,5 +109,3 @@ Weitere Notizen:
 	memory holds only seven items. That means that, eight is a LOT more than seven."
 
 - "Items that appear first or last on any list are most effective. Navigation is no exception. "
-
-

@@ -2,24 +2,9 @@
 code:
 - separate "item" and "inventory" code. Items are used by equipment too.
 
-map:
-- heat map vs. low zoom objects vs. high zoom objects
-- display vs. click
-- static vs. dynamic objects
--->
-tile layer vs. vector layer vs. overlays
-client-side vs. server-side click handling
--->
-- heat map = tile layer; server-side click handling
-- dynamic objects unsichtbar auf heat map (später evtl. einzelne sichtbar machen durch trackers)
-- KISS: alles per server-side click handling (das kann später immer noch geändert werden, wenn es Probleme macht)
-	-> nur noch tile layer vs. vector layer vs. overlays für low/high zoom objects klären
-- dynamic objects nicht als tile layer -> vector oder overlay (CSS animation support)
-- static objects: ???
-
 click (for now handle static/dynamic space objects the same):
-- pass click event to server side
-- position hit/miss for SpaceObject
-- click(SpaceObject) for map page
 - add side bar to map page
 - show object details in side bar
+
+map selection indicator -> follow selected object
+
