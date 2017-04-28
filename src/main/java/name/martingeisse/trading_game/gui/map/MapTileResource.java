@@ -21,11 +21,14 @@ import java.io.IOException;
 public class MapTileResource extends DynamicImageResource {
 
 	private static final boolean DRAW_GRID = false;
+	private static final int HEAT_MAP_RESOLUTION_SHIFT = 6;
+	private static final int HEAT_MAP_RESOLUTION = 1 << HEAT_MAP_RESOLUTION_SHIFT;
 
 	// note: the Graphics2D cannot be stored since it somehow loses connection to its target image. That stuff happens
 	// in native code, so I can't really debug it. The overhead of creating the Graphics2D again and disposing of it
 	// is not measurable, though.
-	private static final ThreadLocal<BufferedImage> imagePerThread = new ThreadLocal<>();
+	private static final ThreadLocal<BufferedImage> detailImagePerThread = new ThreadLocal<>();
+	private static final ThreadLocal<BufferedImage> heatMapImagePerThread = new ThreadLocal<>();
 
 	@Override
 	protected void configureResponse(ResourceResponse response, Attributes attributes) {
@@ -39,18 +42,15 @@ public class MapTileResource extends DynamicImageResource {
 		int x = attributes.getParameters().get("x").toInt(0);
 		int y = attributes.getParameters().get("y").toInt(0);
 		int z = attributes.getParameters().get("z").toInt(0);
-
-		// prepare drawing resources
-		BufferedImage image = imagePerThread.get();
-		if (image == null) {
-			image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
-			imagePerThread.set(image);
-		}
+		boolean isHeatMap = (z <= MapCoordinates.HEAT_MAP_ZOOM_THRESHOLD);
 
 		// draw the image
-		if (z <= MapCoordinates.HEAT_MAP_ZOOM_THRESHOLD) {
+		BufferedImage image;
+		if (isHeatMap) {
+			image = getImage(heatMapImagePerThread, HEAT_MAP_RESOLUTION, BufferedImage.TYPE_BYTE_GRAY);
 			renderHeatMapTile(x, y, z, image);
 		} else {
+			image = getImage(detailImagePerThread, 256, BufferedImage.TYPE_INT_RGB);
 			Graphics2D graphics = image.createGraphics();
 			renderDetailTile(x, y, z, graphics);
 			graphics.dispose();
@@ -62,15 +62,22 @@ public class MapTileResource extends DynamicImageResource {
 		return result;
 	}
 
+	private static BufferedImage getImage(ThreadLocal<BufferedImage> storage, int size, int type) {
+		BufferedImage image = storage.get();
+		if (image == null) {
+			image = new BufferedImage(size, size, type);
+			storage.set(image);
+		}
+		return image;
+	}
+
 	private void renderHeatMapTile(int tileX, int tileY, int zoomLevel, BufferedImage image) {
 		WritableRaster raster = image.getRaster();
 
 		// fill background
-		for (int x = 0; x < 256; x++) {
-			for (int y = 0; y < 256; y++) {
+		for (int x = 0; x < HEAT_MAP_RESOLUTION; x++) {
+			for (int y = 0; y < HEAT_MAP_RESOLUTION; y++) {
 				raster.setSample(x, y, 0, 0);
-				raster.setSample(x, y, 1, 0);
-				raster.setSample(x, y, 2, 0);
 			}
 		}
 
@@ -79,7 +86,7 @@ public class MapTileResource extends DynamicImageResource {
 			Graphics2D g = image.createGraphics();
 			try {
 				g.setColor(Color.DARK_GRAY);
-				g.drawRect(0, 0, 256, 256);
+				g.drawRect(0, 0, HEAT_MAP_RESOLUTION, HEAT_MAP_RESOLUTION);
 			} finally {
 				g.dispose();
 			}
@@ -91,10 +98,11 @@ public class MapTileResource extends DynamicImageResource {
 		//
 
 		// add space objects to the heat map
-		int shift = zoomLevel + 8; // TODO wrong, should be (8 - shiftLevel), but hits the same problem: pixels != latLng != gameCoords
+		// int shift = zoomLevel + 8; // TODO wrong, should be (8 - shiftLevel), but hits the same problem: pixels != latLng != gameCoords
 		// -- must be solved first
 		// ImmutableList<StaticSpaceObject> spaceObjects = MyWicketApplication.get().getDependency(Space.class).getStaticSpaceObjects();
 		ImmutableList<StaticSpaceObject> spaceObjects = getRelevantStaticSpaceObjects(tileX, tileY, zoomLevel);
+		int valueIncrement = (20 << zoomLevel);
 		for (SpaceObject spaceObject : spaceObjects) {
 			// long lx = spaceObject.getX() - (tileX << shift); // TODO see above
 			// long ly = spaceObject.getY() - (tileY << shift); // TODO see above
@@ -102,15 +110,18 @@ public class MapTileResource extends DynamicImageResource {
 			// double dx = (spaceObject.getX() << zoomLevel) / 1000 - (tileX << 8);
 			// double dy = (spaceObject.getY() << zoomLevel) / 1000 - (tileY << 8);
 
-			double zoomFactor = (1L << zoomLevel);
-			double dx = MapCoordinates.convertXToLongitude(spaceObject.getX()) * zoomFactor - (tileX << 8);
-			double dy = MapCoordinates.convertYToLatitude(spaceObject.getY()) * zoomFactor - (tileY << 8);
+			double zoomFactor = (1L << (zoomLevel + HEAT_MAP_RESOLUTION_SHIFT)) / 256.0;
+			double dx = MapCoordinates.convertXToLongitude(spaceObject.getX()) * zoomFactor - (tileX << HEAT_MAP_RESOLUTION_SHIFT);
+			double dy = MapCoordinates.convertYToLatitude(spaceObject.getY()) * zoomFactor - (tileY << HEAT_MAP_RESOLUTION_SHIFT);
 
-			if (dx >= 0 && dx < 256 && dy >= 0 && dy < 256) {
+			if (dx >= 0 && dx < HEAT_MAP_RESOLUTION && dy >= 0 && dy < HEAT_MAP_RESOLUTION) {
 				int x = (int) dx;
 				int y = (int) dy;
-				int value = raster.getSample(x, y, 0);
-				raster.setSample(x, y, 0, value == 255 ? value : (value + 85));
+				int value = raster.getSample(x, y, 0) + valueIncrement;
+				if (value > 255) {
+					value = 255;
+				}
+				raster.setSample(x, y, 0, value);
 			}
 		}
 
