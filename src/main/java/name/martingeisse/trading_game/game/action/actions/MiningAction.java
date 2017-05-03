@@ -1,5 +1,8 @@
 package name.martingeisse.trading_game.game.action.actions;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.definition.GameConstants;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
@@ -19,10 +22,31 @@ public final class MiningAction extends ContinuousAction {
 	private final Player player;
 	private final long miningSpeed = GameConstants.BASE_MINING_SPEED; // in the future, this will be modified by upgrades and skills
 
-	public MiningAction(GameEventEmitter gameEventEmitter, Asteroid asteroid, Player player) {
+	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+	public MiningAction(@JacksonInject GameEventEmitter gameEventEmitter,
+						@JsonProperty(value = "asteroid", required = true) Asteroid asteroid,
+						@JsonProperty(value = "player", required = true) Player player) {
 		this.gameEventEmitter = gameEventEmitter;
 		this.asteroid = asteroid;
 		this.player = player;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the asteroid
+	 */
+	public Asteroid getAsteroid() {
+		return asteroid;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the player
+	 */
+	public Player getPlayer() {
+		return player;
 	}
 
 	@Override

@@ -12,9 +12,12 @@ import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
+import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.skill.Skill;
+import name.martingeisse.trading_game.game.space.SpaceObject;
+import name.martingeisse.trading_game.game.space.SpaceObjectType;
 import name.martingeisse.trading_game.platform.util.attribute.AttributeKey;
 import name.martingeisse.trading_game.platform.util.attribute.Attributes;
 
@@ -38,10 +41,14 @@ public final class JacksonService {
 	public JacksonService(Injector injector) {
 		this.injector = injector;
 
-		// helper objects
+		// value instantiators and custom deserializers
 		addFromLongValueInstantiator(Player.class, id -> injector.getInstance(EntityProvider.class).getPlayer(id));
 		addFromStringValueInstantiator(Skill.class, name -> injector.getInstance(GameDefinition.class).getSkillByName(name));
 		addFromStringValueInstantiator(ItemType.class, name -> injector.getInstance(GameDefinition.class).getItemTypeByName(name));
+		addFromLongValueInstantiator(SpaceObject.class, id -> injector.getInstance(EntityProvider.class).getSpaceObject(id));
+		for (SpaceObjectType type : SpaceObjectType.values()) {
+			addSpaceObjectSubtypeInstantiator(type.getSpaceObjectClass());
+		}
 
 		// create basic object mapper
 		objectMapper = new ObjectMapper();
@@ -94,6 +101,13 @@ public final class JacksonService {
 			}
 		});
 
+		// support Guice-injectable values
+		objectMapper.setInjectableValues(new GuiceInjectableValues(injector));
+
+	}
+
+	private <T extends SpaceObject> void addSpaceObjectSubtypeInstantiator(Class<T> c) {
+		addFromLongValueInstantiator(c, id -> c.cast(injector.getInstance(EntityProvider.class).getSpaceObject(id)));
 	}
 
 	private <T> void addFromLongValueInstantiator(Class<T> klass, Function<Long, T> actualInstantiator) {
