@@ -1,8 +1,13 @@
 package name.martingeisse.trading_game.gui.inventory;
 
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.actions.EquipAction;
 import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
+import name.martingeisse.trading_game.game.action.actions.UnequipAction;
+import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
+import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentChangedEvent;
+import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.event.GameEventBatch;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
@@ -44,7 +49,7 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 	public InventorySectionPanel(String id) {
 		super(id);
 		setOutputMarkupId(true);
-		IModel<List<PlayerBelongingsService.InventoryEntry>> model = new LoadableDetachableModel<List<PlayerBelongingsService.InventoryEntry>>() {
+		IModel<List<PlayerBelongingsService.InventoryEntry>> inventoryEntryListModel = new LoadableDetachableModel<List<PlayerBelongingsService.InventoryEntry>>() {
 			@Override
 			protected List<PlayerBelongingsService.InventoryEntry> load() {
 				List<PlayerBelongingsService.InventoryEntry> list = MyWicketApplication.get().getDependency(PlayerBelongingsService.class).getBelongingsForPlayerId(getPlayer().getId());
@@ -66,7 +71,7 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 				return list;
 			}
 		};
-		add(new ListView<PlayerBelongingsService.InventoryEntry>("inventories", model) {
+		add(new ListView<PlayerBelongingsService.InventoryEntry>("inventories", inventoryEntryListModel) {
 			@Override
 			protected void populateItem(ListItem<PlayerBelongingsService.InventoryEntry> inventoryEntryItem) {
 				long inventoryId = inventoryEntryItem.getModelObject().getInventoryId();
@@ -134,13 +139,41 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 				});
 			}
 		});
+		IModel<List<SlotInfo>> equipmentSlotListModel = new LoadableDetachableModel<List<SlotInfo>>() {
+			@Override
+			protected List<SlotInfo> load() {
+				EntityProvider entityProvider = MyWicketApplication.get().getDependency(EntityProvider.class);
+				PlayerShipEquipment equipment = entityProvider.getPlayerShipEquipment(getPlayer().getShip().getId());
+				return equipment.getAllSlots();
+			}
+		};
+		add(new ListView<SlotInfo>("equipmentSlots", equipmentSlotListModel) {
+			@Override
+			protected void populateItem(ListItem<SlotInfo> equipmentSlotItem) {
+				equipmentSlotItem.add(new Label("slotType", equipmentSlotItem.getModelObject().getPlayerShipEquipmentSlotType().name().toLowerCase()));
+				equipmentSlotItem.add(new Label("itemType", "" + equipmentSlotItem.getModelObject().getItemType()));
+				equipmentSlotItem.add(new Image("icon", ItemIcons.get(equipmentSlotItem.getModelObject().getItemType())));
+				equipmentSlotItem.add(new AjaxLink<Void>("unequipLink") {
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						Player player = getPlayer();
+						ActionQueue actionQueue = player.getActionQueue();
+						// TODO should add this action as the next one but keep other actions
+						actionQueue.cancelCurrentAction();
+						actionQueue.cancelAllPendingActions();
+						actionQueue.scheduleAction(new UnequipAction(player, equipmentSlotItem.getModelObject().getPlayerShipEquipmentSlotType()));
+					}
+				});
+			}
+		});
+
 	}
 
 	@Override
 	public void receiveGameEventBatch(IPartialPageRequestHandler partialPageRequestHandler, GameEventBatch eventBatch) {
 		for (GameEvent e : eventBatch.getEvents()) {
-			if (e instanceof InventoryChangedEvent) {
-				// TODO filter by inventories that actually contain items owned by the player
+			if (e instanceof InventoryChangedEvent || e instanceof PlayerShipEquipmentChangedEvent) {
+				// TODO filter by inventories that actually contain items owned by the player / equipped by the player
 				partialPageRequestHandler.add(this);
 				return;
 			}
