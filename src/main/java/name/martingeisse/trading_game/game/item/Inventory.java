@@ -100,7 +100,8 @@ public final class Inventory {
 		if (playerIdFilter != null) {
 			query.where(qs.playerId.eq(playerIdFilter));
 		}
-		return query.fetchFirst();
+		Integer result = query.fetchFirst();
+		return (result == null ? 0 : result);
 	}
 
 	public Inventory add(long playerId, ItemType itemType) {

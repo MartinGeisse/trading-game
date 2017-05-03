@@ -1,5 +1,7 @@
 package name.martingeisse.trading_game.game.action.actions;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.Inventory;
@@ -19,9 +21,15 @@ public final class LoadUnloadAction extends ImmediateAction {
 	private final SpaceStation spaceStation;
 	private final Type type;
 	private final ImmutableItemStack items;
-	private final int preferredSoruceInventoryIndex; // TODO typo
+	private final int preferredSourceInventoryIndex;
 
-	public LoadUnloadAction(Player player, SpaceStation spaceStation, Type type, ImmutableItemStack items, int preferredSoruceInventoryIndex) {
+	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+	public LoadUnloadAction(
+			@JsonProperty(value = "player", required = true) Player player,
+			@JsonProperty(value = "spaceStation", required = true) SpaceStation spaceStation,
+			@JsonProperty(value = "type", required = true) Type type,
+			@JsonProperty(value = "items", required = true) ImmutableItemStack items,
+			@JsonProperty(value = "preferredSourceInventoryIndex", required = true) int preferredSourceInventoryIndex) {
 		if (player == null) {
 			throw new IllegalArgumentException("player is null");
 		}
@@ -38,7 +46,52 @@ public final class LoadUnloadAction extends ImmediateAction {
 		this.spaceStation = spaceStation;
 		this.type = type;
 		this.items = items;
-		this.preferredSoruceInventoryIndex = preferredSoruceInventoryIndex;
+		this.preferredSourceInventoryIndex = preferredSourceInventoryIndex;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the player
+	 */
+	public Player getPlayer() {
+		return player;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the spaceStation
+	 */
+	public SpaceStation getSpaceStation() {
+		return spaceStation;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the type
+	 */
+	public Type getType() {
+		return type;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the items
+	 */
+	public ImmutableItemStack getItems() {
+		return items;
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the preferredSourceInventoryIndex
+	 */
+	public int getPreferredSourceInventoryIndex() {
+		return preferredSourceInventoryIndex;
 	}
 
 	@Override
@@ -64,7 +117,7 @@ public final class LoadUnloadAction extends ImmediateAction {
 			destinationInventory = spaceStation.getInventory();
 		}
 		try {
-			sourceInventory.remove(player.getId(), items.getItemType(), items.getSize(), preferredSoruceInventoryIndex);
+			sourceInventory.remove(player.getId(), items.getItemType(), items.getSize(), preferredSourceInventoryIndex);
 		} catch (NotEnoughItemsException e) {
 			return false;
 		}

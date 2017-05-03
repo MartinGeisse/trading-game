@@ -85,7 +85,11 @@ public final class MiningAction extends ContinuousAction {
 
 	@Override
 	public final Action.Status tick() {
-		MiningYield yield = asteroid.obtainYield(miningSpeed, getRemainingCargoMass());
+		int remainingCargoMass = getRemainingCargoMass();
+		if (remainingCargoMass <= 0) {
+			return Action.Status.FINISHED;
+		}
+		MiningYield yield = asteroid.obtainYield(miningSpeed, remainingCargoMass);
 		if (yield.getItems() != null) {
 			player.getInventory().add(player.getId(), yield.getItems());
 		}

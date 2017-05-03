@@ -70,6 +70,7 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 			@Override
 			protected void populateItem(ListItem<PlayerBelongingsService.InventoryEntry> inventoryEntryItem) {
 				long inventoryId = inventoryEntryItem.getModelObject().getInventoryId();
+				boolean isPlayerShipInventory = (inventoryId == getPlayer().getInventory().getId());
 				String title = MyWicketApplication.get().getDependency(InventoryNameService.class).getNameForInventoryId(inventoryId);
 				inventoryEntryItem.add(new Label("inventoryTitle", title));
 				inventoryEntryItem.add(new ListView<ImmutableItemStack>("itemStacks", inventoryEntryItem.getModelObject().getItemStacks().getStacks()) {
@@ -92,7 +93,7 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 							@Override
 							protected void onConfigure() {
 								super.onConfigure();
-								setVisible(itemLoadingSpaceStationModel.getObject() != null);
+								setVisible(isPlayerShipInventory && itemLoadingSpaceStationModel.getObject() != null);
 							}
 
 							@Override
@@ -115,7 +116,7 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 							@Override
 							protected void onConfigure() {
 								super.onConfigure();
-								setVisible(itemStackItem.getModelObject().getItemType().getPlayerShipEquipmentSlotType() != null);
+								setVisible(isPlayerShipInventory && itemStackItem.getModelObject().getItemType().getPlayerShipEquipmentSlotType() != null);
 							}
 
 							@Override
