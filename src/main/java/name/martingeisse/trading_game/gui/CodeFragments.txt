@@ -1,5 +1,4 @@
 
-
 IModel<Integer> currentActionProgressModel = new PropertyModel<>(this, "player.actionExecution.progress.currentProgressPoints");
 InlineProgressBar currentActionProgressBar = new InlineProgressBar("currentActionProgressBar", currentActionProgressModel) {
 	@Override
@@ -23,14 +22,6 @@ currentActionProgressBar.add(new ProgressBarClientProgressBehavior() {
 
 
 
-
-
-
-
-
-
-
-
 currentActionContainer.add(new Label("remainingTime", new AbstractReadOnlyModel<String>() {
 	@Override
 	public String getObject() {
@@ -47,65 +38,3 @@ currentActionContainer.add(new Label("remainingTime", new AbstractReadOnlyModel<
 		}
 	}
 }));
-
-
-
-
-
-
-
-
-
-
-<!-- for asteroids etc., not for remote player-owned items -->
-
-            <div wicket:id="remoteItemsContainer">
-                <h2>Remote Items</h2>
-                <li wicket:id="itemStacks">
-                    <span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon"> <a wicket:id="loadLink">load</a>
-                </li>
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		WebMarkupContainer remoteItemsContainer = new WebMarkupContainer("remoteItemsContainer") {
-			@Override
-			protected void onConfigure() {
-				super.onConfigure();
-				setVisible(getRemoteItems() != null);
-			}
-		};
-		propertiesBox.add(remoteItemsContainer);
-		remoteItemsContainer.add(new ListView<ImmutableItemStack>("itemStacks", new PropertyModel<>(this, "remoteItems")) {
-			@Override
-			protected void populateItem(ListItem<ImmutableItemStack> item) {
-				item.add(new Label("size", "" + item.getModelObject().getSize()));
-				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
-				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
-				item.add(new AjaxLink<Void>("loadLink") {
-					@Override
-					public void onClick(AjaxRequestTarget target) {
-						Player player = getPlayer();
-						SpaceStation spaceStation = (SpaceStation) getSelectedSpaceObject();
-						ImmutableItemStack itemsToLoad = new ImmutableItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
-						ActionQueue actionQueue = player.getActionQueue();
-						actionQueue.cancelCurrentAction();
-						actionQueue.cancelAllPendingActions();
-						actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.LOAD, itemsToLoad, item.getIndex()));
-					}
-				});
-			}
-		});

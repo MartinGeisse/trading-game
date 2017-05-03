@@ -25,6 +25,10 @@ import org.apache.wicket.util.visit.Visits;
  * <p>
  * Note that components implementing just {@link GameEventListener} are not supported since there is little point in
  * doing so -- such a component would not be able to update itsef on the client side in response to events.
+ *
+ * TODO: if no message gets sent, the websocket times out (why? timeout should handle lost connections, not idle ones).
+ * Investigate. If this is correct behavior, send keepalive messages (from the client, to make sure they are still
+ * active. If only the server sends keepalives, lost clients might go unnoticed)
  */
 public class GameListenerWebSocketBehavior extends WebSocketBehavior {
 

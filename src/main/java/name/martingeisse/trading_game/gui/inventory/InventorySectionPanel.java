@@ -84,15 +84,26 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 						itemStackItem.add(new Label("size", itemStackItem.getModelObject().getSize()));
 						itemStackItem.add(new Label("itemType", itemStackItem.getModelObject().getItemType().getName()));
 						itemStackItem.add(new Image("icon", ItemIcons.get(itemStackItem.getModelObject().getItemType())));
-						itemStackItem.add(new AjaxLink<Void>("transferOwnershipLink") {
+						itemStackItem.add(new AjaxLink<Void>("loadLink") {
+
+							@Override
+							protected void onConfigure() {
+								super.onConfigure();
+								SpaceStation spaceStation = itemLoadingSpaceStationModel.getObject();
+								setVisible(spaceStation != null && spaceStation.getInventoryId() == inventoryEntryItem.getModelObject().getInventoryId());
+							}
+
 							@Override
 							public void onClick(AjaxRequestTarget target) {
-								// TODO do not allow to transfer ownership of items in the player's ship!
-								MainMenuTabbedPanel.replaceTabPanel(this, id -> {
-									return new TransferOwnershipPlayerListPanel(id, inventoryId, itemStackItem.getModelObject());
-								}, target);
+								SpaceStation spaceStation = itemLoadingSpaceStationModel.getObject();
+								Player player = getPlayer();
+								ImmutableItemStack itemsToLoad = new ImmutableItemStack(itemStackItem.getModelObject().getItemType(), itemStackItem.getModelObject().getSize());
+								ActionQueue actionQueue = player.getActionQueue();
+								actionQueue.cancelCurrentAction();
+								actionQueue.cancelAllPendingActions();
+								actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.LOAD, itemsToLoad, itemStackItem.getIndex()));
 							}
-						}.setVisible(!inventoryEntryItem.getModelObject().isPlayerExclusive()));
+						});
 						itemStackItem.add(new AjaxLink<Void>("unloadLink") {
 
 							@Override
@@ -135,6 +146,15 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 							}
 
 						});
+						itemStackItem.add(new AjaxLink<Void>("transferOwnershipLink") {
+							@Override
+							public void onClick(AjaxRequestTarget target) {
+								// TODO do not allow to transfer ownership of items in the player's ship!
+								MainMenuTabbedPanel.replaceTabPanel(this, id -> {
+									return new TransferOwnershipPlayerListPanel(id, inventoryId, itemStackItem.getModelObject());
+								}, target);
+							}
+						}.setVisible(!inventoryEntryItem.getModelObject().isPlayerExclusive()));
 					}
 				});
 			}

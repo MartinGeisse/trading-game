@@ -9,7 +9,7 @@ import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.player.Player;
 
 /**
- * TODO serialization
+ *
  */
 public final class UnequipAction extends ImmediateAction {
 
