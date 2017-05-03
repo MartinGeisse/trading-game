@@ -29,6 +29,9 @@ import org.apache.wicket.util.visit.Visits;
  * TODO: if no message gets sent, the websocket times out (why? timeout should handle lost connections, not idle ones).
  * Investigate. If this is correct behavior, send keepalive messages (from the client, to make sure they are still
  * active. If only the server sends keepalives, lost clients might go unnoticed)
+ *
+ * TODO the web socket breaks if the same page instance is opened in multiple tabs. Since websocket based pages must
+ * be stateful in Wicket, this means that another page instance must be created for each tab.
  */
 public class GameListenerWebSocketBehavior extends WebSocketBehavior {
 
