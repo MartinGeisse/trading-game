@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
+import name.martingeisse.trading_game.game.space.Space;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
@@ -18,18 +19,20 @@ public final class PlayerLoginRepository {
 	private final PlayerRepository playerRepository;
 	private final PostgresContextService postgresContextService;
 	private final JacksonService jacksonService;
+	private final Space space;
 	private final EntityProvider entityProvider;
 
 	@Inject
-	public PlayerLoginRepository(PlayerRepository playerRepository, PostgresContextService postgresContextService, JacksonService jacksonService, EntityProvider entityProvider) {
+	public PlayerLoginRepository(PlayerRepository playerRepository, PostgresContextService postgresContextService, JacksonService jacksonService, Space space, EntityProvider entityProvider) {
 		this.playerRepository = playerRepository;
 		this.postgresContextService = postgresContextService;
 		this.jacksonService = jacksonService;
+		this.space = space;
 		this.entityProvider = entityProvider;
 	}
 
 	private Player instantiate(PlayerRow data) {
-		return new Player(playerRepository, new PlayerDataLink(postgresContextService, entityProvider, jacksonService, data));
+		return new Player(playerRepository, new PlayerDataLink(postgresContextService, entityProvider, jacksonService, space, data));
 	}
 
 	/**

@@ -9,6 +9,7 @@ import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.market.NotEnoughMoneyException;
 import name.martingeisse.trading_game.game.space.PlayerShip;
+import name.martingeisse.trading_game.game.space.SpaceStation;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 
 import java.util.HashMap;
@@ -206,6 +207,11 @@ public final class Player {
 	public void transferMoneyTo(Player destination, long amount) throws GameLogicException {
 		subtractMoney(amount); // throws GameLogicException if the player doesn't have enough money
 		destination.addMoney(amount);
+	}
+
+	public SpaceStation getSpaceStationForItemLoading() {
+		PlayerShip ship = getShip();
+		return dataLink.getItemTransferSpaceStation(ship.getX(), ship.getY());
 	}
 
 }

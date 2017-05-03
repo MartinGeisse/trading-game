@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.gui.inventory;
 
 import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.actions.EquipAction;
+import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
 import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.event.GameEventBatch;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
@@ -9,6 +10,7 @@ import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
 import name.martingeisse.trading_game.game.item.InventoryNameService;
 import name.martingeisse.trading_game.game.item.PlayerBelongingsService;
 import name.martingeisse.trading_game.game.player.Player;
+import name.martingeisse.trading_game.game.space.SpaceStation;
 import name.martingeisse.trading_game.gui.gamepage.MainMenuTabbedPanel;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.websockets.GuiGameEventListener;
@@ -31,6 +33,13 @@ import java.util.List;
  * Encapsulates the actual map view and the properties box.
  */
 public class InventorySectionPanel extends AbstractPanel implements GuiGameEventListener {
+
+	private final IModel<SpaceStation> itemLoadingSpaceStationModel = new LoadableDetachableModel<SpaceStation>() {
+		@Override
+		protected SpaceStation load() {
+			return getPlayer().getSpaceStationForItemLoading();
+		}
+	};
 
 	public InventorySectionPanel(String id) {
 		super(id);
@@ -79,19 +88,27 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 							}
 						}.setVisible(!inventoryEntryItem.getModelObject().isPlayerExclusive()));
 						itemStackItem.add(new AjaxLink<Void>("unloadLink") {
+
+							@Override
+							protected void onConfigure() {
+								super.onConfigure();
+								setVisible(itemLoadingSpaceStationModel.getObject() != null);
+							}
+
 							@Override
 							public void onClick(AjaxRequestTarget target) {
-
-								// TODO how to determine the SpaceStation
-
-//								Player player = getPlayer();
-//								SpaceStation spaceStation = (SpaceStation) getSelectedSpaceObject();
-//								ImmutableItemStack itemsToLoad = new ImmutableItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
-//								ActionQueue actionQueue = player.getActionQueue();
-//								actionQueue.cancelCurrentAction();
-//								actionQueue.cancelAllPendingActions();
-//								actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, item.getIndex()));
+								SpaceStation spaceStation = itemLoadingSpaceStationModel.getObject();
+								if (spaceStation == null) {
+									return;
+								}
+								Player player = getPlayer();
+								ImmutableItemStack itemsToLoad = new ImmutableItemStack(itemStackItem.getModelObject().getItemType(), itemStackItem.getModelObject().getSize());
+								ActionQueue actionQueue = player.getActionQueue();
+								actionQueue.cancelCurrentAction();
+								actionQueue.cancelAllPendingActions();
+								actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, itemStackItem.getIndex()));
 							}
+
 						});
 						itemStackItem.add(new AjaxLink<Void>("equipLink") {
 
@@ -127,6 +144,12 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 				return;
 			}
 		}
+	}
+
+	@Override
+	protected void detachModel() {
+		super.detachModel();
+		itemLoadingSpaceStationModel.detach();
 	}
 
 }

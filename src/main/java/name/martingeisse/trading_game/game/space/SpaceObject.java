@@ -16,6 +16,8 @@ import org.postgresql.geometric.PGpoint;
  */
 public abstract class SpaceObject implements PositionProvider {
 
+	public static final int ITEM_LOADING_MAX_DISTANCE = 100;
+
 	public static final String DEFAULT_NAME = "unnamed";
 
 	private PostgresContextService postgresContextService;

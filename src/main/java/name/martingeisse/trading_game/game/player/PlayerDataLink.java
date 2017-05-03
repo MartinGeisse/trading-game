@@ -6,6 +6,9 @@ import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.space.PlayerShip;
+import name.martingeisse.trading_game.game.space.Space;
+import name.martingeisse.trading_game.game.space.SpaceObject;
+import name.martingeisse.trading_game.game.space.SpaceStation;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.PlayerRow;
 import name.martingeisse.trading_game.postgres_entities.QCachedPlayerAttributeRow;
@@ -19,14 +22,16 @@ public final class PlayerDataLink {
 	private final PostgresContextService postgresContextService;
 	private final EntityProvider entityProvider;
 	private final JacksonService jacksonService;
+	private final Space space;
 	private final long id;
 	private final long shipId;
 	private final long actionQueueId;
 
-	public PlayerDataLink(PostgresContextService postgresContextService, EntityProvider entityProvider, JacksonService jacksonService, PlayerRow playerRow) {
+	public PlayerDataLink(PostgresContextService postgresContextService, EntityProvider entityProvider, JacksonService jacksonService, Space space, PlayerRow playerRow) {
 		this.postgresContextService = postgresContextService;
 		this.entityProvider = entityProvider;
 		this.jacksonService = jacksonService;
+		this.space = space;
 		this.id = playerRow.getId();
 		this.shipId = playerRow.getShipId();
 		this.actionQueueId = playerRow.getActionQueueId();
@@ -76,6 +81,15 @@ public final class PlayerDataLink {
 			throw new IllegalStateException("missing player attribute " + key + " for player ID " + id);
 		}
 		return jacksonService.deserialize(serializedValue, Object.class);
+	}
+
+	public SpaceStation getItemTransferSpaceStation(long x, long y) {
+		SpaceObject result = space.get(x, y, SpaceObject.ITEM_LOADING_MAX_DISTANCE, (o1, o2) -> {
+			int i1 = (o1 instanceof SpaceStation) ? 1 : 0;
+			int i2 = (o2 instanceof SpaceStation) ? 1 : 0;
+			return i1 - i2;
+		});
+		return (result instanceof SpaceStation) ? (SpaceStation)result : null;
 	}
 
 }
