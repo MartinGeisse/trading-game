@@ -57,41 +57,15 @@ currentActionContainer.add(new Label("remainingTime", new AbstractReadOnlyModel<
 
 
 
-        <div id="sidebar" wicket:id="sidebar" style="position: absolute; width: 400px; top: 0px; bottom: 0px; right: 0px; ">
-            <h2>Properties</h2>
-            <div>Name: <span wicket:id="name"></span></div>
-            <div>Type: <span wicket:id="type"></span></div>
-            <div>Location: <span wicket:id="x"></span>, <span wicket:id="y"></span></div>
-            <div>Distance: <span wicket:id="distance"></span></div>
-            <h2>Actions</h2>
-            <div wicket:id="actions">
-                <a wicket:id="link"><span wicket:id="name"></span></a>
-            </div>
+<!-- for asteroids etc., not for remote player-owned items -->
+
             <div wicket:id="remoteItemsContainer">
                 <h2>Remote Items</h2>
                 <li wicket:id="itemStacks">
                     <span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon"> <a wicket:id="loadLink">load</a>
                 </li>
             </div>
-            <div wicket:id="localItemsContainer">
-                <h2>Local Items</h2>
-                <li wicket:id="itemStacks">
-                    <span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon"> <a wicket:id="unloadLink">unload</a> <a wicket:id="equipLink">equip</a>
-                </li>
-            </div>
-            <div style="position: absolute; left: 0px; right: 0px; bottom: 0px; height: 100px; ">
-                <div><a href="#" id="selectOwnShipLink">select own ship</a></div>
-                <div><a href="#" id="centerSelectedObjectLink">center selected object</a></div>
-            </div>
-            <hr />
-            <div wicket:id="equipmentContainer">
-                <h2>Equipment</h2>
-                <li wicket:id="slots">
-                    <span wicket:id="slotType"></span>: <span wicket:id="itemType"></span> <img wicket:id="icon"> <a wicket:id="unequipLink">unequip</a>
-                </li>
-            </div>
 
-        </div>
 
 
 
@@ -132,53 +106,6 @@ currentActionContainer.add(new Label("remainingTime", new AbstractReadOnlyModel<
 						actionQueue.cancelAllPendingActions();
 						actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.LOAD, itemsToLoad, item.getIndex()));
 					}
-				});
-			}
-		});
-		WebMarkupContainer localItemsContainer = new WebMarkupContainer("localItemsContainer") {
-			@Override
-			protected void onConfigure() {
-				super.onConfigure();
-				setVisible(getLocalItems() != null);
-			}
-		};
-		propertiesBox.add(localItemsContainer);
-		localItemsContainer.add(new ListView<ImmutableItemStack>("itemStacks", new PropertyModel<>(this, "localItems")) {
-			@Override
-			protected void populateItem(ListItem<ImmutableItemStack> item) {
-				item.add(new Label("size", "" + item.getModelObject().getSize()));
-				item.add(new Label("itemType", "" + item.getModelObject().getItemType()));
-				item.add(new Image("icon", ItemIcons.get(item.getModelObject().getItemType())));
-				item.add(new AjaxLink<Void>("unloadLink") {
-					@Override
-					public void onClick(AjaxRequestTarget target) {
-						Player player = getPlayer();
-						SpaceStation spaceStation = (SpaceStation) getSelectedSpaceObject();
-						ImmutableItemStack itemsToLoad = new ImmutableItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
-						ActionQueue actionQueue = player.getActionQueue();
-						actionQueue.cancelCurrentAction();
-						actionQueue.cancelAllPendingActions();
-						actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, item.getIndex()));
-					}
-				});
-				item.add(new AjaxLink<Void>("equipLink") {
-
-					@Override
-					protected void onConfigure() {
-						super.onConfigure();
-						setVisible(item.getModelObject().getItemType().getPlayerShipEquipmentSlotType() != null);
-					}
-
-					@Override
-					public void onClick(AjaxRequestTarget target) {
-						Player player = getPlayer();
-						ActionQueue actionQueue = player.getActionQueue();
-						// TODO should add this action as the next one but keep other actions
-						actionQueue.cancelCurrentAction();
-						actionQueue.cancelAllPendingActions();
-						actionQueue.scheduleAction(new EquipAction(player, item.getModelObject().getItemType()));
-					}
-
 				});
 			}
 		});

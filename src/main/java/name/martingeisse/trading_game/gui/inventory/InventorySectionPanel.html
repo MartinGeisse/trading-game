@@ -4,10 +4,23 @@
         <h2>Inventory</h2>
         <div wicket:id="inventories">
             <h3 wicket:id="inventoryTitle"></h3>
-            <li wicket:id="itemStacks">
-                <span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon"> <a wicket:id="transferOwnershipLink">Transfer Ownership</a>
-            </li>
+            <ul>
+                <li wicket:id="itemStacks">
+                    <span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon">
+                    <a wicket:id="transferOwnershipLink">Transfer Ownership</a>
+                    <a wicket:id="unloadLink">unload</a>
+                    <a wicket:id="equipLink">equip</a>
+                </li>
+            </ul>
         </div>
+        <h2>Equipped Items</h2>
+        <ul>
+            <!-- TODO
+            <li wicket:id="slots">
+                <span wicket:id="slotType"></span>: <span wicket:id="itemType"></span> <img wicket:id="icon"> <a wicket:id="unequipLink">unequip</a>
+            </li>
+            -->
+        </ul>
     </wicket:panel>
 </body>
 </html>

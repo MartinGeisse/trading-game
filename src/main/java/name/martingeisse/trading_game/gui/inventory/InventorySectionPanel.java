@@ -1,11 +1,14 @@
 package name.martingeisse.trading_game.gui.inventory;
 
+import name.martingeisse.trading_game.game.action.ActionQueue;
+import name.martingeisse.trading_game.game.action.actions.EquipAction;
 import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.event.GameEventBatch;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
 import name.martingeisse.trading_game.game.item.InventoryNameService;
 import name.martingeisse.trading_game.game.item.PlayerBelongingsService;
+import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.gui.gamepage.MainMenuTabbedPanel;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.websockets.GuiGameEventListener;
@@ -75,6 +78,40 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 								}, target);
 							}
 						}.setVisible(!inventoryEntryItem.getModelObject().isPlayerExclusive()));
+						itemStackItem.add(new AjaxLink<Void>("unloadLink") {
+							@Override
+							public void onClick(AjaxRequestTarget target) {
+
+								// TODO how to determine the SpaceStation
+
+//								Player player = getPlayer();
+//								SpaceStation spaceStation = (SpaceStation) getSelectedSpaceObject();
+//								ImmutableItemStack itemsToLoad = new ImmutableItemStack(item.getModelObject().getItemType(), item.getModelObject().getSize());
+//								ActionQueue actionQueue = player.getActionQueue();
+//								actionQueue.cancelCurrentAction();
+//								actionQueue.cancelAllPendingActions();
+//								actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, item.getIndex()));
+							}
+						});
+						itemStackItem.add(new AjaxLink<Void>("equipLink") {
+
+							@Override
+							protected void onConfigure() {
+								super.onConfigure();
+								setVisible(itemStackItem.getModelObject().getItemType().getPlayerShipEquipmentSlotType() != null);
+							}
+
+							@Override
+							public void onClick(AjaxRequestTarget target) {
+								Player player = getPlayer();
+								ActionQueue actionQueue = player.getActionQueue();
+								// TODO should add this action as the next one but keep other actions
+								actionQueue.cancelCurrentAction();
+								actionQueue.cancelAllPendingActions();
+								actionQueue.scheduleAction(new EquipAction(player, itemStackItem.getModelObject().getItemType()));
+							}
+
+						});
 					}
 				});
 			}
