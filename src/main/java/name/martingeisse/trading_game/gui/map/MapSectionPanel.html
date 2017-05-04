@@ -9,6 +9,9 @@
 
         #propertiesBox {
             visibility: hidden;
+            background-color: #002040;
+            border: 1px solid #40b0b0;
+            padding: 5px;
         }
 
         #propertiesBox.hasSelectedSpaceObject {
@@ -217,10 +220,8 @@
             <div wicket:id="actions">
                 <a wicket:id="link"><span wicket:id="name"></span></a>
             </div>
-            <div style="position: absolute; left: 0px; right: 0px; bottom: 0px; height: 100px; ">
-                <div><a href="#" id="centerSelectedObjectLink">center selected object</a></div>
-            </div>
             <hr />
+            <div><a href="#" id="centerSelectedObjectLink">center selected object</a></div>
 
         </div>
     </wicket:panel>
