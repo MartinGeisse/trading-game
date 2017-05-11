@@ -8,6 +8,7 @@ import name.martingeisse.trading_game.gui.websockets.GameListenerWebSocketBehavi
 import name.martingeisse.trading_game.platform.wicket.LoginCookieUtil;
 import name.martingeisse.trading_game.platform.wicket.MyWicketSession;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -20,6 +21,8 @@ import java.util.Arrays;
  *
  */
 public class GamePage extends AbstractPage {
+
+	private boolean alreadyRendered = false;
 
 	public GamePage(PageParameters pageParameters) {
 		super(pageParameters);
@@ -55,6 +58,16 @@ public class GamePage extends AbstractPage {
 			}
 		};
 		add(new MainMenuTabbedPanel<>("tabbedPanel", Arrays.asList(mapTab, selfPlayerTab, playerListTab, inventoryTab)));
+	}
+
+	@Override
+	protected void onBeforeRender() {
+		if (alreadyRendered) {
+			throw new RestartResponseException(getPageClass(), getPageParameters());
+		} else {
+			alreadyRendered = true;
+			super.onBeforeRender();
+		}
 	}
 
 }
