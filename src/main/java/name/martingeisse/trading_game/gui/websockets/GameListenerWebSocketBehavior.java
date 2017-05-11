@@ -29,24 +29,6 @@ import org.apache.wicket.util.visit.Visits;
  * <p>
  * Note that components implementing just {@link GameEventListener} are not supported since there is little point in
  * doing so -- such a component would not be able to update itsef on the client side in response to events.
- *
- * TODO: if no message gets sent, the websocket times out (why? timeout should handle lost connections, not idle ones).
- * Investigate. If this is correct behavior, send keepalive messages (from the client, to make sure they are still
- * active. If only the server sends keepalives, lost clients might go unnoticed)
- * --> http://stackoverflow.com/questions/10585355/sending-websocket-ping-pong-frame-from-browser
- * TCP only detects disconnects when trying to send stuff. The timeout comes from Jetty. A solution would be regular
- * client/server initiated keepalive messages -- they prevent the timeout from happening and will also detect broken
- * connections at TCP level since stuff gets sent. --> client or server initiated?
- * --->
- * client-initiated: Server won't notice dropped connections until stuff gets sent. Blocks a TCP port, but nothing else.
- * server-initiated: client won't notice dropped connections until stuff gets sent. May confuse the user since nothing
- *   gets updated until user interaction, which then fails.
- * The server (Jetty) closesthe connection on timeout.
- * -->
- * Only client-initiated messages are needed, with the interval being shorter than Jetty's timeout.
- *
- * TODO the web socket breaks if the same page instance is opened in multiple tabs. Since websocket based pages must
- * be stateful in Wicket, this means that another page instance must be created for each tab.
  */
 public class GameListenerWebSocketBehavior extends WebSocketBehavior {
 
