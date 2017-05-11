@@ -4,6 +4,8 @@ import name.martingeisse.trading_game.game.event.GameEventBatch;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.event.GameEventListener;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
@@ -31,6 +33,8 @@ import org.apache.wicket.util.visit.Visits;
  * doing so -- such a component would not be able to update itsef on the client side in response to events.
  */
 public class GameListenerWebSocketBehavior extends WebSocketBehavior {
+
+	private static final Logger logger = LogManager.getLogger();
 
 	private Page page;
 	private transient SourceListener sourceListener;
@@ -119,9 +123,9 @@ public class GameListenerWebSocketBehavior extends WebSocketBehavior {
 			IWebSocketConnection connection = registry.getConnection(application, sessionId, key);
 			if (connection != null) {
 				connection.sendMessage(new GameEventBatchPushMessage(eventBatch));
+			} else {
+				logger.error("WebSocket GameEventListener received events without having a connection. This means that a WebSocket connection broke but Jetty/Wicket didn't notice. Investigate and file a bug ticket.");
 			}
-			// TODO else? can only happen if Wicket "forgets" to handle closed connections propertly. Should
-			// clean up the game listener anyway, and probably detect why this happens and file a bug ticket for Wicket
 		}
 
 	}
