@@ -7,13 +7,17 @@ import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.protocol.ws.WebSocketSettings;
 import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
 import org.apache.wicket.protocol.ws.api.WebSocketBehavior;
 import org.apache.wicket.protocol.ws.api.WebSocketRequestHandler;
+import org.apache.wicket.protocol.ws.api.WicketWebSocketJQueryResourceReference;
 import org.apache.wicket.protocol.ws.api.message.*;
 import org.apache.wicket.protocol.ws.api.registry.IKey;
 import org.apache.wicket.protocol.ws.api.registry.IWebSocketConnectionRegistry;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.visit.Visits;
 
 /**
@@ -59,6 +63,21 @@ public class GameListenerWebSocketBehavior extends WebSocketBehavior {
 			throw new IllegalStateException("cannot use this behavior for more than one page");
 		}
 		this.page = (Page) component;
+	}
+
+	@Override
+	public void renderHead(Component component, IHeaderResponse response) {
+		super.renderHead(component, response);
+
+		// Render a simple timer that sends a dummy text message after half the timeout. This message
+		// will be passed directly to the onMessage method of this behavior, which ignores it by default.
+		// TODO: Only send a dummy message if no real message was sent or received in the meantime
+		StringBuilder builder = new StringBuilder();
+		builder.append("setInterval(function() {");
+		builder.append("Wicket.WebSocket.INSTANCE.send('keepalive');");
+		builder.append("}, ").append(WebSocketConstants.TIMEOUT_MILLISECONDS / 2).append(");");
+		response.render(JavaScriptHeaderItem.forScript(builder.toString(), null));
+
 	}
 
 	@Override

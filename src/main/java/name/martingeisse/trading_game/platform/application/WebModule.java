@@ -9,6 +9,7 @@ package name.martingeisse.trading_game.platform.application;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
+import name.martingeisse.trading_game.gui.websockets.WebSocketConstants;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.common.util.profiling.ThreadProfiling;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
@@ -42,6 +43,7 @@ public class WebModule extends ServletModule {
 			bind(MyWicketFilter.class).in(Singleton.class);
 			final Map<String, String> initParams = new HashMap<String, String>(1);
 			initParams.put(WicketFilter.FILTER_MAPPING_PARAM, "/*");
+			initParams.put("maxIdleTime", "" + WebSocketConstants.TIMEOUT_MILLISECONDS);
 			filterRegex("/.*").through(MyWicketFilter.class, initParams);
 		}
 
