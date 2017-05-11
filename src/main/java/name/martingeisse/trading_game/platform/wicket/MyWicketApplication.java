@@ -160,9 +160,6 @@ public class MyWicketApplication extends WebApplication {
 			}
 		}
 
-		// TODO workaround for WICKET-6262, may be removed in the future
-		WebSocketSettings.Holder.get(this).setFilterPrefix("/.");
-
 	}
 
 	/* (non-Javadoc)
