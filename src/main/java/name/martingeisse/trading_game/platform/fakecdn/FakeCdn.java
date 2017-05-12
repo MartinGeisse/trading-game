@@ -64,9 +64,6 @@ public final class FakeCdn {
 	 * 
 	 */
 	private FakeCdnRecord fetch(String key) throws IOException {
-		// TODO make sure that timestamp-protected resources cannot be "poisoned" by sending requests
-		// with future timestamps. Maybe just use signed URLs -- they can be stored / cached to avoid the
-		// calculation of an MD5 each time.
 		HttpResponse response = fetchResponse("http://localhost" + key);
 		byte[] data;
 		try (InputStream responseStream = response.getEntity().getContent()) {
