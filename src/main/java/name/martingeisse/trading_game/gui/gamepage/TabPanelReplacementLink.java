@@ -6,7 +6,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
 /**
- *
+ * Replaces the current tab panel with an arbitrary panel, but does not change the selected tab.
  */
 public abstract class TabPanelReplacementLink<T> extends AjaxLink<T> {
 
