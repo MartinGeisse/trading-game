@@ -12,8 +12,6 @@ import name.martingeisse.trading_game.game.space.GeometryUtil;
 
 /**
  *
- * TODO serialization
- *
  */
 public final class MiningAction extends ContinuousAction {
 
