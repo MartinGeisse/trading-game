@@ -11,6 +11,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.protocol.ws.WebSocketSettings;
 import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
 import org.apache.wicket.protocol.ws.api.WebSocketBehavior;
@@ -57,12 +58,13 @@ public class GameListenerWebSocketBehavior extends WebSocketBehavior {
 
 		// Render a simple timer that sends a dummy text message after half the timeout. This message
 		// will be passed directly to the onMessage method of this behavior, which ignores it by default.
-		// TODO: Only send a dummy message if no real message was sent or received in the meantime
-		StringBuilder builder = new StringBuilder();
-		builder.append("setInterval(function() {");
-		builder.append("Wicket.WebSocket.INSTANCE.send('keepalive');");
-		builder.append("}, ").append(WebSocketConstants.TIMEOUT_MILLISECONDS / 2).append(");");
-		response.render(JavaScriptHeaderItem.forScript(builder.toString(), null));
+		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(
+				GameListenerWebSocketBehavior.class,
+				GameListenerWebSocketBehavior.class.getSimpleName() + ".js"
+		)));
+		response.render(OnDomReadyHeaderItem.forScript(
+				GameListenerWebSocketBehavior.class.getSimpleName() + '(' + WebSocketConstants.TIMEOUT_MILLISECONDS + ");")
+		);
 
 	}
 
