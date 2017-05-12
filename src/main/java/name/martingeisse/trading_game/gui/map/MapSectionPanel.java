@@ -208,7 +208,7 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 			double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
 			double indicatorLatLngRadius = MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius());
 			target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorLatLngRadius + ");");
-			target.appendJavaScript("setStateCookie('mapSelection', " + selectedSpaceObjectId + ")"); // TODO prevent conversion from long to float in JS
+			target.appendJavaScript("setStateCookie('mapSelection', '" + selectedSpaceObjectId + "')");
 		} else {
 			selectedSpaceObjectId = -1;
 			target.appendJavaScript("removeSpaceObjectSelectionIndicator();");
