@@ -4584,8 +4584,8 @@ var chord = function() {
     });
 
     // Convert the sum to scaling factor for [0, 2pi].
-    // TODO Allow start and end angle to be specified?
-    // TODO Allow padding to be specified as percentage?
+    // TO*DO Allow start and end angle to be specified?
+    // TO*DO Allow padding to be specified as percentage?
     k = max$1(0, tau$1 - padAngle * n) / k;
     dx = k ? padAngle : tau$1 / n;
 
@@ -4831,7 +4831,7 @@ var ribbon = function() {
 
     context.moveTo(sx0, sy0);
     context.arc(0, 0, sr, sa0, sa1);
-    if (sa0 !== ta0 || sa1 !== ta1) { // TODO sr !== tr?
+    if (sa0 !== ta0 || sa1 !== ta1) { // TO*DO sr !== tr?
       context.quadraticCurveTo(0, 0, tr * cos(ta0), tr * sin(ta0));
       context.arc(0, 0, tr, ta0, ta1);
     }
@@ -6776,7 +6776,7 @@ function cartesianCross(a, b) {
   return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 }
 
-// TODO return a
+// TO*DO return a
 function cartesianAddInPlace(a, b) {
   a[0] += b[0], a[1] += b[1], a[2] += b[2];
 }
@@ -6785,7 +6785,7 @@ function cartesianScale(vector, k) {
   return [vector[0] * k, vector[1] * k, vector[2] * k];
 }
 
-// TODO return d
+// TO*DO return d
 function cartesianNormalizeInPlace(d) {
   var l = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
   d[0] /= l, d[1] /= l, d[2] /= l;
@@ -7383,7 +7383,7 @@ var clipPolygon = function(segments, compareIntersection, startInside, interpola
     var n, p0 = segment[0], p1 = segment[n], x;
 
     // If the first and last points of a segment are coincident, then treat as a
-    // closed ring. TODO if all rings are closed, then the winding order of the
+    // closed ring. TO*DO if all rings are closed, then the winding order of the
     // exterior ring should be checked.
     if (pointEqual(p0, p1)) {
       stream.lineStart();
@@ -7463,8 +7463,8 @@ function link$1(array) {
 var clipMax = 1e9;
 var clipMin = -clipMax;
 
-// TODO Use d3-polygon’s polygonContains here for the ring check?
-// TODO Eliminate duplicate buffering in clipBuffer and polygon.push?
+// TO*DO Use d3-polygon’s polygonContains here for the ring check?
+// TO*DO Eliminate duplicate buffering in clipBuffer and polygon.push?
 
 function clipExtent(x0, y0, x1, y1) {
 
@@ -7574,7 +7574,7 @@ function clipExtent(x0, y0, x1, y1) {
       x_ = y_ = NaN;
     }
 
-    // TODO rather than special-case polygons, simply handle them separately.
+    // TO*DO rather than special-case polygons, simply handle them separately.
     // Ideally, coincident intersection points should be jittered to avoid
     // clipping issues.
     function lineEnd() {
@@ -7913,7 +7913,7 @@ function boundsPoint$1(x, y) {
   if (y > y1) y1 = y;
 }
 
-// TODO Enforce positive area for exterior, negative area for interior?
+// TO*DO Enforce positive area for exterior, negative area for interior?
 
 var X0$1 = 0;
 var Y0$1 = 0;
@@ -8330,7 +8330,7 @@ var clip = function(pointVisible, clipLine, interpolate, start) {
       }
 
       // Rejoin connected segments.
-      // TODO reuse ringBuffer.rejoin()?
+      // TO*DO reuse ringBuffer.rejoin()?
       if (n > 1 && clean & 2) ringSegments.push(ringSegments.pop().concat(ringSegments.shift()));
 
       segments.push(ringSegments.filter(validSegment));
@@ -8444,7 +8444,7 @@ function clipAntimeridianInterpolate(from, to, direction, stream) {
 var clipCircle = function(radius, delta) {
   var cr = cos$1(radius),
       smallRadius = cr > 0,
-      notHemisphere = abs(cr) > epsilon$2; // TODO optimise for this common case
+      notHemisphere = abs(cr) > epsilon$2; // TO*DO optimise for this common case
 
   function interpolate(from, to, direction, stream) {
     circleStream(stream, radius, delta, direction, from, to);
@@ -8478,7 +8478,7 @@ var clipCircle = function(radius, delta) {
               : v ? code(lambda + (lambda < 0 ? pi$3 : -pi$3), phi) : 0;
         if (!point0 && (v00 = v0 = v)) stream.lineStart();
         // Handle degeneracies.
-        // TODO ignore if not clipping polygons.
+        // TO*DO ignore if not clipping polygons.
         if (v !== v0) {
           point2 = intersect(point0, point1);
           if (pointEqual(point0, point2) || pointEqual(point1, point2)) {
@@ -11561,7 +11561,7 @@ function log$1() {
     if (typeof specifier !== "function") specifier = exports.format(specifier);
     if (count === Infinity) return specifier;
     if (count == null) count = 10;
-    var k = Math.max(1, base * count / scale.ticks().length); // TODO fast estimate?
+    var k = Math.max(1, base * count / scale.ticks().length); // TO*DO fast estimate?
     return function(d) {
       var i = d / pows(Math.round(logs(d)));
       if (i * base < base - 0.5) i *= base;
@@ -12899,7 +12899,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
       dy1 = cy1 - y00;
 
   // Pick the closer of the two intersection points.
-  // TODO Is there a faster way to determine which intersection to use?
+  // TO*DO Is there a faster way to determine which intersection to use?
   if (dx0 * dx0 + dy0 * dy0 > dx1 * dx1 + dy1 * dy1) cx0 = cx1, cy0 = cy1;
 
   return {
@@ -14929,7 +14929,7 @@ function clipEdge(edge, x0, y0, x1, y1) {
     if (r < t1) t1 = r;
   }
 
-  if (!(t0 > 0) && !(t1 < 1)) return true; // TODO Better check?
+  if (!(t0 > 0) && !(t1 < 1)) return true; // TO*DO Better check?
 
   if (t0 > 0) edge[0] = [ax + t0 * dx, ay + t0 * dy];
   if (t1 < 1) edge[1] = [ax + t1 * dx, ay + t1 * dy];
