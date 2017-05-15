@@ -1,0 +1,94 @@
+
+Problem: Backbutton hat nicht die gewünschte Wirkung. Fake-History-Einträge müssen her. Frage ist, wie deren
+Zustand gespeichert werden kann.
+
+Die erste Erkenntnis ist, dass der komplette Zustand irrelevant ist und sogar ignoriert werden MUSS: Es sollen ja
+aktuelle Informationen auf den alten Seiten angezeigt werden, und diese wurden NICHT per Websockets geupdatet.
+
+Lösung Nr. 1: Navigation sind Page-Reloads. Das unterbricht aber jedesmal die Websocket-Verbindung und wenn sich da
+mit HTML2 nicht grundlegend was ändert, dann ist das eine miese Lösung.
+
+Lösung Nr. 2: Die JS-Navigation lädt Seiten und zeigt sie an. Damit ist zumindest klargestellt, welche alte Information
+noch wichtig ist: die URL. Alles andere wird anhand der URL neu geladen. Die Interaktion zwischen Page-Objekten und
+der Navigation ist hier so lala. Es hätte den Vorteil, dass doch noch zusätzliche Infos außer der URL aufgehoben werden
+können, und zwar, indem die einzelnen Seiten stateful sind. Dann bleiben diese Infos im Page Store.
+
+Lösung Nr. 3: Die JS-Navigation lädt Seitenteile (Panels) und benutzt einen eigenen parametrisierten Identifier, analog
+zur URL, nur anders. Das könnte im Prinzip sogar eine "halbe URL" sein. Nachteil: Keine Unterstützung vom Page Store,
+d.h. die Panels verlieren ihren State (alles außer den Informationen in der URL).
+
+Lösung 2a: Seiten mit halben URLs. Diese Seiten funktionieren dann aber nur im Kontext der Navigation korrekt, und
+nicht, wenn sie separat geladen werden. Sollte eine solche Seite separat geladen werden, dann sollte ein Redirect auf
+eine "geframete" Version passieren. (nebenbei: das habe ich woanders schon gesehen). "Nicht korrekt funktionieren"
+heißt: Keine Push-Updates per Websockets als Reaktion auf Game Events. Diese Seiten haben kein Wissen über Websockets
+und verlassen sich auf den Rahmen. Nur die aktuell im Rahmen angezeigte Seite bekommt Game Events gepusht. Alle älteren
+Seiten (oder auch neuere aber gebackbuttonte Seiten) liegen im Speicher oder im serial PageStore ohne Events zu
+bekommen. Sie behalten aber ihren Zustand. Sie müssen also, unabhängig von der Verarbeitung von Game Events, beim
+Rendern die aktuellen Daten holen, damit nach einer passiven Zeit im PageStore und damit vielen verpassten Events
+keine veralteten Daten angezeigt werden.
+
+Folgeproblem von 2a: Wenn eine Seite so abgerufen und in eine andere hineingepastet wird, dann stimmen die URLs nicht überein,
+was den Wicket-Ajax-Kram durcheinanderbringt.
+
+Folgeproblem von 2a: PartialPageRequestHandler wird keine Seite neu rendern können, wenn es gar nicht für diese Seite,
+sondern den umgebenden Rahmen erzeugt wurde.
+
+Lösung Nr. 4: iframes. Superfies im Verhalten bzgl. der Websockets.
+
+-----
+
+Lösung Nr. 5: Weg von Wicket und hin zu einem SPA-JS-Framework.
+
+Lösung Nr. 6: Vielleicht hat Wicket eine eigene Unterstützung für fake-history-Einträge.
+--> keine gefunden
+
+------
+
+Plausible Lösungen sind aktuell 3 (stateless Panels) und 5 (SPA-JS-Framework ohne Wicket).
+
+Stateless Panels sind besonders ärgerlich bei Formularen, der Rest ist nicht toll aber geht. Das hat den Vorteil, dass
+man wenig ändern muss. Aber ein Identifier-Schema muss her.
+
+SPA-JS-Framework hat außerdem den Nachteil, dass auch dort keine Stateful Panels möglich sind -- außer, man baut dafür
+was eigenes (noch aufwändiger) oder hält die gesamte Anwendung auf einen Schlag im Speicher (Das wäre allerdings
+plausibel).
+SPA-JS-Framework hat den weiteren Nachteil, dass weniger radikal nach den aktuell relevanten GameEvents gefiltert werden
+kann. Ob das ein Problem ist, müsste sich zeigen. Weniger radikal sind immer noch recht wenige Events.
+-->
+SPA-JS-Framework wäre aktuell nur als "alles auf einmal laden und weniger radikal filtern" denkbar.
+-
+Der Hauptnachteil wäre aber natürlich, dass ich mich in diesem Bereich erst mal mit Frameworks auseinandersetzen muss.
+
+Trotzdem ist das alles fies. Wicket wäre ein klarer Vorteil. Also lieber Lösung 3 (Stateless Panels), als Identifier
+die Panel-Klasse (MUSS von einer bestimmten Basisklasse erben, aus Sicherheitsgründen), darf nur einen Konstruktor
+haben und dessen Parameter werden an "Pfadsegmente" des Identifier gebunden, wie bei cakephp. Erweiterung für State
+wäre denkbar, falls nötig. Ich denke aber, dass das niedrige prio hat.
+
+------
+
+Lösung 3 ist wahrscheinlich besser als gedacht:
+- Der Identifier kann URL-Suffix-Form haben. Beim Seitenaufruf wird er aus der URL genommen (basePath beachten);
+	schlimmstenfalls uss ein anderer Pfadtrenner als '/' her, um relative URLs nicht zu stören.
+- State von Stateful Pages kann vermutlich mit in die "Memento"-Daten des History-Eintrags gepackt werden. Dann
+	ist Serverseitig gar kein Analogon zum PageStore nötig, vorausgesetzt der State "passt" immer da rein.
+	-->
+	unklar ist, wie sich die Memento-Daten bei einem Page-Reload auswirken. Wenn die vollkommen ignoriert werden,
+	dann ist es doch Doof, und alle Daten müssen in die URL / Serverseitig.
+- Per replaceHistory() oder wie das heißt können die Gegenstücke zu Redirects in die History gefriemelt werden.
+	Dadurch kann aus einem "bookmarkable" identifier ein Stateful identifier werden. Das geht unabhängig davon,
+	ob Serveseitiger Storage nötig ist.
+
+
+------
+
+Lösung Nr. 7: Sections sind Page-Objekte im PageStore. Die Probleme mit der Base-URL werden durch fake-history-Einträge
+gelöst, die die URL entsprechend anpassen. Eine andere Sichtweise ist, mit Page-Reloads anzufangen und danach die
+Page-Reloads durch "soft-loads" (AJAX + Umbau) zu ersetzen. Der Backbutton wird dann auch ein "soft-load". Sollte an
+irgendeiner Stelle der Softload so fehlschlagen, dass stattdessen ein Hard-Load passiert, dann ist das nur mäßig
+doof: Es funzt alles weiter, aber die Websocket-Verbindung muss neu aufgebaut werden.
+
+Diese Lösung wäre von daher cool, dass in Wicket alles so laufen kann, wie es soll. Vermutlich funzen auch Stateful
+Pages, vorausgesetzt der Soft-Load behandelt HTTP-Redirects korrekt.
+
+
+
