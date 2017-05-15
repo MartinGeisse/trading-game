@@ -16,7 +16,7 @@ import name.martingeisse.trading_game.game.item.InventoryNameService;
 import name.martingeisse.trading_game.game.item.PlayerBelongingsService;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.space.SpaceStation;
-import name.martingeisse.trading_game.gui.gamepage.MainMenuTabbedPanel;
+import name.martingeisse.trading_game.gui.gamepage.GuiNavigationUtil;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
 import name.martingeisse.trading_game.gui.websockets.GuiGameEventListener;
 import name.martingeisse.trading_game.platform.wicket.AbstractPanel;
@@ -150,7 +150,7 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 							@Override
 							public void onClick(AjaxRequestTarget target) {
 								// TODO do not allow to transfer ownership of items in the player's ship!
-								MainMenuTabbedPanel.replaceTabPanel(this, id -> {
+								GuiNavigationUtil.setPanel(this, id -> {
 									return new TransferOwnershipPlayerListPanel(id, inventoryId, itemStackItem.getModelObject());
 								}, target);
 							}

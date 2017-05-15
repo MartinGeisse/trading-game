@@ -7,7 +7,7 @@
 package name.martingeisse.trading_game.gui.self;
 
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
-import name.martingeisse.trading_game.gui.gamepage.MainMenuTabbedPanel;
+import name.martingeisse.trading_game.gui.gamepage.GuiNavigationUtil;
 import name.martingeisse.trading_game.gui.util.AjaxRequestUtil;
 import name.martingeisse.trading_game.platform.wicket.AbstractPanel;
 import name.martingeisse.wicket.simpleform.SimpleFormPanel;
@@ -34,7 +34,7 @@ public class RenamePlayerPanel extends AbstractPanel {
 			protected void onSubmit() {
 				try {
 					getPlayer().renameTo(newName);
-					MainMenuTabbedPanel.replaceTabPanel(this, SelfPlayerPanel::new, AjaxRequestUtil.getAjaxRequestTarget());
+					GuiNavigationUtil.setPanel(this, SelfPlayerPanel::new, AjaxRequestUtil.getAjaxRequestTarget());
 				} catch (NameAlreadyUsedException e) {
 					get("form:formBlocks:1:decoratedBody:textField").error("This name is already taken.");
 				}

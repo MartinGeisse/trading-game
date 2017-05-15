@@ -7,8 +7,8 @@ import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.player.PlayerRepository;
-import name.martingeisse.trading_game.gui.gamepage.MainMenuTabbedPanel;
-import name.martingeisse.trading_game.gui.gamepage.TabPanelReplacementLink;
+import name.martingeisse.trading_game.gui.gamepage.GuiNavigationLink;
+import name.martingeisse.trading_game.gui.gamepage.GuiNavigationUtil;
 import name.martingeisse.trading_game.platform.wicket.AbstractPanel;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -36,7 +36,7 @@ public class TransferOwnershipPlayerListPanel extends AbstractPanel {
 		super(id);
 		this.inventoryId = inventoryId;
 		this.items = items;
-		add(new TabPanelReplacementLink<Void>("backLink") {
+		add(new GuiNavigationLink<Void>("backLink") {
 			@Override
 			protected Panel getPanel(String panelId) {
 				return new InventorySectionPanel(panelId);
@@ -61,7 +61,7 @@ public class TransferOwnershipPlayerListPanel extends AbstractPanel {
 							throw new UnexpectedExceptionException(e);
 						}
 						inventory.add(item.getModelObject().getId(), items);
-						MainMenuTabbedPanel.replaceTabPanel(this, InventorySectionPanel::new, target);
+						GuiNavigationUtil.setPanel(this, InventorySectionPanel::new, target);
 					}
 				};
 				item.add(link);

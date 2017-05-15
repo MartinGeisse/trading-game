@@ -70,4 +70,8 @@ public class GamePage extends AbstractPage {
 		}
 	}
 
+	MainMenuTabbedPanel getMainMenuTabbedPanel() {
+		return (MainMenuTabbedPanel)get("tabbedPanel");
+	}
+
 }

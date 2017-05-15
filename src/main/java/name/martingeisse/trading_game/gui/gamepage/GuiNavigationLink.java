@@ -8,19 +8,19 @@ import org.apache.wicket.model.IModel;
 /**
  * Replaces the current tab panel with an arbitrary panel, but does not change the selected tab.
  */
-public abstract class TabPanelReplacementLink<T> extends AjaxLink<T> {
+public abstract class GuiNavigationLink<T> extends AjaxLink<T> {
 
-	public TabPanelReplacementLink(String id) {
+	public GuiNavigationLink(String id) {
 		super(id);
 	}
 
-	public TabPanelReplacementLink(String id, IModel<T> model) {
+	public GuiNavigationLink(String id, IModel<T> model) {
 		super(id, model);
 	}
 
 	@Override
 	public void onClick(AjaxRequestTarget target) {
-		MainMenuTabbedPanel.replaceTabPanel(this, this::getPanel, target);
+		GuiNavigationUtil.setPanel(this, this::getPanel, target);
 	}
 
 	// may return null to leave the panel unchanged

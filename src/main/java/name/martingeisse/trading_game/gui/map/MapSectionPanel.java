@@ -8,7 +8,7 @@ import name.martingeisse.trading_game.game.event.GameEventBatch;
 import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
 import name.martingeisse.trading_game.game.item.ObjectWithInventory;
 import name.martingeisse.trading_game.game.space.*;
-import name.martingeisse.trading_game.gui.gamepage.TabPanelReplacementLink;
+import name.martingeisse.trading_game.gui.gamepage.GuiNavigationLink;
 import name.martingeisse.trading_game.gui.map.leaflet.D3;
 import name.martingeisse.trading_game.gui.map.leaflet.Leaflet;
 import name.martingeisse.trading_game.gui.map.leaflet.LeafletD3SvgOverlay;
@@ -27,7 +27,6 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.PropertyModel;
@@ -95,7 +94,7 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 			}
 
 		});
-		propertiesBox.add(new TabPanelReplacementLink("spaceObjectDetailLink") {
+		propertiesBox.add(new GuiNavigationLink("spaceObjectDetailLink") {
 			@Override
 			protected WebMarkupContainer getPanel(String panelId) {
 				return new SpaceObjectDetailPanel(panelId, new PropertyModel<>(MapSectionPanel.this, "selectedSpaceObject"));

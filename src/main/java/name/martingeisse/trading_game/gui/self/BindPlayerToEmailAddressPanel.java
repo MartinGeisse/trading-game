@@ -7,7 +7,7 @@
 package name.martingeisse.trading_game.gui.self;
 
 import name.martingeisse.trading_game.game.player.Player;
-import name.martingeisse.trading_game.gui.gamepage.MainMenuTabbedPanel;
+import name.martingeisse.trading_game.gui.gamepage.GuiNavigationUtil;
 import name.martingeisse.trading_game.gui.util.AjaxRequestUtil;
 import name.martingeisse.trading_game.platform.wicket.AbstractPanel;
 import name.martingeisse.wicket.simpleform.SimpleFormPanel;
@@ -35,7 +35,7 @@ public class BindPlayerToEmailAddressPanel extends AbstractPanel {
 				Player player = getPlayer();
 				System.out.println("*** TODO send email to " + emailAddress + " with login token " + player.getLoginToken()); // TODO
 				player.setEmailAddress(emailAddress);
-				MainMenuTabbedPanel.replaceTabPanel(this, SelfPlayerPanel::new, AjaxRequestUtil.getAjaxRequestTarget());
+				GuiNavigationUtil.setPanel(this, SelfPlayerPanel::new, AjaxRequestUtil.getAjaxRequestTarget());
 			}
 		};
 		formPanel.prepareDecorator().withLabel("Email address").withModel("emailAddress").addTextField();
