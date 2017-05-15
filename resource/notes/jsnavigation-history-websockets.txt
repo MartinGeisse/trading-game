@@ -90,5 +90,12 @@ doof: Es funzt alles weiter, aber die Websocket-Verbindung muss neu aufgebaut we
 Diese Lösung wäre von daher cool, dass in Wicket alles so laufen kann, wie es soll. Vermutlich funzen auch Stateful
 Pages, vorausgesetzt der Soft-Load behandelt HTTP-Redirects korrekt.
 
+-------
 
+Websockets machen einen Strich durch die Rechnung. Die WebsocketConnection basiert auf der pageId, d.h. diese auf eine
+neue Page umzuziehen wird ganz eklig. Also wäre besser, innerhalb eines Page-Objects (mit fester ID -- auch das Page
+Versioning würde diese ändern) nur Panels auszutauschen. Dafür habe ich erst mal keinen "Panel Store". Diesen
+könnte ich bauen, und der wird vermutlich auch weniger können müssen als der Wicket Page Store. Im einfachsten Fall
+könnte man die History an das Page-Objekt hängen, das ist aber nicht toll weil dann beim Speichern/Laden im PageStore
+jedesmal die komplette History übertragen werden muss. Ein separater Store wäre schon besser.
 
