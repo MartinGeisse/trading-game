@@ -11,6 +11,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
+import name.martingeisse.trading_game.gui.gamepage.GamePage;
 import name.martingeisse.trading_game.gui.homepage.HomePage;
 import name.martingeisse.trading_game.gui.map.MapTileResource;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
@@ -139,8 +140,8 @@ public class MyWicketApplication extends WebApplication {
 		//		);
 
 		// --- mount pages ---
+		mountPage("/game", GamePage.class);
 		// main pages
-		//		mountPage("foo", FooPage.class);
 		//		mountPage("bar/${id}", BarPage.class);
 		// internal
 

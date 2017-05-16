@@ -6,6 +6,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.TabbedPanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.request.Url;
+import org.apache.wicket.request.cycle.RequestCycle;
 
 /**
  * Provides static methods to interact with the navigation features of the GUI.
@@ -37,8 +39,25 @@ public final class GuiNavigationUtil {
 		WebMarkupContainer newPanel = panelFactory.apply(TabbedPanel.TAB_PANEL_ID);
 		if (newPanel != null) {
 			mainMenuTabbedPanel.replace(newPanel);
+			addHistoryEntry(mainMenuTabbedPanel, newPanel, ajaxRequestTarget);
 			ajaxRequestTarget.add(mainMenuTabbedPanel);
 		}
+	}
+
+	/**
+	 * Adds a server-side history entry for the specified mainMenuTabbedPanel and a client-side history entry by
+	 * rendering a Javascript snippet through the specified ajaxRequestTarget.
+	 */
+	public static void addHistoryEntry(MainMenuTabbedPanel mainMenuTabbedPanel, WebMarkupContainer panel, AjaxRequestTarget ajaxRequestTarget) {
+
+		// add a server-side history entry
+		int panelHistoryId = mainMenuTabbedPanel.getPanelHistory().addPanel(panel);
+
+		// add a client-side history entry
+		String state = Integer.toString(panelHistoryId);
+		String url = RequestCycle.get().getUrlRenderer().renderFullUrl(Url.parse(RequestCycle.get().urlFor(GamePage.class, null)));
+		ajaxRequestTarget.appendJavaScript("history.pushState('" + state + "', '', '" + url + "');");
+
 	}
 
 }
