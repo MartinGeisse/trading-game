@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * An immutable list of immutable item stacks.
- *
+ * <p>
  * Among other purposes, this class may be used as a "bill of materials" for crafting recipes IF valid according
  * to {@link #isValidBillOfMaterials()}. This method ensures that no two item stacks with the same item type exist
  * in this object.
@@ -123,11 +123,11 @@ public final class ImmutableItemStacks implements Iterable<ImmutableItemStack>, 
 
 	/**
 	 * Returns an instance that is a reduced version of this one, with at most the specified mass. Specifically,
-	 *
+	 * <p>
 	 * - the returned instance has at most the specified target mass
 	 * - the returned instance does not contain items (type or per-type quantity) which this object does not contain
 	 * - as few items as possible have been removed, though this is a soft rule since the value of different item types
-	 *   cannot be compared
+	 * cannot be compared
 	 */
 	public ImmutableItemStacks reduceToMass(int targetMass) {
 		if (targetMass < 0) {

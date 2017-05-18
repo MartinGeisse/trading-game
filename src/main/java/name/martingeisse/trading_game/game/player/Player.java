@@ -194,14 +194,14 @@ public final class Player {
 	 * @return the movement speed of the player's ship
 	 */
 	public long getShipMovementSpeed() {
-		return ((Number)getAttribute(PlayerAttributeKey.SHIP_MOVEMENT_SPEED)).longValue();
+		return ((Number) getAttribute(PlayerAttributeKey.SHIP_MOVEMENT_SPEED)).longValue();
 	}
 
 	/**
 	 * @return the maximum cargo mass that can be loaded into the player's ship
 	 */
 	public int getMaximumCargoMass() {
-		return ((Number)getAttribute(PlayerAttributeKey.MAXIMUM_CARGO_MASS)).intValue();
+		return ((Number) getAttribute(PlayerAttributeKey.MAXIMUM_CARGO_MASS)).intValue();
 	}
 
 	public void transferMoneyTo(Player destination, long amount) throws GameLogicException {

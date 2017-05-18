@@ -36,9 +36,9 @@ public class MarketOrderMatchingService {
 
 		QMarketOrderRow qmo = QMarketOrderRow.MarketOrder;
 		BooleanExpression predicate = qmo.principalPlayerId.ne(marketOrder.getPrincipalPlayerId())
-			.and(qmo.locationSpaceObjectBaseDataId.eq(marketOrder.getLocationSpaceObjectBaseDataId()))
-			.and(qmo.type.eq(marketOrder.getType().getOpposite()))
-			.and(qmo.itemType.eq(marketOrder.getSerializedItemType()));
+				.and(qmo.locationSpaceObjectBaseDataId.eq(marketOrder.getLocationSpaceObjectBaseDataId()))
+				.and(qmo.type.eq(marketOrder.getType().getOpposite()))
+				.and(qmo.itemType.eq(marketOrder.getSerializedItemType()));
 		OrderSpecifier<?> order;
 		if (marketOrder.getType() == MarketOrderType.BUY) {
 			predicate = predicate.and(qmo.unitPrice.loe(marketOrder.getUnitPrice()));

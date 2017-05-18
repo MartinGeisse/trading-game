@@ -8,6 +8,7 @@ import java.text.NumberFormat;
 public final class ThreadProfiling {
 
 	private static final NumberFormat INDEX_COUNTER_FORMAT = NumberFormat.getIntegerInstance();
+
 	static {
 		INDEX_COUNTER_FORMAT.setMinimumIntegerDigits(3);
 	}

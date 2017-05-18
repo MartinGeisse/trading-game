@@ -27,43 +27,34 @@ import java.lang.reflect.Field;
  * An HttpServletRequest that wraps the original HttpServletRequest
  * hidden hard by Jetty 9.x UpgradeRequest.
  */
-class Jetty9UpgradeHttpRequest extends HttpServletRequestWrapper
-{
+class Jetty9UpgradeHttpRequest extends HttpServletRequestWrapper {
 	private static final Field REQ;
-	static
-	{
-		try
-		{
+
+	static {
+		try {
 			REQ = ServletUpgradeRequest.class.getDeclaredField("request");
-		} catch (NoSuchFieldException nsfx)
-		{
+		} catch (NoSuchFieldException nsfx) {
 			throw new IllegalStateException(ServletUpgradeRequest.class.getName() +
 					" has no 'request' field!", nsfx);
 		}
 		REQ.setAccessible(true);
 	}
 
-	Jetty9UpgradeHttpRequest(UpgradeRequest upgradeRequest)
-	{
+	Jetty9UpgradeHttpRequest(UpgradeRequest upgradeRequest) {
 		super(extractHttpRequest(upgradeRequest));
 	}
 
-	private static HttpServletRequest extractHttpRequest(UpgradeRequest upgradeRequest)
-	{
-		if (upgradeRequest instanceof ServletUpgradeRequest == false)
-		{
+	private static HttpServletRequest extractHttpRequest(UpgradeRequest upgradeRequest) {
+		if (upgradeRequest instanceof ServletUpgradeRequest == false) {
 			throw new IllegalArgumentException(Jetty9UpgradeHttpRequest.class.getName() +
 					" can work only with " + ServletUpgradeRequest.class.getName());
 		}
 
 		ServletUpgradeRequest servletWebSocketRequest = (ServletUpgradeRequest) upgradeRequest;
 		HttpServletRequest request;
-		try
-		{
+		try {
 			request = (HttpServletRequest) REQ.get(servletWebSocketRequest);
-		}
-		catch (IllegalAccessException iax)
-		{
+		} catch (IllegalAccessException iax) {
 			throw new IllegalStateException("Cannot get the HttpServletRequest after the protocol upgrade", iax);
 		}
 

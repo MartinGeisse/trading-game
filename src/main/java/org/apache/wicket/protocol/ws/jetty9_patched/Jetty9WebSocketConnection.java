@@ -32,8 +32,7 @@ import java.nio.ByteBuffer;
  *
  * @since 6.2
  */
-public class Jetty9WebSocketConnection extends AbstractWebSocketConnection
-{
+public class Jetty9WebSocketConnection extends AbstractWebSocketConnection {
 	private static final Logger LOG = LoggerFactory.getLogger(Jetty9WebSocketConnection.class);
 
 	private final Session session;
@@ -41,33 +40,27 @@ public class Jetty9WebSocketConnection extends AbstractWebSocketConnection
 	/**
 	 * Constructor.
 	 *
-	 * @param session
-	 *            the jetty websocket connection
+	 * @param session the jetty websocket connection
 	 */
-	public Jetty9WebSocketConnection(Session session, AbstractWebSocketProcessor webSocketProcessor)
-	{
+	public Jetty9WebSocketConnection(Session session, AbstractWebSocketProcessor webSocketProcessor) {
 		super(webSocketProcessor);
 		this.session = Args.notNull(session, "connection");
 	}
 
 	@Override
-	public boolean isOpen()
-	{
+	public boolean isOpen() {
 		return session.isOpen();
 	}
 
 	@Override
-	public void close(int code, String reason)
-	{
-		if (isOpen())
-		{
+	public void close(int code, String reason) {
+		if (isOpen()) {
 			session.close(code, reason);
 		}
 	}
 
 	@Override
-	public IWebSocketConnection sendMessage(String message) throws IOException
-	{
+	public IWebSocketConnection sendMessage(String message) throws IOException {
 		checkClosed();
 
 		session.getRemote().sendString(message);
@@ -76,8 +69,7 @@ public class Jetty9WebSocketConnection extends AbstractWebSocketConnection
 
 	@Override
 	public IWebSocketConnection sendMessage(byte[] message, int offset, int length)
-		throws IOException
-	{
+			throws IOException {
 		checkClosed();
 
 		ByteBuffer buf = ByteBuffer.wrap(message, offset, length);
@@ -85,10 +77,8 @@ public class Jetty9WebSocketConnection extends AbstractWebSocketConnection
 		return this;
 	}
 
-	private void checkClosed()
-	{
-		if (!isOpen())
-		{
+	private void checkClosed() {
+		if (!isOpen()) {
 			throw new IllegalStateException("The connection is closed.");
 		}
 	}

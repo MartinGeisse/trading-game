@@ -18,6 +18,7 @@
             visibility: visible;
         }
 
+
     </style>
     <script type="text/javascript">
         initializeMapSectionPanel = function() {
@@ -197,33 +198,37 @@
 
 
         };
+
     </script>
 </wicket:head>
 <body>
-    <wicket:panel>
-        <div id="map" style="position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; cursor: initial; z-index: 0"></div>
-        <ul class="dropdown-menu" id="context-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-        </ul>
-        <div style="position: absolute; left: 20px; bottom: 20px; z-index: 1"><a href="#" id="selectOwnShipLink">select own ship</a></div>
-        <div id="propertiesBox" wicket:id="propertiesBox" style="position: absolute; width: 400px; height: 400px; right: 0px; bottom: 0px; z-index: 1">
-            <h2>Properties</h2>
-            <div>Name: <span wicket:id="name"></span></div>
-            <div>Type: <span wicket:id="type"></span></div>
-            <div>Location: <span wicket:id="x"></span>, <span wicket:id="y"></span></div>
-            <div>Distance: <span wicket:id="distance"></span></div>
-            <h2>Actions</h2>
-            <div wicket:id="actions">
-                <a wicket:id="link"><span wicket:id="name"></span></a>
-            </div>
-            <hr />
-            <div><a href="#" id="centerSelectedObjectLink">center selected object</a></div>
-            <div><a wicket:id="spaceObjectDetailLink">details &gt;&gt;</a></div>
+<wicket:panel>
+    <div id="map"
+         style="position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; cursor: initial; z-index: 0"></div>
+    <ul class="dropdown-menu" id="context-menu">
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+    </ul>
+    <div style="position: absolute; left: 20px; bottom: 20px; z-index: 1"><a href="#" id="selectOwnShipLink">select own
+        ship</a></div>
+    <div id="propertiesBox" wicket:id="propertiesBox"
+         style="position: absolute; width: 400px; height: 400px; right: 0px; bottom: 0px; z-index: 1">
+        <h2>Properties</h2>
+        <div>Name: <span wicket:id="name"></span></div>
+        <div>Type: <span wicket:id="type"></span></div>
+        <div>Location: <span wicket:id="x"></span>, <span wicket:id="y"></span></div>
+        <div>Distance: <span wicket:id="distance"></span></div>
+        <h2>Actions</h2>
+        <div wicket:id="actions">
+            <a wicket:id="link"><span wicket:id="name"></span></a>
         </div>
-    </wicket:panel>
+        <hr/>
+        <div><a href="#" id="centerSelectedObjectLink">center selected object</a></div>
+        <div><a wicket:id="spaceObjectDetailLink">details &gt;&gt;</a></div>
+    </div>
+</wicket:panel>
 </body>
 </html>

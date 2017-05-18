@@ -72,10 +72,10 @@ public final class GameDefinition {
 		CraftingRecipe fellTreeRecipe = new FixedCraftingRecipe(1000, ImmutableItemStacks.from(pixelAxeItemType, 1), ImmutableItemStacks.from(pixelAxeItemType, 1, logItemType, 3));
 
 		ImmutableItemStacks pixelToolBillOfMaterials = new ImmutableItemStacks(ImmutableList.of(
-			new ImmutableItemStack(redPixelLineItemType, 3),
-			new ImmutableItemStack(redPixelAssemblyItemType, 5),
-			new ImmutableItemStack(redPixelItemType, 10),
-			new ImmutableItemStack(redPixelGlueItemType, 1)
+				new ImmutableItemStack(redPixelLineItemType, 3),
+				new ImmutableItemStack(redPixelAssemblyItemType, 5),
+				new ImmutableItemStack(redPixelItemType, 10),
+				new ImmutableItemStack(redPixelGlueItemType, 1)
 		));
 		CraftingRecipe pixelAxeCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelAxeItemType);
 		CraftingRecipe pixelHoeCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelHoeItemType);

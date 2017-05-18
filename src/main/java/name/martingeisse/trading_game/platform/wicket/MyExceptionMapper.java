@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2010 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -23,20 +23,20 @@ public final class MyExceptionMapper extends DefaultExceptionMapper {
 	 * the logger
 	 */
 	private static Logger logger = Logger.getLogger(MyExceptionMapper.class);
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.request.IExceptionMapper#map(java.lang.Exception)
 	 */
 	@Override
 	public IRequestHandler map(Exception e) {
 		try {
-			
+
 			// disable caching for error pages
 			final Response response = RequestCycle.get().getResponse();
 			if (response instanceof WebResponse) {
-				((WebResponse)response).disableCaching();
+				((WebResponse) response).disableCaching();
 			}
-			
+
 		} catch (final RuntimeException e2) {
 			// log this exception, then use default mapping for the original exception
 			logger.error("nested exception in exception mapper", e2);
@@ -44,7 +44,7 @@ public final class MyExceptionMapper extends DefaultExceptionMapper {
 
 		// fall back to default beahvior
 		return super.map(e);
-		
+
 	}
-	
+
 }

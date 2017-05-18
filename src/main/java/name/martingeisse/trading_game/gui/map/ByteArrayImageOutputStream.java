@@ -2,7 +2,6 @@ package name.martingeisse.trading_game.gui.map;
 
 import javax.imageio.stream.ImageOutputStreamImpl;
 import java.io.IOException;
-
 import java.util.Arrays;
 
 /**
@@ -35,7 +34,7 @@ public class ByteArrayImageOutputStream extends ImageOutputStreamImpl {
 
 	public int read() throws IOException {
 		int n = beginRead(1);
-		int value = (n == 0 ? -1 : data[(int)streamPos]);
+		int value = (n == 0 ? -1 : data[(int) streamPos]);
 		streamPos++;
 		return value;
 	}
@@ -51,14 +50,14 @@ public class ByteArrayImageOutputStream extends ImageOutputStreamImpl {
 		if (n == 0) {
 			return -1;
 		}
-		System.arraycopy(data, (int)streamPos, toBuffer, toOffset, n);
+		System.arraycopy(data, (int) streamPos, toBuffer, toOffset, n);
 		return n;
 	}
 
 	private int beginRead(int readLength) throws IOException {
 		checkClosed();
 		bitOffset = 0;
-		int available = (int)(dataSize - streamPos);
+		int available = (int) (dataSize - streamPos);
 		return (available < readLength) ? available : readLength;
 	}
 
@@ -80,13 +79,13 @@ public class ByteArrayImageOutputStream extends ImageOutputStreamImpl {
 	private void beginWrite(int writeLength) throws IOException {
 		checkClosed();
 		flushBits();
-		makeRoom((int)streamPos + writeLength);
+		makeRoom((int) streamPos + writeLength);
 	}
 
 	private void finishWrite(int writeLength) throws IOException {
 		streamPos += writeLength;
 		if (streamPos > dataSize) {
-			dataSize = (int)streamPos;
+			dataSize = (int) streamPos;
 		}
 	}
 

@@ -32,30 +32,25 @@ import java.io.IOException;
 /**
  * An upgrade filter that uses Jetty9's WebSocketServerFactory to decide whether to upgrade or not.
  */
-public class Jetty9WebSocketFilter extends AbstractUpgradeFilter
-{
+public class Jetty9WebSocketFilter extends AbstractUpgradeFilter {
 	private static final Logger LOG = LoggerFactory.getLogger(Jetty9WebSocketFilter.class);
 
 	private WebSocketServerFactory _webSocketFactory;
 
-	public Jetty9WebSocketFilter()
-	{
+	public Jetty9WebSocketFilter() {
 		super();
 	}
 
-	public Jetty9WebSocketFilter(WebApplication application)
-	{
+	public Jetty9WebSocketFilter(WebApplication application) {
 		super(application);
 	}
 
 	@Override
 	public void init(final boolean isServlet, final FilterConfig filterConfig)
-		throws ServletException
-	{
+			throws ServletException {
 		super.init(isServlet, filterConfig);
 
-		try
-		{
+		try {
 			WebSocketPolicy serverPolicy = WebSocketPolicy.newServerPolicy();
 			String bs = filterConfig.getInitParameter("inputBufferSize");
 			if (bs != null)
@@ -73,37 +68,27 @@ public class Jetty9WebSocketFilter extends AbstractUpgradeFilter
 			_webSocketFactory.setCreator((request, response) -> new Jetty9WebSocketProcessor(request, response, getApplication()));
 
 			_webSocketFactory.start();
-		}
-		catch (ServletException x)
-		{
+		} catch (ServletException x) {
 			throw x;
-		}
-		catch (Exception x)
-		{
+		} catch (Exception x) {
 			throw new ServletException(x);
 		}
 	}
 
 	@Override
-	protected boolean acceptWebSocket(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-	{
+	protected boolean acceptWebSocket(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		return super.acceptWebSocket(req, resp) &&
-			_webSocketFactory.acceptWebSocket(req, resp);
+				_webSocketFactory.acceptWebSocket(req, resp);
 	}
 
 	/* ------------------------------------------------------------ */
 	@Override
-	public void destroy()
-	{
-		try
-		{
-			if (_webSocketFactory != null)
-			{
+	public void destroy() {
+		try {
+			if (_webSocketFactory != null) {
 				_webSocketFactory.stop();
 			}
-		}
-		catch (Exception x)
-		{
+		} catch (Exception x) {
 			LOG.warn("A problem occurred while stopping the web socket factory", x);
 		}
 

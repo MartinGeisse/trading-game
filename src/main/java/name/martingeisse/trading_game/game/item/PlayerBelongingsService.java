@@ -32,7 +32,7 @@ public class PlayerBelongingsService {
 	/**
 	 * Returns a nested list of all the items that belong to the specified player, no matter in which inventory they
 	 * are stored.
-	 *
+	 * <p>
 	 * The returned outer list is newly created.
 	 */
 	public List<InventoryEntry> getBelongingsForPlayerId(long playerId) {

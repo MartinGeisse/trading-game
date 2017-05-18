@@ -22,7 +22,7 @@ public class EscrowService {
 
 	public void putItemsInEscrow(SpaceObject location, Player owner, ItemType itemType, int quantity) throws NotEnoughItemsException {
 		checkLocationValidForEscrow(location);
-		Inventory inventory = ((ObjectWithInventory)location).getInventory();
+		Inventory inventory = ((ObjectWithInventory) location).getInventory();
 		inventory.remove(owner.getId(), itemType, quantity);
 	}
 
@@ -32,7 +32,7 @@ public class EscrowService {
 
 	public void removeItemsFromEscrow(SpaceObject location, Player owner, ItemType itemType, int quantity) {
 		checkLocationValidForEscrow(location);
-		Inventory inventory = ((ObjectWithInventory)location).getInventory();
+		Inventory inventory = ((ObjectWithInventory) location).getInventory();
 		inventory.add(owner.getId(), itemType, quantity);
 	}
 

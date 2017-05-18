@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2015 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -19,31 +19,31 @@ import org.apache.wicket.protocol.ws.jetty9_patched.Jetty9WebSocketFilter;
  */
 public class MyWicketFilter extends Jetty9WebSocketFilter {
 
-    private final Provider<WebApplication> applicationProvider;
+	private final Provider<WebApplication> applicationProvider;
 
-    /**
-     * Constructor.
-     * @param applicationProvider the provider for the Wicket {@link WebApplication}
-     */
-    @Inject
-    public MyWicketFilter(Provider<WebApplication> applicationProvider) {
-        this.applicationProvider = applicationProvider;
-    }
+	/**
+	 * Constructor.
+	 * @param applicationProvider the provider for the Wicket {@link WebApplication}
+	 */
+	@Inject
+	public MyWicketFilter(Provider<WebApplication> applicationProvider) {
+		this.applicationProvider = applicationProvider;
+	}
 
-    @Override
-    protected IWebApplicationFactory getApplicationFactory() {
-        return new IWebApplicationFactory() {
+	@Override
+	protected IWebApplicationFactory getApplicationFactory() {
+		return new IWebApplicationFactory() {
 
-            @Override
-            public WebApplication createApplication(WicketFilter filter) {
-                return applicationProvider.get();
-            }
+			@Override
+			public WebApplication createApplication(WicketFilter filter) {
+				return applicationProvider.get();
+			}
 
-            @Override
-            public void destroy(WicketFilter filter) {
-            }
+			@Override
+			public void destroy(WicketFilter filter) {
+			}
 
-        };
-    }
+		};
+	}
 
 }

@@ -1,7 +1,6 @@
 package name.martingeisse.trading_game.gui.gamepage;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.panel.Panel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.List;
 /**
  * This object is part of the GamePage and stores current and previously visible panels to support in-page back button
  * navigation (via the Javascript history API).
- *
+ * <p>
  * The purpose of this class itself is only to store the panels.
  */
 public class PanelHistory implements Serializable {

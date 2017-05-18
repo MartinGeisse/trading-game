@@ -11,7 +11,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.head.PriorityHeaderItem;
 import org.apache.wicket.protocol.ws.WebSocketSettings;
 import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
@@ -24,7 +23,6 @@ import org.apache.wicket.protocol.ws.api.registry.IWebSocketConnectionRegistry;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Generics;
-import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.apache.wicket.util.visit.Visits;
 

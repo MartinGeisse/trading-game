@@ -39,6 +39,7 @@ public class AbstractPage extends WebPage {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param model the page model
 	 */
 	public AbstractPage(final IModel<?> model) {
@@ -47,6 +48,7 @@ public class AbstractPage extends WebPage {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param parameters the page parameters
 	 */
 	public AbstractPage(final PageParameters parameters) {

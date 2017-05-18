@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2015 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -68,7 +68,7 @@ public class DependencyListModel<T> extends AbstractReadOnlyModel<List<T>> {
 	public <C extends Comparable<C>> DependencyListModel(final Class<T> type, final SerializableFunction<? super T, C> mapper, SerializablePredicate<? super T> filter) {
 		this(type, (x, y) -> mapper.apply(x).compareTo(mapper.apply(y)), filter);
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param type the dependency type

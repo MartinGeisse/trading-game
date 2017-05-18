@@ -19,7 +19,7 @@ class MainMenuTabbedPanel<T extends ITab> extends AjaxTabbedPanel<T> {
 	}
 
 	public WebMarkupContainer getCurrentTab() {
-		return (WebMarkupContainer)get(TAB_PANEL_ID);
+		return (WebMarkupContainer) get(TAB_PANEL_ID);
 	}
 
 	public PanelHistory getPanelHistory() {
@@ -41,10 +41,10 @@ class MainMenuTabbedPanel<T extends ITab> extends AjaxTabbedPanel<T> {
 		// TabbedPanel, that's the easiest way. If no matching tab is found, we stay at the currently selected one
 		// and just replace the panel.
 		List<? extends ITab> tabs = getTabs();
-		for (int i=0; i<tabs.size(); i++) {
+		for (int i = 0; i < tabs.size(); i++) {
 			ITab tab = tabs.get(i);
 			if (tab instanceof PanelRecognizingTab) {
-				if (((PanelRecognizingTab)tab).isMatchingPanel(panel)) {
+				if (((PanelRecognizingTab) tab).isMatchingPanel(panel)) {
 					setSelectedTab(i);
 					break;
 				}

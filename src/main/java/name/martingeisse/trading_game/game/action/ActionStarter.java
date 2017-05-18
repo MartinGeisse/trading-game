@@ -57,7 +57,7 @@ final class ActionStarter {
 	 * a prerequisite was started and is running. Sets the prerequisiteFailure flag if starting a prerequisite failed. Doesn't
 	 * set any flags if no prerequisite was found, or if all prerequisites finished instantly. In the latter case,
 	 * the caller can continue starting actions.
-	 *
+	 * <p>
 	 * Starting a prerequisite is different from starting a scheduled action since prerequisites are not yet backed
 	 * by a queue slot when this method gets called.
 	 */

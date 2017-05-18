@@ -10,7 +10,6 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 
@@ -48,11 +47,11 @@ public class SpaceObjectDetailPanel extends AbstractPanel {
 	}
 
 	public IModel<SpaceObject> getModel() {
-		return (IModel<SpaceObject>)getDefaultModel();
+		return (IModel<SpaceObject>) getDefaultModel();
 	}
 
 	public SpaceObject getSpaceObject() {
-		return (SpaceObject)getDefaultModelObject();
+		return (SpaceObject) getDefaultModelObject();
 	}
 
 	public Double getDistance() {

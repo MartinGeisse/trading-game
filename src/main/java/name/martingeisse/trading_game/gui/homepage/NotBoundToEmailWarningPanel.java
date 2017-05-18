@@ -20,7 +20,7 @@ public class NotBoundToEmailWarningPanel extends Panel {
 	@Override
 	protected void onConfigure() {
 		super.onConfigure();
-		Player player = (Player)getDefaultModelObject();
+		Player player = (Player) getDefaultModelObject();
 		setVisible(player.getEmailAddress() == null);
 	}
 

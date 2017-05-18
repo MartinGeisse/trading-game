@@ -25,7 +25,7 @@ public class MyPostgresSqlSerializer extends SQLSerializer {
 	@Override
 	public void visitConstant(Object constant) {
 		if (constant instanceof Collection<?>) {
-			LinkedList<Path<?>> constantPaths = (LinkedList<Path<?>>)getConstantPaths();
+			LinkedList<Path<?>> constantPaths = (LinkedList<Path<?>>) getConstantPaths();
 			append("(");
 			boolean first = true;
 			for (Object element : ((Collection) constant)) {

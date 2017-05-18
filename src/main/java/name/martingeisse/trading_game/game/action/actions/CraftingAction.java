@@ -9,7 +9,7 @@ import name.martingeisse.trading_game.game.player.Player;
 
 /**
  * An action backed by a {@link CraftingRecipe}.
- *
+ * <p>
  * TODO serialization
  */
 public final class CraftingAction extends FixedEffortAction {

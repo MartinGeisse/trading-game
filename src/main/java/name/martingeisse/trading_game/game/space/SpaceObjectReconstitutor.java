@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.EntityProvider;
-import name.martingeisse.trading_game.game.action.actions.MiningYield;
 import name.martingeisse.trading_game.game.definition.MiningYieldInfo;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;

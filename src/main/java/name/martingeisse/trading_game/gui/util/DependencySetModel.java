@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2015 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 /**
  * Model for a dependency set.
- * 
+ *
  * @param <T> the dependency type
  */
 public class DependencySetModel<T> extends AbstractReadOnlyModel<Set<T>> {
@@ -34,7 +34,7 @@ public class DependencySetModel<T> extends AbstractReadOnlyModel<Set<T>> {
 		this.type = type;
 		this.filter = (filter == null ? (x -> true) : filter);
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param type the dependency type

@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2010 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -24,7 +24,7 @@ public class JavascriptAssemblerUtil {
 		}
 		return identifier;
 	}
-	
+
 	/**
 	 * Appends the argument, formatted as a Javascript identifier,
 	 * to the string builder. This method actually just appends
@@ -41,7 +41,7 @@ public class JavascriptAssemblerUtil {
 		}
 		stringBuilder.append(identifier);
 	}
-	
+
 	/**
 	 * Returns the argument with any characters escaped that have a
 	 * special meaning inside Javascript string literals. This allows
@@ -54,7 +54,7 @@ public class JavascriptAssemblerUtil {
 			throw new IllegalArgumentException("identifier argument is null");
 		}
 		StringBuilder builder = new StringBuilder();
-		for (int i=0; i<value.length(); i++) {
+		for (int i = 0; i < value.length(); i++) {
 			char c = value.charAt(i);
 			if (c < 32) {
 				if (c == '\t') {
@@ -77,7 +77,7 @@ public class JavascriptAssemblerUtil {
 		}
 		return builder.toString();
 	}
-	
+
 	/**
 	 * Returns the argument, formatted as a Javascript string literal.
 	 * This method adds quotes and escapes all special characters.
@@ -90,7 +90,7 @@ public class JavascriptAssemblerUtil {
 		}
 		return "\"" + escapeStringLiteralSpecialCharacters(value) + "\"";
 	}
-	
+
 	/**
 	 * Appends the argument, formatted as a Javascript string literal,
 	 * to the string builder. This method adds quotes and escapes all
@@ -116,7 +116,7 @@ public class JavascriptAssemblerUtil {
 	public static String formatBooleanLiteral(boolean value) {
 		return (value ? "true" : "false");
 	}
-	
+
 	/**
 	 * Appends the argument, formatted as a Javascript boolean literal.
 	 * @param stringBuilder the string builder
@@ -128,5 +128,5 @@ public class JavascriptAssemblerUtil {
 		}
 		stringBuilder.append(formatBooleanLiteral(value));
 	}
-	
+
 }

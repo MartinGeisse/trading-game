@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2010 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -15,7 +15,7 @@ public final class FakeCdnRecord {
 	 * the statusCode
 	 */
 	private final int statusCode;
-	
+
 	/**
 	 * the key
 	 */
@@ -52,7 +52,7 @@ public final class FakeCdnRecord {
 	public int getStatusCode() {
 		return statusCode;
 	}
-	
+
 	/**
 	 * Getter method for the key.
 	 * @return the key
@@ -60,7 +60,7 @@ public final class FakeCdnRecord {
 	public String getKey() {
 		return key;
 	}
-	
+
 	/**
 	 * Getter method for the contentType.
 	 * @return the contentType
@@ -68,7 +68,7 @@ public final class FakeCdnRecord {
 	public String getContentType() {
 		return contentType;
 	}
-	
+
 	/**
 	 * Getter method for the data.
 	 * @return the data

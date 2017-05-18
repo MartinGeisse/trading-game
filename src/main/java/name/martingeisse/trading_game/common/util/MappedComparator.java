@@ -6,7 +6,7 @@ import java.util.function.Function;
 /**
  * A comparator that first maps the values to compare to other values, then
  * compares them either using their natural order or another comparator.
- * 
+ *
  * @param <A> the type of values to compare
  * @param <B> the mapped value type
  */
@@ -28,7 +28,7 @@ public class MappedComparator<A, B> implements Comparator<A> {
 
 	/**
 	 * Creates a new instance that maps the values to compare to comparable values.
-	 * 
+	 *
 	 * @param mapper the mapper function
 	 * @return the comparator
 	 */
@@ -39,8 +39,8 @@ public class MappedComparator<A, B> implements Comparator<A> {
 	/**
 	 * Creates a new instance that maps the values to compare to other values and uses a
 	 * second comparator for them.
-	 * 
-	 * @param mapper the mapper function
+	 *
+	 * @param mapper     the mapper function
 	 * @param comparator the second comparator to use on the mapped values
 	 * @return the newly created comparator
 	 */

@@ -61,8 +61,8 @@ public final class MiningAction extends ContinuousAction {
 
 		int remainingTimeForYieldCapacity;
 		{
-			long remainingYieldCapacity = (int)asteroid.getYieldCapacity();
-			remainingTimeForYieldCapacity = (int)(remainingYieldCapacity / miningSpeed);
+			long remainingYieldCapacity = (int) asteroid.getYieldCapacity();
+			remainingTimeForYieldCapacity = (int) (remainingYieldCapacity / miningSpeed);
 		}
 
 		int remainingTimeForCargo;

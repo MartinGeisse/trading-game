@@ -31,7 +31,7 @@ public interface Action {
 
 	/**
 	 * Starts the action.
-	 *
+	 * <p>
 	 * This method must not be called if the action has any prerequisite actions as returned by {@link #getPrerequisite()}.
 	 * If called anyway, this action may fail by returning FAILED, apply inconsistent or undesired changes to the database,
 	 * fail with an exception, and so on.

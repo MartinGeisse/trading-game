@@ -32,66 +32,54 @@ import org.slf4j.LoggerFactory;
  * @since 6.2
  */
 public class Jetty9WebSocketProcessor extends AbstractWebSocketProcessor
-	implements
-		WebSocketListener
-{
+		implements
+		WebSocketListener {
 	private static final Logger LOG = LoggerFactory.getLogger(Jetty9WebSocketProcessor.class);
 
 	/**
 	 * Constructor.
 	 *
-	 * @param upgradeRequest
-	 *            the jetty upgrade request
-	 * @param upgradeResponse
-	 *            the jetty upgrade response
-	 * @param application
-	 *            the current Wicket Application
+	 * @param upgradeRequest  the jetty upgrade request
+	 * @param upgradeResponse the jetty upgrade response
+	 * @param application     the current Wicket Application
 	 */
 	public Jetty9WebSocketProcessor(final UpgradeRequest upgradeRequest,
-		final UpgradeResponse upgradeResponse, final WebApplication application)
-	{
+									final UpgradeResponse upgradeResponse, final WebApplication application) {
 		super(new Jetty9UpgradeHttpRequest(upgradeRequest), application);
 	}
 
 	@Override
-	public void onWebSocketConnect(Session session)
-	{
+	public void onWebSocketConnect(Session session) {
 		onConnect(new Jetty9WebSocketConnection(session, this));
 	}
 
 	@Override
-	public void onWebSocketText(String message)
-	{
+	public void onWebSocketText(String message) {
 		onMessage(message);
 	}
 
 	@Override
-	public void onWebSocketBinary(byte[] payload, int offset, int len)
-	{
+	public void onWebSocketBinary(byte[] payload, int offset, int len) {
 		onMessage(payload, offset, len);
 	}
 
 	@Override
-	public void onWebSocketClose(int statusCode, String reason)
-	{
+	public void onWebSocketClose(int statusCode, String reason) {
 		onClose(statusCode, reason);
 	}
 
 	@Override
-	public void onWebSocketError(Throwable throwable)
-	{
+	public void onWebSocketError(Throwable throwable) {
 		LOG.error("An error occurred when using WebSocket.", throwable);
 		onError(throwable);
 	}
 
 	@Override
-	public void onOpen(Object connection)
-	{
-		if (!(connection instanceof Session))
-		{
+	public void onOpen(Object connection) {
+		if (!(connection instanceof Session)) {
 			throw new IllegalArgumentException(Jetty9WebSocketProcessor.class.getName() +
-				" can work only with " + Session.class.getName());
+					" can work only with " + Session.class.getName());
 		}
-		onWebSocketConnect((Session)connection);
+		onWebSocketConnect((Session) connection);
 	}
 }

@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2010 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -10,13 +10,13 @@ import org.apache.wicket.model.IModel;
 
 /**
  * Forwards get/set calls to another model.
- * 
+ *
  * Whether this model also forwards the {@link #detach()} call
  * is decided by the return value of {@link #isForwardDetachCall()}.
- * 
+ *
  * Note: No type checking is done by this model itself, although
  * subclasses might add type checking.
- * 
+ *
  * @param <T> the model type
  */
 public abstract class AbstractRelayModel<T> implements IModel<T> {
@@ -55,14 +55,14 @@ public abstract class AbstractRelayModel<T> implements IModel<T> {
 
 	/**
 	 * Returns the model to forward the calls to.
-	 * 
+	 *
 	 * @return the target model
 	 */
 	protected abstract IModel<T> getTargetModel();
 
 	/**
 	 * Decides whether to forward the {@link #detach()} call.
-	 * 
+	 *
 	 * @return true to forward the detach() call, false to ignore it.
 	 */
 	protected abstract boolean isForwardDetachCall();

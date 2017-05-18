@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 /**
  * Item types may provide code for the item behavior (if any) and are referred to by crafting recipes.
- *
+ * <p>
  * Each item stack refers to its item type.
  */
 public final class ItemType implements Serializable {

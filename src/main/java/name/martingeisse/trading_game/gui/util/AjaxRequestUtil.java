@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2010 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -23,13 +23,13 @@ public class AjaxRequestUtil {
 	 * the logger
 	 */
 	private static Logger logger = Logger.getLogger(AjaxRequestUtil.class);
-	
+
 	/**
 	 * Prevent instantiation.
 	 */
 	private AjaxRequestUtil() {
 	}
-	
+
 	/**
 	 * Obtains the {@link AjaxRequestTarget} for the current request. Returns
 	 * null for non-AJAX requests.
@@ -39,22 +39,22 @@ public class AjaxRequestUtil {
 		RequestCycle requestCycle = RequestCycle.get();
 		IRequestHandler scheduledHandler = requestCycle.getRequestHandlerScheduledAfterCurrent();
 		if (scheduledHandler instanceof AjaxRequestTarget) {
-			return (AjaxRequestTarget)scheduledHandler;
+			return (AjaxRequestTarget) scheduledHandler;
 		}
 		IRequestHandler currentHandler = requestCycle.getActiveRequestHandler();
 		if (currentHandler instanceof AjaxRequestTarget) {
-			return (AjaxRequestTarget)currentHandler;
+			return (AjaxRequestTarget) currentHandler;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @return true for AJAX requests, false for other requests
 	 */
 	public static boolean isAjax() {
 		return getAjaxRequestTarget() != null;
 	}
-	
+
 	/**
 	 * Marks components for (re-)rendering. If the current request is an AJAX
 	 * request, this adds the components to the ART. Otherwise this does nothing
@@ -67,7 +67,7 @@ public class AjaxRequestUtil {
 			art.add(components);
 		}
 	}
-	
+
 	/**
 	 * Returns true if and only if the argument is not null.
 	 * Also outputs an error message if it is null.
@@ -80,7 +80,7 @@ public class AjaxRequestUtil {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Opens a Javascript alert box with a fixed message. Does nothing visible
 	 * but logs an error in non-AJAX requests.
@@ -104,5 +104,5 @@ public class AjaxRequestUtil {
 			target.focusComponent(component);
 		}
 	}
-	
+
 }

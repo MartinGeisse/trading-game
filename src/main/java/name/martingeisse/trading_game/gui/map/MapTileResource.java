@@ -13,7 +13,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -74,10 +73,10 @@ public class MapTileResource extends DynamicImageResource {
 	}
 
 	private void renderHeatMapTile(int tileX, int tileY, int zoomLevel, BufferedImage image) {
-		byte[] data = ((DataBufferByte)image.getRaster().getDataBuffer()).getData();
+		byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 
 		// clear the image buffer to black
-		Arrays.fill(data, (byte)0);
+		Arrays.fill(data, (byte) 0);
 
 		// draw tile grid
 		if (DRAW_GRID) {
@@ -103,7 +102,7 @@ public class MapTileResource extends DynamicImageResource {
 				if (value > 255) {
 					value = 255;
 				}
-				data[(y << HEAT_MAP_RESOLUTION_SHIFT) + x] = (byte)value;
+				data[(y << HEAT_MAP_RESOLUTION_SHIFT) + x] = (byte) value;
 			}
 		}
 

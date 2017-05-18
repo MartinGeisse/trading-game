@@ -48,7 +48,7 @@ class Util {
 		} else if (type.equals(Boolean.class)) {
 			return BooleanWordParser.INSTANCE;
 		} else if (type.isEnum()) {
-			return new EnumParser<>((Class)type);
+			return new EnumParser<>((Class) type);
 		} else {
 			throw new IllegalArgumentException("no configuration parser known for type " + type);
 		}

@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2010 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -29,13 +29,13 @@ public final class FakeCdn {
 	 * the cache
 	 */
 	private final ConcurrentHashMap<String, FakeCdnRecord> cache = new ConcurrentHashMap<String, FakeCdnRecord>();
-	
+
 	/**
 	 * Constructor.
 	 */
 	public FakeCdn() {
 	}
-	
+
 	/**
 	 * Requests an entity from the CDN. If the entity is not yet stored,
 	 * it is fetched. The response is stored, whether it is a successful
@@ -43,7 +43,7 @@ public final class FakeCdn {
 	 * request. If fetching the entity fails so hard that no response is
 	 * even available (e.g. server not reached), a fake 404 response is
 	 * built.
-	 * 
+	 *
 	 * @param key the storage key
 	 * @return the record for the entity
 	 */
@@ -61,7 +61,7 @@ public final class FakeCdn {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private FakeCdnRecord fetch(String key) throws IOException {
 		HttpResponse response = fetchResponse("http://localhost" + key);
@@ -73,12 +73,12 @@ public final class FakeCdn {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private HttpResponse fetchResponse(String url) throws IOException {
 		HttpClientConnectionManager connectionManager = new BasicHttpClientConnectionManager();
 		HttpClient client = HttpClients.custom().setConnectionManager(connectionManager).setDefaultCookieStore(new NullCookieStore()).build();
-		for (int i=0; i<10; i++) {
+		for (int i = 0; i < 10; i++) {
 			HttpUriRequest request = new HttpGet(url);
 			HttpResponse response = client.execute(request);
 			int statusCode = response.getStatusLine().getStatusCode();

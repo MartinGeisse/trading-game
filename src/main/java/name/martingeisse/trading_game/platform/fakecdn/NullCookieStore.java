@@ -45,5 +45,5 @@ public final class NullCookieStore implements CookieStore {
 	public List<Cookie> getCookies() {
 		return new ArrayList<>();
 	}
-	
+
 }

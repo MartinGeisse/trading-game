@@ -20,13 +20,13 @@ public final class GuiNavigationUtil {
 
 	/**
 	 * Sets the currently visible panel, creating a new history entry. Does not change which tab is shown as active.
-	 *
+	 * <p>
 	 * The anchor component must be a component that is part of the hierarchy of the GamePage. It is used to locate
 	 * the tab panel and modify it.
-	 *
+	 * <p>
 	 * The panelFactory creates the new component to show. It is a factory instead of the component itself so the
 	 * wicketId can be passed to it.
-	 *
+	 * <p>
 	 * The ajaxRequestTarget is used to update the page client-side.
 	 */
 	public static void setPanel(Component anchor, SerializableFunction<String, WebMarkupContainer> panelFactory, AjaxRequestTarget ajaxRequestTarget) {
@@ -34,7 +34,7 @@ public final class GuiNavigationUtil {
 		ParameterUtil.ensureNotNull(panelFactory, "panelFactory");
 		ParameterUtil.ensureNotNull(ajaxRequestTarget, "ajaxRequestTarget");
 
-		GamePage gamePage = (GamePage)anchor.getPage();
+		GamePage gamePage = (GamePage) anchor.getPage();
 		MainMenuTabbedPanel mainMenuTabbedPanel = gamePage.getMainMenuTabbedPanel();
 		WebMarkupContainer newPanel = panelFactory.apply(TabbedPanel.TAB_PANEL_ID);
 		if (newPanel != null) {

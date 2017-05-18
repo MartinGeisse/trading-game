@@ -12,7 +12,6 @@ import com.google.inject.Singleton;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.definition.GameDefinition;
-import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.skill.Skill;

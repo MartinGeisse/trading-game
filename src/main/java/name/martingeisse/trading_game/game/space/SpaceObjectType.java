@@ -21,6 +21,7 @@ public enum SpaceObjectType {
 
 	private static final ImmutableSet<SpaceObjectType> staticTypes;
 	private static final ImmutableSet<SpaceObjectType> dynamicTypes;
+
 	static {
 		Set<SpaceObjectType> staticTypesAccumulator = new HashSet<>();
 		Set<SpaceObjectType> dynamicTypesAccumulator = new HashSet<>();

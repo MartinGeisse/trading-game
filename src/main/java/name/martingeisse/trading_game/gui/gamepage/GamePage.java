@@ -19,21 +19,13 @@ import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.ws.WebSocketSettings;
-import org.apache.wicket.protocol.ws.api.WicketWebSocketJQueryResourceReference;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.lang.Args;
-import org.apache.wicket.util.lang.Generics;
-import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.template.PackageTextTemplate;
 
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  *
@@ -134,7 +126,7 @@ public class GamePage extends AbstractPage {
 	}
 
 	MainMenuTabbedPanel getMainMenuTabbedPanel() {
-		return (MainMenuTabbedPanel)get("tabbedPanel");
+		return (MainMenuTabbedPanel) get("tabbedPanel");
 	}
 
 	public static abstract class PanelClassRecognizingTab extends AbstractTab implements MainMenuTabbedPanel.PanelRecognizingTab {

@@ -18,7 +18,6 @@ import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.protocol.ws.WebSocketSettings;
 import org.apache.wicket.request.IExceptionMapper;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
@@ -150,11 +149,11 @@ public class MyWicketApplication extends WebApplication {
 		// mount Bootstrap fonts
 		{
 			final String[] bootstrapFontFiles = new String[]{
-				"glyphicons-halflings-regular.eot",
-				"glyphicons-halflings-regular.woff",
-				"glyphicons-halflings-regular.woff2",
-				"glyphicons-halflings-regular.ttf",
-				"glyphicons-halflings-regular.svg",
+					"glyphicons-halflings-regular.eot",
+					"glyphicons-halflings-regular.woff",
+					"glyphicons-halflings-regular.woff2",
+					"glyphicons-halflings-regular.ttf",
+					"glyphicons-halflings-regular.svg",
 			};
 			for (final String fontFile : bootstrapFontFiles) {
 				mountResource("/fonts/" + fontFile, new PackageResourceReference(AbstractPage.class, fontFile));

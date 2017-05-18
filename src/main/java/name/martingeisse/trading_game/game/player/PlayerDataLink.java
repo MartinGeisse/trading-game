@@ -89,7 +89,7 @@ public final class PlayerDataLink {
 			int i2 = (o2 instanceof SpaceStation) ? 1 : 0;
 			return i1 - i2;
 		});
-		return (result instanceof SpaceStation) ? (SpaceStation)result : null;
+		return (result instanceof SpaceStation) ? (SpaceStation) result : null;
 	}
 
 }

@@ -26,7 +26,7 @@ public class EnterLoginTokenPage extends AbstractPage {
 				try {
 					selectedPlayer = MyWicketApplication.get().getDependency(PlayerLoginRepository.class).getPlayerByLoginToken(loginToken);
 				} catch (IllegalArgumentException e) {
-					FormComponent<?> formComponent = (FormComponent<?>)get("form:formBlocks:1:decoratedBody:textField");
+					FormComponent<?> formComponent = (FormComponent<?>) get("form:formBlocks:1:decoratedBody:textField");
 					formComponent.error("invalid login token");
 					return;
 				}

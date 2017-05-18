@@ -6,5 +6,6 @@ package name.martingeisse.trading_game.game.space;
  */
 public interface PositionProvider {
 	public long getX();
+
 	public long getY();
 }

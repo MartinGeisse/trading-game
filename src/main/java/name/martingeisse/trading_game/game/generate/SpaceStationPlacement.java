@@ -17,12 +17,12 @@ public final class SpaceStationPlacement implements Iterable<Pair<Long, Long>> {
 	private SpaceStationPlacement(StarPlacement starPlacement, int numberOfSpaceStations, long minimumDistance, long maximumDistance) {
 		double deltaDistance = maximumDistance - minimumDistance;
 		Random random = new Random();
-		for (int i=0; i<numberOfSpaceStations; i++) {
+		for (int i = 0; i < numberOfSpaceStations; i++) {
 			Pair<Long, Long> star = starPlacement.getStarPosition(random.nextInt(starPlacement.getNumberOfStars()));
 			double angle = 2 * Math.PI * random.nextDouble();
 			double distance = minimumDistance + deltaDistance * random.nextDouble();
-			long dx = (long)(distance * Math.cos(angle));
-			long dy = (long)(distance * Math.sin(angle));
+			long dx = (long) (distance * Math.cos(angle));
+			long dy = (long) (distance * Math.sin(angle));
 			Pair<Long, Long> spaceStation = Pair.of(star.getLeft() + dx, star.getRight() + dy);
 			spaceStations.add(spaceStation);
 		}

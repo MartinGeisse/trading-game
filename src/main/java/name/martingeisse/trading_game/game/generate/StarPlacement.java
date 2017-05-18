@@ -34,12 +34,13 @@ public final class StarPlacement implements Iterable<Pair<Long, Long>> {
 				continue;
 			}
 			long x = star.getLeft(), y = star.getRight();
-			long minimumDistance = 200000 + (long)(noise.getClamped(((double)x) / ((double)galaxyRadius), ((double)y) / ((double)galaxyRadius)) * 170000);
-			breadthLoop: for (int i=0; i<breadth; i++) {
+			long minimumDistance = 200000 + (long) (noise.getClamped(((double) x) / ((double) galaxyRadius), ((double) y) / ((double) galaxyRadius)) * 170000);
+			breadthLoop:
+			for (int i = 0; i < breadth; i++) {
 				double angle = 2 * Math.PI * random.nextDouble();
 				double distance = minimumDistance * (1.0 + 0.5 * random.nextDouble());
-				long dx = (long)(distance * Math.cos(angle));
-				long dy = (long)(distance * Math.sin(angle));
+				long dx = (long) (distance * Math.cos(angle));
+				long dy = (long) (distance * Math.sin(angle));
 				Pair<Long, Long> neighbor = Pair.of(x + dx, y + dy);
 				for (Pair<Long, Long> potentialBlocker : stars) {
 					if (starsCloserThan(neighbor, potentialBlocker, minimumDistance)) {

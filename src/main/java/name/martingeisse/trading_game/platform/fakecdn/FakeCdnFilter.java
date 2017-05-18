@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2010 Martin Geisse
- *
+ * <p>
  * This file is distributed under the terms of the MIT license.
  */
 
@@ -26,12 +26,12 @@ public final class FakeCdnFilter implements Filter {
 	 * the URI_PREFIX
 	 */
 	public static final String URI_PREFIX = "/__cdn/";
-	
+
 	/**
 	 * the cdn
 	 */
 	private final FakeCdn cdn = new FakeCdn();
-	
+
 	/**
 	 * the dateTimeHeaderFormatter
 	 */
@@ -56,7 +56,7 @@ public final class FakeCdnFilter implements Filter {
 	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-		HttpServletRequest httpRequest = (HttpServletRequest)request;
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String uri = httpRequest.getRequestURI();
 		if (uri.startsWith(URI_PREFIX)) {
 			String key = uri.substring(URI_PREFIX.length() - 1);
@@ -67,10 +67,10 @@ public final class FakeCdnFilter implements Filter {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void doCdn(ServletRequest request, ServletResponse response, String key) throws IOException, ServletException {
-		HttpServletResponse httpResponse = (HttpServletResponse)response;
+		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		FakeCdnRecord record = cdn.request(key);
 		httpResponse.setStatus(record.getStatusCode());
 		httpResponse.setContentType(record.getContentType());
@@ -82,5 +82,5 @@ public final class FakeCdnFilter implements Filter {
 		httpResponse.getOutputStream().flush();
 		httpResponse.getOutputStream().close();
 	}
-	
+
 }

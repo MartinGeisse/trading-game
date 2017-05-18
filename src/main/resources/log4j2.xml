@@ -67,7 +67,7 @@
             <AppenderRef ref="error"/>
             <AppenderRef ref="emergency"/>
         </Root>
-        <Logger name="org.quartz.core.JobRunShell" level="INFO" />
+        <Logger name="org.quartz.core.JobRunShell" level="INFO"/>
         <!--
         <Logger name="name.martingeisse.trading_game.Foo" level="INFO" additivity="false">
             <AppenderRef ref="console"/>
