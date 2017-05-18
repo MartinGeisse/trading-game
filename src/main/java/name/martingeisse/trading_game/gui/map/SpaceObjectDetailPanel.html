@@ -1,7 +1,15 @@
 <html>
 <body>
 <wicket:panel>
-    SPACE OBJECT DETAILS: <span wicket:id="name"></span>
+    <h2>Properties</h2>
+    <div>Name: <span wicket:id="name"></span></div>
+    <div>Type: <span wicket:id="type"></span></div>
+    <div>Location: <span wicket:id="x"></span>, <span wicket:id="y"></span></div>
+    <div>Distance: <span wicket:id="distance"></span></div>
+    <h2>Actions</h2>
+    <div wicket:id="actions">
+        <a wicket:id="link"><span wicket:id="name"></span></a>
+    </div>
 </wicket:panel>
 </body>
 </html>

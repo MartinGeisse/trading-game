@@ -12,6 +12,7 @@ import org.apache.wicket.Page;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.head.PriorityHeaderItem;
 import org.apache.wicket.protocol.ws.WebSocketSettings;
 import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
 import org.apache.wicket.protocol.ws.api.WebSocketBehavior;
@@ -21,7 +22,13 @@ import org.apache.wicket.protocol.ws.api.message.*;
 import org.apache.wicket.protocol.ws.api.registry.IKey;
 import org.apache.wicket.protocol.ws.api.registry.IWebSocketConnectionRegistry;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.lang.Args;
+import org.apache.wicket.util.lang.Generics;
+import org.apache.wicket.util.string.Strings;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.apache.wicket.util.visit.Visits;
+
+import java.util.Map;
 
 /**
  * This behavior can be added to a page to make all components which implement {@link GuiGameEventListener} receive
@@ -54,7 +61,10 @@ public class GameListenerWebSocketBehavior extends WebSocketBehavior {
 
 	@Override
 	public void renderHead(Component component, IHeaderResponse response) {
-		super.renderHead(component, response);
+
+		// the base websocket scripts must be replaced by "deferred" ones that open the websocket only after the
+		// page has checked whether it is being displayed in multiple tabs
+		renderDeferredBaseClassHead(component, response);
 
 		// Render a simple timer that sends a dummy text message after half the timeout. This message
 		// will be passed directly to the onMessage method of this behavior, which ignores it by default.
@@ -62,9 +72,30 @@ public class GameListenerWebSocketBehavior extends WebSocketBehavior {
 				GameListenerWebSocketBehavior.class,
 				GameListenerWebSocketBehavior.class.getSimpleName() + ".js"
 		)));
-		response.render(OnDomReadyHeaderItem.forScript(
-				GameListenerWebSocketBehavior.class.getSimpleName() + '(' + WebSocketConstants.TIMEOUT_MILLISECONDS + ");")
-		);
+
+	}
+
+	private void renderDeferredBaseClassHead(Component component, IHeaderResponse response) {
+
+		response.render(JavaScriptHeaderItem.forReference(WicketWebSocketJQueryResourceReference.get()));
+
+		// render the init script as a priority header item since the function must be present as soon as the
+		// multiple-tabs-check gets sent -- after sending it, the response calling the websocket function may arrive at
+		// any time
+		PackageTextTemplate webSocketSetupTemplate = new PackageTextTemplate(GameListenerWebSocketBehavior.class,
+				"wicket-websocket-setup.js.tmpl");
+		WebSocketSettings webSocketSettings = WebSocketSettings.Holder.get(component.getApplication());
+		Map<String, Object> variables = Generics.newHashMap();
+		variables.put("pageId", component.getPage().getPageId());
+		variables.put("resourceName", "");
+		variables.put("baseUrl", Args.notNull(getBaseUrl(webSocketSettings), "baseUrl"));
+		variables.put("contextPath", Args.notNull(getContextPath(webSocketSettings), "contextPath"));
+		variables.put("applicationName", component.getApplication().getName());
+		variables.put("filterPrefix", Args.notNull(getFilterPrefix(webSocketSettings), "filterPrefix"));
+		variables.put("gameListenerWebSocketBehaviorInitializer", GameListenerWebSocketBehavior.class.getSimpleName());
+		variables.put("gameListenerWebSocketBehaviorTimeout", WebSocketConstants.TIMEOUT_MILLISECONDS);
+		String script = webSocketSetupTemplate.asString(variables);
+		response.render(new PriorityHeaderItem(JavaScriptHeaderItem.forScript(script, null)));
 
 	}
 

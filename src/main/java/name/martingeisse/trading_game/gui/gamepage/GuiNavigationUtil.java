@@ -38,7 +38,7 @@ public final class GuiNavigationUtil {
 		MainMenuTabbedPanel mainMenuTabbedPanel = gamePage.getMainMenuTabbedPanel();
 		WebMarkupContainer newPanel = panelFactory.apply(TabbedPanel.TAB_PANEL_ID);
 		if (newPanel != null) {
-			mainMenuTabbedPanel.replace(newPanel);
+			mainMenuTabbedPanel.replacePanelAndRecognize(newPanel);
 			addHistoryEntry(mainMenuTabbedPanel, newPanel, ajaxRequestTarget);
 			ajaxRequestTarget.add(mainMenuTabbedPanel);
 		}

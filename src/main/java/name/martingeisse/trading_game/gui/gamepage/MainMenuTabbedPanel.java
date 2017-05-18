@@ -31,4 +31,31 @@ class MainMenuTabbedPanel<T extends ITab> extends AjaxTabbedPanel<T> {
 		GuiNavigationUtil.addHistoryEntry(this, getCurrentTab(), target);
 	}
 
+	public void replacePanelAndRecognize(WebMarkupContainer panel) {
+		if (!panel.getId().equals(TAB_PANEL_ID)) {
+			throw new IllegalArgumentException("argument panel has wicket:id " + panel.getId() + ", expected " + TAB_PANEL_ID);
+		}
+
+		// find a tab that matches the panel and set it as the selected tab. This will create a panel for that tab,
+		// which we throw away immediately and use the provided argument tab instead. Wasteful, but with Wicket's
+		// TabbedPanel, that's the easiest way. If no matching tab is found, we stay at the currently selected one
+		// and just replace the panel.
+		List<? extends ITab> tabs = getTabs();
+		for (int i=0; i<tabs.size(); i++) {
+			ITab tab = tabs.get(i);
+			if (tab instanceof PanelRecognizingTab) {
+				if (((PanelRecognizingTab)tab).isMatchingPanel(panel)) {
+					setSelectedTab(i);
+					break;
+				}
+			}
+		}
+
+		replace(panel);
+	}
+
+	public static interface PanelRecognizingTab {
+		public boolean isMatchingPanel(WebMarkupContainer panel);
+	}
+
 }
