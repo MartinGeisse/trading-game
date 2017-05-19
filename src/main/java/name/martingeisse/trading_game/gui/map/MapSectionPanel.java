@@ -22,9 +22,11 @@ import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -50,6 +52,11 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 	};
 
 	private long selectedSpaceObjectId = -1;
+
+	// that large number must be greater than the number of dynamic space objects visible at once
+	private static final long DYNAMIC_SPACE_OBJECTS_ANIMATION_INDEX_BLOCK_SIZE = 1_000_000;
+	private long dynamicSpaceObjectsAnimationRenderCounter = 0;
+	private transient ImmutableList<DynamicSpaceObject> dynamicSpaceObjectsToRender;
 
 	public MapSectionPanel(String id) {
 		super(id);
@@ -205,6 +212,7 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 
 		});
 
+		add(new Label("animationStylesheet", new PropertyModel<>(this, "animationStylesheet")).setOutputMarkupId(true));
 
 	}
 
@@ -230,6 +238,12 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 	}
 
 	@Override
+	protected void onBeforeRender() {
+		super.onBeforeRender();
+		this.dynamicSpaceObjectsToRender = getSpace().getDynamicSpaceObjects();
+	}
+
+	@Override
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
 
@@ -240,6 +254,7 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 		LeafletEdgeBuffer.renderHead(response);
 
 		// render initialization script
+		dynamicSpaceObjectsAnimationRenderCounter++;
 		StringBuilder builder = new StringBuilder();
 		builder.append("mapTileBaseUrl = '").append(getAbsoluteUrlFor(new SharedResourceReference("MapTile"))).append("';\n");
 		buildDynamicSpaceObjectsData(builder);
@@ -255,13 +270,26 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 
 	private void buildDynamicSpaceObjectsData(StringBuilder builder) {
 		builder.append("dynamicSpaceObjectsData = [\n");
-		for (DynamicSpaceObject spaceObject : getSpace().getDynamicSpaceObjects()) {
+		for (DynamicSpaceObject spaceObject : dynamicSpaceObjectsToRender) {
 			builder.append("\t{x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
 			builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
 			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius()));
 			builder.append(", c: '").append(spaceObject instanceof PlayerShip ? "#00ffff" : "#0000ff").append("'},");
 		}
 		builder.append("];\n");
+		builder.append("dynamicSpaceObjectsAnimationStartIndex = " + (dynamicSpaceObjectsAnimationRenderCounter * DYNAMIC_SPACE_OBJECTS_ANIMATION_INDEX_BLOCK_SIZE) + ';');
+	}
+
+	public String getAnimationStylesheet() {
+		StringBuilder builder = new StringBuilder();
+		long animationIndex = dynamicSpaceObjectsAnimationRenderCounter * DYNAMIC_SPACE_OBJECTS_ANIMATION_INDEX_BLOCK_SIZE;
+		for (DynamicSpaceObject spaceObject : dynamicSpaceObjectsToRender) {
+			builder.append(".anim").append(animationIndex).append(" {\n");
+			builder.append("\t/* TODO */\n"); // TODO
+			builder.append("}\n");
+			animationIndex++;
+		}
+		return builder.toString();
 	}
 
 	private String getAbsoluteUrlFor(ResourceReference reference) {
@@ -326,6 +354,9 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 
 		// react to space objects changing their position (e.g. ships)
 		if (anySpaceObjectChangedItsPosition) {
+			dynamicSpaceObjectsAnimationRenderCounter++;
+			partialPageRequestHandler.add(get("animationStylesheet"));
+			dynamicSpaceObjectsToRender = getSpace().getDynamicSpaceObjects(); // fetch once to protect against concurrent changes
 			StringBuilder builder = new StringBuilder();
 			buildDynamicSpaceObjectsData(builder);
 			builder.append("redrawDynamicSpaceObjects();");

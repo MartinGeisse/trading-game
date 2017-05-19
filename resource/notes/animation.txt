@@ -1,0 +1,36 @@
+
+Websockets vs CSS Animation (denn nur diese funzen im SVG -- SMIL wird nicht breit unterstützt):
+
+Mit jedem Update kann sich die Animation unvorhergesehen ändern, z.B. ein fliegendes Schiff ändert die Richtung. Wenn
+die Animation nur vorhergesehen weiterläuft, kann grundsätzlich dies direkt auf CSS abgebildet werden.
+
+Wegen der Möglichkeit der Änderung ist es aber erst mal einfacher, alle Animationen grundsätzlich bei jedem Update
+neu zu initialisieren. Wegen der unterschiedlichen Zeitversetzung zwischen Server und Client in verschiedenen Requests
+kommt es dann in den laufenden Animationen zu Sprüngen. Das ist der Preis für die einfachere Lösung.
+
+Eine alternative Lösung wäre es, per animation-delay und beidseitigen Uhren die Zeitversprünge auszugleichen. Das ist
+nicht optimal, denn weiterlaufende Animationen müssen unnötigerweise vom Server zum Client übertragen werden, aber die
+Sprünge sollten damit weitestgehend unsichtbar werden. Dazu muss eine Serverseitige Uhr und eine Clientseitige Uhr
+laufen; der Server sendet seine aktuelle Zeit in den Responses mit. Dadurch kann der Client die Differenz zwischen den
+Response-Delays errechnen und diese Differenz in das animation-delay einfließen lassen. Der Vorteil dieser Lösung ist,
+dass man sie inkrementell in das "immer-updaten-Verfahren" einbauen kann.
+
+Manche älteren Browser brauchen ein '-webkit-' Präfix. Das lässt sich ja machen.
+
+Mit einem Serverseitigen Counter lassen sich bei jedem Neurendern neue Animationsnamen erzeugen. Dadurch wird
+verhindert, dass Änderungen "übersehen" werden, weil sie eine laufende Animation betreffen. (Keine Ahnung wie da
+der Browser-Support ist, aber es macht auch bei 100% Support die Updates einfacher; wenn nämlich die Startposition
+eines bewegten Objekts geändert wird, dann *MUSS* die Animation resetted werden, um keine falsche Position anzuzeigen,
+da sonst die neue Position und der Animation-Progress *addiert* werden).
+
+------
+
+Vorgehen:
+- die DynamicSpaceObjects müssen entsprechende Animationsnamen per CSS bekommen. Wann/wie werden die eigentlich nochmal
+	in den DOM eingefügt?
+- ein header-Element deklariert die Animationen. Werden header-Elemente in einer AJAX-Response eigentlich beachtet,
+	d.h. ersetzen diese die alten Elemente?
+
+Wenn immer alle Animationen *ersetzt* werden, dann kann einfach davon ausgegangen werden, dass neue Animationsnamen
+anhand einer laufenden Nummer in derselben Reihenfolge vergeben werden, wie die dynamic space objects im übertragenen
+Datenarray stehen. Dann muss nur die Anfangsnummer in den Daten übertragen werden.
