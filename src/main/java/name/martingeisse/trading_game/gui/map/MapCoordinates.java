@@ -12,20 +12,36 @@ public final class MapCoordinates {
 		return 128 + ((double) x) / COORDINATE_SCALE;
 	}
 
+	public static double convertDeltaXToDeltaLongitude(long dx) {
+		return ((double) dx) / COORDINATE_SCALE;
+	}
+
 	public static double convertYToLatitude(long y) {
 		return 128 - ((double) y) / COORDINATE_SCALE;
+	}
+
+	public static double convertDeltaYToDeltaLatitude(long dy) {
+		return -((double) dy) / COORDINATE_SCALE;
 	}
 
 	public static double convertGameDistanceToMapDistance(long gameDistance) {
 		return ((double) gameDistance) / COORDINATE_SCALE;
 	}
 
-	public static long convertLongitudeToX(double mapPosition) {
-		return (long) ((mapPosition - 128) * COORDINATE_SCALE);
+	public static long convertLongitudeToX(double longitude) {
+		return (long) ((longitude - 128) * COORDINATE_SCALE);
 	}
 
-	public static long convertLatitudeToY(double mapPosition) {
-		return (long) ((128 - mapPosition) * COORDINATE_SCALE);
+	public static long convertDeltaLongitudeToDeltaX(double deltaLongitude) {
+		return (long) (deltaLongitude * COORDINATE_SCALE);
+	}
+
+	public static long convertLatitudeToY(double latitude) {
+		return (long) ((128 - latitude) * COORDINATE_SCALE);
+	}
+
+	public static long convertDeltaLatitudeToDeltaY(double deltaLatitude) {
+		return (long) (-deltaLatitude * COORDINATE_SCALE);
 	}
 
 	public static long convertMapDistanceToGameDistance(double mapDistance) {
