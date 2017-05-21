@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
+import name.martingeisse.trading_game.postgres_entities.ActionQueueRow;
 import name.martingeisse.trading_game.postgres_entities.ActionQueueSlotRow;
 
 import java.util.ArrayList;
@@ -44,6 +45,18 @@ public final class ActionQueue {
 			entries.add(new ActionQueueEntry(helper.extractAction(row), row.getPrerequisite()));
 		}
 		return ImmutableList.copyOf(entries);
+	}
+
+	/**
+	 * Returns the entry currently being executed, or null if none.
+	 */
+	public ActionQueueEntry getRunningEntry() {
+		ActionQueueSlotRow row = helper.fetchStartedSlot();
+		if (row == null) {
+			return null;
+		} else {
+			return new ActionQueueEntry(helper.extractAction(row), row.getPrerequisite());
+		}
 	}
 
 	/**
