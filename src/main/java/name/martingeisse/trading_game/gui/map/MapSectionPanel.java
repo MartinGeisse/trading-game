@@ -210,8 +210,6 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 
 		});
 
-		add(new Label("animationStylesheet", new PropertyModel<>(this, "animationStylesheet")).setOutputMarkupId(true));
-
 	}
 
 	public void selectSpaceObject(SpaceObject spaceObject, AjaxRequestTarget target) {
@@ -272,13 +270,13 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 			builder.append("\t{x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
 			builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
 			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius()));
-			builder.append(", c: '").append(spaceObject instanceof PlayerShip ? "#00ffff" : "#0000ff");
+			builder.append(", c: '").append(spaceObject instanceof PlayerShip ? "#00ffff'" : "#0000ff'");
 			if (movementInfo != null) {
 				builder.append(", x2: ").append(MapCoordinates.convertXToLongitude(movementInfo.getDestinationX()));
 				builder.append(", y2: ").append(MapCoordinates.convertYToLatitude(movementInfo.getDestinationY()));
-				builder.append(", t: ").append(movementInfo.getRemainingTime());
+				builder.append(", t: ").append(movementInfo.getRemainingTime() + 1); // usually too low by 1 due to rounding errors
 			}
-			builder.append("'},");
+			builder.append("},");
 		}
 		builder.append("];\n");
 	}
@@ -345,11 +343,10 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 
 		// react to space objects changing their position (e.g. ships)
 		if (anySpaceObjectChangedItsPosition) {
-			partialPageRequestHandler.add(get("animationStylesheet"));
 			dynamicSpaceObjectsToRender = getSpace().getDynamicSpaceObjects(); // fetch once to protect against concurrent changes
 			StringBuilder builder = new StringBuilder();
 			buildDynamicSpaceObjectsData(builder);
-			builder.append("redrawDynamicSpaceObjects();");
+			builder.append("latestDynamicSpaceObjectsUpdateTimestamp = new Date().getTime();\n");
 			partialPageRequestHandler.appendJavaScript(builder.toString());
 		}
 

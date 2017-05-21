@@ -18,11 +18,9 @@
             visibility: visible;
         }
 
-
-    </style>
-    <style type="text/css" wicket:id="animationStylesheet">
     </style>
     <script type="text/javascript">
+        latestDynamicSpaceObjectsUpdateTimestamp = new Date().getTime();
         initializeMapSectionPanel = function() {
 
             // set defaults for global variables
@@ -126,20 +124,33 @@
                     return spaceObjectsParentSelection;
                 }
 
+                var secondsSinceLatestDynamicSpaceObjectsUpdate = (new Date().getTime() - latestDynamicSpaceObjectsUpdateTimestamp) / 1000;
                 var spaceObjectsParentSelection = createSpaceObjectsParent(selection, projection);
                 var updateSelection = spaceObjectsParentSelection.selectAll('*').data(dynamicSpaceObjectsData);
-                updateSelection.enter().append('circle').attr("style", "stroke-width: 0px")
+                updateSelection.enter().append('circle')
+                    .attr("style", "stroke-width: 0px")
                     .merge(updateSelection)
-                    .attr("cx", function(d) {return d.x;})
-                    .attr("cy", function(d) {return d.y;})
                     .attr("r", function(d) {return d.r;})
-                    .style("fill", function(d) {return d.c;});
-
+                    .style("fill", function(d) {return d.c;})
+                    .each(function(d, index) {
+                        if (('x2' in d) && ('y2' in d) && ('t' in d) && (d.t > 0)) {
+                            var alpha = secondsSinceLatestDynamicSpaceObjectsUpdate / d.t;
+                            if (alpha >= 1) {
+                                d3.select(this).attr("cx", d.x2).attr("cy", d.y2);
+                            } else {
+                                d3.select(this)
+                                    .attr("cx", alpha * d.x2 + (1 - alpha) * d.x)
+                                    .attr("cy", alpha * d.y2 + (1 - alpha) * d.y);
+                            }
+                        } else {
+                            d3.select(this).attr("cx", d.x).attr("cy", d.y);
+                        }
+                    });
             });
             dynamicSpaceObjectsOverlay.addTo(leafletMap);
-            redrawDynamicSpaceObjects = function() {
+            setInterval(function() {
                 dynamicSpaceObjectsOverlay.draw();
-            };
+            }, 100);
 
             // clicking selects an object. Finding the object is done on the server.
             leafletMap.on('click', function(e) {
@@ -160,16 +171,17 @@
                 removeSpaceObjectSelectionIndicator();
                 spaceObjectSelectionIndicator = new HybridCircle(L.latLng(lat, lng), {latLngRadius: radius, pixelRadius: 10});
                 spaceObjectSelectionIndicator.addTo(leafletMap);
-                // console.log(lat + ", " + lng);
             };
 
             $(document).on('click', '#selectOwnShipLink', function() {
                 sendSelectOwnShipCommand();
+                return false;
             });
             $(document).on('click', '#centerSelectedObjectLink', function() {
                 if (spaceObjectSelectionIndicator != null) {
                     leafletMap.flyTo(spaceObjectSelectionIndicator.getLatLng());
                 }
+                return false;
             });
             $(document).on('click contextmenu', '#map, #propertiesBox', function() {
                 $('#context-menu').css('display', 'none');
