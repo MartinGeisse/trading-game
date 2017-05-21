@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.game.action.actions;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import name.martingeisse.trading_game.game.action.Action;
 import name.martingeisse.trading_game.game.player.Player;
@@ -57,14 +58,19 @@ public final class MoveToPositionAction extends ContinuousAction implements Posi
 		return null;
 	}
 
+	@JsonIgnore
+	public long getSpeed() {
+		return player.getShipMovementSpeed();
+	}
+
 	@Override
 	public Integer getRemainingTime() {
-		return GeometryUtil.getMovementTime(player.getShip(), this, player.getShipMovementSpeed());
+		return GeometryUtil.getMovementTime(player.getShip(), this, getSpeed());
 	}
 
 	@Override
 	public Status tick() {
-		GeometryUtil.moveSpaceObjectTowards(player.getShip(), this, player.getShipMovementSpeed());
+		GeometryUtil.moveSpaceObjectTowards(player.getShip(), this, getSpeed());
 		return GeometryUtil.isAtSamePosition(player.getShip(), this) ? Status.FINISHED : Status.RUNNING;
 	}
 
