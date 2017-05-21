@@ -3,6 +3,7 @@ package name.martingeisse.trading_game.game.action;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import name.martingeisse.trading_game.common.util.contract.ParameterUtil;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
+import name.martingeisse.trading_game.platform.postgres.PostgresContext;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.ActionQueueSlotRow;
 import name.martingeisse.trading_game.postgres_entities.QActionQueueSlotRow;
@@ -58,6 +59,11 @@ final class ActionQueueHelper {
 
 	ActionQueueSlotRow fetchStartedSlot() {
 		return postgresContextService.select(qaqs).from(qaqs).where(qaqs.actionQueueId.eq(id)).where(qaqs.started.isTrue()).fetchFirst();
+	}
+
+	void markSlotStarted(ActionQueueSlotRow row) {
+		ParameterUtil.ensureNotNull(row, "row");
+		postgresContextService.update(qaqs).set(qaqs.started, true).where(qaqs.id.eq(row.getId())).execute();
 	}
 
 	void deleteSlot(ActionQueueSlotRow row) {
