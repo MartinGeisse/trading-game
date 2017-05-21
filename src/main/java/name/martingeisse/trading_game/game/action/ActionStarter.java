@@ -41,6 +41,7 @@ final class ActionStarter {
 				Action.Status status = action.start();
 				if (status == Action.Status.RUNNING) {
 					// the action was successfully started
+					helper.markSlotStarted(slot);
 					runningSlot = slot;
 					runningAction = action;
 					return;
@@ -70,7 +71,8 @@ final class ActionStarter {
 		startPrerequisiteFor(prerequisite);
 		if (prerequisiteSuccess || prerequisiteFailure) {
 			// A nested prerequisite was started and is running, or starting it failed. Either way, we cannot start the
-			// current prerequisite now.
+			// current prerequisite now. The success/failure flags can be used just as they were set by the nested
+			// prerequisite.
 			return;
 		}
 		// Any nested prerequisites are finished, so we can start the current prerequisite
