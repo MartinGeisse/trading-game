@@ -1,8 +1,12 @@
 package name.martingeisse.trading_game.game.space;
 
 import name.martingeisse.trading_game.game.EntityProvider;
+import name.martingeisse.trading_game.game.action.Action;
+import name.martingeisse.trading_game.game.action.ActionQueueEntry;
+import name.martingeisse.trading_game.game.action.actions.MoveToPositionAction;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.item.ObjectWithInventory;
+import name.martingeisse.trading_game.game.player.Player;
 
 /**
  *
@@ -51,6 +55,26 @@ public final class PlayerShip extends DynamicSpaceObject implements ObjectWithIn
 	@Override
 	public long getRadius() {
 		return 500;
+	}
+
+	@Override
+	public MovementInfo getMovementInfo() {
+		Player player = entityProvider.getPlayerByShipId(getId());
+		if (player != null) {
+			ActionQueueEntry actionQueueEntry = player.getActionQueue().getRunningEntry();
+			if (actionQueueEntry != null) {
+				Action action = actionQueueEntry.getAction();
+				if (action instanceof MoveToPositionAction) {
+					MoveToPositionAction moveToPositionAction = (MoveToPositionAction)action;
+					long destX = moveToPositionAction.getX();
+					long destY = moveToPositionAction.getY();
+					long speed = moveToPositionAction.getSpeed();
+					int remainingTime = action.getRemainingTime();
+					return new MovementInfo(destX, destY, speed, remainingTime);
+				}
+			}
+		}
+		return null;
 	}
 
 }

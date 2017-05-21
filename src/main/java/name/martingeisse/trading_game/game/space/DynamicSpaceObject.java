@@ -5,4 +5,10 @@ package name.martingeisse.trading_game.game.space;
  * objects on an overlay layer, and updated via websockets.
  */
 public abstract class DynamicSpaceObject extends SpaceObject {
+
+	/**
+	 * Returns information about the movement of this object, or null if not moving.
+	 */
+	public abstract MovementInfo getMovementInfo();
+
 }
