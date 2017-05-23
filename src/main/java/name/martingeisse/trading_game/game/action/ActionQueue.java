@@ -88,8 +88,8 @@ public final class ActionQueue {
 		ActionQueueSlotRow row = helper.fetchStartedSlot();
 		if (row != null) {
 			Action action = helper.extractAction(row);
-			action.cancel();
 			helper.deleteSlot(row);
+			action.cancel();
 		}
 	}
 

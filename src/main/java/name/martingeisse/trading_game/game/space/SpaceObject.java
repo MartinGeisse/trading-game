@@ -167,7 +167,7 @@ public abstract class SpaceObject implements PositionProvider {
 	 * @return
 	 */
 	public final Action getMoveToPositionActionFor(Player player) {
-		return new MoveToPositionAction(player, x, y);
+		return new MoveToPositionAction(player, x, y, gameEventEmitter);
 	}
 
 	public abstract long getRadius();

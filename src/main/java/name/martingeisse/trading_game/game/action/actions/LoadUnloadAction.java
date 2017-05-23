@@ -1,8 +1,10 @@
 package name.martingeisse.trading_game.game.action.actions;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import name.martingeisse.trading_game.game.action.Action;
+import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.Inventory;
 import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
@@ -20,6 +22,7 @@ public final class LoadUnloadAction extends ImmediateAction {
 	private final Type type;
 	private final ImmutableItemStack items;
 	private final int preferredSourceInventoryIndex;
+	private final GameEventEmitter gameEventEmitter;
 
 	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
 	public LoadUnloadAction(
@@ -27,7 +30,8 @@ public final class LoadUnloadAction extends ImmediateAction {
 			@JsonProperty(value = "spaceStation", required = true) SpaceStation spaceStation,
 			@JsonProperty(value = "type", required = true) Type type,
 			@JsonProperty(value = "items", required = true) ImmutableItemStack items,
-			@JsonProperty(value = "preferredSourceInventoryIndex", required = true) int preferredSourceInventoryIndex) {
+			@JsonProperty(value = "preferredSourceInventoryIndex", required = true) int preferredSourceInventoryIndex,
+			@JacksonInject GameEventEmitter gameEventEmitter) {
 		if (player == null) {
 			throw new IllegalArgumentException("player is null");
 		}
@@ -45,6 +49,7 @@ public final class LoadUnloadAction extends ImmediateAction {
 		this.type = type;
 		this.items = items;
 		this.preferredSourceInventoryIndex = preferredSourceInventoryIndex;
+		this.gameEventEmitter = gameEventEmitter;
 	}
 
 	/**
@@ -97,7 +102,7 @@ public final class LoadUnloadAction extends ImmediateAction {
 		if (GeometryUtil.isAtSamePosition(player.getShip(), spaceStation)) {
 			return null;
 		} else {
-			return new MoveToPositionAction(player, spaceStation.getX(), spaceStation.getY());
+			return new MoveToPositionAction(player, spaceStation.getX(), spaceStation.getY(), gameEventEmitter);
 		}
 	}
 

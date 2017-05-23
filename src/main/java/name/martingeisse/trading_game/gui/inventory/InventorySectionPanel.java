@@ -10,6 +10,7 @@ import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentChangedE
 import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.event.GameEventBatch;
+import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
 import name.martingeisse.trading_game.game.item.InventoryNameService;
@@ -101,7 +102,8 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 								ActionQueue actionQueue = player.getActionQueue();
 								actionQueue.cancelCurrentAction();
 								actionQueue.cancelAllPendingActions();
-								actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.LOAD, itemsToLoad, itemStackItem.getIndex()));
+								GameEventEmitter gameEventEmitter = MyWicketApplication.get().getDependency(GameEventEmitter.class);
+								actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.LOAD, itemsToLoad, itemStackItem.getIndex(), gameEventEmitter));
 							}
 						});
 						itemStackItem.add(new AjaxLink<Void>("unloadLink") {
@@ -123,7 +125,8 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 								ActionQueue actionQueue = player.getActionQueue();
 								actionQueue.cancelCurrentAction();
 								actionQueue.cancelAllPendingActions();
-								actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, itemStackItem.getIndex()));
+								GameEventEmitter gameEventEmitter = MyWicketApplication.get().getDependency(GameEventEmitter.class);
+								actionQueue.scheduleAction(new LoadUnloadAction(player, spaceStation, LoadUnloadAction.Type.UNLOAD, itemsToLoad, itemStackItem.getIndex(), gameEventEmitter));
 							}
 
 						});
