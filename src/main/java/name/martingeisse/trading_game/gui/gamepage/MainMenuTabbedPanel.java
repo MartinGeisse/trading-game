@@ -1,9 +1,14 @@
 package name.martingeisse.trading_game.gui.gamepage;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.extensions.ajax.markup.html.tabs.AjaxTabbedPanel;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.model.PropertyModel;
 
 import java.util.List;
 
@@ -14,8 +19,53 @@ class MainMenuTabbedPanel<T extends ITab> extends AjaxTabbedPanel<T> {
 
 	private final PanelHistory panelHistory = new PanelHistory();
 
+	private String feedbackText;
+
 	public MainMenuTabbedPanel(String id, List<T> tabs) {
 		super(id, tabs);
+
+		Form<?> feedbackForm = new Form<Void>("feedbackForm") {
+			@Override
+			protected void onSubmit() {
+				System.out.println("*** " + feedbackText);
+				feedbackText = null;
+			}
+		};
+		feedbackForm.add(new AjaxFormSubmitBehavior("submit") {
+
+			@Override
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+				super.updateAjaxAttributes(attributes);
+				attributes.setPreventDefault(true);
+			}
+
+			@Override
+			protected void onSubmit(AjaxRequestTarget target) {
+				super.onSubmit(target);
+				target.add(getComponent().get("text"));
+			}
+
+		});
+		feedbackForm.add(new TextArea<>("text", new PropertyModel<>(this, "feedbackText")).setOutputMarkupId(true));
+		add(feedbackForm);
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the feedbackText
+	 */
+	public String getFeedbackText() {
+		return feedbackText;
+	}
+
+	/**
+	 * Setter method.
+	 *
+	 * @param feedbackText the feedbackText
+	 */
+	public void setFeedbackText(String feedbackText) {
+		this.feedbackText = feedbackText;
 	}
 
 	public WebMarkupContainer getCurrentTab() {

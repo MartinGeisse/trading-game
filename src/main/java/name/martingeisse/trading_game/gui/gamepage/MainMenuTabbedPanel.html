@@ -7,6 +7,17 @@
             }
 
     </style>
+    <script type="text/javascript">
+        $(function() {
+            $('#feedbackForm').on('keypress', 'textarea', function(e) {
+                console.log(e);
+                if (e && e.keyCode == 13) {
+                    $('#feedbackForm').submit();
+                    $('#feedbackSentIndicator').show().delay(2000).fadeOut(500);
+                }
+            });
+        });
+    </script>
 </wicket:head>
 <body>
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
@@ -18,6 +29,13 @@
                         wicket:id="title">[[tab title]]</span></a>
             </div>
         </div>
+        <hr style="margin-top: 20px">
+        <form id="feedbackForm" wicket:id="feedbackForm">
+            <div>Feedback?</div>
+            <div><textarea wicket:id="text" style="width: 100%; margin-bottom: 3px; resize: none; background-color: #aaa; color: black; "></textarea></div>
+            <div><input type="submit" value="Send" class="btn btn-primary btn-block"></div>
+            <div id="feedbackSentIndicator" style="display: none; margin-top: 5px; ">Feedback sent.</div>
+        </form>
     </div>
     <div style="position: fixed; left: 300px; top: 0px; bottom: 0px; right: 0px; padding: 5px;">
         <div wicket:id="panel" class="tab-panel"><!-- no panel --></div>
