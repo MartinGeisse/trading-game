@@ -138,6 +138,19 @@ CREATE INDEX "MarketOrder_principalPlayerId" ON "game"."MarketOrder" ("principal
 CREATE INDEX "MarketOrder_locationSpaceObjectBaseDataId" ON "game"."MarketOrder" ("locationSpaceObjectBaseDataId");
 
 -----------------------------------------------------------------------------------------------------------------------
+-- peripherals
+-----------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE "game"."GameFeedback" (
+	"id" bigserial NOT NULL PRIMARY KEY,
+	"timestamp" timestamp with time zone NOT NULL DEFAUlT NOW(),
+	"sessionId" character varying(1000),
+	"playerId" bigint REFERENCES "game"."Player" ON DELETE SET NULL,
+	"context" jsonb NOT NULL, -- but may be JSON null to indicate no / unknown context
+	"text" text NOT NULL
+);
+
+-----------------------------------------------------------------------------------------------------------------------
 -- more foreign keys which could not be defined above due to table creation order, or because they are circular
 -----------------------------------------------------------------------------------------------------------------------
 

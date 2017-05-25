@@ -1,5 +1,9 @@
 package name.martingeisse.trading_game.gui.gamepage;
 
+import name.martingeisse.trading_game.peripherals.feedback.FeedbackContext;
+import name.martingeisse.trading_game.peripherals.feedback.SubmitFeedbackService;
+import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
+import name.martingeisse.trading_game.platform.wicket.MyWicketSession;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
@@ -27,7 +31,9 @@ class MainMenuTabbedPanel<T extends ITab> extends AjaxTabbedPanel<T> {
 		Form<?> feedbackForm = new Form<Void>("feedbackForm") {
 			@Override
 			protected void onSubmit() {
-				System.out.println("*** " + feedbackText);
+				MyWicketSession session = MyWicketSession.get();
+				FeedbackContext context = null;
+				MyWicketApplication.get().getDependency(SubmitFeedbackService.class).submitFeedback(session.getId(), session.getPlayerId(), context, feedbackText);
 				feedbackText = null;
 			}
 		};
