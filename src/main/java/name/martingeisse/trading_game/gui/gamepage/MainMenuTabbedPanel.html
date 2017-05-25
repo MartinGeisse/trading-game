@@ -11,10 +11,10 @@
     <script type="text/javascript">
         $(function() {
             $('#feedbackForm').on('keypress', 'textarea', function(e) {
-                console.log(e);
                 if (e && e.keyCode == 13) {
                     $('#feedbackForm').submit();
                     $('#feedbackSentIndicator').show().delay(2000).fadeOut(500);
+                    return false;
                 }
             });
         });
