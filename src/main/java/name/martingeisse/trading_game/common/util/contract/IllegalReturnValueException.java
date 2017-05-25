@@ -23,6 +23,7 @@ public class IllegalReturnValueException extends RuntimeException {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param message the exception message
 	 */
 	public IllegalReturnValueException(String message) {
@@ -31,6 +32,7 @@ public class IllegalReturnValueException extends RuntimeException {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param cause the exception that caused this exception
 	 */
 	public IllegalReturnValueException(Throwable cause) {
@@ -39,8 +41,9 @@ public class IllegalReturnValueException extends RuntimeException {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param message the exception message
-	 * @param cause the exception that caused this exception
+	 * @param cause   the exception that caused this exception
 	 */
 	public IllegalReturnValueException(String message, Throwable cause) {
 		super(message, cause);

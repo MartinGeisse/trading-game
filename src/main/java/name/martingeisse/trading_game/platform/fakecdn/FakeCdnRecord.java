@@ -33,10 +33,11 @@ public final class FakeCdnRecord {
 
 	/**
 	 * Constructor.
-	 * @param statusCode the HTTP status code
-	 * @param key the CDN storage key
+	 *
+	 * @param statusCode  the HTTP status code
+	 * @param key         the CDN storage key
 	 * @param contentType the content type
-	 * @param data the data
+	 * @param data        the data
 	 */
 	public FakeCdnRecord(final int statusCode, final String key, final String contentType, final byte[] data) {
 		this.statusCode = statusCode;
@@ -47,6 +48,7 @@ public final class FakeCdnRecord {
 
 	/**
 	 * Getter method for the statusCode.
+	 *
 	 * @return the statusCode
 	 */
 	public int getStatusCode() {
@@ -55,6 +57,7 @@ public final class FakeCdnRecord {
 
 	/**
 	 * Getter method for the key.
+	 *
 	 * @return the key
 	 */
 	public String getKey() {
@@ -63,6 +66,7 @@ public final class FakeCdnRecord {
 
 	/**
 	 * Getter method for the contentType.
+	 *
 	 * @return the contentType
 	 */
 	public String getContentType() {
@@ -71,6 +75,7 @@ public final class FakeCdnRecord {
 
 	/**
 	 * Getter method for the data.
+	 *
 	 * @return the data
 	 */
 	public byte[] getData() {

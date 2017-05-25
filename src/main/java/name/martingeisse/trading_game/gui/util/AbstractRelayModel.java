@@ -10,10 +10,10 @@ import org.apache.wicket.model.IModel;
 
 /**
  * Forwards get/set calls to another model.
- *
+ * <p>
  * Whether this model also forwards the {@link #detach()} call
  * is decided by the return value of {@link #isForwardDetachCall()}.
- *
+ * <p>
  * Note: No type checking is done by this model itself, although
  * subclasses might add type checking.
  *

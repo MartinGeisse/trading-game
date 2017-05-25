@@ -65,7 +65,7 @@ public final class PlayerShip extends DynamicSpaceObject implements ObjectWithIn
 			if (actionQueueEntry != null) {
 				Action action = actionQueueEntry.getAction();
 				if (action instanceof MoveToPositionAction) {
-					MoveToPositionAction moveToPositionAction = (MoveToPositionAction)action;
+					MoveToPositionAction moveToPositionAction = (MoveToPositionAction) action;
 					// this check ensures that no animation is sent to the browser when the ship reaches its destination,
 					// since it's the last position update being sent, but movement has not officially finished yet
 					if (!moveToPositionAction.isFinishing()) {

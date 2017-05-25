@@ -27,7 +27,8 @@ public class DependencySetModel<T> extends AbstractReadOnlyModel<Set<T>> {
 
 	/**
 	 * Constructor.
-	 * @param type the dependency type
+	 *
+	 * @param type   the dependency type
 	 * @param filter the filter to use, or null to accept all dependency objects
 	 */
 	public DependencySetModel(final Class<T> type, SerializablePredicate<? super T> filter) {
@@ -37,6 +38,7 @@ public class DependencySetModel<T> extends AbstractReadOnlyModel<Set<T>> {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param type the dependency type
 	 */
 	public DependencySetModel(final Class<T> type) {

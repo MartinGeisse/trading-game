@@ -27,6 +27,7 @@ public final class PerlinNoise {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param seed the random generator seed
 	 */
 	public PerlinNoise(long seed) {
@@ -104,9 +105,10 @@ public final class PerlinNoise {
 	/**
 	 * Computes the linear interpolation between the specified start and end
 	 * values, with t giving the interpolation position in the range 0..1.
+	 *
 	 * @param start the start value
-	 * @param end the end value
-	 * @param t the interpolation position, in the range 0..1
+	 * @param end   the end value
+	 * @param t     the interpolation position, in the range 0..1
 	 * @return the interpolated value
 	 */
 	private double computeLinearInterpolation(double start, double end, double t) {

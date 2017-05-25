@@ -15,6 +15,7 @@ public class JavascriptAssemblerUtil {
 	 * Returns the argument, formatted as a Javascript identifier.
 	 * This method actually just returns the argument since identifiers
 	 * do not use any special syntax.
+	 *
 	 * @param identifier the identifier
 	 * @return the formatted identifier
 	 */
@@ -29,8 +30,9 @@ public class JavascriptAssemblerUtil {
 	 * Appends the argument, formatted as a Javascript identifier,
 	 * to the string builder. This method actually just appends
 	 * the argument since identifiers do not use any special syntax.
+	 *
 	 * @param stringBuilder the string builder
-	 * @param identifier the identifier
+	 * @param identifier    the identifier
 	 */
 	public static void appendIdentifier(StringBuilder stringBuilder, String identifier) {
 		if (stringBuilder == null) {
@@ -46,6 +48,7 @@ public class JavascriptAssemblerUtil {
 	 * Returns the argument with any characters escaped that have a
 	 * special meaning inside Javascript string literals. This allows
 	 * to use the returned string as part of such a string literal.
+	 *
 	 * @param value a string that possibly contains special characters
 	 * @return the argument with all special characters escaped
 	 */
@@ -81,6 +84,7 @@ public class JavascriptAssemblerUtil {
 	/**
 	 * Returns the argument, formatted as a Javascript string literal.
 	 * This method adds quotes and escapes all special characters.
+	 *
 	 * @param value the unformatted string literal value
 	 * @return the formatted string literal expression
 	 */
@@ -95,8 +99,9 @@ public class JavascriptAssemblerUtil {
 	 * Appends the argument, formatted as a Javascript string literal,
 	 * to the string builder. This method adds quotes and escapes all
 	 * special characters.
+	 *
 	 * @param stringBuilder the string builder
-	 * @param value the unformatted string literal value
+	 * @param value         the unformatted string literal value
 	 */
 	public static void appendStringLiteral(StringBuilder stringBuilder, String value) {
 		if (stringBuilder == null) {
@@ -110,6 +115,7 @@ public class JavascriptAssemblerUtil {
 
 	/**
 	 * Returns the argument, formatted as a Javascript boolean literal.
+	 *
 	 * @param value the value of the literal
 	 * @return the formatted literal expression
 	 */
@@ -119,8 +125,9 @@ public class JavascriptAssemblerUtil {
 
 	/**
 	 * Appends the argument, formatted as a Javascript boolean literal.
+	 *
 	 * @param stringBuilder the string builder
-	 * @param value the value of the literal
+	 * @param value         the value of the literal
 	 */
 	public static void appendBooleanLiteral(StringBuilder stringBuilder, boolean value) {
 		if (stringBuilder == null) {

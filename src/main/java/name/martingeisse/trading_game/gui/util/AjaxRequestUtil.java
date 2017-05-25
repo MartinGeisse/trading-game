@@ -33,6 +33,7 @@ public class AjaxRequestUtil {
 	/**
 	 * Obtains the {@link AjaxRequestTarget} for the current request. Returns
 	 * null for non-AJAX requests.
+	 *
 	 * @return the ART
 	 */
 	public static AjaxRequestTarget getAjaxRequestTarget() {
@@ -59,6 +60,7 @@ public class AjaxRequestUtil {
 	 * Marks components for (re-)rendering. If the current request is an AJAX
 	 * request, this adds the components to the ART. Otherwise this does nothing
 	 * since the components will be rendered anyway.
+	 *
 	 * @param components the components
 	 */
 	public static void markForRender(Component... components) {
@@ -84,6 +86,7 @@ public class AjaxRequestUtil {
 	/**
 	 * Opens a Javascript alert box with a fixed message. Does nothing visible
 	 * but logs an error in non-AJAX requests.
+	 *
 	 * @param message the message to show
 	 */
 	public static void alert(String message) {
@@ -96,6 +99,7 @@ public class AjaxRequestUtil {
 	/**
 	 * Focuses a component via Javascript. Does nothing visible
 	 * but logs an error in non-AJAX requests.
+	 *
 	 * @param component the component to focus
 	 */
 	public static void focus(Component component) {

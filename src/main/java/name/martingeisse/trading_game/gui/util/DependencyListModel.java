@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * Model for a dependency list.
- *
+ * <p>
  * This model requires a comparator to determine the list order. If
  * no comparator is specified, it will use a default comparator that
  * sorts by implementation class, but will fail with an exception if
@@ -40,9 +40,10 @@ public class DependencyListModel<T> extends AbstractReadOnlyModel<List<T>> {
 
 	/**
 	 * Constructor.
-	 * @param type the dependency type
+	 *
+	 * @param type       the dependency type
 	 * @param comparator the comparator that determines the list order
-	 * @param filter the filter to use, or null to accept all dependency objects
+	 * @param filter     the filter to use, or null to accept all dependency objects
 	 */
 	public DependencyListModel(final Class<T> type, final SerializableComparator<? super T> comparator, SerializablePredicate<? super T> filter) {
 		this.type = type;
@@ -52,7 +53,8 @@ public class DependencyListModel<T> extends AbstractReadOnlyModel<List<T>> {
 
 	/**
 	 * Constructor.
-	 * @param type the dependency type
+	 *
+	 * @param type       the dependency type
 	 * @param comparator the comparator that determines the list order
 	 */
 	public DependencyListModel(final Class<T> type, final SerializableComparator<? super T> comparator) {
@@ -61,7 +63,8 @@ public class DependencyListModel<T> extends AbstractReadOnlyModel<List<T>> {
 
 	/**
 	 * Constructor.
-	 * @param type the dependency type
+	 *
+	 * @param type   the dependency type
 	 * @param mapper a function that maps the dependency object to a comparable value
 	 * @param filter the filter to use, or null to accept all dependency objects
 	 */
@@ -71,7 +74,8 @@ public class DependencyListModel<T> extends AbstractReadOnlyModel<List<T>> {
 
 	/**
 	 * Constructor.
-	 * @param type the dependency type
+	 *
+	 * @param type   the dependency type
 	 * @param mapper a function that maps the dependency object to a comparable value
 	 */
 	public <C extends Comparable<C>> DependencyListModel(final Class<T> type, final SerializableFunction<? super T, C> mapper) {

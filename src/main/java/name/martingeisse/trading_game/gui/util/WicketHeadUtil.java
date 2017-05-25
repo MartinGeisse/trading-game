@@ -28,7 +28,7 @@ public class WicketHeadUtil {
 	 * extension appended. The reference is identified by the class's canonical name.
 	 *
 	 * @param response the header response to which the reference shall be added
-	 * @param c the class whose stylesheet shall be included
+	 * @param c        the class whose stylesheet shall be included
 	 */
 	public static void includeClassStylesheet(IHeaderResponse response, Class<?> c) {
 		response.render(CssHeaderItem.forReference(new PackageResourceReference(c, c.getSimpleName() + ".css")));
@@ -40,7 +40,7 @@ public class WicketHeadUtil {
 	 * extension appended. The reference is identified by the class's canonical name.
 	 *
 	 * @param response the header response to which the reference shall be added
-	 * @param c the class whose code shall be included
+	 * @param c        the class whose code shall be included
 	 */
 	public static void includeClassJavascript(IHeaderResponse response, Class<?> c) {
 		response.render(JavaScriptHeaderItem.forReference(new PackageResourceReference(c, c.getSimpleName() + ".js")));

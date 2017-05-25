@@ -13,7 +13,7 @@ import org.apache.wicket.model.IModel;
  * Delegates get/set calls to the model of another component.
  * The {@link #detach()} method does nothing since it expects
  * the other component to detach on its own.
- *
+ * <p>
  * Note: No type checking is done by this model.
  *
  * @param <T> the model type
@@ -27,6 +27,7 @@ public class ComponentRelayModel<T> extends AbstractRelayModel<T> {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param target the target component
 	 */
 	public ComponentRelayModel(final Component target) {

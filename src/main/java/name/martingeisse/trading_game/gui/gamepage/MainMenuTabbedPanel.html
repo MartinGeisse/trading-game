@@ -6,6 +6,7 @@
                 background-color: #80c040;
             }
 
+
     </style>
     <script type="text/javascript">
         $(function() {
@@ -17,6 +18,7 @@
                 }
             });
         });
+
     </script>
 </wicket:head>
 <body>
@@ -32,7 +34,9 @@
         <hr style="margin-top: 20px">
         <form id="feedbackForm" wicket:id="feedbackForm">
             <div>Feedback?</div>
-            <div><textarea wicket:id="text" style="width: 100%; margin-bottom: 3px; resize: none; background-color: #aaa; color: black; "></textarea></div>
+            <div><textarea wicket:id="text"
+                           style="width: 100%; margin-bottom: 3px; resize: none; background-color: #aaa; color: black; "></textarea>
+            </div>
             <div><input type="submit" value="Send" class="btn btn-primary btn-block"></div>
             <div id="feedbackSentIndicator" style="display: none; margin-top: 5px; ">Feedback sent.</div>
         </form>

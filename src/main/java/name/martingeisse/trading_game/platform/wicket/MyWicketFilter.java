@@ -23,6 +23,7 @@ public class MyWicketFilter extends Jetty9WebSocketFilter {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param applicationProvider the provider for the Wicket {@link WebApplication}
 	 */
 	@Inject
