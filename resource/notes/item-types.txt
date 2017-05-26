@@ -119,3 +119,8 @@ EO manufacturing:
 	- (cargohold optimization 2) = (interface circuit, power circuit, armor/hull tech, single-crystal superalloey i-beam)
 
 
+------------------------------------------------------------------------------------------------------------
+
+Ansatz (zeitlich nicht eingeordnet!):
+
+ItemBaseType db tabelle. ItemBaseTypeId string. ItemType jsonb. Feld baseTypeId im ItemType.

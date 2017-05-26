@@ -93,22 +93,16 @@ CREATE INDEX "Player_actionQueueId" ON "game"."Player" ("actionQueueId");
 CREATE UNIQUE INDEX "Player_loginToken" ON "game"."Player" ("loginToken");
 CREATE INDEX "Player_emailAddress" ON "game"."Player" ("emailAddress");
 
+-- note: a player has "unlocked" a skill (made available for learning) when a row for that skill is in the table
 CREATE TABLE "game"."PlayerSkill" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"playerId" bigint NOT NULL REFERENCES "game"."Player" ON DELETE CASCADE,
-	"skillType" character varying(2000) NOT NULL
-);
-CREATE INDEX "PlayerSkill_playerIdIndex" ON "game"."PlayerSkill" ("playerId");
-
-CREATE TABLE "game"."PlayerSkillLearningQueueSlot" (
-	"id" bigserial NOT NULL PRIMARY KEY,
-	"playerId" bigint NOT NULL REFERENCES "game"."Player" ON DELETE CASCADE,
-	"skillType" character varying(2000) NOT NULL,
+	"name" character varying(2000) NOT NULL,
 	"learningPoints" integer NOT NULL CHECK ("learningPoints" >= 0),
-	"learningOrderIndex" integer -- entries with learningOrderIndex null aren't actively part of the queue, but
-		-- have acquired learning points that should not be dropped
+	"learningOrderIndex" integer, -- entries with learningOrderIndex null aren't part of the queue
+	"learningFinished" boolean NOT NULL
 );
-CREATE INDEX "PlayerSkillLearningQueueSlot_playerIdIndex" ON "game"."PlayerSkillLearningQueueSlot" ("playerId");
+CREATE INDEX "PlayerSkill_mainIndex" ON "game"."PlayerSkill" ("playerId", "learningFinished", "name");
 
 CREATE TABLE "game"."CachedPlayerAttribute" (
 	"id" bigserial NOT NULL PRIMARY KEY,

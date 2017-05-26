@@ -1,0 +1,9 @@
+
+Feedback-Formular ist eingebaut.
+
+VALIDATE IDEAS!
+Feature-Requests fake-implementieren und schauen, wie viele es verwenden wollen. Baustellenschild ist aber häßlich,
+sondern lieber ein "this feature is available for early-access users only", nur dass kein einziger User ein EA-User ist.
+
+
+

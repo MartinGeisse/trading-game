@@ -1,0 +1,6 @@
+
+EO: market fee für order, sales tax wenn matched. Start je 1% (?).
+
+Order fee direkt abziehen. Bei beiden, d.h. Käufer und Verkäufer, jeweils?
+
+Sales Tax reduziert das Geld, was der Verkäufer erhält, d.h. Verkäufer trägt die sales tax.
