@@ -25,14 +25,29 @@ public class PlayerSkillRow implements Serializable {
 	private Long id;
 
 	/**
+	 * the learningFinished
+	 */
+	private Boolean learningFinished;
+
+	/**
+	 * the learningOrderIndex
+	 */
+	private Integer learningOrderIndex;
+
+	/**
+	 * the learningPoints
+	 */
+	private Integer learningPoints;
+
+	/**
+	 * the name
+	 */
+	private String name;
+
+	/**
 	 * the playerId
 	 */
 	private Long playerId;
-
-	/**
-	 * the skillType
-	 */
-	private String skillType;
 
 	/**
 	 * Getter method for the id.
@@ -53,6 +68,78 @@ public class PlayerSkillRow implements Serializable {
 	}
 
 	/**
+	 * Getter method for the learningFinished.
+	 *
+	 * @return the learningFinished
+	 */
+	public Boolean getLearningFinished() {
+		return learningFinished;
+	}
+
+	/**
+	 * Setter method for the learningFinished.
+	 *
+	 * @param learningFinished the learningFinished to set
+	 */
+	public void setLearningFinished(Boolean learningFinished) {
+		this.learningFinished = learningFinished;
+	}
+
+	/**
+	 * Getter method for the learningOrderIndex.
+	 *
+	 * @return the learningOrderIndex
+	 */
+	public Integer getLearningOrderIndex() {
+		return learningOrderIndex;
+	}
+
+	/**
+	 * Setter method for the learningOrderIndex.
+	 *
+	 * @param learningOrderIndex the learningOrderIndex to set
+	 */
+	public void setLearningOrderIndex(Integer learningOrderIndex) {
+		this.learningOrderIndex = learningOrderIndex;
+	}
+
+	/**
+	 * Getter method for the learningPoints.
+	 *
+	 * @return the learningPoints
+	 */
+	public Integer getLearningPoints() {
+		return learningPoints;
+	}
+
+	/**
+	 * Setter method for the learningPoints.
+	 *
+	 * @param learningPoints the learningPoints to set
+	 */
+	public void setLearningPoints(Integer learningPoints) {
+		this.learningPoints = learningPoints;
+	}
+
+	/**
+	 * Getter method for the name.
+	 *
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Setter method for the name.
+	 *
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
 	 * Getter method for the playerId.
 	 *
 	 * @return the playerId
@@ -68,24 +155,6 @@ public class PlayerSkillRow implements Serializable {
 	 */
 	public void setPlayerId(Long playerId) {
 		this.playerId = playerId;
-	}
-
-	/**
-	 * Getter method for the skillType.
-	 *
-	 * @return the skillType
-	 */
-	public String getSkillType() {
-		return skillType;
-	}
-
-	/**
-	 * Setter method for the skillType.
-	 *
-	 * @param skillType the skillType to set
-	 */
-	public void setSkillType(String skillType) {
-		this.skillType = skillType;
 	}
 
 	/**
@@ -109,8 +178,11 @@ public class PlayerSkillRow implements Serializable {
 		}
 		QPlayerSkillRow q = QPlayerSkillRow.PlayerSkill;
 		SQLInsertClause insert = connection.insert(q);
+		insert.set(q.learningFinished, learningFinished);
+		insert.set(q.learningOrderIndex, learningOrderIndex);
+		insert.set(q.learningPoints, learningPoints);
+		insert.set(q.name, name);
 		insert.set(q.playerId, playerId);
-		insert.set(q.skillType, skillType);
 		id = insert.executeWithKey(Long.class);
 	}
 
@@ -119,7 +191,7 @@ public class PlayerSkillRow implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "{PlayerSkillRow. id = " + id + ", playerId = " + playerId + ", skillType = " + skillType + "}";
+		return "{PlayerSkillRow. id = " + id + ", learningFinished = " + learningFinished + ", learningOrderIndex = " + learningOrderIndex + ", learningPoints = " + learningPoints + ", name = " + name + ", playerId = " + playerId + "}";
 	}
 
 }

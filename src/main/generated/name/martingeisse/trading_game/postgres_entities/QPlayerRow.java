@@ -51,8 +51,6 @@ public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 
 	public final com.querydsl.sql.ForeignKey<PlayerSkillRow> _playerSkillPlayerIdFkey = createInvForeignKey(id, "playerId");
 
-	public final com.querydsl.sql.ForeignKey<PlayerSkillLearningQueueSlotRow> _playerSkillLearningQueueSlotPlayerIdFkey = createInvForeignKey(id, "playerId");
-
 	public final com.querydsl.sql.ForeignKey<CachedPlayerAttributeRow> _cachedPlayerAttributePlayerIdFkey = createInvForeignKey(id, "playerId");
 
 	public QPlayerRow(String variable) {
