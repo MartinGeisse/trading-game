@@ -24,6 +24,9 @@ import name.martingeisse.trading_game.game.definition.GameDefinition;
  * way, there is only one game-defining class hierarchy instead of two parallel hierarchies.
  * <p>
  * BTW, standard actions could follow the same pattern by introducing a fake default skill which handles these cases.
+ * <p>
+ * Skill objects must implement equals() and hashCode() based on name equality (the name is used to identify the skill
+ * during serialization).
  */
 public interface Skill {
 

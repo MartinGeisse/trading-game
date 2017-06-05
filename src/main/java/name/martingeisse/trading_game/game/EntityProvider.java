@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.action.ActionQueue;
+import name.martingeisse.trading_game.game.definition.GameDefinition;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
 import name.martingeisse.trading_game.game.item.Inventory;
@@ -32,14 +33,16 @@ public class EntityProvider {
 	private final Provider<GameEventEmitter> gameEventEmitterProvider;
 	private final Provider<PlayerRepository> playerRepositoryProvider;
 	private final Provider<Space> spaceProvider;
+	private final Provider<GameDefinition> gameDefinitionProvider;
 
 	@Inject
-	public EntityProvider(Provider<PostgresContextService> postgresContextServiceProvider, Provider<JacksonService> jacksonServiceProvider, Provider<GameEventEmitter> gameEventEmitterProvider, Provider<PlayerRepository> playerRepositoryProvider, Provider<Space> spaceProvider) {
+	public EntityProvider(Provider<PostgresContextService> postgresContextServiceProvider, Provider<JacksonService> jacksonServiceProvider, Provider<GameEventEmitter> gameEventEmitterProvider, Provider<PlayerRepository> playerRepositoryProvider, Provider<Space> spaceProvider, Provider<GameDefinition> gameDefinitionProvider) {
 		this.postgresContextServiceProvider = postgresContextServiceProvider;
 		this.jacksonServiceProvider = jacksonServiceProvider;
 		this.gameEventEmitterProvider = gameEventEmitterProvider;
 		this.playerRepositoryProvider = playerRepositoryProvider;
 		this.spaceProvider = spaceProvider;
+		this.gameDefinitionProvider = gameDefinitionProvider;
 	}
 
 	public ActionQueue getActionQueue(long id) {
@@ -63,7 +66,7 @@ public class EntityProvider {
 	}
 
 	public PlayerSkills getPlayerSkills(long playerId) {
-		return new PlayerSkills(postgresContextServiceProvider.get(), playerId);
+		return new PlayerSkills(postgresContextServiceProvider.get(), gameDefinitionProvider.get(), playerId);
 	}
 
 	public SpaceObject getSpaceObject(long id) {

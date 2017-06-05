@@ -98,10 +98,11 @@ CREATE TABLE "game"."PlayerSkill" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"playerId" bigint NOT NULL REFERENCES "game"."Player" ON DELETE CASCADE,
 	"name" character varying(2000) NOT NULL,
-	"learningPoints" integer NOT NULL CHECK ("learningPoints" >= 0),
+	"learningPoints" integer NOT NULL DEFAULT 0 CHECK ("learningPoints" >= 0),
 	"learningOrderIndex" integer, -- entries with learningOrderIndex null aren't part of the queue
-	"learningFinished" boolean NOT NULL
+	"learningFinished" boolean NOT NULL DEFAULT false
 );
+CREATE UNIQUE INDEX "PlayerSkill_uniqueIndex" ON "game"."PlayerSkill" ("playerId", "name");
 CREATE INDEX "PlayerSkill_mainIndex" ON "game"."PlayerSkill" ("playerId", "learningFinished", "name");
 
 CREATE TABLE "game"."CachedPlayerAttribute" (

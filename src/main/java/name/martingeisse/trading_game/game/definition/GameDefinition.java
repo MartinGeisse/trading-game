@@ -12,6 +12,7 @@ import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.player.PlayerAttributeKey;
+import name.martingeisse.trading_game.game.skill.SimpleSkill;
 import name.martingeisse.trading_game.game.skill.Skill;
 
 import java.util.ArrayList;
@@ -97,20 +98,17 @@ public final class GameDefinition {
 //			new ContextFreeActionDefinition("Fell a tree", fellTreeRecipe)
 //		);
 
-		this.skills = ImmutableList.of(new Skill() {
-
-			@Override
-			public String getName() {
-				return "being cool";
-			}
-
-			@Override
-			public int getRequiredSecondsForLearning() {
-				return 10_000;
-			}
-
-		});
-
+		this.skills = ImmutableList.of(
+				new SimpleSkill("Navigation", 10_000),
+				new SimpleSkill("Manufacturing", 10_000),
+				new SimpleSkill("Industry", 10_000),
+				new SimpleSkill("Science", 10_000),
+				new SimpleSkill("Supply Chain Management", 10_000),
+				new SimpleSkill("Mining", 10_000),
+				new SimpleSkill("Industry", 10_000),
+				new SimpleSkill("Jury-rigging", 10_000),
+				new SimpleSkill("Electronics", 10_000)
+		);
 		this.redPixelItemType = redPixelItemType;
 		this.redPixelAssemblyItemType = redPixelAssemblyItemType;
 	}
