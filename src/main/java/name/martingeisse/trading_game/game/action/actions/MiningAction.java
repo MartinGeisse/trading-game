@@ -107,4 +107,9 @@ public final class MiningAction extends ContinuousAction {
 		return "mine ores from " + asteroid.getName();
 	}
 
+	@Override
+	public String getGlyphiconName() {
+		return "cog";
+	}
+
 }

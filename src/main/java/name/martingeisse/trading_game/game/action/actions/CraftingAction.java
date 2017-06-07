@@ -65,6 +65,11 @@ public final class CraftingAction extends FixedEffortAction {
 		return (customName == null ? getDefaultText(recipe) : customName);
 	}
 
+	@Override
+	public String getGlyphiconName() {
+		return "wrench";
+	}
+
 	/**
 	 * Builds the default name for a crafting action with the specified recipe.
 	 */

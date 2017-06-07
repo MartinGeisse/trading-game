@@ -69,4 +69,9 @@ public final class EquipAction extends ImmediateAction {
 		return "equip " + itemType.getName();
 	}
 
+	@Override
+	public String getGlyphiconName() {
+		return "wrench";
+	}
+
 }

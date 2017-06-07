@@ -65,4 +65,9 @@ public final class UnequipAction extends ImmediateAction {
 		return "unequip item at slot " + slotType;
 	}
 
+	@Override
+	public String getGlyphiconName() {
+		return "eject";
+	}
+
 }

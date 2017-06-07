@@ -15,6 +15,7 @@ import name.martingeisse.trading_game.gui.map.leaflet.LeafletD3SvgOverlay;
 import name.martingeisse.trading_game.gui.map.leaflet.LeafletEdgeBuffer;
 import name.martingeisse.trading_game.gui.websockets.GuiGameEventListener;
 import name.martingeisse.trading_game.platform.wicket.AbstractPanel;
+import name.martingeisse.wicket.bootstrap.GlyphiconComponent;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -25,6 +26,7 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -91,10 +93,14 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 						actionQueue.scheduleAction(actionItem.getModelObject());
 					}
 				};
-				link.add(new Label("name", actionItem.getModelObject().getName()));
+				link.add(new GlyphiconComponent("icon", actionItem.getModel()) {
+					@Override
+					protected String getGlyphiconIdentifier() {
+						return ((Action)getDefaultModelObject()).getGlyphiconName();
+					}
+				});
 				actionItem.add(link);
 			}
-
 		});
 		propertiesBox.add(new GuiNavigationLink("spaceObjectDetailLink") {
 			@Override

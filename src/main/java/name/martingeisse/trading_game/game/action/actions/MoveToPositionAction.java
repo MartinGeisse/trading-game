@@ -107,4 +107,9 @@ public final class MoveToPositionAction extends ContinuousAction implements Posi
 		return "move " + player.getShip().getName() + " to " + x + ", " + y;
 	}
 
+	@Override
+	public String getGlyphiconName() {
+		return "forward";
+	}
+
 }

@@ -133,6 +133,11 @@ public final class LoadUnloadAction extends ImmediateAction {
 		return type.name().toLowerCase() + " " + items + " at " + spaceStation.getName();
 	}
 
+	@Override
+	public String getGlyphiconName() {
+		return (type == Type.LOAD ? "save" : "open");
+	}
+
 	public enum Type {
 		LOAD, UNLOAD;
 	}

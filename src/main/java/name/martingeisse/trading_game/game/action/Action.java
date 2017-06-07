@@ -16,6 +16,12 @@ public interface Action {
 	public String getName();
 
 	/**
+	 * @return the Glyphicon name of the action
+	 */
+	@JsonIgnore
+	public String getGlyphiconName();
+
+	/**
 	 * @return the total time needed to execute the action, or null if unknown or not applicable for this action.
 	 */
 	@JsonIgnore
