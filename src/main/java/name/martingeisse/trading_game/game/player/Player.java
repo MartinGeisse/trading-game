@@ -1,15 +1,24 @@
 package name.martingeisse.trading_game.game.player;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.querydsl.core.types.Path;
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.GameLogicException;
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
 import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
 import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.item.Inventory;
+import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.market.NotEnoughMoneyException;
+import name.martingeisse.trading_game.game.skill.PlayerSkills;
 import name.martingeisse.trading_game.game.space.PlayerShip;
+import name.martingeisse.trading_game.game.space.Space;
+import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.game.space.SpaceStation;
+import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
+import name.martingeisse.trading_game.postgres_entities.PlayerRow;
+import name.martingeisse.trading_game.postgres_entities.QCachedPlayerAttributeRow;
 import name.martingeisse.trading_game.postgres_entities.QPlayerRow;
 
 import java.util.HashMap;
@@ -21,25 +30,42 @@ import java.util.Map;
 public final class Player {
 
 	private final PlayerRepository playerRepository;
-	private final PlayerDataLink dataLink;
+	private final PostgresContextService postgresContextService;
+	private final EntityProvider entityProvider;
+	private final JacksonService jacksonService;
+	private final Space space;
+	private final long id;
+	private final long shipId;
+	private final long actionQueueId;
 
-	public Player(PlayerRepository playerRepository, PlayerDataLink dataLink) {
+	public Player(PlayerRepository playerRepository, PostgresContextService postgresContextService, EntityProvider entityProvider, JacksonService jacksonService, Space space, PlayerRow playerRow) {
 		this.playerRepository = playerRepository;
-		this.dataLink = dataLink;
+		this.postgresContextService = postgresContextService;
+		this.entityProvider = entityProvider;
+		this.jacksonService = jacksonService;
+		this.space = space;
+		this.id = playerRow.getId();
+		this.shipId = playerRow.getShipId();
+		this.actionQueueId = playerRow.getActionQueueId();
 	}
 
-	/**
-	 * Getter method.
-	 *
-	 * @return the id
-	 */
 	@JsonValue
 	public long getId() {
-		return dataLink.getId();
+		return id;
+	}
+
+	private <T> T getField(Path<T> path) {
+		QPlayerRow qp = QPlayerRow.Player;
+		return postgresContextService.select(path).from(qp).where(qp.id.eq(id)).fetchFirst();
+	}
+
+	private <T> void setField(Path<T> path, T newValue) {
+		QPlayerRow qp = QPlayerRow.Player;
+		postgresContextService.update(qp).set(path, newValue).where(qp.id.eq(id)).execute();
 	}
 
 	public String getName() {
-		return dataLink.getField(QPlayerRow.Player.name);
+		return getField(QPlayerRow.Player.name);
 	}
 
 	/**
@@ -55,7 +81,7 @@ public final class Player {
 			throw new NameAlreadyUsedException();
 		}
 		boolean updateShipName = getShip().getName().equals(generateShipName(getName()));
-		dataLink.setField(QPlayerRow.Player.name, name);
+		setField(QPlayerRow.Player.name, name);
 		if (updateShipName) {
 			getShip().setName(generateShipName(name));
 		}
@@ -66,23 +92,23 @@ public final class Player {
 	}
 
 	public String getLoginToken() {
-		return dataLink.getField(QPlayerRow.Player.loginToken);
+		return getField(QPlayerRow.Player.loginToken);
 	}
 
 	public void setLoginToken(String loginToken) {
-		dataLink.setField(QPlayerRow.Player.loginToken, loginToken);
+		setField(QPlayerRow.Player.loginToken, loginToken);
 	}
 
 	public String getEmailAddress() {
-		return dataLink.getField(QPlayerRow.Player.emailAddress);
+		return getField(QPlayerRow.Player.emailAddress);
 	}
 
 	public void setEmailAddress(String emailAddress) {
-		dataLink.setField(QPlayerRow.Player.emailAddress, emailAddress);
+		setField(QPlayerRow.Player.emailAddress, emailAddress);
 	}
 
 	public long getMoney() {
-		return dataLink.getField(QPlayerRow.Player.money);
+		return getField(QPlayerRow.Player.money);
 	}
 
 	public void addMoney(long amount) {
@@ -92,7 +118,7 @@ public final class Player {
 		if (amount == 0) {
 			return;
 		}
-		dataLink.setField(QPlayerRow.Player.money, dataLink.getField(QPlayerRow.Player.money) + amount);
+		setField(QPlayerRow.Player.money, getField(QPlayerRow.Player.money) + amount);
 	}
 
 	public void subtractMoney(long amount) throws NotEnoughMoneyException {
@@ -102,11 +128,11 @@ public final class Player {
 		if (amount == 0) {
 			return;
 		}
-		long currentMoney = dataLink.getField(QPlayerRow.Player.money);
+		long currentMoney = getField(QPlayerRow.Player.money);
 		if (amount > currentMoney) {
 			throw new NotEnoughMoneyException();
 		}
-		dataLink.setField(QPlayerRow.Player.money, currentMoney - amount);
+		setField(QPlayerRow.Player.money, currentMoney - amount);
 	}
 
 	/**
@@ -115,7 +141,7 @@ public final class Player {
 	 * @return the ship
 	 */
 	public PlayerShip getShip() {
-		return dataLink.getShip();
+		return (PlayerShip) entityProvider.getSpaceObject(shipId);
 	}
 
 	/**
@@ -133,7 +159,7 @@ public final class Player {
 	 * @return the action queue
 	 */
 	public ActionQueue getActionQueue() {
-		return dataLink.getActionQueue();
+		return entityProvider.getActionQueue(actionQueueId);
 	}
 
 	/**
@@ -142,7 +168,16 @@ public final class Player {
 	 * @return the player ship equipment
 	 */
 	public PlayerShipEquipment getEquipment() {
-		return dataLink.getEquipment();
+		return entityProvider.getPlayerShipEquipment(shipId);
+	}
+
+	/**
+	 * Getter method.
+	 *
+	 * @return the player skills
+	 */
+	public PlayerSkills getSkills() {
+		return entityProvider.getPlayerSkills(id);
 	}
 
 	/**
@@ -157,6 +192,7 @@ public final class Player {
 	 * such as skill or equipment.
 	 */
 	public void updateAttributes() {
+		QCachedPlayerAttributeRow qa = QCachedPlayerAttributeRow.CachedPlayerAttribute;
 
 		// set up base values
 		Map<PlayerAttributeKey, Integer> attributes = new HashMap<>();
@@ -173,9 +209,10 @@ public final class Player {
 
 		// update the attributes in the database
 		// TODO wrap in transaction
-		dataLink.clearCachedAttributes();
+		postgresContextService.delete(qa).where(qa.playerId.eq(id)).execute();
 		for (Map.Entry<PlayerAttributeKey, ?> entry : attributes.entrySet()) {
-			dataLink.insertCachedAttribute(entry.getKey(), entry.getValue());
+			String serializedValue = jacksonService.serialize(entry.getValue());
+			postgresContextService.insert(qa).set(qa.playerId, id).set(qa.key, entry.getKey()).set(qa.value, serializedValue).execute();
 		}
 
 	}
@@ -187,7 +224,12 @@ public final class Player {
 	 * @return the attribute value
 	 */
 	public Object getAttribute(PlayerAttributeKey key) {
-		return dataLink.getCachedAttribute(key);
+		QCachedPlayerAttributeRow qa = QCachedPlayerAttributeRow.CachedPlayerAttribute;
+		String serializedValue = postgresContextService.select(qa.value).from(qa).where(qa.playerId.eq(id), qa.key.eq(key)).fetchFirst();
+		if (serializedValue == null) {
+			throw new IllegalStateException("missing player attribute " + key + " for player ID " + id);
+		}
+		return jacksonService.deserialize(serializedValue, Object.class);
 	}
 
 	/**
@@ -211,7 +253,12 @@ public final class Player {
 
 	public SpaceStation getSpaceStationForItemLoading() {
 		PlayerShip ship = getShip();
-		return dataLink.getItemTransferSpaceStation(ship.getX(), ship.getY());
+		SpaceObject result = space.get(ship.getX(), ship.getY(), SpaceObject.ITEM_LOADING_MAX_DISTANCE, (o1, o2) -> {
+			int i1 = (o1 instanceof SpaceStation) ? 1 : 0;
+			int i2 = (o2 instanceof SpaceStation) ? 1 : 0;
+			return i1 - i2;
+		});
+		return (result instanceof SpaceStation) ? (SpaceStation) result : null;
 	}
 
 }
