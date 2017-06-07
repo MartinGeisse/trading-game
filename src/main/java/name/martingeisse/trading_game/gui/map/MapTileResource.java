@@ -21,6 +21,8 @@ import java.util.Arrays;
  */
 public class MapTileResource extends DynamicImageResource {
 
+	public static final int HEAT_MAP_ZOOM_THRESHOLD = 5;
+	public static final int ARTIFICIAL_ENLARGEMENT_ZOOM_THRESHOLD = 8;
 	private static final boolean DRAW_GRID = false;
 	private static final int HEAT_MAP_RESOLUTION_SHIFT = 6;
 	private static final int HEAT_MAP_RESOLUTION = 1 << HEAT_MAP_RESOLUTION_SHIFT;
@@ -43,7 +45,7 @@ public class MapTileResource extends DynamicImageResource {
 		int x = attributes.getParameters().get("x").toInt(0);
 		int y = attributes.getParameters().get("y").toInt(0);
 		int z = attributes.getParameters().get("z").toInt(0);
-		boolean isHeatMap = (z <= MapCoordinates.HEAT_MAP_ZOOM_THRESHOLD);
+		boolean isHeatMap = (z <= HEAT_MAP_ZOOM_THRESHOLD);
 
 		// draw the image
 		BufferedImage image;
@@ -129,28 +131,41 @@ public class MapTileResource extends DynamicImageResource {
 		ImmutableList<StaticSpaceObject> spaceObjects = getRelevantStaticSpaceObjects(x, y, z);
 		g.setFont(g.getFont().deriveFont((float) (MapCoordinates.convertGameDistanceToMapDistance(5000))));
 		for (SpaceObject spaceObject : spaceObjects) {
-			draw(spaceObject, g);
+			draw(spaceObject, g, z);
 		}
 
 	}
 
-	private static void draw(SpaceObject spaceObject, Graphics2D g) {
+	// Note: for a realistic rendering, the zoom is irrelevant to the method since it is part of the Graphics2D
+	// transformation already. However, in space, a realistic rendering leaves the objects too small to be useful for
+	// a map rendering, so they are artificially enlarged (based on the current zoom level) by this method.
+	private static void draw(SpaceObject spaceObject, Graphics2D g, int zoom) {
 		double x = MapCoordinates.convertXToLongitude(spaceObject.getX());
 		double y = MapCoordinates.convertYToLatitude(spaceObject.getY());
 		// shows coordinates:
 		// g.drawString("" + spaceObject.getX() + ", " + spaceObject.getY(), (float)(x + MapCoordinates.convertGameDistanceToMapDistance(5000)), (float)y);
 		if (spaceObject instanceof Asteroid) {
 			g.setColor(Color.GRAY);
-			drawCircle(g, x, y, MapCoordinates.convertGameDistanceToMapDistance(2000));
+			drawCircle(g, x, y, MapCoordinates.convertGameDistanceToMapDistance(getMinimumObjectDisplaySize(2000, zoom)));
 		} else if (spaceObject instanceof Planet) {
 			g.setColor(Color.GRAY);
-			drawCircle(g, x, y, MapCoordinates.convertGameDistanceToMapDistance(5000));
+			drawCircle(g, x, y, MapCoordinates.convertGameDistanceToMapDistance(getMinimumObjectDisplaySize(5000, zoom)));
 		} else if (spaceObject instanceof SpaceStation) {
 			g.setColor(Color.BLUE);
-			drawBox(g, x, y, MapCoordinates.convertGameDistanceToMapDistance(500));
+			drawBox(g, x, y, MapCoordinates.convertGameDistanceToMapDistance(getMinimumObjectDisplaySize(500, zoom)));
 		} else {
 			g.setColor(Color.RED);
 			g.drawString("?", (int) x - 5, (int) y - 5);
+		}
+	}
+
+	private static long getMinimumObjectDisplaySize(long actualSize, int zoom) {
+		// TODO does not affect dynamic space objects. However, with all the performance and re-rendering problems with
+		// Leaflet maps, it might be easier to re-write the map rendering from scratch before fixing this problem
+		if (zoom > ARTIFICIAL_ENLARGEMENT_ZOOM_THRESHOLD) {
+			return actualSize;
+		} else {
+			return 5000 << (ARTIFICIAL_ENLARGEMENT_ZOOM_THRESHOLD - zoom);
 		}
 	}
 
