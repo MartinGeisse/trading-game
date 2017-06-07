@@ -127,19 +127,21 @@ public final class PlayerSkills {
 	 * Called once every second to advance game logic.
 	 */
 	public void tick() {
-//		if (skillCurrentlyBeingLearned != null) {
-//			secondsLearned++;
-//			if (secondsLearned >= skillCurrentlyBeingLearned.getRequiredSecondsForLearning()) {
-//				skills.add(skillCurrentlyBeingLearned);
-//				skillCurrentlyBeingLearned = null;
-//				secondsLearned = 0;
-//			}
-//		}
-//		if (skillCurrentlyBeingLearned == null && !learningQueue.isEmpty()) {
-//			skillCurrentlyBeingLearned = learningQueue.remove(0);
-//			secondsLearned = 0;
-//		}
+		PlayerSkillRow row = selectByLearningOrder().where(qps.learningFinished.isFalse()).fetchFirst();
+		if (row != null) {
+			Skill skill = gameDefinition.getSkillByName(row.getName());
+			if (row.getLearningPoints() == skill.getRequiredSecondsForLearning()) {
+				postgresContextService.update(qps).setNull(qps.learningOrderIndex).set(qps.learningFinished, true).where(qps.id.eq(row.getId())).execute();
+			} else {
+				postgresContextService.update(qps).set(qps.learningPoints, qps.learningPoints.add(1)).where(qps.id.eq(row.getId())).execute();
+			}
+		}
 	}
+
+
+
+
+
 //
 //	public <T extends Skill> void contribute(Class<T> skillType, Consumer<? super T> consumer) {
 //		for (Skill skill : skills) {

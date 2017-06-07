@@ -185,6 +185,7 @@ public final class Player {
 	 */
 	public void tick() {
 		getActionQueue().tick();
+		getSkills().tick();
 	}
 
 	/**
