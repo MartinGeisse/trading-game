@@ -1,0 +1,193 @@
+<html>
+<head>
+    <style type="text/css">
+
+        html, body, #map {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        #map {
+            display: block;
+        }
+
+    </style>
+    <script type="text/javascript" src="jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="jquery.mousewheel.js"></script>
+    <script type="text/javascript">
+        $(function() {
+
+
+            //
+            // public data
+            //
+
+            mapView = {
+                zoom: 1,
+                mapOriginX: 0, // the position of the map's origin on the page (NOT the other way round!)
+                mapOriginY: 0
+            };
+            mapObjects = [];
+
+
+            //
+            // private global data
+            //
+
+            var canvas = $('#map')[0];
+
+
+            //
+            // drawing
+            //
+
+            (function() {
+
+                var c = canvas.getContext('2d');
+                function redrawNow() {
+                    c.setTransform(1, 0, 0, 1, 0, 0);
+                    c.fillStyle = '#000000';
+                    c.fillRect(0, 0, canvas.width, canvas.height);
+                    c.fillStyle = '#0000ff';
+                    c.scale(mapView.zoom, mapView.zoom);
+                    c.translate(mapView.mapOriginX, mapView.mapOriginY);
+                    for (var i in mapObjects) {
+                        var o = mapObjects[i];
+                        c.beginPath();
+                        c.arc(o.x, o.y, o.r, 0, 2 * Math.PI);
+                        c.fill();
+                    }
+                }
+
+                var redrawScheduled = false;
+                function handleRedrawTimer() {
+                    redrawNow();
+                    redrawScheduled = false;
+                }
+                redrawMap = function() {
+                    if (!redrawScheduled) {
+                        setTimeout(handleRedrawTimer, 10);
+                        redrawScheduled = true;
+                    }
+                }
+
+            })();
+
+
+            //
+            // resizing support
+            //
+
+            (function() {
+
+                var resizeHandlerNesting = 1;
+
+                function handleResize() {
+                    resizeHandlerNesting--;
+                    if (resizeHandlerNesting == 0) {
+                        canvas.width = window.innerWidth;
+                        canvas.height = window.innerHeight;
+                        redrawMap();
+                    }
+                }
+
+                $(window).resize(function() {
+                    resizeHandlerNesting++;
+                    setTimeout(handleResize, 500);
+                });
+
+                handleResize();
+
+            })();
+
+
+            //
+            // zooming
+            //
+
+            (function() {
+
+                $('#map').on('mousewheel', function(event) {
+                    var amount = event.deltaY * event.deltaFactor;
+                    var factor = Math.exp(amount / 1000);
+                    mapView.zoom *= factor;
+                    var panningCorrectionFactor = (factor - 1) / mapView.zoom;
+                    mapView.mapOriginX -= panningCorrectionFactor * event.pageX;
+                    mapView.mapOriginY -= panningCorrectionFactor * event.pageY;
+                    redrawMap();
+                });
+
+            })();
+
+
+            //
+            // panning
+            //
+
+            (function() {
+
+                var dragging = false;
+                var dragStartX, dragStartY;
+
+                $('#map').on('mousemove', function(event) {
+                    if (dragging) {
+                        var zoomedPanningFactor = 1 / mapView.zoom;
+                        mapView.mapOriginX += zoomedPanningFactor * (event.pageX - dragStartX);
+                        mapView.mapOriginY += zoomedPanningFactor * (event.pageY - dragStartY);
+                        dragStartX = event.pageX;
+                        dragStartY = event.pageY;
+                        redrawMap();
+                    }
+                });
+
+                $('#map').on('mousedown', function(event) {
+                    dragging = true;
+                    dragStartX = event.pageX;
+                    dragStartY = event.pageY;
+                });
+
+                $('#map').on('mouseup', function(event) {
+                    dragging = false;
+                });
+
+                $('#map').on('contextmenu', function(event) {
+                    // TODO
+                    // var $element = $(document.createElementNS("http://www.w3.org/2000/svg", "circle"));
+                    // $element.attr('cx', event.pageX / mapView.zoom - mapView.mapOriginX);
+                    // $element.attr('cy', event.pageY / mapView.zoom - mapView.mapOriginY);
+                    // $element.attr('r', '40');
+                    // $element.attr('stroke', 'blue');
+                    // $element.attr('stroke-width', '3');
+                    // $element.attr('fill', 'red');
+                    // $('#map-panning-group').append($element);
+                    return false;
+                });
+
+            })();
+
+
+            //
+            // initialization
+            //
+
+            for (i=0; i<10000; i++) {
+                mapObjects.push({
+                    x: Math.random() * 100000 - 50000,
+                    y: Math.random() * 100000 - 50000,
+                    r: Math.random() * 50 + 10
+                });
+            }
+            redrawMap();
+
+        });
+    </script>
+</head>
+<body>
+    <canvas id="map"></canvas>
+</body>
+</html>
