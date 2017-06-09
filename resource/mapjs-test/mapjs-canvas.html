@@ -28,9 +28,14 @@
             //
 
             mapView = {
+
+                // the factor by which displayed map features are larger than real map features
                 zoom: 1,
-                mapOriginX: 0, // the position of the map's origin on the page (NOT the other way round!)
+
+                // the position of the map's origin on the page measured in pixels
+                mapOriginX: 0,
                 mapOriginY: 0
+
             };
             mapObjects = [];
 
@@ -54,14 +59,21 @@
                     c.fillStyle = '#000000';
                     c.fillRect(0, 0, canvas.width, canvas.height);
                     c.fillStyle = '#0000ff';
-                    c.scale(mapView.zoom, mapView.zoom);
                     c.translate(mapView.mapOriginX, mapView.mapOriginY);
+                    c.scale(mapView.zoom, mapView.zoom);
                     for (var i in mapObjects) {
                         var o = mapObjects[i];
                         c.beginPath();
                         c.arc(o.x, o.y, o.r, 0, 2 * Math.PI);
                         c.fill();
                     }
+
+                    // TODO remove: show origin
+                    c.fillStyle = '#ff0000';
+                    c.beginPath();
+                    c.arc(0, 0, 50, 0, 2 * Math.PI);
+                    c.fill();
+
                 }
 
                 var redrawScheduled = false;
@@ -116,9 +128,8 @@
                     var amount = event.deltaY * event.deltaFactor;
                     var factor = Math.exp(amount / 1000);
                     mapView.zoom *= factor;
-                    var panningCorrectionFactor = (factor - 1) / mapView.zoom;
-                    mapView.mapOriginX -= panningCorrectionFactor * event.pageX;
-                    mapView.mapOriginY -= panningCorrectionFactor * event.pageY;
+                    mapView.mapOriginX += (event.pageX - mapView.mapOriginX) * (1 - factor);
+                    mapView.mapOriginY += (event.pageY - mapView.mapOriginY) * (1 - factor);
                     redrawMap();
                 });
 
@@ -136,9 +147,8 @@
 
                 $('#map').on('mousemove', function(event) {
                     if (dragging) {
-                        var zoomedPanningFactor = 1 / mapView.zoom;
-                        mapView.mapOriginX += zoomedPanningFactor * (event.pageX - dragStartX);
-                        mapView.mapOriginY += zoomedPanningFactor * (event.pageY - dragStartY);
+                        mapView.mapOriginX += event.pageX - dragStartX;
+                        mapView.mapOriginY += event.pageY - dragStartY;
                         dragStartX = event.pageX;
                         dragStartY = event.pageY;
                         redrawMap();
