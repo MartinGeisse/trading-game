@@ -19,103 +19,21 @@
     </style>
     <script type="text/javascript" src="jquery-3.2.1.js"></script>
     <script type="text/javascript" src="jquery.mousewheel.js"></script>
+    <script type="text/javascript" src="general.js"></script>
+    <script type="text/javascript" src="map.js"></script>
     <script type="text/javascript">
         $(function() {
 
-
             //
-            // public data
-            //
-
-            mapView = {
-
-                // the factor by which displayed map features are larger than real map features
-                zoom: 1,
-
-                // the position of the map's origin on the page measured in pixels
-                mapOriginX: 0,
-                mapOriginY: 0
-
-            };
-            mapObjects = [];
-
-
-            //
-            // private global data
+            // create the map
             //
 
-            var canvas = $('#map')[0];
-
-
-            //
-            // drawing
-            //
-
-            (function() {
-
-                var c = canvas.getContext('2d');
-                function redrawNow() {
-                    c.setTransform(1, 0, 0, 1, 0, 0);
-                    c.fillStyle = '#000000';
-                    c.fillRect(0, 0, canvas.width, canvas.height);
-                    c.fillStyle = '#0000ff';
-                    c.translate(mapView.mapOriginX, mapView.mapOriginY);
-                    c.scale(mapView.zoom, mapView.zoom);
-                    for (var i in mapObjects) {
-                        var o = mapObjects[i];
-                        c.beginPath();
-                        c.arc(o.x, o.y, o.r, 0, 2 * Math.PI);
-                        c.fill();
-                    }
-
-                    // TODO remove: show origin
-                    c.fillStyle = '#ff0000';
-                    c.beginPath();
-                    c.arc(0, 0, 50, 0, 2 * Math.PI);
-                    c.fill();
-
-                }
-
-                var redrawScheduled = false;
-                function handleRedrawTimer() {
-                    redrawNow();
-                    redrawScheduled = false;
-                }
-                redrawMap = function() {
-                    if (!redrawScheduled) {
-                        setTimeout(handleRedrawTimer, 10);
-                        redrawScheduled = true;
-                    }
-                }
-
-            })();
-
-
-            //
-            // resizing support
-            //
-
-            (function() {
-
-                var resizeHandlerNesting = 1;
-
-                function handleResize() {
-                    resizeHandlerNesting--;
-                    if (resizeHandlerNesting == 0) {
-                        canvas.width = window.innerWidth;
-                        canvas.height = window.innerHeight;
-                        redrawMap();
-                    }
-                }
-
-                $(window).resize(function() {
-                    resizeHandlerNesting++;
-                    setTimeout(handleResize, 500);
-                });
-
-                handleResize();
-
-            })();
+            map = new AwesomeMap.Map($('#map')[0]);
+            map.layers[0] = new AwesomeMap.Layer();
+            map.installResizer(function(canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
 
 
             //
@@ -125,12 +43,8 @@
             (function() {
 
                 $('#map').on('mousewheel', function(event) {
-                    var amount = event.deltaY * event.deltaFactor;
-                    var factor = Math.exp(amount / 1000);
-                    mapView.zoom *= factor;
-                    mapView.mapOriginX += (event.pageX - mapView.mapOriginX) * (1 - factor);
-                    mapView.mapOriginY += (event.pageY - mapView.mapOriginY) * (1 - factor);
-                    redrawMap();
+                    var factor = Math.exp(event.deltaY * event.deltaFactor / 1000);
+                    map.viewport.zoomAtPixelPosition(event.pageX, event.pageY, factor);
                 });
 
             })();
@@ -142,34 +56,16 @@
 
             (function() {
 
-                var dragging = false;
-                var dragStartX, dragStartY;
-
-                $('#map').on('mousemove', function(event) {
-                    if (dragging) {
-                        mapView.mapOriginX += event.pageX - dragStartX;
-                        mapView.mapOriginY += event.pageY - dragStartY;
-                        dragStartX = event.pageX;
-                        dragStartY = event.pageY;
-                        redrawMap();
-                    }
+                $('#map').awesomeDrag(function(dx, dy) {
+                    map.viewport.panByPixelAmount(dx, dy);
                 });
 
-                $('#map').on('mousedown', function(event) {
-                    dragging = true;
-                    dragStartX = event.pageX;
-                    dragStartY = event.pageY;
-                });
-
-                $('#map').on('mouseup', function(event) {
-                    dragging = false;
-                });
 
                 $('#map').on('contextmenu', function(event) {
                     // TODO
                     // var $element = $(document.createElementNS("http://www.w3.org/2000/svg", "circle"));
-                    // $element.attr('cx', event.pageX / mapView.zoom - mapView.mapOriginX);
-                    // $element.attr('cy', event.pageY / mapView.zoom - mapView.mapOriginY);
+                    // $element.attr('cx', event.pageX / map.viewport.zoom - map.viewport.mapOriginX);
+                    // $element.attr('cy', event.pageY / map.viewport.zoom - map.viewport.mapOriginY);
                     // $element.attr('r', '40');
                     // $element.attr('stroke', 'blue');
                     // $element.attr('stroke-width', '3');
@@ -186,13 +82,13 @@
             //
 
             for (i=0; i<10000; i++) {
-                mapObjects.push({
+                map.layers[0].objects.push({
                     x: Math.random() * 100000 - 50000,
                     y: Math.random() * 100000 - 50000,
                     r: Math.random() * 50 + 10
                 });
             }
-            redrawMap();
+            map.render();
 
         });
     </script>
