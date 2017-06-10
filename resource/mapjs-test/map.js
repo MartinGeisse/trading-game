@@ -27,6 +27,17 @@ AwesomeMap = {
 				context.scale(this.zoom, this.zoom);
 			},
 
+			applyToContextReverse: function(context) {
+				context.scale(1.0 / this.zoom, 1.0 / this.zoom);
+				context.translate(-this.mapOriginX, -this.mapOriginY);
+			},
+
+			applyDeltaToContext: function(context, baseTransform) {
+				// TODO optimize
+				this.applyToContext(context);
+				baseTransform.applyToContextReverse(context);
+			},
+
 			zoomAtPixelPosition: function(pixelX, pixelY, factor) {
 				this.zoom *= factor;
 				this.mapOriginX += (pixelX - this.mapOriginX) * (1 - factor);
@@ -38,6 +49,14 @@ AwesomeMap = {
 				this.mapOriginX += pixelDeltaX;
 				this.mapOriginY += pixelDeltaY;
 				this.drawCallback();
+			},
+
+			cloneForTransformation: function() {
+				var clone = new AwesomeMap.Viewport();
+				clone.zoom = this.zoom;
+				clone.mapOriginX = this.mapOriginX;
+				clone.mapOriginY = this.mapOriginY;
+				return clone;
 			},
 
 		};
@@ -53,12 +72,11 @@ AwesomeMap = {
 
 		function constructor() {
 			this.objects = [];
-			this.renderer = function(obj) {};
 		}
 
 		constructor.prototype = {
 
-			render: function(context) {
+			render: function(context, viewport) {
 				context.beginPath();
 				for (var i in this.objects) {
 					var o = this.objects[i];
@@ -108,7 +126,7 @@ AwesomeMap = {
 					context.fillStyle = '#0000ff';
 					map.viewport.applyToContext(context);
 					for (var i in this.layers) {
-						this.layers[i].render(context);
+						this.layers[i].render(context, map.viewport);
 					}
 
 					// TODO remove: show origin

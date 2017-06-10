@@ -81,13 +81,75 @@
             // initialization
             //
 
-            for (i=0; i<10000; i++) {
+            for (i=0; i<100000; i++) {
                 map.layers[0].objects.push({
                     x: Math.random() * 100000 - 50000,
                     y: Math.random() * 100000 - 50000,
-                    r: Math.random() * 50 + 10
+                    r: Math.random() * 50 + 100
                 });
             }
+
+            // TODO optimization test
+            if (true) {
+                var oldLayer0 = map.layers[0];
+                var bufferCanvas = null;
+                var bufferContext = null;
+                var bufferCounter = 0;
+                var bufferTransformation = null;
+                map.layers[0] = {
+                    render: function(context, viewport) {
+
+                        // first, simple optimization: rate-limit the actual drawing and just pan/zoom and old rendering
+                        // in between.
+                        // result: not really good because the re-rendering doesn't happen in the background, so when
+                        // it happens there are noticeable stops.
+                        // Web workers won't help: A WW could filter the visible set, but if the visible set is large,
+                        // all those objects must still be rendered (in the main thread).
+                        //
+                        // Solution to this problem: Build an offscreen canvas in the worker and transfer image data
+                        // as in https://stackoverflow.com/questions/1864756/web-workers-and-canvas
+                        //
+
+                        // initialization
+                        if (!bufferCanvas) {
+                            bufferCanvas = document.createElement('canvas');
+                            bufferCanvas.width = context.canvas.width;
+                            bufferCanvas.height = context.canvas.height;
+                            bufferContext = bufferCanvas.getContext('2d');
+                        }
+
+                        // rendering
+                        if (bufferCounter < 1) {
+                            bufferCounter = 10;
+
+                            // clear buffer to transparent
+                            bufferContext.setTransform(1, 0, 0, 1, 0, 0);
+                            bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
+
+                            // render to buffer
+                            bufferContext.fillStyle = '#0000ff';
+                            bufferContext.setTransform(1, 0, 0, 1, 0, 0);
+                            viewport.applyToContext(bufferContext);
+                            oldLayer0.render(bufferContext, viewport);
+
+                            // remember the current transformation to compute deltas later
+                            bufferTransformation = viewport.cloneForTransformation();
+
+                        } else {
+                            bufferCounter--;
+                        }
+
+                        // render the buffer onto the real canvas
+                        context.save();
+                        context.setTransform(1, 0, 0, 1, 0, 0);
+                        viewport.applyDeltaToContext(context, bufferTransformation);
+                        context.drawImage(bufferCanvas, 0, 0);
+                        context.restore();
+
+                    }
+                };
+            }
+
             map.render();
 
         });

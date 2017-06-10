@@ -1,0 +1,19 @@
+
+
+Problem:
+- großer zoom level: viele objekte sind undsichtbar. potentially visible set würde hier was bringen.
+- kleiner zoom level: viele objekte sind sichtbar. "potentially visible set" bringt hier nix, weil das zu viele
+	Objekte betrifft.
+
+Ansatz: PVS + pre-rendering.
+- erzeuge Canvas, der größer ist als der Bildschirm
+- bei Panning kann dieser verschoben werden
+- beim verlassen kann ein PVS benutzt werden, um den Hilfs-Canvas neu zu rendern.
+
+Ansatz: grouped / hierarchical pre-rendering
+- Gruppen von Objekten werden pre-rendered
+- Supergruppen werden aus Gruppen pre-rendered
+- beim panning müssen nur die obersten supergruppen neu gerendert werden
+- die gruppierung kann serverseitig vorberechnet werden
+- Zusätzlich können Objekte, die weit außerhalb des Bildschirms liegen, weggelassen werden. Das würde aber bedeuten,
+	dass die Supergruppen ihren Inhalt laufend ändern, was komplizierter ist.
