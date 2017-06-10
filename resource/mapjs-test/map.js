@@ -59,12 +59,13 @@ AwesomeMap = {
 		constructor.prototype = {
 
 			render: function(context) {
+				context.beginPath();
 				for (var i in this.objects) {
 					var o = this.objects[i];
-					context.beginPath();
+					context.moveTo(o.x + o.r, o.y);
 					context.arc(o.x, o.y, o.r, 0, 2 * Math.PI);
-					context.fill();
 				}
+				context.fill();
 			},
 
 		};
