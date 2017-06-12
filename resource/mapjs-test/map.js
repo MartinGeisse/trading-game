@@ -112,7 +112,15 @@ AwesomeMap = {
 
 		constructor.prototype = {
 
+			//
+			// Renders this layer.
+			//
+			// Expects the context's transformation to be the identity. Calling this method is surrounded by
+			// context.save() / context.restore() to limit the effect of state changes. This method must return with
+			// the state stack at the same size as when it is called.
+			//
 			render: function(context, viewport) {
+				viewport.applyToContext(context);
 				context.beginPath();
 				for (var i in this.objects) {
 					var o = this.objects[i];
@@ -160,9 +168,10 @@ AwesomeMap = {
 
 					// space objects
 					context.fillStyle = '#0000ff';
-					map.viewport.applyToContext(context);
 					for (var i in this.layers) {
+						context.save();
 						this.layers[i].render(context, map.viewport);
+						context.restore();
 					}
 
 					// TODO remove: show origin
