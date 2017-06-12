@@ -60,17 +60,15 @@
                     map.viewport.panByPixelAmount(dx, dy);
                 });
 
-
                 $('#map').on('contextmenu', function(event) {
-                    // TODO
-                    // var $element = $(document.createElementNS("http://www.w3.org/2000/svg", "circle"));
-                    // $element.attr('cx', event.pageX / map.viewport.zoom - map.viewport.mapOriginX);
-                    // $element.attr('cy', event.pageY / map.viewport.zoom - map.viewport.mapOriginY);
-                    // $element.attr('r', '40');
-                    // $element.attr('stroke', 'blue');
-                    // $element.attr('stroke-width', '3');
-                    // $element.attr('fill', 'red');
-                    // $('#map-panning-group').append($element);
+                    var screenPoint = {x: event.pageX, y: event.pageY};
+                    var mapPoint = map.viewport.untransform(screenPoint);
+                    map.layers[0].objects.push({
+                        x: mapPoint.x,
+                        y: mapPoint.y,
+                        r: 100
+                    });
+                    map.render();
                     return false;
                 });
 
@@ -81,7 +79,7 @@
             // initialization
             //
 
-            for (i=0; i<100000; i++) {
+            for (i=0; i<10000; i++) {
                 map.layers[0].objects.push({
                     x: Math.random() * 100000 - 50000,
                     y: Math.random() * 100000 - 50000,
@@ -90,7 +88,7 @@
             }
 
             // TODO optimization test
-            if (true) {
+            if (false) {
                 var oldLayer0 = map.layers[0];
                 var bufferCanvas = null;
                 var bufferContext = null;

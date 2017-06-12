@@ -38,6 +38,20 @@ AwesomeMap = {
 				baseTransform.applyToContextReverse(context);
 			},
 
+			transform: function(point) {
+				return {
+					x: this.zoom * point.x + this.mapOriginX,
+					y: this.zoom * point.y + this.mapOriginY,
+				};
+			},
+
+			untransform: function(point) {
+				return {
+					x: (point.x - this.mapOriginX) / this.zoom,
+					y: (point.y - this.mapOriginY) / this.zoom,
+				};
+			},
+
 			zoomAtPixelPosition: function(pixelX, pixelY, factor) {
 				this.zoom *= factor;
 				this.mapOriginX += (pixelX - this.mapOriginX) * (1 - factor);
