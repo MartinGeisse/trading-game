@@ -108,6 +108,7 @@ AwesomeMap = {
 
 		function constructor() {
 			this.objects = [];
+			this.renderer = function(context, object) {};
 		}
 
 		constructor.prototype = {
@@ -121,6 +122,13 @@ AwesomeMap = {
 			//
 			render: function(context, viewport) {
 				viewport.applyToContext(context);
+				for (var i in this.objects) {
+					this.renderer(context, this.objects[i]);
+				}
+
+				/*
+				TODO this code renders faster but cannot handle custom renderers yet!
+
 				context.beginPath();
 				for (var i in this.objects) {
 					var o = this.objects[i];
@@ -128,6 +136,8 @@ AwesomeMap = {
 					context.arc(o.x, o.y, o.r, 0, 2 * Math.PI);
 				}
 				context.fill();
+				*/
+
 			},
 
 		};
@@ -175,6 +185,7 @@ AwesomeMap = {
 					}
 
 					// TODO remove: show origin
+					map.viewport.applyToContext(context);
 					context.fillStyle = '#ff0000';
 					context.beginPath();
 					context.arc(0, 0, 50, 0, 2 * Math.PI);

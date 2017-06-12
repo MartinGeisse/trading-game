@@ -30,6 +30,11 @@
 
             map = new AwesomeMap.Map($('#map')[0]);
             map.layers[0] = new AwesomeMap.Layer();
+            map.layers[0].renderer = function(context, object) {
+				context.beginPath();
+				context.arc(object.x, object.y, object.r, 0, 2 * Math.PI);
+				context.fill();
+			};
             map.installResizer(function(canvas) {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
