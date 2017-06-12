@@ -172,7 +172,8 @@
                 dynamicSpaceObjectsOverlay.draw();
             }, 100);
 
-            // clicking selects an object. Finding the object is done on the server.
+            // clicking selects an object. Finding the object is done on the server -- this needs the current zoom
+            // level to determine the search radius.
             leafletMap.on('click', function(e) {
                 sendMapClickCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom());
             });
