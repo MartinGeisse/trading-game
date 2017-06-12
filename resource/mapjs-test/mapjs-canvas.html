@@ -62,7 +62,7 @@
 
                 $('#map').on('contextmenu', function(event) {
                     var screenPoint = {x: event.pageX, y: event.pageY};
-                    var mapPoint = map.viewport.untransform(screenPoint);
+                    var mapPoint = map.viewport.untransformPoint(screenPoint);
                     map.layers[0].objects.push({
                         x: mapPoint.x,
                         y: mapPoint.y,

@@ -1,0 +1,9 @@
+
+Things needed to use my own map implementation in the game:
+- custom object renderers
+- hybrid radius circle (A map coords + B pixel coords)
+
+Umsetzung:
+- thee layers: static obj, dynamic obj, selection indicator
+
+

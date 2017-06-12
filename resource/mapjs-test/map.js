@@ -38,18 +38,40 @@ AwesomeMap = {
 				baseTransform.applyToContextReverse(context);
 			},
 
-			transform: function(point) {
+			transformPoint: function(point) {
 				return {
 					x: this.zoom * point.x + this.mapOriginX,
 					y: this.zoom * point.y + this.mapOriginY,
 				};
 			},
 
-			untransform: function(point) {
+			transformVector: function(vector) {
+				return {
+					x: this.zoom * vector.x,
+					y: this.zoom * vector.y,
+				};
+			},
+
+			transformDistance: function(distance) {
+				return this.zoom * distance;
+			},
+
+			untransformPoint: function(point) {
 				return {
 					x: (point.x - this.mapOriginX) / this.zoom,
 					y: (point.y - this.mapOriginY) / this.zoom,
 				};
+			},
+
+			untransformVector: function(vector) {
+				return {
+					x: vector.x / this.zoom,
+					y: vector.y / this.zoom,
+				};
+			},
+
+			untransformDistance: function(distance) {
+				return distance / this.zoom;
 			},
 
 			zoomAtPixelPosition: function(pixelX, pixelY, factor) {
