@@ -164,6 +164,17 @@ AwesomeMap = {
 			this.layers = [];
 			this._renderScheduled = false;
 			this._resizeScheduled = false;
+
+			var $canvas = $(canvas);
+            $canvas.on('mousewheel', function(event) {
+                var point = getRelativePositionForMouseEvent(event);
+                var factor = Math.exp(event.deltaY * event.deltaFactor / 1000);
+                map.viewport.zoomAtPixelPosition(point.x, point.y, factor);
+                return false;
+            });
+            $canvas.awesomeDrag(function(dx, dy) {
+                map.viewport.panByPixelAmount(dx, dy);
+            });
 		}
 
 		constructor.prototype = {
