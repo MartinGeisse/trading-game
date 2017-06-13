@@ -40,9 +40,9 @@
 			};
             map.layers[0] = new AwesomeMap.Layer();
             map.layers[0].renderer = function(context, viewport, object) {
-				context.fillStyle = '#004000';
+				context.fillStyle = '#008000';
 				context.strokeStyle = '#00ff00';
-				context.lineWidth = 2;
+				context.lineWidth = map.viewport.untransformDistance(2);
 				context.beginPath();
 				context.arc(object.x, object.y, object.mapRadius + viewport.untransformDistance(object.pixelRadius), 0, 2 * Math.PI);
 				context.fill();
