@@ -108,11 +108,14 @@ AwesomeMap = {
 	//
 	// a map layer containing objects to render
 	//
+	// Note: unlike the render() method of the map and the layer, the renderer() property should assume that the
+	// viewport transformation has already been applied to the context.
+	//
 	Layer: (function() {
 
 		function constructor() {
 			this.objects = [];
-			this.renderer = function(context, object) {};
+			this.renderer = function(context, viewport, object) {};
 		}
 
 		constructor.prototype = {
@@ -127,7 +130,7 @@ AwesomeMap = {
 			render: function(context, viewport) {
 				viewport.applyToContext(context);
 				for (var i in this.objects) {
-					this.renderer(context, this.objects[i]);
+					this.renderer(context, viewport, this.objects[i]);
 				}
 
 				/*
@@ -181,7 +184,6 @@ AwesomeMap = {
 					context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
 					// space objects
-					context.fillStyle = '#0000ff';
 					for (var i in this.layers) {
 						context.save();
 						this.layers[i].render(context, map.viewport);

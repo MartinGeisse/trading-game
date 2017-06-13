@@ -30,9 +30,17 @@
 
             map = new AwesomeMap.Map($('#map')[0]);
             map.layers[0] = new AwesomeMap.Layer();
-            map.layers[0].renderer = function(context, object) {
-				context.beginPath();
+            map.layers[0].renderer = function(context, viewport, object) {
+				context.fillStyle = '#0000ff';
+                context.beginPath();
 				context.arc(object.x, object.y, object.r, 0, 2 * Math.PI);
+				context.fill();
+			};
+            map.layers[1] = new AwesomeMap.Layer();
+            map.layers[1].renderer = function(context, viewport, object) {
+				context.fillStyle = '#00ff00';
+				context.beginPath();
+				context.arc(object.x, object.y, object.mapRadius + viewport.untransformDistance(object.pixelRadius), 0, 2 * Math.PI);
 				context.fill();
 			};
             map.installResizer(function(canvas) {
@@ -69,8 +77,9 @@
 
                 $('#map').on('contextmenu', function(event) {
                     var point = map.viewport.untransformMouseEvent(event);
-                    point.r = 100;
-                    map.layers[0].objects.push(point);
+                    point.mapRadius = 500;
+                    point.pixelRadius = 50;
+                    map.layers[1].objects = [point];
                     map.render();
                     return false;
                 });
