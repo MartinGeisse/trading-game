@@ -48,8 +48,10 @@
             (function() {
 
                 $('#map').on('mousewheel', function(event) {
+                    var point = getRelativePositionForMouseEvent(event);
                     var factor = Math.exp(event.deltaY * event.deltaFactor / 1000);
-                    map.viewport.zoomAtPixelPosition(event.pageX, event.pageY, factor);
+                    map.viewport.zoomAtPixelPosition(point.x, point.y, factor);
+                    return false;
                 });
 
             })();
@@ -66,13 +68,9 @@
                 });
 
                 $('#map').on('contextmenu', function(event) {
-                    var screenPoint = {x: event.pageX, y: event.pageY};
-                    var mapPoint = map.viewport.untransformPoint(screenPoint);
-                    map.layers[0].objects.push({
-                        x: mapPoint.x,
-                        y: mapPoint.y,
-                        r: 100
-                    });
+                    var point = map.viewport.untransformMouseEvent(event);
+                    point.r = 100;
+                    map.layers[0].objects.push(point);
                     map.render();
                     return false;
                 });

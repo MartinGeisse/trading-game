@@ -56,6 +56,10 @@ AwesomeMap = {
 				return this.zoom * distance;
 			},
 
+			untransformMouseEvent: function(event) {
+				return this.untransformPoint(getRelativePositionForMouseEvent(event));
+			},
+
 			untransformPoint: function(point) {
 				return {
 					x: (point.x - this.mapOriginX) / this.zoom,

@@ -28,3 +28,14 @@ $.fn.awesomeDrag = function(handler) {
 
 };
 
+getRelativePositionForMouseEvent = function(event) {
+    return {
+        x: event.offsetX || (event.pageX - $(event.target).offset().left),
+        y: event.offsetY || (event.pageY - $(event.target).offset().top),
+    };
+    // seems to be equivalent, but I'll keep it here just in case problems pop up
+//    return {
+//        x: (event.offsetX || event.clientX - $(event.target).offset().left + window.pageXOffset),
+//        y: (event.offsetY || event.clientY - $(event.target).offset().top + window.pageYOffset),
+//    };
+};
