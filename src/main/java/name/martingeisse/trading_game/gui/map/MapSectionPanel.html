@@ -44,6 +44,7 @@
         initializeMapSectionPanel = function() {
             $(function() {
 
+                // create the map and its layers
                 map = new AwesomeMap.Map($('#map')[0]);
                 selectionIndicatorLayer = new AwesomeMap.Layer();
                 selectionIndicatorLayer.renderer = function(context, viewport, object) {
@@ -63,36 +64,27 @@
                     context.fill();
                 };
                 dynamicSpaceObjectsLayer = new AwesomeMap.Layer();
+                dynamicSpaceObjectsLayer.onBeforeRender = function(context, viewport) {
+                    this.secondsSinceLatestDynamicSpaceObjectsUpdate = (new Date().getTime() - latestDynamicSpaceObjectsUpdateTimestamp) / 1000;
+                };
                 dynamicSpaceObjectsLayer.renderer = function(context, viewport, object) {
-
-                /*
-                    var secondsSinceLatestDynamicSpaceObjectsUpdate = (new Date().getTime() - latestDynamicSpaceObjectsUpdateTimestamp) / 1000;
-                    var spaceObjectsParentSelection = createSpaceObjectsParent(selection, projection);
-                    var updateSelection = spaceObjectsParentSelection.selectAll('*').data(dynamicSpaceObjects);
-                    updateSelection.enter().append('circle')
-                        .attr("style", "stroke-width: 0px")
-                        .merge(updateSelection)
-                        .attr("r", function(d) {return d.r;})
-                        .style("fill", function(d) {return d.c;})
-                        .each(function(d, index) {
-                            if (('x2' in d) && ('y2' in d) && ('t' in d) && (d.t > 0)) {
-                                var alpha = secondsSinceLatestDynamicSpaceObjectsUpdate / d.t;
-                                if (alpha >= 1) {
-                                    d3.select(this).attr("cx", d.x2).attr("cy", d.y2);
-                                } else {
-                                    d3.select(this)
-                                        .attr("cx", alpha * d.x2 + (1 - alpha) * d.x)
-                                        .attr("cy", alpha * d.y2 + (1 - alpha) * d.y);
-                                }
-                            } else {
-                                d3.select(this).attr("cx", d.x).attr("cy", d.y);
-                            }
-                        });
-*/
-
+                    var x, y;
+                    if (('x2' in object) && ('y2' in object) && ('t' in object) && (object.t > 0)) {
+                        var alpha = this.secondsSinceLatestDynamicSpaceObjectsUpdate / object.t;
+                        if (alpha >= 1) {
+                            x = object.x2;
+                            y = object.y2;
+                        } else {
+                            x = alpha * object.x2 + (1 - alpha) * object.x);
+                            y = alpha * object.y2 + (1 - alpha) * object.y);
+                        }
+                    } else {
+                        x = object.x;
+                        y = object.y;
+                    }
                     context.fillStyle = object.c;
                     context.beginPath();
-                    context.arc(object.x, object.y, object.r, 0, 2 * Math.PI);
+                    context.arc(x, y, object.r, 0, 2 * Math.PI);
                     context.fill();
                 };
                 map.layers = [selectionIndicatorLayer, staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
@@ -101,78 +93,98 @@
                     canvas.height = window.innerHeight;
                 });
 
-
-
-
-
-
-
-                // set defaults for global variables
-                spaceObjectSelectionIndicator = null;
-                leafletMap = null;
-
-                // create a map with the tile layer coming from our server
-                leafletMap = L.map('map', {
-                    crs: L.CRS.SimpleNonInverted,
-                    fadeAnimation: false,
-                    updateInterval: 0,
-                    edgeBufferTiles: 1,
-                    // maxZoom: 4
-                });
-                L.tileLayer(mapTileBaseUrl + '?x={x}&y={y}&z={z}', {
-                    continuousWorld: true,
-                    noWrap: true,
-                    // maxZoom: 3,
-                    bounds: L.latLngBounds(L.latLng(0, 0), L.latLng(256, 256)),
-                }).addTo(leafletMap);
-
                 // re-render periodically to animate dynamic space objects
                 setInterval(function() {
                     map.render();
                 }, 100);
 
-                // clicking selects an object. Finding the object is done on the server -- this needs the current zoom
-                // level to determine the search radius.
-                leafletMap.on('click', function(e) {
-                    sendMapClickCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom());
+                // Clicking selects an object. At least for dynamic space objects, finding the target object must happen
+                // on the client-side to handle moving dynamic space objects properly -- the delay between client and
+                // server would make this unreliable. For static space objects, we can do the same for simiplicity IF
+                // we restrict the search to the visible set of space objects (otherwise it takes too long).
+                //
+                // TODO currently uses 'contextmenu' event since we cannot distinguish left-clicking from dragging yet
+                //
+                leafletMap.on('contextmenu', function(event) {
+                    selectionIndicatorLayer.objects = [];
+                    var point = map.viewport.untransformMouseEvent(event);
+                    var clickRadius = map.viewport.untransformDistance(selectionDistance);
+                    var clickTargetLayers = [staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
+                    layerLoop: for (i in clickTargetLayers) {
+                        var clickTargetLayer = clickTargetLayers[i];
+                        for (var j in clickTargetLayer.objects) {
+                            var object = clickTargetLayer.objects[j];
+                            var maxDistance = clickRadius + object.r;
+                            var dx = (point.x - object.x);
+                            if (dx > maxDistance || dx < -maxDistance) {
+                                continue;
+                            }
+                            var dy = (point.y - object.y);
+                            if (dy > maxDistance || dy < -maxDistance) {
+                                continue;
+                            }
+                            if (dx * dx + dy * dy <= maxDistance * maxDistance) {
+                                // TODO find nearest one in case of multiple matches
+                                selectionIndicatorLayer.objects = [{
+                                    x: object.x,
+                                    y: object.y,
+                                    mapRadius: object.r,
+                                    pixelRadius: selectionDistance,
+                                }];
+                                break;
+                            }
+                        }
+                    }
+                    map.render();
+                    // TODO send command to server to select this object; while that request loads, clear the property box (loading indicator!)
+                    return false;
                 });
 
                 // right-clicking (long-press on mobile) opens a context menu, but again we must first search for the object
-                leafletMap.on('contextmenu', function(e) {
-                    sendMapMenuCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom(), e.originalEvent.pageX, e.originalEvent.pageY);
-                });
+                // TODO commented because "clicking" uses a right-click. Should share code and just send a different command
+                // leafletMap.on('contextmenu', function(e) {
+                //    sendMapMenuCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom(), e.originalEvent.pageX, e.originalEvent.pageY);
+                //});
+                //$(document).on('click contextmenu', '#map, #propertiesBox', function() {
+                //    $('#context-menu').css('display', 'none');
+                //});
 
+                // TODO these functions must be replaced by a better system. The server cannot set the position for the
+                // indicator because of moving dynamic space objects, but may have to trigger setting the indicator for
+                // select-by-id (e.g. select own ship). For moving objects, it is more useful to allow a moving indicator
+                // or possibly a position-less indicator that references the selected space object. This would have to use
+                // a symbolic reference such that during server-reloads of the list of dynamic space objects, the
+                // reference doesn't get broken.
                 removeSpaceObjectSelectionIndicator = function() {
-                    if (spaceObjectSelectionIndicator != null) {
-                        spaceObjectSelectionIndicator.remove();
-                    }
+                    // selectionIndicatorLayer.objects = [];
                 };
                 changeSpaceObjectSelectionIndicator = function(lat, lng, radius) {
-                    removeSpaceObjectSelectionIndicator();
-                    spaceObjectSelectionIndicator = new HybridCircle(L.latLng(lat, lng), {latLngRadius: radius, pixelRadius: 10});
-                    spaceObjectSelectionIndicator.addTo(leafletMap);
+                    // removeSpaceObjectSelectionIndicator();
+                    // spaceObjectSelectionIndicator = new HybridCircle(L.latLng(lat, lng), {latLngRadius: radius, pixelRadius: 10});
+                    // spaceObjectSelectionIndicator.addTo(leafletMap);
                 };
 
+                // utility links
                 $(document).on('click', '#selectOwnShipLink', function() {
+                    // TODO show loading indicator in the properties panel
                     sendSelectOwnShipCommand();
                     return false;
                 });
                 $(document).on('click', '#centerSelectedObjectLink', function() {
-                    if (spaceObjectSelectionIndicator != null) {
-                        leafletMap.flyTo(spaceObjectSelectionIndicator.getLatLng());
-                    }
+                    // TODO
                     return false;
-                });
-                $(document).on('click contextmenu', '#map, #propertiesBox', function() {
-                    $('#context-menu').css('display', 'none');
                 });
 
                 // restore previous position and zoom
                 oldState = getStateCookie('mapState');
                 if (oldState) {
-                    leafletMap.setView(L.latLng(oldState.lat, oldState.lng), oldState.zoom);
+                    map.viewport.mapOriginX = oldState.mapOriginX;
+                    map.viewport.mapOriginY = oldState.mapOriginY;
+                    map.viewport.zoom = oldState.zoom;
                 } else {
-                    leafletMap.setView([128, 128], 1);
+                    map.viewport.mapOriginX = 0;
+                    map.viewport.mapOriginY = 0;
+                    map.viewport.zoom = 1;
                 }
                 oldSelectedId = getStateCookie('mapSelection');
                 if (oldSelectedId) {
@@ -180,18 +192,16 @@
                 }
 
                 // save position/zoom changes from here
-                leafletMap.on('moveend', function (e) {
-                    if (this._loaded) {
-                        setStateCookie('mapState', {
-                            lat: this.getCenter().lat,
-                            lng: this.getCenter().lng,
-                            zoom: this.getZoom()
-                        });
-                    }
-                }, leafletMap);
+                map.viewport.onChange = function() {
+                    setStateCookie('mapState', {
+                        mapOriginX: map.viewport.mapOriginX,
+                        mapOriginY: map.viewport.mapOriginY,
+                        zoom: map.viewport.zoom,
+                    });
+                };
 
+                map.render();
             });
-
         };
         updateDynamicSpaceObjectsOnMap = function() {
             latestDynamicSpaceObjectsUpdateTimestamp = new Date().getTime();

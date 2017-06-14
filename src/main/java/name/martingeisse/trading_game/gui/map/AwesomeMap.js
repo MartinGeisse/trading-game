@@ -83,12 +83,14 @@ AwesomeMap = {
 				this.mapOriginX += (pixelX - this.mapOriginX) * (1 - factor);
 				this.mapOriginY += (pixelY - this.mapOriginY) * (1 - factor);
 				this.drawCallback();
+				this.onChange();
 			},
 
 			panByPixelAmount: function(pixelDeltaX, pixelDeltaY) {
 				this.mapOriginX += pixelDeltaX;
 				this.mapOriginY += pixelDeltaY;
 				this.drawCallback();
+				this.onChange();
 			},
 
 			cloneForTransformation: function() {
@@ -97,6 +99,9 @@ AwesomeMap = {
 				clone.mapOriginX = this.mapOriginX;
 				clone.mapOriginY = this.mapOriginY;
 				return clone;
+			},
+
+			onChange: function() {
 			},
 
 		};
@@ -120,6 +125,12 @@ AwesomeMap = {
 
 		constructor.prototype = {
 
+            //
+            // Called before actually rendering this layer.
+            //
+            onBeforeRender: function(context, viewport) {
+            },
+
 			//
 			// Renders this layer.
 			//
@@ -128,6 +139,7 @@ AwesomeMap = {
 			// the state stack at the same size as when it is called.
 			//
 			render: function(context, viewport) {
+			    this.onBeforeRender(context, viewport);
 				viewport.applyToContext(context);
 				for (var i in this.objects) {
 					this.renderer(context, viewport, this.objects[i]);
