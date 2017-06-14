@@ -2,11 +2,6 @@
 <wicket:head>
     <style type="text/css">
 
-        #context-menu {
-            position: absolute;
-            display: none;
-        }
-
         #propertiesBox {
             visibility: hidden;
             position: absolute;
@@ -110,6 +105,7 @@
                     var point = map.viewport.untransformMouseEvent(event);
                     var clickRadius = map.viewport.untransformDistance(selectionDistance);
                     var clickTargetLayers = [staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
+                    var id = null;
                     layerLoop: for (i in clickTargetLayers) {
                         var clickTargetLayer = clickTargetLayers[i];
                         for (var j in clickTargetLayer.objects) {
@@ -131,23 +127,20 @@
                                     mapRadius: object.r,
                                     pixelRadius: selectionDistance,
                                 }];
+                                id = object.id;
                                 break;
                             }
                         }
                     }
                     map.render();
-                    // TODO send command to server to select this object; while that request loads, clear the property box (loading indicator!)
+                    // TODO: loading indicator
+                    if (id) {
+                        selectById(id);
+                    } else {
+                        sendUnselectCommand();
+                    }
                     return false;
                 });
-
-                // right-clicking (long-press on mobile) opens a context menu, but again we must first search for the object
-                // TODO commented because "clicking" uses a right-click. Should share code and just send a different command
-                // leafletMap.on('contextmenu', function(e) {
-                //    sendMapMenuCommand(e.latlng.lat, e.latlng.lng, leafletMap.getZoom(), e.originalEvent.pageX, e.originalEvent.pageY);
-                //});
-                //$(document).on('click contextmenu', '#map, #propertiesBox', function() {
-                //    $('#context-menu').css('display', 'none');
-                //});
 
                 // TODO these functions must be replaced by a better system. The server cannot set the position for the
                 // indicator because of moving dynamic space objects, but may have to trigger setting the indicator for
@@ -219,13 +212,6 @@
 <body>
 <wicket:panel>
     <canvas id="map" style="display: block; margin: 0px; padding: 0px; z-index: 0; "></canvas>
-    <ul class="dropdown-menu" id="context-menu">
-        <li><a href="#">Action</a></li>
-        <li><a href="#">Another action</a></li>
-        <li><a href="#">Something else here</a></li>
-        <li role="separator" class="divider"></li>
-        <li><a href="#">Separated link</a></li>
-    </ul>
     <div style="position: absolute; left: 20px; bottom: 20px; z-index: 1"><a href="#" id="selectOwnShipLink">select own
         ship</a></div>
     <div id="propertiesBox" wicket:id="propertiesBox">

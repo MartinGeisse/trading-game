@@ -129,19 +129,6 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 						builder.append("sendMapClickCommand = ").append(getCallbackFunction(parameters)).append(';');
 					}
 
-					// right-clicking (long-pressing on mobile) on the map
-					{
-						CallbackParameter[] parameters = {
-								CallbackParameter.resolved("command", "'menu'"),
-								CallbackParameter.explicit("latitude"),
-								CallbackParameter.explicit("longitude"),
-								CallbackParameter.explicit("zoom"),
-								CallbackParameter.explicit("x"),
-								CallbackParameter.explicit("y"),
-						};
-						builder.append("sendMapMenuCommand = ").append(getCallbackFunction(parameters)).append(';');
-					}
-
 					// directly selecting the player's ship
 					{
 						CallbackParameter[] parameters = {
@@ -159,6 +146,14 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 						builder.append("sendSelectByIdCommand = ").append(getCallbackFunction(parameters)).append(';');
 					}
 
+					// unselect the currently selected object
+					{
+						CallbackParameter[] parameters = {
+								CallbackParameter.resolved("command", "'unselect'")
+						};
+						builder.append("sendUnselectCommand = ").append(getCallbackFunction(parameters)).append(';');
+					}
+
 					response.render(JavaScriptHeaderItem.forScript(builder, null));
 				}
 			}
@@ -172,8 +167,8 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 				}
 				switch (command) {
 
-					case "click":
-					case "menu": {
+					// TODO remove. Searching happens on the client, followed by selectById()
+					case "click": {
 						double clickLatitude = parameters.getParameterValue("latitude").toDouble();
 						double clickLongitude = parameters.getParameterValue("longitude").toDouble();
 						int zoom = parameters.getParameterValue("zoom").toInt();
@@ -182,16 +177,9 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 						long radius = 5000 + (MapCoordinates.convertMapDistanceToGameDistance(10) >> zoom); // 5000 = object radius, plus 10 pixels extra
 						SpaceObject spaceObject = getSpace().get(clickX, clickY, radius, playerShipsLowPriorityComparator);
 						selectSpaceObject(spaceObject, target);
-						if (command.equals("menu")) {
-							int x = parameters.getParameterValue("x").toInt();
-							int y = parameters.getParameterValue("y").toInt();
-							target.appendJavaScript("$('#context-menu').css({display: 'block', left: " + x + ", top: " + y + "});");
-							// TODO open the context menu
-						}
 						break;
 					}
 
-					// TODO clicking the "select own ship" link for some reason refreshes the page
 					case "selectOwnShip": {
 						selectSpaceObject(getPlayer().getShip(), target);
 						break;
@@ -206,6 +194,10 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 						}
 						selectSpaceObject(spaceObject, target);
 						break;
+					}
+
+					case "unselect": {
+						selectSpaceObject(null, target);
 					}
 
 				}
