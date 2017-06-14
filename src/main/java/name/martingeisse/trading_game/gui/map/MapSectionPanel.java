@@ -34,6 +34,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Url;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.SharedResourceReference;
 
@@ -52,8 +53,6 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 	};
 
 	private long selectedSpaceObjectId = -1;
-
-	private transient ImmutableList<DynamicSpaceObject> dynamicSpaceObjectsToRender;
 
 	public MapSectionPanel(String id) {
 		super(id);
@@ -238,40 +237,40 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 	}
 
 	@Override
-	protected void onBeforeRender() {
-		super.onBeforeRender();
-		this.dynamicSpaceObjectsToRender = getSpace().getDynamicSpaceObjects();
-	}
-
-	@Override
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
 
-		// include JS libraries
-		Leaflet.renderHead(response);
-		D3.renderHead(response);
-		LeafletD3SvgOverlay.renderHead(response);
-		LeafletEdgeBuffer.renderHead(response);
+		// include AwesomeMap JS library
+		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(MapSectionPanel.class, "AwesomeMap.js")));
 
 		// render initialization script
 		StringBuilder builder = new StringBuilder();
-		builder.append("mapTileBaseUrl = '").append(getAbsoluteUrlFor(new SharedResourceReference("MapTile"))).append("';\n");
+		buildStaticSpaceObjectsData(builder);
 		buildDynamicSpaceObjectsData(builder);
+		builder.append("initializeMapSectionPanel();");
 		response.render(JavaScriptHeaderItem.forScript(builder.toString(), null));
-		response.render(new OnDomReadyHeaderItem("initializeMapSectionPanel();") {
-			@Override
-			public Iterable<?> getRenderTokens() {
-				return ImmutableList.of();
-			}
-		});
 
 	}
 
+	private void buildStaticSpaceObjectsData(StringBuilder builder) {
+		builder.append("staticSpaceObjects = [\n");
+		for (StaticSpaceObject spaceObject : getSpace().getStaticSpaceObjects()) {
+			builder.append("\t{id: ").append(spaceObject.getId());
+			builder.append(", x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
+			builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
+			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius()));
+			builder.append(", c: '#cccccc'");
+			builder.append("},");
+		}
+		builder.append("];\n");
+	}
+
 	private void buildDynamicSpaceObjectsData(StringBuilder builder) {
-		builder.append("dynamicSpaceObjectsData = [\n");
-		for (DynamicSpaceObject spaceObject : dynamicSpaceObjectsToRender) {
+		builder.append("dynamicSpaceObjects = [\n");
+		for (DynamicSpaceObject spaceObject : getSpace().getDynamicSpaceObjects()) {
 			MovementInfo movementInfo = spaceObject.getMovementInfo();
-			builder.append("\t{x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
+			builder.append("\t{id: ").append(spaceObject.getId());
+			builder.append(", x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
 			builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
 			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius()));
 			builder.append(", c: '").append(spaceObject instanceof PlayerShip ? "#00ffff'" : "#0000ff'");
@@ -283,10 +282,6 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 			builder.append("},");
 		}
 		builder.append("];\n");
-	}
-
-	private String getAbsoluteUrlFor(ResourceReference reference) {
-		return getRequestCycle().getUrlRenderer().renderFullUrl(Url.parse(urlFor(reference, null)));
 	}
 
 	/**
@@ -347,10 +342,9 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 
 		// react to space objects changing their position (e.g. ships)
 		if (anySpaceObjectChangedItsPosition) {
-			dynamicSpaceObjectsToRender = getSpace().getDynamicSpaceObjects(); // fetch once to protect against concurrent changes
 			StringBuilder builder = new StringBuilder();
 			buildDynamicSpaceObjectsData(builder);
-			builder.append("latestDynamicSpaceObjectsUpdateTimestamp = new Date().getTime();\n");
+			builder.append("updateDynamicSpaceObjectsOnMap();\n");
 			partialPageRequestHandler.appendJavaScript(builder.toString());
 		}
 
