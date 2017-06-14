@@ -155,6 +155,11 @@
                 // or possibly a position-less indicator that references the selected space object. This would have to use
                 // a symbolic reference such that during server-reloads of the list of dynamic space objects, the
                 // reference doesn't get broken.
+                // --
+                // alternative: the indicator gets an animation that is decoupled from the selected object, and updating
+                // the objects also updates the indicator.
+                // Would require a helper function that updates the indicator based on the *current data* of the target
+                // object but not allow to keep a reference to that mutable data since the reference gets broken on list updates
                 removeSpaceObjectSelectionIndicator = function() {
                     // selectionIndicatorLayer.objects = [];
                 };
@@ -171,7 +176,8 @@
                     return false;
                 });
                 $(document).on('click', '#centerSelectedObjectLink', function() {
-                    // TODO
+                    // TODO get selected object
+                    // map.focusMapCoordinates(selectedObject.x, selectedObject.y);
                     return false;
                 });
 

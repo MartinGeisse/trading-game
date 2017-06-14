@@ -93,6 +93,12 @@ AwesomeMap = {
 				this.onChange();
 			},
 
+            // see map.focusMapCoordinates() for a more convenient variant that focuses at the center of the canvas
+			focusMapCoordinates: function(x, y, targetPixelX, targetPixelY) {
+                this.mapOriginX = targetPixelX - this.zoom * x;
+                this.mapOriginY = targetPixelY - this.zoom * y;
+			},
+
 			cloneForTransformation: function() {
 				var clone = new AwesomeMap.Viewport();
 				clone.zoom = this.zoom;
@@ -224,7 +230,7 @@ AwesomeMap = {
 			// is rate-limited using the specified timeout (in milliseconds). Installing the resizer will call it
 			// once initially to configure the initial size.
 			//
-			installResizer(resizer, timeout) {
+			installResizer: function(resizer, timeout) {
 				var map = this;
 
                 function handleResize() {
@@ -243,6 +249,10 @@ AwesomeMap = {
 				map._resizeScheduled = true;
                 handleResize.bind(map)();
 
+			},
+
+			focusMapCoordinates: function(x, y) {
+			    this.viewport.focusMapCoordinates(x, y, this.canvas.width / 2, this.canvas.height / 2);
 			},
 
 		};
