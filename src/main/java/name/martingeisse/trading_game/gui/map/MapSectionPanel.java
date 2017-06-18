@@ -42,25 +42,10 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 	public MapSectionPanel(String id) {
 		super(id);
 
-		WebMarkupContainer propertiesBox = new WebMarkupContainer("propertiesBox") {
-			@Override
-			protected void onComponentTag(ComponentTag tag) {
-				super.onComponentTag(tag);
-				String classAttribute = tag.getAttribute("class");
-				if (classAttribute != null) {
-					classAttribute = classAttribute.replace("hasSelectedSpaceObject", "").trim();
-				} else {
-					classAttribute = "";
-				}
-				if (getSelectedSpaceObject() != null) {
-					classAttribute = classAttribute + " hasSelectedSpaceObject";
-				}
-				tag.put("class", classAttribute);
-			}
-		};
+		add(new Image("propertiesBoxLoadingIndicator", AbstractDefaultAjaxBehavior.INDICATOR));
+		WebMarkupContainer propertiesBox = new WebMarkupContainer("propertiesBox");
 		propertiesBox.setOutputMarkupId(true);
 		add(propertiesBox);
-		propertiesBox.add(new Image("loadingIndicator", AbstractDefaultAjaxBehavior.INDICATOR));
 		propertiesBox.add(new Label("name", new PropertyModel<>(this, "selectedSpaceObject.name")));
 		propertiesBox.add(new Label("type", new PropertyModel<>(this, "selectedSpaceObject.class.simpleName")));
 		propertiesBox.add(new Label("x", new PropertyModel<>(this, "selectedSpaceObject.x")));
