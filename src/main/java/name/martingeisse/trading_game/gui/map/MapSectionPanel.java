@@ -9,10 +9,6 @@ import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
 import name.martingeisse.trading_game.game.item.ObjectWithInventory;
 import name.martingeisse.trading_game.game.space.*;
 import name.martingeisse.trading_game.gui.gamepage.GuiNavigationLink;
-import name.martingeisse.trading_game.gui.map.leaflet.D3;
-import name.martingeisse.trading_game.gui.map.leaflet.Leaflet;
-import name.martingeisse.trading_game.gui.map.leaflet.LeafletD3SvgOverlay;
-import name.martingeisse.trading_game.gui.map.leaflet.LeafletEdgeBuffer;
 import name.martingeisse.trading_game.gui.websockets.GuiGameEventListener;
 import name.martingeisse.trading_game.platform.wicket.AbstractPanel;
 import name.martingeisse.wicket.bootstrap.GlyphiconComponent;
@@ -25,32 +21,20 @@ import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.IRequestParameters;
-import org.apache.wicket.request.Url;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.request.resource.SharedResourceReference;
 
-import java.util.Comparator;
 import java.util.List;
 
 /**
  * Encapsulates the actual map view and the properties box.
  */
 public class MapSectionPanel extends AbstractPanel implements GuiGameEventListener {
-
-	private static final Comparator<SpaceObject> playerShipsLowPriorityComparator = (a, b) -> {
-		boolean a2 = (a instanceof PlayerShip);
-		boolean b2 = (b instanceof PlayerShip);
-		return a2 ? (b2 ? 0 : -1) : (b2 ? 1 : 0);
-	};
 
 	private long selectedSpaceObjectId = -1;
 
@@ -118,32 +102,13 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 				{
 					StringBuilder builder = new StringBuilder();
 
-					// left-clicking on the map
-					{
-						CallbackParameter[] parameters = {
-								CallbackParameter.resolved("command", "'click'"),
-								CallbackParameter.explicit("latitude"),
-								CallbackParameter.explicit("longitude"),
-								CallbackParameter.explicit("zoom"),
-						};
-						builder.append("sendMapClickCommand = ").append(getCallbackFunction(parameters)).append(';');
-					}
-
-					// directly selecting the player's ship
-					{
-						CallbackParameter[] parameters = {
-								CallbackParameter.resolved("command", "'selectOwnShip'"),
-						};
-						builder.append("sendSelectOwnShipCommand = ").append(getCallbackFunction(parameters)).append(';');
-					}
-
 					// directly selecting any object by ID
 					{
 						CallbackParameter[] parameters = {
-								CallbackParameter.resolved("command", "'selectById'"),
+								CallbackParameter.resolved("command", "'select'"),
 								CallbackParameter.explicit("id"),
 						};
-						builder.append("sendSelectByIdCommand = ").append(getCallbackFunction(parameters)).append(';');
+						builder.append("sendSelectCommand = ").append(getCallbackFunction(parameters)).append(';');
 					}
 
 					// unselect the currently selected object
@@ -167,64 +132,30 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 				}
 				switch (command) {
 
-					// TODO remove. Searching happens on the client, followed by selectById()
-					case "click": {
-						double clickLatitude = parameters.getParameterValue("latitude").toDouble();
-						double clickLongitude = parameters.getParameterValue("longitude").toDouble();
-						int zoom = parameters.getParameterValue("zoom").toInt();
-						long clickX = MapCoordinates.convertLongitudeToX(clickLongitude);
-						long clickY = MapCoordinates.convertLatitudeToY(clickLatitude);
-						long radius = 5000 + (MapCoordinates.convertMapDistanceToGameDistance(10) >> zoom); // 5000 = object radius, plus 10 pixels extra
-						SpaceObject spaceObject = getSpace().get(clickX, clickY, radius, playerShipsLowPriorityComparator);
-						selectSpaceObject(spaceObject, target);
-						break;
-					}
-
-					case "selectOwnShip": {
-						selectSpaceObject(getPlayer().getShip(), target);
-						break;
-					}
-
-					case "selectById": {
-						SpaceObject spaceObject;
+					case "select": {
+						long idToSelect = parameters.getParameterValue("id").toLong();
 						try {
-							spaceObject = getSpace().get(parameters.getParameterValue("id").toLong());
+							if (getSpace().get(idToSelect) == null) {
+								idToSelect = -1;
+							}
 						} catch (IllegalArgumentException e) {
-							spaceObject = null;
+							idToSelect = -1;
 						}
-						selectSpaceObject(spaceObject, target);
+						selectedSpaceObjectId = idToSelect;
+						target.add(get("propertiesBox"));
 						break;
 					}
 
 					case "unselect": {
-						selectSpaceObject(null, target);
+						selectedSpaceObjectId = -1;
+						target.add(get("propertiesBox"));
+						break;
 					}
 
 				}
 			}
 
 		});
-
-	}
-
-	public void selectSpaceObject(SpaceObject spaceObject, AjaxRequestTarget target) {
-		if (spaceObject != null) {
-			selectedSpaceObjectId = spaceObject.getId();
-			double indicatorLatitude = MapCoordinates.convertYToLatitude(spaceObject.getY());
-			double indicatorLongitude = MapCoordinates.convertXToLongitude(spaceObject.getX());
-			double indicatorLatLngRadius = MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius());
-			target.appendJavaScript("changeSpaceObjectSelectionIndicator(" + indicatorLatitude + ", " + indicatorLongitude + ", " + indicatorLatLngRadius + ");");
-			target.appendJavaScript("setStateCookie('mapSelection', '" + selectedSpaceObjectId + "')");
-		} else {
-			selectedSpaceObjectId = -1;
-			target.appendJavaScript("removeSpaceObjectSelectionIndicator();");
-			target.appendJavaScript("setStateCookie('mapSelection', null)");
-		}
-
-		// extra
-		if (target != null) {
-			target.add(get("propertiesBox"));
-		}
 
 	}
 
@@ -237,6 +168,7 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 
 		// render initialization script
 		StringBuilder builder = new StringBuilder();
+		builder.append("playerShipId = ").append(getPlayer().getShip().getId()).append(";");
 		buildStaticSpaceObjectsData(builder);
 		buildDynamicSpaceObjectsData(builder);
 		builder.append("initializeMapSectionPanel();");
@@ -245,44 +177,46 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 	}
 
 	private void buildStaticSpaceObjectsData(StringBuilder builder) {
-		builder.append("staticSpaceObjects = [\n");
+		builder.append("staticSpaceObjects = {\n");
+		boolean first = true;
 		for (StaticSpaceObject spaceObject : getSpace().getStaticSpaceObjects()) {
-			builder.append("\t{id: ").append(spaceObject.getId());
-			builder.append(", x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
-			builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
-			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius()));
-			builder.append(", c: '#cccccc'");
-			builder.append("},");
+			if (first) {
+				first = false;
+			} else {
+				builder.append(',');
+			}
+			buildSpaceObjectData(builder, spaceObject, null, "#cccccc");
 		}
-		builder.append("];\n");
+		builder.append("};\n");
 	}
 
 	private void buildDynamicSpaceObjectsData(StringBuilder builder) {
-		builder.append("dynamicSpaceObjects = [\n");
+		builder.append("dynamicSpaceObjects = {\n");
+		boolean first = true;
 		for (DynamicSpaceObject spaceObject : getSpace().getDynamicSpaceObjects()) {
-			MovementInfo movementInfo = spaceObject.getMovementInfo();
-			builder.append("\t{id: ").append(spaceObject.getId());
-			builder.append(", x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
-			builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
-			builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius()));
-			builder.append(", c: '").append(spaceObject instanceof PlayerShip ? "#00ffff'" : "#0000ff'");
-			if (movementInfo != null) {
-				builder.append(", x2: ").append(MapCoordinates.convertXToLongitude(movementInfo.getDestinationX()));
-				builder.append(", y2: ").append(MapCoordinates.convertYToLatitude(movementInfo.getDestinationY()));
-				builder.append(", t: ").append(movementInfo.getRemainingTime() + 1); // usually too low by 1 due to rounding errors
+			if (first) {
+				first = false;
+			} else {
+				builder.append(',');
 			}
-			builder.append("},");
+			buildSpaceObjectData(builder, spaceObject, spaceObject.getMovementInfo(), spaceObject instanceof PlayerShip ? "#00ffff" : "#0000ff");
 		}
-		builder.append("];\n");
+		builder.append("};\n");
 	}
 
-	/**
-	 * Getter method.
-	 *
-	 * @return the selectedSpaceObjectId
-	 */
-	public long getSelectedSpaceObjectId() {
-		return selectedSpaceObjectId;
+	private void buildSpaceObjectData(StringBuilder builder, SpaceObject spaceObject, MovementInfo movementInfo, String colorCode) {
+		builder.append(spaceObject.getId()).append(": {");
+		builder.append("id: ").append(spaceObject.getId());
+		builder.append(", x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
+		builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
+		builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius()));
+		builder.append(", c: '").append(colorCode).append('\'');
+		if (movementInfo != null) {
+			builder.append(", x2: ").append(MapCoordinates.convertXToLongitude(movementInfo.getDestinationX()));
+			builder.append(", y2: ").append(MapCoordinates.convertYToLatitude(movementInfo.getDestinationY()));
+			builder.append(", t: ").append(movementInfo.getRemainingTime() + 1); // usually too low by 1 due to rounding errors
+		}
+		builder.append("}");
 	}
 
 	public SpaceObject getSelectedSpaceObject() {

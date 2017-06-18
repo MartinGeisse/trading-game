@@ -36,6 +36,8 @@
     </style>
     <script type="text/javascript">
         latestDynamicSpaceObjectsUpdateTimestamp = new Date().getTime();
+        selectedSpaceObjectId = null;
+        selectionDistance = 10;
         initializeMapSectionPanel = function() {
             $(function() {
 
@@ -93,15 +95,33 @@
                     map.render();
                 }, 100);
 
-                // Clicking selects an object. At least for dynamic space objects, finding the target object must happen
-                // on the client-side to handle moving dynamic space objects properly -- the delay between client and
-                // server would make this unreliable. For static space objects, we can do the same for simiplicity IF
-                // we restrict the search to the visible set of space objects (otherwise it takes too long).
-                //
-                // TODO currently uses 'contextmenu' event since we cannot distinguish left-clicking from dragging yet
-                //
-                leafletMap.on('contextmenu', function(event) {
-                    selectionIndicatorLayer.objects = [];
+                // object selection
+                updateSpaceObjectSelectionIndicator = function() {
+                    // TODO this is old code -- wrong for the new id-as-index system
+                    if (selectedSpaceObjectId === null) {
+                        selectionIndicatorLayer.objects = [];
+                    } else {
+                        selectionIndicatorLayer.objects = [{
+                            x: object.x,
+                            y: object.y,
+                            mapRadius: object.r,
+                            pixelRadius: selectionDistance,
+                        }];
+                    }
+                    map.render();
+                };
+                selectSpaceObject = function(id) {
+                    selectedSpaceObjectId = id;
+                    setStateCookie('mapSelection', id);
+                    if (id === null) {
+                        sendUnselectCommand();
+                    } else {
+                        sendSelectCommand(id);
+                    }
+                    updateSpaceObjectSelectionIndicator();
+                    // TODO: loading indicator in properties box
+                };
+                selectNearestSpaceObject = function(event) {
                     var point = map.viewport.untransformMouseEvent(event);
                     var clickRadius = map.viewport.untransformDistance(selectionDistance);
                     var clickTargetLayers = [staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
@@ -120,51 +140,26 @@
                                 continue;
                             }
                             if (dx * dx + dy * dy <= maxDistance * maxDistance) {
-                                // TODO find nearest one in case of multiple matches
-                                selectionIndicatorLayer.objects = [{
-                                    x: object.x,
-                                    y: object.y,
-                                    mapRadius: object.r,
-                                    pixelRadius: selectionDistance,
-                                }];
                                 id = object.id;
                                 break;
                             }
                         }
                     }
-                    map.render();
-                    // TODO: loading indicator
-                    if (id) {
-                        selectById(id);
-                    } else {
-                        sendUnselectCommand();
-                    }
+                    selectSpaceObject(id);
+                };
+
+                // clicking selects an object
+                //
+                // TODO currently uses 'contextmenu' event since we cannot distinguish left-clicking from dragging yet
+                //
+                leafletMap.on('contextmenu', function(event) {
+                    selectNearestSpaceObject(event);
                     return false;
                 });
 
-                // TODO these functions must be replaced by a better system. The server cannot set the position for the
-                // indicator because of moving dynamic space objects, but may have to trigger setting the indicator for
-                // select-by-id (e.g. select own ship). For moving objects, it is more useful to allow a moving indicator
-                // or possibly a position-less indicator that references the selected space object. This would have to use
-                // a symbolic reference such that during server-reloads of the list of dynamic space objects, the
-                // reference doesn't get broken.
-                // --
-                // alternative: the indicator gets an animation that is decoupled from the selected object, and updating
-                // the objects also updates the indicator.
-                // Would require a helper function that updates the indicator based on the *current data* of the target
-                // object but not allow to keep a reference to that mutable data since the reference gets broken on list updates
-                removeSpaceObjectSelectionIndicator = function() {
-                    // selectionIndicatorLayer.objects = [];
-                };
-                changeSpaceObjectSelectionIndicator = function(lat, lng, radius) {
-                    // removeSpaceObjectSelectionIndicator();
-                    // spaceObjectSelectionIndicator = new HybridCircle(L.latLng(lat, lng), {latLngRadius: radius, pixelRadius: 10});
-                    // spaceObjectSelectionIndicator.addTo(leafletMap);
-                };
-
                 // utility links
                 $(document).on('click', '#selectOwnShipLink', function() {
-                    // TODO show loading indicator in the properties panel
+                    selectSpaceObject(playerShipId);
                     sendSelectOwnShipCommand();
                     return false;
                 });
@@ -185,10 +180,7 @@
                     map.viewport.mapOriginY = 0;
                     map.viewport.zoom = 1;
                 }
-                oldSelectedId = getStateCookie('mapSelection');
-                if (oldSelectedId) {
-                    sendSelectByIdCommand(oldSelectedId);
-                }
+                selectSpaceObject(getStateCookie('mapSelection'));
 
                 // save position/zoom changes from here
                 map.viewport.onChange = function() {
