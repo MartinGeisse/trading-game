@@ -72,8 +72,8 @@
                             x = object.x2;
                             y = object.y2;
                         } else {
-                            x = alpha * object.x2 + (1 - alpha) * object.x);
-                            y = alpha * object.y2 + (1 - alpha) * object.y);
+                            x = alpha * object.x2 + (1 - alpha) * object.x;
+                            y = alpha * object.y2 + (1 - alpha) * object.y;
                         }
                     } else {
                         x = object.x;
@@ -96,9 +96,21 @@
                 }, 100);
 
                 // object selection
-                updateSpaceObjectSelectionIndicator = function() {
-                    // TODO this is old code -- wrong for the new id-as-index system
+                getSelectedSpaceObject = function() {
                     if (selectedSpaceObjectId === null) {
+                        return null;
+                    }
+                    if (selectedSpaceObjectId in staticSpaceObjects) {
+                        return staticSpaceObjects[selectedSpaceObjectId];
+                    }
+                    if (selectedSpaceObjectId in dynamicSpaceObjects) {
+                        return dynamicSpaceObjects[selectedSpaceObjectId];
+                    }
+                    return null;
+                };
+                updateSpaceObjectSelectionIndicator = function() {
+                    var object = getSelectedSpaceObject();
+                    if (object === null) {
                         selectionIndicatorLayer.objects = [];
                     } else {
                         selectionIndicatorLayer.objects = [{
@@ -111,6 +123,9 @@
                     map.render();
                 };
                 selectSpaceObject = function(id) {
+                    if (id !== null && (typeof id) !== 'string') {
+                        throw 'invalid id type: ' + (typeof id);
+                    }
                     selectedSpaceObjectId = id;
                     setStateCookie('mapSelection', id);
                     if (id === null) {
@@ -152,7 +167,7 @@
                 //
                 // TODO currently uses 'contextmenu' event since we cannot distinguish left-clicking from dragging yet
                 //
-                leafletMap.on('contextmenu', function(event) {
+                $('#map').on('contextmenu', function(event) {
                     selectNearestSpaceObject(event);
                     return false;
                 });
@@ -160,12 +175,12 @@
                 // utility links
                 $(document).on('click', '#selectOwnShipLink', function() {
                     selectSpaceObject(playerShipId);
-                    sendSelectOwnShipCommand();
+                    sendSelectOwnShipCommand(); // TODO
                     return false;
                 });
                 $(document).on('click', '#centerSelectedObjectLink', function() {
-                    // TODO get selected object
-                    // map.focusMapCoordinates(selectedObject.x, selectedObject.y);
+                    var object = getSelectedSpaceObject();
+                    map.focusMapCoordinates(object.x, object.y);
                     return false;
                 });
 

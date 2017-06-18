@@ -7,4 +7,11 @@ setStateCookie = function(name, value) {
 	});
 };
 
-getStateCookie = Cookies.getJSON;
+getStateCookie = function(name) {
+	var result = Cookies.getJSON(name);
+	if ((typeof result) === 'undefined') {
+		return null;
+	} else {
+		return result;
+	}
+};

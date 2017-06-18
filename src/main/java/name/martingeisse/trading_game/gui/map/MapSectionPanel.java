@@ -164,11 +164,12 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 		super.renderHead(response);
 
 		// include AwesomeMap JS library
+		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(MapSectionPanel.class, "general.js")));
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(MapSectionPanel.class, "AwesomeMap.js")));
 
 		// render initialization script
 		StringBuilder builder = new StringBuilder();
-		builder.append("playerShipId = ").append(getPlayer().getShip().getId()).append(";");
+		builder.append("playerShipId = '").append(getPlayer().getShip().getId()).append("';");
 		buildStaticSpaceObjectsData(builder);
 		buildDynamicSpaceObjectsData(builder);
 		builder.append("initializeMapSectionPanel();");
@@ -205,8 +206,8 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 	}
 
 	private void buildSpaceObjectData(StringBuilder builder, SpaceObject spaceObject, MovementInfo movementInfo, String colorCode) {
-		builder.append(spaceObject.getId()).append(": {");
-		builder.append("id: ").append(spaceObject.getId());
+		builder.append('\'').append(spaceObject.getId()).append("': {");
+		builder.append("id: '").append(spaceObject.getId()).append('\'');
 		builder.append(", x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
 		builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
 		builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius()));

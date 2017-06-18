@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- *
+ * TODO remove once all the rendering has been implemented client-side
  */
 public class MapTileResource extends DynamicImageResource {
 

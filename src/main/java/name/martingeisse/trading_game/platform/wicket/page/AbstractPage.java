@@ -65,6 +65,7 @@ public class AbstractPage extends WebPage {
 		response.render(new PriorityHeaderItem(CssHeaderItem.forReference(new CssResourceReference(AbstractPage.class, "common.css"))));
 		response.render(new PriorityHeaderItem(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(AbstractPage.class, "bootstrap.js"))));
 		response.render(new PriorityHeaderItem(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(AbstractPage.class, "jscookie.js"))));
+		response.render(new PriorityHeaderItem(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(AbstractPage.class, "jquery.mousewheel.js"))));
 		response.render(new PriorityHeaderItem(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(AbstractPage.class, "AbstractPage.js"))));
 	}
 
