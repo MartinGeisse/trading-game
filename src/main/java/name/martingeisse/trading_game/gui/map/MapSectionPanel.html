@@ -86,9 +86,12 @@
                 };
                 map.layers = [selectionIndicatorLayer, staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
                 map.installResizer(function(canvas) {
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
+                    var $container = $(canvas).parent();
+                    canvas.width = $container.width();
+                    canvas.height = $container.height();
                 });
+                staticSpaceObjectsLayer.objects = staticSpaceObjects;
+                dynamicSpaceObjectsLayer.objects = dynamicSpaceObjects;
 
                 // re-render periodically to animate dynamic space objects
                 setInterval(function() {
@@ -124,10 +127,10 @@
                 };
                 selectSpaceObject = function(id) {
                     if (id !== null && (typeof id) !== 'string') {
-                        throw 'invalid id type: ' + (typeof id);
+                        throw 'invalid id type: ' + (typeof id) + ' in ' + id;
                     }
                     selectedSpaceObjectId = id;
-                    setStateCookie('mapSelection', id);
+                    setStateCookie('mapSelection', {id: id});
                     if (id === null) {
                         sendUnselectCommand();
                     } else {
@@ -193,9 +196,14 @@
                 } else {
                     map.viewport.mapOriginX = 0;
                     map.viewport.mapOriginY = 0;
-                    map.viewport.zoom = 1;
+                    map.viewport.zoom = 0.001;
                 }
-                selectSpaceObject(getStateCookie('mapSelection'));
+                oldSelection = getStateCookie('mapSelection');
+                if (oldSelection) {
+                    selectSpaceObject(oldSelection.id);
+                } else {
+                    selectSpaceObject(null);
+                }
 
                 // save position/zoom changes from here
                 map.viewport.onChange = function() {

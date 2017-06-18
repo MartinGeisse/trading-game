@@ -208,13 +208,13 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 	private void buildSpaceObjectData(StringBuilder builder, SpaceObject spaceObject, MovementInfo movementInfo, String colorCode) {
 		builder.append('\'').append(spaceObject.getId()).append("': {");
 		builder.append("id: '").append(spaceObject.getId()).append('\'');
-		builder.append(", x: ").append(MapCoordinates.convertXToLongitude(spaceObject.getX()));
-		builder.append(", y: ").append(MapCoordinates.convertYToLatitude(spaceObject.getY()));
-		builder.append(", r: ").append(MapCoordinates.convertGameDistanceToMapDistance(spaceObject.getRadius()));
+		builder.append(", x: ").append(spaceObject.getX());
+		builder.append(", y: ").append(spaceObject.getY());
+		builder.append(", r: ").append(spaceObject.getRadius());
 		builder.append(", c: '").append(colorCode).append('\'');
 		if (movementInfo != null) {
-			builder.append(", x2: ").append(MapCoordinates.convertXToLongitude(movementInfo.getDestinationX()));
-			builder.append(", y2: ").append(MapCoordinates.convertYToLatitude(movementInfo.getDestinationY()));
+			builder.append(", x2: ").append(movementInfo.getDestinationX());
+			builder.append(", y2: ").append(movementInfo.getDestinationY());
 			builder.append(", t: ").append(movementInfo.getRemainingTime() + 1); // usually too low by 1 due to rounding errors
 		}
 		builder.append("}");
