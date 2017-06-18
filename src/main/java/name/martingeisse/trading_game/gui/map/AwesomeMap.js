@@ -130,12 +130,6 @@ AwesomeMap = {
 
 		constructor.prototype = {
 
-            //
-            // Called before actually rendering this layer.
-            //
-            onBeforeRender: function(context, viewport) {
-            },
-
 			//
 			// Renders this layer.
 			//
@@ -144,7 +138,6 @@ AwesomeMap = {
 			// the state stack at the same size as when it is called.
 			//
 			render: function(context, viewport) {
-			    this.onBeforeRender(context, viewport);
 				viewport.applyToContext(context);
 				for (var i in this.objects) {
 					this.renderer(context, viewport, this.objects[i]);
@@ -196,6 +189,12 @@ AwesomeMap = {
 
 		constructor.prototype = {
 
+            //
+            // Called before actually rendering the map
+            //
+            onBeforeRender: function(context) {
+            },
+
 			//
 			// Renders the map.
 			//
@@ -205,6 +204,7 @@ AwesomeMap = {
 
 				function renderNow() {
 					var context = this.canvas.getContext('2d');
+					this.onBeforeRender(context);
 					context.setTransform(1, 0, 0, 1, 0, 0);
 					context.fillStyle = '#000000';
 					context.fillRect(0, 0, context.canvas.width, context.canvas.height);

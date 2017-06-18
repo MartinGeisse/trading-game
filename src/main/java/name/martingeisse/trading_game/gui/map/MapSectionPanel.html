@@ -52,20 +52,50 @@
         latestDynamicSpaceObjectsUpdateTimestamp = new Date().getTime();
         selectedSpaceObjectId = null;
         selectionDistance = 10;
+        secondsSinceLatestDynamicSpaceObjectsUpdate = 0;
         initializeMapSectionPanel = function() {
             $(function() {
 
                 // create the map and its layers
+                function interpolateSpaceObjectPosition(object) {
+                    if (('x2' in object) && ('y2' in object) && ('t' in object) && (object.t > 0)) {
+                        var alpha = secondsSinceLatestDynamicSpaceObjectsUpdate / object.t;
+                        if (alpha >= 1) {
+                            return {
+                                x: object.x2,
+                                y: object.y2
+                            };
+                        } else {
+                            return {
+                                x: alpha * object.x2 + (1 - alpha) * object.x,
+                                y: alpha * object.y2 + (1 - alpha) * object.y
+                            };
+                        }
+                    } else {
+                        return {
+                            x: object.x,
+                            y: object.y
+                        };
+                    }
+                }
                 map = new AwesomeMap.Map($('#map')[0]);
+                map.onBeforeRender = function(context) {
+                    secondsSinceLatestDynamicSpaceObjectsUpdate = (new Date().getTime() - latestDynamicSpaceObjectsUpdateTimestamp) / 1000;
+                };
                 selectionIndicatorLayer = new AwesomeMap.Layer();
+                selectionIndicatorLayer.objects = [0];
                 selectionIndicatorLayer.renderer = function(context, viewport, object) {
-                    context.fillStyle = '#008000';
-                    context.strokeStyle = '#00ff00';
-                    context.lineWidth = map.viewport.untransformDistance(2);
-                    context.beginPath();
-                    context.arc(object.x, object.y, object.mapRadius + viewport.untransformDistance(object.pixelRadius), 0, 2 * Math.PI);
-                    context.fill();
-                    context.stroke();
+                    var selectedSpaceObject = getSelectedSpaceObject();
+                    if (selectedSpaceObject !== null) {
+                        var position = interpolateSpaceObjectPosition(selectedSpaceObject);
+                        context.fillStyle = '#008000';
+                        context.strokeStyle = '#00ff00';
+                        context.lineWidth = map.viewport.untransformDistance(2);
+                        context.beginPath();
+                        context.arc(position.x, position.y, selectedSpaceObject.r + viewport.untransformDistance(selectionDistance), 0, 2 * Math.PI);
+                        context.fill();
+                        context.stroke();
+                    }
                 };
                 staticSpaceObjectsLayer = new AwesomeMap.Layer();
                 staticSpaceObjectsLayer.renderer = function(context, viewport, object) {
@@ -75,27 +105,11 @@
                     context.fill();
                 };
                 dynamicSpaceObjectsLayer = new AwesomeMap.Layer();
-                dynamicSpaceObjectsLayer.onBeforeRender = function(context, viewport) {
-                    this.secondsSinceLatestDynamicSpaceObjectsUpdate = (new Date().getTime() - latestDynamicSpaceObjectsUpdateTimestamp) / 1000;
-                };
                 dynamicSpaceObjectsLayer.renderer = function(context, viewport, object) {
-                    var x, y;
-                    if (('x2' in object) && ('y2' in object) && ('t' in object) && (object.t > 0)) {
-                        var alpha = this.secondsSinceLatestDynamicSpaceObjectsUpdate / object.t;
-                        if (alpha >= 1) {
-                            x = object.x2;
-                            y = object.y2;
-                        } else {
-                            x = alpha * object.x2 + (1 - alpha) * object.x;
-                            y = alpha * object.y2 + (1 - alpha) * object.y;
-                        }
-                    } else {
-                        x = object.x;
-                        y = object.y;
-                    }
+                    var position = interpolateSpaceObjectPosition(object);
                     context.fillStyle = object.c;
                     context.beginPath();
-                    context.arc(x, y, object.r, 0, 2 * Math.PI);
+                    context.arc(position.x, position.y, object.r, 0, 2 * Math.PI);
                     context.fill();
                 };
                 map.layers = [selectionIndicatorLayer, staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
@@ -125,27 +139,13 @@
                     }
                     return null;
                 };
-                updateSpaceObjectSelectionIndicator = function() {
-                    var object = getSelectedSpaceObject();
-                    if (object === null) {
-                        selectionIndicatorLayer.objects = [];
-                    } else {
-                        selectionIndicatorLayer.objects = [{
-                            x: object.x,
-                            y: object.y,
-                            mapRadius: object.r,
-                            pixelRadius: selectionDistance,
-                        }];
-                    }
-                    map.render();
-                };
                 selectSpaceObject = function(id) {
                     if (id !== null && (typeof id) !== 'string') {
                         throw 'invalid id type: ' + (typeof id) + ' in ' + id;
                     }
                     selectedSpaceObjectId = id;
+                    map.render();
                     setStateCookie('mapSelection', {id: id});
-                    updateSpaceObjectSelectionIndicator();
                     $('#propertiesBoxLoadingIndicator').show();
                     if (id === null) {
                         $('#propertiesBox').hide();
@@ -194,7 +194,6 @@
                 // utility links
                 $(document).on('click', '#selectOwnShipLink', function() {
                     selectSpaceObject(playerShipId);
-                    sendSelectOwnShipCommand(); // TODO
                     return false;
                 });
                 $(document).on('click', '#centerSelectedObjectLink', function() {
