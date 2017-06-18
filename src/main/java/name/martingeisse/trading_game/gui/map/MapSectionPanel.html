@@ -15,6 +15,24 @@
             padding: 5px;
         }
 
+        #propertiesBoxLoadingIndicator {
+            display: none;
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            background-color: #002040;
+            z-index: 10;
+            text-align: center;
+            padding-top: 61px;
+        }
+
+        #propertiesBoxLoadingIndicator img {
+            width: 16px;
+            height: 16px;
+        }
+
         #propertiesBox.hasSelectedSpaceObject {
             visibility: visible;
         }
@@ -131,13 +149,13 @@
                     }
                     selectedSpaceObjectId = id;
                     setStateCookie('mapSelection', {id: id});
+                    updateSpaceObjectSelectionIndicator();
+                    $('#propertiesBoxLoadingIndicator').show();
                     if (id === null) {
                         sendUnselectCommand();
                     } else {
                         sendSelectCommand(id);
                     }
-                    updateSpaceObjectSelectionIndicator();
-                    // TODO: loading indicator in properties box
                 };
                 selectNearestSpaceObject = function(event) {
                     var point = map.viewport.untransformMouseEvent(event);
@@ -230,6 +248,9 @@
     <div style="position: absolute; left: 20px; bottom: 20px; z-index: 1"><a href="#" id="selectOwnShipLink">select own
         ship</a></div>
     <div id="propertiesBox" wicket:id="propertiesBox">
+        <div id="propertiesBoxLoadingIndicator">
+            <img wicket:id="loadingIndicator">
+        </div>
         <div><span wicket:id="name"></span> (<span wicket:id="type"></span>)</div>
         <div>Location: <span wicket:id="x"></span>, <span wicket:id="y"></span></div>
         <div>Distance: <span wicket:id="distance"></span></div>

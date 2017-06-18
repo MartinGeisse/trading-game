@@ -23,6 +23,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.PropertyModel;
@@ -59,6 +60,7 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 		};
 		propertiesBox.setOutputMarkupId(true);
 		add(propertiesBox);
+		propertiesBox.add(new Image("loadingIndicator", AbstractDefaultAjaxBehavior.INDICATOR));
 		propertiesBox.add(new Label("name", new PropertyModel<>(this, "selectedSpaceObject.name")));
 		propertiesBox.add(new Label("type", new PropertyModel<>(this, "selectedSpaceObject.class.simpleName")));
 		propertiesBox.add(new Label("x", new PropertyModel<>(this, "selectedSpaceObject.x")));
@@ -153,6 +155,7 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 					}
 
 				}
+				target.appendJavaScript("$('#propertiesBoxLoadingIndicator').hide();");
 			}
 
 		});

@@ -33,7 +33,6 @@ AwesomeMap = {
 			},
 
 			applyDeltaToContext: function(context, baseTransform) {
-				// TODO optimize
 				this.applyToContext(context);
 				baseTransform.applyToContextReverse(context);
 			},
@@ -152,7 +151,7 @@ AwesomeMap = {
 				}
 
 				/*
-				TODO this code renders faster but cannot handle custom renderers yet!
+				this code renders faster but cannot handle custom renderers yet!
 
 				context.beginPath();
 				for (var i in this.objects) {
