@@ -13,7 +13,6 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import name.martingeisse.trading_game.gui.gamepage.GamePage;
 import name.martingeisse.trading_game.gui.homepage.HomePage;
-import name.martingeisse.trading_game.gui.map.MapTileResource;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
@@ -143,8 +142,6 @@ public class MyWicketApplication extends WebApplication {
 		// main pages
 		//		mountPage("bar/${id}", BarPage.class);
 		// internal
-
-		getSharedResources().add("MapTile", new MapTileResource());
 
 		// mount Bootstrap fonts
 		{
