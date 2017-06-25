@@ -50,7 +50,7 @@ public final class SpaceStation extends StaticSpaceObject implements ObjectWithI
 
 	@Override
 	public long getRadius() {
-		return 707;
+		return 200;
 	}
 
 }

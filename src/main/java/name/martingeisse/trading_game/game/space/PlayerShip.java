@@ -54,8 +54,7 @@ public final class PlayerShip extends DynamicSpaceObject implements ObjectWithIn
 
 	@Override
 	public long getRadius() {
-		// return 500;
-		return 10_000; // TODO make player ships visible on low zoom levels for now until artificial enlargement works for them
+		return 100;
 	}
 
 	@Override

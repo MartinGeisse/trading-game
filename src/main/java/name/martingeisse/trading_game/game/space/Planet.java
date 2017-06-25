@@ -7,7 +7,7 @@ public final class Planet extends StaticSpaceObject {
 
 	@Override
 	public long getRadius() {
-		return 5000;
+		return 3000;
 	}
 
 }

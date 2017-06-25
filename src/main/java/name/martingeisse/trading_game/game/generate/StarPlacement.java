@@ -18,7 +18,7 @@ public final class StarPlacement implements Iterable<Pair<Long, Long>> {
 
 		final SpectrumNoise noise = new SpectrumNoise(3, 2.0);
 		long breadth = 3;
-		long galaxyRadius = 6000000;
+		long galaxyRadius = 10_000_000; // too small, but rendering isn't really optimized yet
 
 		Pair<Long, Long> seed = Pair.of(0L, 0L);
 		stars.add(seed);
@@ -34,7 +34,7 @@ public final class StarPlacement implements Iterable<Pair<Long, Long>> {
 				continue;
 			}
 			long x = star.getLeft(), y = star.getRight();
-			long minimumDistance = 200000 + (long) (noise.getClamped(((double) x) / ((double) galaxyRadius), ((double) y) / ((double) galaxyRadius)) * 170000);
+			long minimumDistance = 2_000_000 + (long) (noise.getClamped(((double) x) / ((double) galaxyRadius), ((double) y) / ((double) galaxyRadius)) * 1_700_000);
 			breadthLoop:
 			for (int i = 0; i < breadth; i++) {
 				double angle = 2 * Math.PI * random.nextDouble();

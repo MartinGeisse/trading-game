@@ -29,6 +29,14 @@ public final class InitialSpaceObjectsFactory {
 		this.inventoryFactory = inventoryFactory;
 	}
 
+	public void createStar(String name, long x, long y) {
+		insertBaseData(SpaceObjectType.STAR, name, x, y, null, null);
+	}
+
+	public void createPlanet(String name, long x, long y) {
+		insertBaseData(SpaceObjectType.PLANET, name, x, y, null, null);
+	}
+
 	public void createAsteroid(String name, long x, long y, ImmutableItemStacks miningYield, long miningCapacity) {
 		insertBaseData(SpaceObjectType.ASTEROID, name, x, y, inventoryFactory.createInventory(miningYield), miningCapacity);
 	}

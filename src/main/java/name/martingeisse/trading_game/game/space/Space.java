@@ -81,30 +81,6 @@ public final class Space {
 	}
 
 	/**
-	 * Gets a subset of static space objects in a newly created list. This method selects all objects that overlap a
-	 * selection rectangle.
-	 * <p>
-	 * Note that for now, all objects are represented by a maximal bounding circle. This should use the actual object
-	 * size instead.
-	 */
-	public ImmutableList<StaticSpaceObject> getStaticSpaceObjects(long minX, long minY, long maxX, long maxY) {
-
-		// adjust for object size by using a maximal bounding circle, so we can search for object centers
-		long adjustedMinX = minX - StaticSpaceObject.BOUNDING_RADIUS;
-		long adjustedMinY = minY - StaticSpaceObject.BOUNDING_RADIUS;
-		long adjustedMaxX = maxX + StaticSpaceObject.BOUNDING_RADIUS;
-		long adjustedMaxY = maxY + StaticSpaceObject.BOUNDING_RADIUS;
-
-		return ImmutableList.copyOf((List<StaticSpaceObject>) (List) get(query -> {
-			query.where(qbd.type.in(SpaceObjectType.getStaticTypes()));
-			PGpoint minPoint = new PGpoint(adjustedMinX, adjustedMinY);
-			PGpoint maxPoint = new PGpoint(adjustedMaxX, adjustedMaxY);
-			query.where(GeometricExpressions.pointInsideRectangle(qbd.position, Expressions.constant(minPoint), Expressions.constant(maxPoint)));
-		}));
-
-	}
-
-	/**
 	 * Gets all dynamic space objects in a newly created list.
 	 */
 	public ImmutableList<DynamicSpaceObject> getDynamicSpaceObjects() {

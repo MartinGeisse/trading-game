@@ -7,7 +7,7 @@ public final class Star extends StaticSpaceObject {
 
 	@Override
 	public long getRadius() {
-		return 5000;
+		return 10_000;
 	}
 
 }

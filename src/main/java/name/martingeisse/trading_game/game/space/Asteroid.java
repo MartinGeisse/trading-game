@@ -82,7 +82,7 @@ public final class Asteroid extends StaticSpaceObject {
 
 	@Override
 	public long getRadius() {
-		return 2000;
+		return 200;
 	}
 
 }
