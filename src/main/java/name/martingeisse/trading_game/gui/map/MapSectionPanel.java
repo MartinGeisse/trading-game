@@ -30,12 +30,23 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Encapsulates the actual map view and the properties box.
  */
 public class MapSectionPanel extends AbstractPanel implements GuiGameEventListener {
+
+	private static final Map<SpaceObjectType, String> SPACE_OBJECT_RENDER_MAPPING = new HashMap<>();
+	static {
+		SPACE_OBJECT_RENDER_MAPPING.put(SpaceObjectType.STAR, "star");
+		SPACE_OBJECT_RENDER_MAPPING.put(SpaceObjectType.PLANET, "planet");
+		SPACE_OBJECT_RENDER_MAPPING.put(SpaceObjectType.ASTEROID, "asteroid");
+		SPACE_OBJECT_RENDER_MAPPING.put(SpaceObjectType.PLAYER_SHIP, "ship");
+		SPACE_OBJECT_RENDER_MAPPING.put(SpaceObjectType.SPACE_STATION, "spaceStation");
+	}
 
 	private long selectedSpaceObjectId = -1;
 
@@ -174,7 +185,7 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 			} else {
 				builder.append(',');
 			}
-			buildSpaceObjectData(builder, spaceObject, null, "#cccccc");
+			buildSpaceObjectData(builder, spaceObject, null);
 		}
 		builder.append("};\n");
 	}
@@ -188,18 +199,26 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 			} else {
 				builder.append(',');
 			}
-			buildSpaceObjectData(builder, spaceObject, spaceObject.getMovementInfo(), spaceObject instanceof PlayerShip ? "#00ffff" : "#0000ff");
+			buildSpaceObjectData(builder, spaceObject, spaceObject.getMovementInfo());
 		}
 		builder.append("};\n");
 	}
 
-	private void buildSpaceObjectData(StringBuilder builder, SpaceObject spaceObject, MovementInfo movementInfo, String colorCode) {
+	private void buildSpaceObjectData(StringBuilder builder, SpaceObject spaceObject, MovementInfo movementInfo) {
+
+		String renderFunction;
+		if (spaceObject.getId() == getPlayer().getShip().getId()) {
+			renderFunction = "self";
+		} else {
+			renderFunction = SPACE_OBJECT_RENDER_MAPPING.get(SpaceObjectType.getType(spaceObject));
+		}
+
 		builder.append('\'').append(spaceObject.getId()).append("': {");
 		builder.append("id: '").append(spaceObject.getId()).append('\'');
 		builder.append(", x: ").append(spaceObject.getX());
 		builder.append(", y: ").append(spaceObject.getY());
 		builder.append(", r: ").append(spaceObject.getRadius());
-		builder.append(", c: '").append(colorCode).append('\'');
+		builder.append(", f: '").append(renderFunction).append('\'');
 		if (movementInfo != null) {
 			builder.append(", x2: ").append(movementInfo.getDestinationX());
 			builder.append(", y2: ").append(movementInfo.getDestinationY());
