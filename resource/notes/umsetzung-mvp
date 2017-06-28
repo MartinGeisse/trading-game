@@ -1,6 +1,19 @@
 
+
+Next:
+- verschiedene Erzsorten als Item Types anlegen
+- erzsorten in asteroiden (mix; je system wird entschieden, was vor allem vorkommt)
+- ein paar mehr Upgrades anlegen
+	- schnellerer Antrib (3 levels)
+	- größerer Frachtraum (3 levels)
+	- schnelleres Mining (3 levels)
+	- höhere Ausbeute (3 levels)
+- location-lose BUY orders für erz
+- location-lose SELL orders für upgrades
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 Milestones:
-- ActionSerializer-Probleme
 - Spielinhalt
 	- Erz in SpaceStation verkaufen
 	- Schiffe können Upgrades haben
@@ -11,6 +24,8 @@ Milestones:
 		- schneller Erz abbauen
 		- höhere Ausbeute
 		- mehr Frachtraum
+- market orders (siehe market-orders.txt)
+- ggf. manufacturing (???)
 - Feinschliff
 	- Restzeit bei Mining anhand von Restbestand und Frachtraum ermitteln
 	- prerequisite actions farblich hervorgehoben und nicht cancellable

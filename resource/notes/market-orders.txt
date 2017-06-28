@@ -1,0 +1,26 @@
+
+
+Patterns vs. escrow: Aktuell wird die SELL-MarketOrder auch als Information über die "items in escrow" benutzt. Dadurch können keine "pattern orders" angelegt werden,
+da aus diesen die items und locations nicht mehr erkennbar sind.
+
+BUY-Orders sind nicht betroffen. Da wird nur Geld hinterlegt, und das hat keine Location.
+
+=>
+
+Man könnte es für das MVP erst mal so lassen. BUY orders würden dann patterns unterstützen, SELL orders nicht. Das würde aber nur helfen, um vom Spiel her Erz
+anzukaufen, und nicht, um Upgrades zu verkaufen.
+
+------------------------------------------------------------------------------------
+
+Alternativer Ansatz:
+
+Spieler können erst mal nur 1:1-match-orders erstellen. Nur das Spiel kann pattern Orders erstellen. Dabei wird davon ausgegangen, dass bei pattern-SELL-orders an der jeweiligen
+location immer die Items vorliegen. Das Pattern kann sich dann aber nur auf die Location beziehen.
+
+Fazit (nötige Änderungen am Code):
+- Market Orders können NULL als location haben
+- Spieler können solche aber nicht anlegen.
+- Das Init-Programm (über AaaInit) legt location-lose BUY orders für erz und SELL orders für upgrades an
+- bei location-losen orders wird beim matching die location aus der jeweils anderen order genommen
+- eine location-lose order kann nicht die argument-order für MarketOrderMatchingService.match() sein. Dadurch können auch nie zwei location-lose orders
+	miteinander gematcht werden.
