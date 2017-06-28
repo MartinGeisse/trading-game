@@ -38,12 +38,21 @@ public class MarketOrderRepository {
 		return getMarketOrders(qmo.principalPlayerId.eq(principal.getId()).and(qmo.type.eq(type)));
 	}
 
-	public List<MarketOrder> getMarketOrdersByLocation(SpaceObject location) {
-		return getMarketOrders(qmo.locationSpaceObjectBaseDataId.eq(location.getId()));
+	public List<MarketOrder> getMarketOrdersByLocation(SpaceObject location, boolean includeGlobal) {
+		return getMarketOrders(buildLocationPredicate(location, includeGlobal));
 	}
 
-	public List<MarketOrder> getMarketOrdersByLocation(SpaceObject location, MarketOrderType type) {
-		return getMarketOrders(qmo.locationSpaceObjectBaseDataId.eq(location.getId()).and(qmo.type.eq(type)));
+	public List<MarketOrder> getMarketOrdersByLocation(SpaceObject location, MarketOrderType type, boolean includeGlobal) {
+		return getMarketOrders(buildLocationPredicate(location, includeGlobal).and(qmo.type.eq(type)));
+	}
+
+	private BooleanExpression buildLocationPredicate(SpaceObject location, boolean includeGlobal) {
+		BooleanExpression corePredicate = qmo.locationSpaceObjectBaseDataId.eq(location.getId());
+		if (includeGlobal) {
+			return qmo.locationSpaceObjectBaseDataId.isNull().or(corePredicate);
+		} else {
+			return qmo.locationSpaceObjectBaseDataId.isNotNull().and(corePredicate);
+		}
 	}
 
 	private List<MarketOrder> getMarketOrders(BooleanExpression predicate) {

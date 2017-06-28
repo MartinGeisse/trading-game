@@ -31,6 +31,24 @@ public class MarketOrderFactory {
 	}
 
 	public void createMarketOrder(Player principal, SpaceObject location, MarketOrderType marketOrderType, ItemType itemType, int quantity, long unitPrice) throws GameLogicException {
+		if (principal == null) {
+			throw new IllegalArgumentException("principal cannot be null");
+		}
+		if (location == null) {
+			throw new IllegalArgumentException("location cannot be null");
+		}
+		if (marketOrderType == null) {
+			throw new IllegalArgumentException("marketOrderType cannot be null");
+		}
+		if (itemType == null) {
+			throw new IllegalArgumentException("itemType cannot be null");
+		}
+		if (quantity < 1) {
+			throw new IllegalArgumentException("quantity must be positive");
+		}
+		if (unitPrice < 0) {
+			throw new IllegalArgumentException("unitPrice must be non-negative");
+		}
 
 		// Put money / items in escrow. This also ensures that the principal has those items or money in the first place.
 		if (marketOrderType == MarketOrderType.BUY) {
@@ -40,7 +58,6 @@ public class MarketOrderFactory {
 		}
 
 		// create the market order
-		QMarketOrderRow qmo = QMarketOrderRow.MarketOrder;
 		String serializedItemType = jacksonService.serialize(itemType);
 		MarketOrderRow data = new MarketOrderRow();
 		data.setPrincipalPlayerId(principal.getId());

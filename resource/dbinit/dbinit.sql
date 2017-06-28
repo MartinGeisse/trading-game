@@ -123,10 +123,17 @@ CREATE TYPE "game"."MarketOrderType" AS ENUM ('BUY', 'SELL');
 CREATE TABLE "game"."MarketOrder" (
 	"id" bigserial NOT NULL PRIMARY KEY,
 	"principalPlayerId" bigint NOT NULL REFERENCES "game"."Player" ON DELETE CASCADE,
-	"locationSpaceObjectBaseDataId" bigint NOT NULL REFERENCES "game"."SpaceObjectBaseData" ON DELETE CASCADE,
+	-- Location-less orders cannot be created by players for now; they can only be predefined by the game. The reason
+	-- is that for SELL orders, besides matching BUY orders, the order also indicates items in escrow at that location.
+	-- Allowing players to create them would allow them to teleport items. BUY orders would be okay, but a totally
+	-- location-unrestricted player-owned BUY order is useless to players since space is big.
+	"locationSpaceObjectBaseDataId" bigint REFERENCES "game"."SpaceObjectBaseData" ON DELETE CASCADE,
 	"type" "game"."MarketOrderType" NOT NULL,
 	"itemType" character varying(2000) NOT NULL,
-	"quantity" int NOT NULL CHECK ("quantity" >= 0), -- can be 0 temporary when awating deletion
+	-- The quantity can be 0 temporary when awating deletion. Only the game's global market orders can have a NULL
+	-- quantity (meaning the order is unlimited) since for player orders it would indicate an unlimited amount of money
+	-- or an unlimited number of items in escrow.
+	"quantity" int NULL CHECK ("quantity" IS NULL or "quantity" >= 0),
 	"unitPrice" bigint NOT NULL CHECK ("unitPrice" >= 0)
 );
 CREATE INDEX "MarketOrder_principalPlayerId" ON "game"."MarketOrder" ("principalPlayerId");

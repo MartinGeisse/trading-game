@@ -32,11 +32,20 @@ public class MarketOrderMatchingService {
 	 * Looks for matching orders for the specified order.
 	 */
 	public void match(MarketOrder marketOrder) {
-		ItemType itemType = marketOrder.getItemType();
+		if (marketOrder == null) {
+			throw new IllegalArgumentException("marketOrder cannot be null");
+		}
+		if (marketOrder.getLocationSpaceObjectBaseDataId() == null) {
+			throw new IllegalArgumentException("marketOrder must have a location");
+		}
+		if (marketOrder.getQuantity() == null) {
+			throw new IllegalArgumentException("marketOrder must have a quantity");
+		}
 
+		ItemType itemType = marketOrder.getItemType();
 		QMarketOrderRow qmo = QMarketOrderRow.MarketOrder;
 		BooleanExpression predicate = qmo.principalPlayerId.ne(marketOrder.getPrincipalPlayerId())
-				.and(qmo.locationSpaceObjectBaseDataId.eq(marketOrder.getLocationSpaceObjectBaseDataId()))
+				.and(qmo.locationSpaceObjectBaseDataId.isNull().or(qmo.locationSpaceObjectBaseDataId.eq(marketOrder.getLocationSpaceObjectBaseDataId())))
 				.and(qmo.type.eq(marketOrder.getType().getOpposite()))
 				.and(qmo.itemType.eq(marketOrder.getSerializedItemType()));
 		OrderSpecifier<?> order;
@@ -54,13 +63,16 @@ public class MarketOrderMatchingService {
 					break;
 				}
 				Tuple tuple = iterator.next();
-				int matchQuantity = tuple.get(qmo.quantity);
-				if (matchQuantity > quantity) {
+				int matchQuantity;
+				if (tuple.get(qmo.quantity) == null) {
 					matchQuantity = quantity;
+				} else {
+					matchQuantity = Math.min(quantity, tuple.get(qmo.quantity));
 				}
-
 				if (matchQuantity > 0) {
 					// TODO transaction
+
+					TODO handle quantity correctly
 
 					// The price is that of the existing order. This is totally arbitrary, but simplifies the
 					// common case that a newly created order should match multiple existing orders. By using the
@@ -94,7 +106,7 @@ public class MarketOrderMatchingService {
 		}
 
 		// remove fully matched orders in a race condition free way
-		postgresContextService.delete(qmo).where(qmo.quantity.eq(0)).execute();
+		postgresContextService.delete(qmo).where(qmo.quantity.isNotNull(), qmo.quantity.eq(0)).execute();
 
 	}
 
