@@ -72,8 +72,6 @@ public class MarketOrderMatchingService {
 				if (matchQuantity > 0) {
 					// TODO transaction
 
-					TODO handle quantity correctly
-
 					// The price is that of the existing order. This is totally arbitrary, but simplifies the
 					// common case that a newly created order should match multiple existing orders. By using the
 					// existing order's price, we spare the creating player the necessity of creating multiple
@@ -81,8 +79,11 @@ public class MarketOrderMatchingService {
 					long matchUnitPrice = tuple.get(qmo.unitPrice);
 					long matchPrice = matchQuantity * matchUnitPrice;
 
-					// reduce orders TODO rollback if reduction fails, especially for the second one
-					matchQuantity = reduceOrderQuantity(tuple.get(qmo.id), matchQuantity);
+					// reduce order quantities (the matched one in variable 'tuple' may be unlimited)
+					if (tuple.get(qmo.quantity) != null) {
+						// TODO rollback if reduction fails, especially for the second one
+						matchQuantity = reduceOrderQuantity(tuple.get(qmo.id), matchQuantity);
+					}
 					reduceOrderQuantity(marketOrder.getId(), matchQuantity);
 
 					// determine buyer/seller
@@ -118,7 +119,7 @@ public class MarketOrderMatchingService {
 				if (reduction == 0) {
 					return 0;
 				}
-				if (postgresContextService.update(qmo).set(qmo.quantity, qmo.quantity.subtract(reduction)).execute() == 0) {
+				if (postgresContextService.update(qmo).set(qmo.quantity, qmo.quantity.subtract(reduction)).where(qmo.id.eq(id)).execute() == 0) {
 					return 0;
 				} else {
 					return reduction;
