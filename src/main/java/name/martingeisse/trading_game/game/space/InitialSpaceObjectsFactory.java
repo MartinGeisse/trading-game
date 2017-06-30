@@ -43,7 +43,8 @@ public final class InitialSpaceObjectsFactory {
 
 	public void createSpaceStation(String name, long x, long y) {
 		// TODO these are just sample items for testing
-		ImmutableItemStacks inventory = ImmutableItemStacks.from(gameDefinition.getRedPixelItemType(), 1000, gameDefinition.getRedPixelAssemblyItemType(), 1000);
+		// ImmutableItemStacks inventory = ImmutableItemStacks.from(gameDefinition.getRedPixelItemType(), 1000, gameDefinition.getRedPixelAssemblyItemType(), 1000);
+		ImmutableItemStacks inventory = ImmutableItemStacks.EMPTY;
 		insertBaseData(SpaceObjectType.SPACE_STATION, name, x, y, inventoryFactory.createInventory(inventory), null);
 	}
 

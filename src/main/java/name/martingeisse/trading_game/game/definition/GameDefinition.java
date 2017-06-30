@@ -4,13 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
-import name.martingeisse.trading_game.game.crafting.FixedCraftingRecipe;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType;
-import name.martingeisse.trading_game.game.item.ImmutableItemStack;
-import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.ItemType;
-import name.martingeisse.trading_game.game.jackson.JacksonService;
 import name.martingeisse.trading_game.game.player.PlayerAttributeKey;
 import name.martingeisse.trading_game.game.skill.SimpleSkill;
 import name.martingeisse.trading_game.game.skill.Skill;
@@ -25,53 +20,59 @@ import java.util.List;
 @Singleton
 public final class GameDefinition {
 
-	private final JacksonService jacksonService;
-
 	private final ImmutableList<ItemType> itemTypes;
+	private final ImmutableList<ItemType> oreItemTypes;
 
 	private final ImmutableList<Skill> skills;
-	private final ItemType redPixelItemType;
-	private final ItemType redPixelAssemblyItemType;
 
 	/**
 	 *
 	 */
 	@Inject
-	public GameDefinition(JacksonService jacksonService) {
-		this.jacksonService = jacksonService;
+	public GameDefinition() {
 
-		ImmutableMap<PlayerAttributeKey, Integer> redPixelBonus = ImmutableMap.of(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 100_000);
-		ItemType redPixelItemType = new ItemType("red pixel", "red_pixel.png", 10, PlayerShipEquipmentSlotType.ENGINE, redPixelBonus);
-		ItemType redPixelAssemblyItemType = new ItemType("red pixel assembly", "red_pixel_assembly.png", 10);
-		ItemType redPixelLineItemType = new ItemType("red pixel line", "no_icon.png", 10);
-		ItemType redPixelGlueItemType = new ItemType("red pixel glue", "no_icon.png", 10);
+		ItemType ironOre = new ItemType("iron ore", "no_icon.png", 10);
+		ItemType copperOre = new ItemType("copper ore", "no_icon.png", 10);
+		ItemType aluminiumOre = new ItemType("aluminium ore", "no_icon.png", 10);
+		ItemType silverOre = new ItemType("silver ore", "no_icon.png", 10);
+		ItemType titaniumOre = new ItemType("titanium ore", "no_icon.png", 10);
+		ItemType tinOre = new ItemType("tin ore", "no_icon.png", 10);
+		this.oreItemTypes = ImmutableList.of(ironOre, copperOre, aluminiumOre, silverOre, titaniumOre, tinOre);
 
-		ItemType pixelAxeItemType = new ItemType("pixel axe", "no_icon.png", 10);
-		ItemType pixelHoeItemType = new ItemType("pixel hoe", "no_icon.png", 10);
-		ItemType pixelHammerItemType = new ItemType("pixel hammer", "no_icon.png", 10);
-		ItemType pixelPickaxeItemType = new ItemType("pixel pickaxe", "no_icon.png", 10);
-
-		ItemType logItemType = new ItemType("log", "no_icon.png", 10);
+		ItemType level2Engine = new ItemType("level 2 engines", "no_icon.png", 10, PlayerShipEquipmentSlotType.ENGINE, ImmutableMap.of(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 10_000));
+		ItemType level3Engine = new ItemType("level 3 engines", "no_icon.png", 10, PlayerShipEquipmentSlotType.ENGINE, ImmutableMap.of(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 20_000));
+		ItemType level4Engine = new ItemType("level 4 engines", "no_icon.png", 10, PlayerShipEquipmentSlotType.ENGINE, ImmutableMap.of(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 30_000));
+		ItemType level2MiningGear = new ItemType("level 2 mining gear", "no_icon.png", 10, PlayerShipEquipmentSlotType.MINING_GEAR, ImmutableMap.of(PlayerAttributeKey.MINING_SPEED, 10_000));
+		ItemType level3MiningGear = new ItemType("level 3 mining gear", "no_icon.png", 10, PlayerShipEquipmentSlotType.MINING_GEAR, ImmutableMap.of(PlayerAttributeKey.MINING_SPEED, 20_000));
+		ItemType level4MiningGear = new ItemType("level 4 mining gear", "no_icon.png", 10, PlayerShipEquipmentSlotType.MINING_GEAR, ImmutableMap.of(PlayerAttributeKey.MINING_SPEED, 30_000));
+		ItemType level2CargoHold = new ItemType("level 2 cargo hold", "no_icon.png", 10, PlayerShipEquipmentSlotType.CARGO_HOLD, ImmutableMap.of(PlayerAttributeKey.MAXIMUM_CARGO_MASS, 5_000));
+		ItemType level3CargoHold = new ItemType("level 3 cargo hold", "no_icon.png", 10, PlayerShipEquipmentSlotType.CARGO_HOLD, ImmutableMap.of(PlayerAttributeKey.MAXIMUM_CARGO_MASS, 10_000));
+		ItemType level4CargoHold = new ItemType("level 4 cargo hold", "no_icon.png", 10, PlayerShipEquipmentSlotType.CARGO_HOLD, ImmutableMap.of(PlayerAttributeKey.MAXIMUM_CARGO_MASS, 20_000));
 
 		List<ItemType> itemTypes = new ArrayList<>();
-		itemTypes.add(redPixelItemType);
-		itemTypes.add(redPixelAssemblyItemType);
-		itemTypes.add(redPixelLineItemType);
-		itemTypes.add(redPixelGlueItemType);
-		itemTypes.add(pixelAxeItemType);
-		itemTypes.add(pixelHoeItemType);
-		itemTypes.add(pixelHammerItemType);
-		itemTypes.add(pixelPickaxeItemType);
-		itemTypes.add(logItemType);
+		itemTypes.add(ironOre);
+		itemTypes.add(copperOre);
+		itemTypes.add(aluminiumOre);
+		itemTypes.add(silverOre);
+		itemTypes.add(titaniumOre);
+		itemTypes.add(tinOre);
+		itemTypes.add(level2Engine);
+		itemTypes.add(level3Engine);
+		itemTypes.add(level4Engine);
+		itemTypes.add(level2MiningGear);
+		itemTypes.add(level3MiningGear);
+		itemTypes.add(level4MiningGear);
+		itemTypes.add(level2CargoHold);
+		itemTypes.add(level3CargoHold);
+		itemTypes.add(level4CargoHold);
 		this.itemTypes = ImmutableList.copyOf(itemTypes);
 
+		/* TODO
 		CraftingRecipe redPixelCraftingRecipe = new FixedCraftingRecipe(100, ImmutableItemStacks.EMPTY, redPixelItemType);
 		CraftingRecipe redPixelAssemblyCraftingRecipe = new FixedCraftingRecipe(300, ImmutableItemStacks.from(redPixelItemType, 5), redPixelAssemblyItemType);
 		CraftingRecipe redPixelLineCraftingRecipe = new FixedCraftingRecipe(300, ImmutableItemStacks.from(redPixelItemType, 10), redPixelLineItemType);
 		CraftingRecipe redPixelGlueCraftingRecipe = new FixedCraftingRecipe(50, ImmutableItemStacks.from(redPixelItemType, 5), redPixelGlueItemType);
-
 		CraftingRecipe fellTreeRecipe = new FixedCraftingRecipe(1000, ImmutableItemStacks.from(pixelAxeItemType, 1), ImmutableItemStacks.from(pixelAxeItemType, 1, logItemType, 3));
-
 		ImmutableItemStacks pixelToolBillOfMaterials = new ImmutableItemStacks(ImmutableList.of(
 				new ImmutableItemStack(redPixelLineItemType, 3),
 				new ImmutableItemStack(redPixelAssemblyItemType, 5),
@@ -82,6 +83,7 @@ public final class GameDefinition {
 		CraftingRecipe pixelHoeCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelHoeItemType);
 		CraftingRecipe pixelHammerCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelHammerItemType);
 		CraftingRecipe pixelPickaxeCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelPickaxeItemType);
+		*/
 
 		// TODO
 //		this.contextFreeActionDefinitions = ImmutableList.of(
@@ -109,35 +111,14 @@ public final class GameDefinition {
 				new SimpleSkill("Jury-rigging", 10_000),
 				new SimpleSkill("Electronics", 10_000)
 		);
-		this.redPixelItemType = redPixelItemType;
-		this.redPixelAssemblyItemType = redPixelAssemblyItemType;
 	}
 
-	/**
-	 * Getter method.
-	 *
-	 * @return the skills
-	 */
 	public ImmutableList<Skill> getSkills() {
 		return skills;
 	}
 
-	/**
-	 * Getter method.
-	 *
-	 * @return the redPixelItemType
-	 */
-	public ItemType getRedPixelItemType() {
-		return redPixelItemType;
-	}
-
-	/**
-	 * Getter method.
-	 *
-	 * @return the redPixelAssemblyItemType
-	 */
-	public ItemType getRedPixelAssemblyItemType() {
-		return redPixelAssemblyItemType;
+	public ImmutableList<ItemType> getOreItemTypes() {
+		return oreItemTypes;
 	}
 
 	public ItemType getItemTypeByName(String itemTypeName) {

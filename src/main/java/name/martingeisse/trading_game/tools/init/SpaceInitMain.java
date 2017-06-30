@@ -7,10 +7,12 @@ import name.martingeisse.trading_game.game.generate.SpaceStationPlacement;
 import name.martingeisse.trading_game.game.generate.StarNaming;
 import name.martingeisse.trading_game.game.generate.StarPlacement;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
+import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.space.InitialSpaceObjectsFactory;
 import name.martingeisse.trading_game.platform.application.CommandLineApplicationBootstrapper;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -43,15 +45,17 @@ public class SpaceInitMain {
 		}
 	}
 
-
 	private static void generateStarSystem(long starX, long starY) {
 		String starName = StarNaming.compute();
 		initialSpaceObjectsFactory.createStar(starName, starX, starY);
 		double distance = 100_000;
 		int numberOfPlanets = random.nextInt(10);
 		int planetCounter = 0;
+		ItemType primaryOreType = random(gameDefinition.getOreItemTypes());
+		ItemType secondaryOreType = random(gameDefinition.getOreItemTypes());
 		for (int i = 0; i < numberOfPlanets; i++) {
 			int typeKey = random.nextInt(100);
+			ItemType tertiaryOreType = random(gameDefinition.getOreItemTypes());
 			if (typeKey < 50) {
 
 				// planet
@@ -74,7 +78,7 @@ public class SpaceInitMain {
 					double asteroidDistance = distance + random.nextDouble() * radialSpan;
 					long asteroidX = (long)(starX + Math.cos(angle) * asteroidDistance);
 					long asteroidY = (long)(starY + Math.sin(angle) * asteroidDistance);
-					ImmutableItemStacks asteroidYieldPerTick = ImmutableItemStacks.from(gameDefinition.getRedPixelItemType(), 5);
+					ImmutableItemStacks asteroidYieldPerTick = buildYield(primaryOreType, secondaryOreType, tertiaryOreType);
 					long miningCapacity = 1000 * GameConstants.BASE_MINING_SPEED;
 					initialSpaceObjectsFactory.createAsteroid(starName + " A-" + generateAsteroidCode(), asteroidX, asteroidY, asteroidYieldPerTick, miningCapacity);
 				}
@@ -96,6 +100,13 @@ public class SpaceInitMain {
 		return builder.toString();
 	}
 
+	private static <T> T random(List<T> list) {
+		return list.get(random.nextInt(list.size()));
+	}
+
+	private static ImmutableItemStacks buildYield(ItemType primary, ItemType secondary, ItemType tertiary) {
+		return ImmutableItemStacks.from(primary, 5, secondary, 2, tertiary, 1);
+	}
 
 
 //	public static void init(Injector injector) {

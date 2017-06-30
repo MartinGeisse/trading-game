@@ -197,7 +197,7 @@ public final class Player {
 
 		// set up base values
 		Map<PlayerAttributeKey, Integer> attributes = new HashMap<>();
-		attributes.put(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 50_000);
+		attributes.put(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 30_000);
 		attributes.put(PlayerAttributeKey.MAXIMUM_CARGO_MASS, 10_000);
 
 		// apply equipment bonus
