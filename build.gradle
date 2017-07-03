@@ -17,6 +17,19 @@ sourceSets.main.resources.srcDir 'src/main/java'
 sourceSets.main.resources.srcDir 'src/main/generated'
 sourceSets.main.output.resourcesDir 'build/classes/main'
 
+task InitializeSubsystem_All(type: JavaExec) {
+	classpath = sourceSets.main.runtimeClasspath
+	main = 'name.martingeisse.trading_game.tools.init.AaaMain';
+}
+task InitializeSubsystem_DatabaseStructure(type: JavaExec) {
+	classpath = sourceSets.main.runtimeClasspath
+	main = 'name.martingeisse.trading_game.tools.init.DatabaseStructureInitMain';
+}
+task InitializeSubsystem_SpaceObjects(type: JavaExec) {
+	classpath = sourceSets.main.runtimeClasspath
+	main = 'name.martingeisse.trading_game.tools.init.SpaceInitMain';
+}
+
 repositories {
 	mavenCentral()
 }
