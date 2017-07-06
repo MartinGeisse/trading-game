@@ -21,6 +21,8 @@ import name.martingeisse.trading_game.platform.util.attribute.AttributeKey;
 import name.martingeisse.trading_game.platform.util.attribute.Attributes;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -129,7 +131,39 @@ public final class JacksonService {
 		return deserialize(json, klass, null);
 	}
 
+	public <T> T deserialize(InputStream json, Class<T> klass) {
+		return deserialize(json, klass, null);
+	}
+
+	public <T> T deserialize(Reader json, Class<T> klass) {
+		return deserialize(json, klass, null);
+	}
+
 	public <T> T deserialize(String json, Class<T> klass, Attributes contextAttributes) {
+		Attributes oldContextAttributes = contextAttributesHolder.get();
+		try {
+			contextAttributesHolder.set(contextAttributes);
+			return objectMapper.readValue(json, klass);
+		} catch (IOException e) {
+			throw new UnexpectedExceptionException(e);
+		} finally {
+			contextAttributesHolder.set(oldContextAttributes);
+		}
+	}
+
+	public <T> T deserialize(InputStream json, Class<T> klass, Attributes contextAttributes) {
+		Attributes oldContextAttributes = contextAttributesHolder.get();
+		try {
+			contextAttributesHolder.set(contextAttributes);
+			return objectMapper.readValue(json, klass);
+		} catch (IOException e) {
+			throw new UnexpectedExceptionException(e);
+		} finally {
+			contextAttributesHolder.set(oldContextAttributes);
+		}
+	}
+
+	public <T> T deserialize(Reader json, Class<T> klass, Attributes contextAttributes) {
 		Attributes oldContextAttributes = contextAttributesHolder.get();
 		try {
 			contextAttributesHolder.set(contextAttributes);

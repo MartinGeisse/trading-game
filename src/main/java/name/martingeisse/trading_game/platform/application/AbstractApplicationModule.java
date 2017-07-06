@@ -10,7 +10,12 @@ import com.google.inject.Inject;
 import com.google.inject.multibindings.Multibinder;
 import name.martingeisse.trading_game.game.event.GameEventListener;
 import name.martingeisse.trading_game.platform.application.configuration.ConfigurationParticipant;
+import name.martingeisse.trading_game.platform.fakecdn.NullCookieStore;
 import name.martingeisse.trading_game.platform.postgres.PostgresService;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 
 /**
  *
@@ -26,6 +31,9 @@ public abstract class AbstractApplicationModule extends AbstractModule {
 
 		// game listeners
 		defineExtensionPoint(GameEventListener.class);
+
+		// HTTP client
+		bind(HttpClient.class).toInstance(HttpClients.custom().setConnectionManager(new BasicHttpClientConnectionManager()).setDefaultCookieStore(new NullCookieStore()).build());
 
 	}
 

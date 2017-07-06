@@ -76,6 +76,9 @@ public final class FakeCdn {
 	 *
 	 */
 	private HttpResponse fetchResponse(String url) throws IOException {
+
+		// TODO inject HttpClient
+
 		HttpClientConnectionManager connectionManager = new BasicHttpClientConnectionManager();
 		HttpClient client = HttpClients.custom().setConnectionManager(connectionManager).setDefaultCookieStore(new NullCookieStore()).build();
 		for (int i = 0; i < 10; i++) {
