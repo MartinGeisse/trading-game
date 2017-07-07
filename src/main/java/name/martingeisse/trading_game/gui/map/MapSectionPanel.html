@@ -206,7 +206,7 @@
                 //
                 // TODO currently uses 'contextmenu' event since we cannot distinguish left-clicking from dragging yet
                 //
-                $('#map').on('contextmenu', function(event) {
+                map.clickCallback = function(event) {
                     selectNearestSpaceObject(event);
                     return false;
                 });

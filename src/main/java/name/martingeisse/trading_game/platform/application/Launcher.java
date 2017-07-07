@@ -53,7 +53,7 @@ public final class Launcher {
 		servletHandler.addServletWithMapping(NopServlet.class, "/*");
 
 		ServletContextHandler contextHandler = new ServletContextHandler();
-		contextHandler.setContextPath("/trading_game");
+		contextHandler.setContextPath("/");
 		contextHandler.setServletHandler(servletHandler);
 		contextHandler.setInitParameter("logfilePath", "logs");
 		contextHandler.addEventListener(new ServerApplicationBootstrapper());

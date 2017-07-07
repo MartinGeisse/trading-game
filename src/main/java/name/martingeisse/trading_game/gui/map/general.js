@@ -3,27 +3,34 @@
 // simple jquery helpers
 //
 
-$.fn.awesomeDrag = function(handler) {
+$.fn.awesomeDrag = function(dragHandler, clickHandler) {
 
 	var dragging = false;
-	var dragStartX, dragStartY;
+	var dragStartX, dragStartY, dragLastX, dragLastY;
 
 	this.on('mousemove', function(event) {
 		if (dragging) {
-			handler(event.pageX - dragStartX, event.pageY - dragStartY);
-			dragStartX = event.pageX;
-			dragStartY = event.pageY;
+		    if (dragHandler) {
+			    dragHandler(event.pageX - dragLastX, event.pageY - dragLastY);
+		    }
+			dragLastX = event.pageX;
+			dragLastY = event.pageY;
 		}
 	});
 
 	this.on('mousedown', function(event) {
 		dragging = true;
-		dragStartX = event.pageX;
-		dragStartY = event.pageY;
+		dragLastX = dragStartX = event.pageX;
+		dragLastY = dragStartY = event.pageY;
 	});
 
 	this.on('mouseup', function(event) {
 		dragging = false;
+		if (clickHandler && Math.abs(event.pageX - dragStartX) < 2 && Math.abs(event.pageY - dragStartY) < 2) {
+		    return clickHandler(event);
+		} else {
+		    return false;
+		}
 	});
 
 };

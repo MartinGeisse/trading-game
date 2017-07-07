@@ -1,9 +1,13 @@
 
 Next:
 - port 80
-- script: run in screen
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+    --> in script eintragen
+    --> https://askubuntu.com/questions/270693/how-can-set-these-iptables-rules-to-run-at-startup
 - /trading_game aus der URL weg
+    --> solte gefixt sein
 - Linksklick statt rechtsklick zum auswählen
+    --> solte gefixt sein
 
 Next:
 - verschiedene Erzsorten als Item Types anlegen

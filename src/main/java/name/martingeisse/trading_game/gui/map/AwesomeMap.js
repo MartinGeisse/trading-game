@@ -174,18 +174,28 @@ AwesomeMap = {
 			this.layers = [];
 			this._renderScheduled = false;
 			this._resizeScheduled = false;
+			this.clickCallback = null;
+			var self = this;
 
 			var $canvas = $(canvas);
             $canvas.on('mousewheel', function(event) {
                 var point = getRelativePositionForMouseEvent(event);
                 var factor = Math.exp(event.deltaY * event.deltaFactor / 1000);
-                map.viewport.zoomAtPixelPosition(point.x, point.y, factor);
+                self.viewport.zoomAtPixelPosition(point.x, point.y, factor);
                 return false;
             });
             $canvas.awesomeDrag(function(dx, dy) {
-                map.viewport.panByPixelAmount(dx, dy);
+                self.viewport.panByPixelAmount(dx, dy);
+            }, function(originalEvent) {
+                if (self.clickCallback) {
+                    return self.clickCallback(originalEvent);
+                } else {
+                    return false;
+                }
             });
 		}
+
+        // TODO the code below uses the variable "map" -- shouldn't work (probably does by accident)!
 
 		constructor.prototype = {
 
