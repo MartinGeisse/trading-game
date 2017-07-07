@@ -195,8 +195,6 @@ AwesomeMap = {
             });
 		}
 
-        // TODO the code below uses the variable "map" -- shouldn't work (probably does by accident)!
-
 		constructor.prototype = {
 
             //
@@ -220,7 +218,7 @@ AwesomeMap = {
 					context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 					for (var i in this.layers) {
 						context.save();
-						this.layers[i].render(context, map.viewport);
+						this.layers[i].render(context, this.viewport);
 						context.restore();
 					}
 					this._renderScheduled = false;
@@ -240,23 +238,23 @@ AwesomeMap = {
 			// once initially to configure the initial size.
 			//
 			installResizer: function(resizer, timeout) {
-				var map = this;
+				var self = this;
 
                 function handleResize() {
-                	resizer(map.canvas);
-					map.render();
-                    map._resizeScheduled = false;
+                	resizer(self.canvas);
+					self.render();
+                    self._resizeScheduled = false;
                 }
 
                 $(window).resize(function() {
-                	if (!map._resizeScheduled) {
-                    	setTimeout(handleResize.bind(map), timeout);
-                		map._resizeScheduled = true;
+                	if (!self._resizeScheduled) {
+                    	setTimeout(handleResize.bind(self), timeout);
+                		self._resizeScheduled = true;
                 	}
                 });
 
-				map._resizeScheduled = true;
-                handleResize.bind(map)();
+				self._resizeScheduled = true;
+                handleResize.bind(self)();
 
 			},
 
