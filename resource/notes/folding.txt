@@ -1,0 +1,22 @@
+
+------------------------------------------------
+"Bezahlen" per folding@home
+------------------------------------------------
+
+Technische Umsetzung:
+- Feld spentFoldingCredits in Tabelle Player
+    - langfristig trennen, aber erst mal geht das schneller
+- Feld remainingPlayTime (Sekunden)
+    - wird in tick() heruntergezählt; wenn 0, dann wird tick() nicht mehr ausgeführt
+    - damit wird auch automatisch, sobald wieder remainingPlayTime da ist, weitergemacht
+- Regelmäßiger Job (1x täglich), der für alle Player-Objekte die Credits von der FaH-API abholt und ggf. in
+    remainingPlayTime umwandelt, dabei spentFoldingCredits hochsetzt
+
+Umrechnung:
+Fürs erste sollen 1000 FaH-Credits im Monat reichen. Ein Monat sind
+
+    30 * 24 * 3600 s = 2_592_000 s
+
+Also entspricht (1 FaHCredit) = (ca.) (2500s)
+
+Diese Umrechnung hat auch genug Luft, um es später zu erschweren (mehr Folding nötig) ohne in Probleme zu rennen.

@@ -85,7 +85,9 @@ CREATE TABLE "game"."Player" (
 	"emailAddress" character varying(500) CHECK (LENGTH("loginToken") >= 5),
 	"shipId" bigint NOT NULL REFERENCES "game"."SpaceObjectBaseData",
 	"actionQueueId" bigint NOT NULL REFERENCES "game"."ActionQueue",
-	"money" bigint NOT NULL CHECK ("money" >= 0)
+	"money" bigint NOT NULL CHECK ("money" >= 0),
+	"spentFoldingCredits" bigint NOT NULL CHECK ("spentFoldingCredits" >= 0),
+	"remainingPlayTime" bigint NOT NULL CHECK ("remainingPlayTime" >= 0)
 );
 CREATE INDEX "Player_nameIndex" ON "game"."Player" ("name");
 CREATE INDEX "Player_shipIdIndex" ON "game"."Player" ("shipId");
