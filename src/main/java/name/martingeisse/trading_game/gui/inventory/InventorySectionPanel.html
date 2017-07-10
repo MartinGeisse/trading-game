@@ -11,6 +11,11 @@
                 <a wicket:id="unloadLink">unload</a>
                 <a wicket:id="equipLink">equip</a>
                 <a wicket:id="transferOwnershipLink">Transfer Ownership</a>
+                <wicket:enclosure child="sellLink">
+                    <div>
+                        <a wicket:id="sellLink">Sell <span wicket:id="quantity"></span> for <span wicket:id="unitPrice"></span> each.</a>
+                    </div>
+                </wicket:enclosure>
             </li>
         </ul>
     </div>

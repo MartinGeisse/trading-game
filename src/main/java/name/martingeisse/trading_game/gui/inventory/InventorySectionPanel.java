@@ -1,6 +1,8 @@
 package name.martingeisse.trading_game.gui.inventory;
 
+import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.game.EntityProvider;
+import name.martingeisse.trading_game.game.GameLogicException;
 import name.martingeisse.trading_game.game.action.ActionQueue;
 import name.martingeisse.trading_game.game.action.actions.EquipAction;
 import name.martingeisse.trading_game.game.action.actions.LoadUnloadAction;
@@ -11,11 +13,15 @@ import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.event.GameEvent;
 import name.martingeisse.trading_game.game.event.GameEventBatch;
 import name.martingeisse.trading_game.game.event.GameEventEmitter;
-import name.martingeisse.trading_game.game.item.ImmutableItemStack;
-import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
-import name.martingeisse.trading_game.game.item.InventoryNameService;
-import name.martingeisse.trading_game.game.item.PlayerBelongingsService;
+import name.martingeisse.trading_game.game.item.*;
+import name.martingeisse.trading_game.game.jackson.JacksonService;
+import name.martingeisse.trading_game.game.market.MarketOrder;
+import name.martingeisse.trading_game.game.market.MarketOrderFactory;
+import name.martingeisse.trading_game.game.market.MarketOrderRepository;
+import name.martingeisse.trading_game.game.market.MarketOrderType;
 import name.martingeisse.trading_game.game.player.Player;
+import name.martingeisse.trading_game.game.space.Space;
+import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.game.space.SpaceStation;
 import name.martingeisse.trading_game.gui.gamepage.GuiNavigationUtil;
 import name.martingeisse.trading_game.gui.item.ItemIcons;
@@ -32,6 +38,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,6 +86,13 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 				boolean isPlayerShipInventory = (inventoryId == getPlayer().getInventory().getId());
 				String title = MyWicketApplication.get().getDependency(InventoryNameService.class).getNameForInventoryId(inventoryId);
 				inventoryEntryItem.add(new Label("inventoryTitle", title));
+				SpaceObject location = MyWicketApplication.get().getDependency(Space.class).getInventoryLocationOrNull(inventoryId);
+				List<MarketOrder> buyOrders;
+				if (location == null) {
+					buyOrders = new ArrayList<>();
+				} else {
+					buyOrders = MyWicketApplication.get().getDependency(MarketOrderRepository.class).getMarketOrdersByLocation(location, MarketOrderType.BUY, true);
+				}
 				inventoryEntryItem.add(new ListView<ImmutableItemStack>("itemStacks", inventoryEntryItem.getModelObject().getItemStacks().getStacks()) {
 					@Override
 					protected void populateItem(ListItem<ImmutableItemStack> itemStackItem) {
@@ -158,6 +172,47 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 								}, target);
 							}
 						}.setVisible(!inventoryEntryItem.getModelObject().isPlayerExclusive()));
+
+						boolean foundBuyOrder = false;
+						long foundUnitPrice = 0;
+						int foundQuantity = 0;
+						ItemType currentItemType = itemStackItem.getModelObject().getItemType();
+						String serializedCurrentItemType = MyWicketApplication.get().getDependency(JacksonService.class).serialize(currentItemType);
+						for (MarketOrder buyOrder : buyOrders) {
+							if (!buyOrder.getSerializedItemType().equals(serializedCurrentItemType)) {
+								continue;
+							}
+							if (!foundBuyOrder || buyOrder.getUnitPrice() > foundUnitPrice) {
+								foundUnitPrice = buyOrder.getUnitPrice();
+								foundQuantity = buyOrder.getQuantity();
+							} else if (buyOrder.getUnitPrice() == foundUnitPrice) {
+								foundQuantity += buyOrder.getQuantity();
+							} else {
+								continue;
+							}
+							foundBuyOrder = true;
+							if (foundQuantity >= itemStackItem.getModelObject().getSize()) {
+								foundQuantity = itemStackItem.getModelObject().getSize();
+								break;
+							}
+						}
+						int finalFoundQuantity = foundQuantity;
+						long finalFoundUnitPrice = foundUnitPrice;
+						AjaxLink sellLink = new AjaxLink<Void>("sellLink") {
+							@Override
+							public void onClick(AjaxRequestTarget target) {
+								try {
+									MyWicketApplication.get().getDependency(MarketOrderFactory.class).createMarketOrder(
+										getPlayer(), location, MarketOrderType.SELL, currentItemType, finalFoundQuantity, finalFoundUnitPrice);
+								} catch (GameLogicException e) {
+									throw new UnexpectedExceptionException(e);
+								}
+							}
+						};
+						sellLink.add(new Label("quantity", foundQuantity));
+						sellLink.add(new Label("unitPrice", foundUnitPrice));
+						sellLink.setVisible(!inventoryEntryItem.getModelObject().isPlayerExclusive() && foundBuyOrder);
+						itemStackItem.add(sellLink);
 					}
 				});
 			}

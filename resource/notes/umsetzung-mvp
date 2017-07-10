@@ -15,7 +15,18 @@ Next:
 - location-lose BUY orders für erz
 - location-lose SELL orders für upgrades
 - Möglichkeit, anhand von existierenden SELL orders dinge (Upgrades!) zu kaufen
+    --> location muss angegeben werden --> wie?
+        überlegiung: Langfristig soll es keine globalen market orers geben, dh market orders haben von sich aus eine location.
+        Dann wählt man die MO in der market-view aus und hat dadurch die location. Im Inventory etwas einblenden macht
+        nicht viel sinn, da man dann für jede location wo man was hat (und warum ausgerechnet die und nicht andere?)
+        eine riesenliste von allen verfügbaren items einblenden müsste.
+        --
+        Außerdem wäre, z.B. für das Filtern der MOs, eine Location-Auswahl gut. Dann kann ich diese auch benutzen,
+        um (bevor es nur noch lokale MOs gibt) die location zu wählen.
 - Möglichkeit, anhand von existierenden BUY orders dinge (Erz!) zu verkaufen
+    --> nach existierenden market orders suchen wenn man im inventory ist
+        -> blind gecoded, noch testen, dann ist das fertig
+    --> nach inventory items suchen wenn man in der market order übersicht ist
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

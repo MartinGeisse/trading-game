@@ -56,6 +56,23 @@ public final class Space {
 		return reconstructSpaceObject(row);
 	}
 
+	public SpaceObject getInventoryLocationOrNull(long inventoryId) {
+		SpaceObjectBaseDataRow row = postgresContextService.query().select(qbd).from(qbd).where(qbd.inventoryId.eq(inventoryId)).fetchFirst();
+		if (row == null) {
+			return null;
+		} else {
+			return reconstructSpaceObject(row);
+		}
+	}
+
+	public SpaceObject getInventoryLocation(long inventoryId) {
+		SpaceObject location = getInventoryLocationOrNull(inventoryId);
+		if (location == null) {
+			throw new IllegalArgumentException("inventory with ID " + inventoryId + " has no location");
+		}
+		return location;
+	}
+
 	/**
 	 * Gets a list of space objects based on a query configurator.
 	 *

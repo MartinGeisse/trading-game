@@ -1,26 +1,27 @@
 package name.martingeisse.trading_game.game.market;
 
 import com.querydsl.core.types.Path;
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
+import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.QMarketOrderRow;
 
 /**
- * TODO:
- * - must the money be paid up-front?
- * - must the items be provided up-front?
- * - what is the actual unit price -- the buyer or seller price?
+ *
  */
 public final class MarketOrder {
 
 	private final PostgresContextService postgresContextService;
 	private final JacksonService jacksonService;
+	private final EntityProvider entityProvider;
 	private final long id;
 
-	public MarketOrder(PostgresContextService postgresContextService, JacksonService jacksonService, long id) {
+	public MarketOrder(PostgresContextService postgresContextService, JacksonService jacksonService, EntityProvider entityProvider, long id) {
 		this.postgresContextService = postgresContextService;
 		this.jacksonService = jacksonService;
+		this.entityProvider = entityProvider;
 		this.id = id;
 	}
 
@@ -53,6 +54,10 @@ public final class MarketOrder {
 
 	public Long getLocationSpaceObjectBaseDataId() {
 		return getField(QMarketOrderRow.MarketOrder.locationSpaceObjectBaseDataId);
+	}
+
+	public SpaceObject getLocation() {
+		return entityProvider.getSpaceObject(getLocationSpaceObjectBaseDataId());
 	}
 
 	public Long getPrincipalPlayerId() {

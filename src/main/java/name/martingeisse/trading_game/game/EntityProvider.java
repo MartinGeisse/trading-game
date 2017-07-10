@@ -73,8 +73,12 @@ public class EntityProvider {
 		return spaceProvider.get().get(id);
 	}
 
+	public SpaceObject getInventoryLocation(long inventoryId) {
+		return spaceProvider.get().getInventoryLocation(inventoryId);
+	}
+
 	public MarketOrder getMarketOrder(long id) {
-		return new MarketOrder(postgresContextServiceProvider.get(), jacksonServiceProvider.get(), id);
+		return new MarketOrder(postgresContextServiceProvider.get(), jacksonServiceProvider.get(), this, id);
 	}
 
 }

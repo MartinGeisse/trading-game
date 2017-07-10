@@ -2,6 +2,7 @@ package name.martingeisse.trading_game.game.market;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.GameLogicException;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
@@ -9,7 +10,6 @@ import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.MarketOrderRow;
-import name.martingeisse.trading_game.postgres_entities.QMarketOrderRow;
 
 /**
  * Note: Since market orders are matched whenever a new order is created, this factory also does all the matching.
@@ -21,13 +21,15 @@ public class MarketOrderFactory {
 	private final JacksonService jacksonService;
 	private final EscrowService escrowService;
 	private final MarketOrderMatchingService marketOrderMatchingService;
+	private final EntityProvider entityProvider;
 
 	@Inject
-	public MarketOrderFactory(PostgresContextService postgresContextService, JacksonService jacksonService, EscrowService escrowService, MarketOrderMatchingService marketOrderMatchingService) {
+	public MarketOrderFactory(PostgresContextService postgresContextService, JacksonService jacksonService, EscrowService escrowService, MarketOrderMatchingService marketOrderMatchingService, EntityProvider entityProvider) {
 		this.postgresContextService = postgresContextService;
 		this.jacksonService = jacksonService;
 		this.escrowService = escrowService;
 		this.marketOrderMatchingService = marketOrderMatchingService;
+		this.entityProvider = entityProvider;
 	}
 
 	public void createMarketOrder(Player principal, SpaceObject location, MarketOrderType marketOrderType, ItemType itemType, int quantity, long unitPrice) throws GameLogicException {
@@ -69,9 +71,25 @@ public class MarketOrderFactory {
 		data.insert(postgresContextService.getConnection());
 
 		// match the new market order against existing ones
-		MarketOrder marketOrder = new MarketOrder(postgresContextService, jacksonService, data.getId());
+		MarketOrder marketOrder = new MarketOrder(postgresContextService, jacksonService, entityProvider, data.getId());
 		marketOrderMatchingService.match(marketOrder);
 
+	}
+
+	public void createMatchingMarketOrderForGlobal(Player principal, SpaceObject location, MarketOrder existingMarketOrder, int quantity) throws GameLogicException {
+		createMarketOrder(principal, location, existingMarketOrder.getType().getOpposite(), existingMarketOrder.getItemType(), quantity, existingMarketOrder.getUnitPrice());
+	}
+
+	public void createMatchingMarketOrderForLocal(Player principal, MarketOrder existingMarketOrder) throws GameLogicException {
+		createMatchingMarketOrderForLocal(principal, existingMarketOrder, existingMarketOrder.getQuantity());
+	}
+
+	public void createMatchingMarketOrderForLocal(Player principal, MarketOrder existingMarketOrder, int quantity) throws GameLogicException {
+		if (quantity > existingMarketOrder.getQuantity()) {
+			throw new GameLogicException("trying to create market order from existing one with greater quantity than the existing one");
+		}
+		createMarketOrder(principal, existingMarketOrder.getLocation(), existingMarketOrder.getType().getOpposite(),
+			existingMarketOrder.getItemType(), quantity, existingMarketOrder.getUnitPrice());
 	}
 
 }
