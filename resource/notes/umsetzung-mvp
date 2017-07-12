@@ -54,24 +54,10 @@ Milestones:
 - Feinschliff
 	- Restzeit bei Mining anhand von Restbestand und Frachtraum ermitteln
 	- prerequisite actions farblich hervorgehoben und nicht cancellable
-- fake buy button
 - analytics
 - "Bezahlung" per folding@home
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Umsetzungs-Überlegungen (betr. alle Milestones)
-- Spielzeit bei vielen Spielobjekten
-	- für alle Objekte tick() aufrufen wird irgendwann das System ausbremsen!
-	- einfacher Ansatz: Objekte geben an, ob ihre tick()-Methode leer ist, und werden dann massenweise davon ausgenommen
-	- Verbesserung 1: Jedes Objekt liefert die Anzahl ticks, bis etwas interessantes passiert. Außerdem lässt jedes
-		Objekt einen Zähler mitlaufen, wie viele Ticks es schon bekommen hat. Erst wenn die Ticks nötig sind, werden
-		sie ausgeführt, und dann massenhaft (nötig: nötig für UI oder es passiert etwas interessantes anhand vorheriger
-		Def, z.B. Aktion fertig) -> optimiert für Spieler, die gerade offline sind.
-    - Verbesserung 2: Es gibt keine Ticks mehr. Stattdessen wird ein Call ausgeführt, sobald etwas interessantes
-    	passiert. Für UI sowie beim Abbruch von Aktionen wird ein Zwischenergebnis interpoliert.
-    	Das vermeidet auch Rundungsfehler beim Zwischenergebnis von Bewegung ganz gut, ist aber davon abhängig, dass
-    	die Gesamtzeit für Bewegung genau ermittelt wird.
 
 MVP-Ideen: (WICHTIG: Nicht Ideen, was man alles einbauen könnte, sondern wie man kreativ Dinge *weglassen* kann bzw.
         durch manuelle Arbeit ersetzen kann, vgl. MVP unter https://en.wikipedia.org/wiki/Lean_startup !)
@@ -80,112 +66,6 @@ MVP-Ideen: (WICHTIG: Nicht Ideen, was man alles einbauen könnte, sondern wie ma
     - textuelle beschreibung, was gebaut / erfunden werden soll
         - daraus kann ich auch ableiten, welche Features zukünftig interessant sind!
 - Buy Orders / Sell Orders mit Location per Script erzeugen, dafür auch Fake-Spieler erzeugen
-
-https://en.wikipedia.org/wiki/Lean_software_development
-
-
-
-Quelle 1: https://www.devbridge.com/articles/4-steps-to-defining-a-minimum-viable-product/
-- We believe that viability means delivering enough value to a user that they’re willing to use your product.
-    It doesn’t necessarily mean that they’ll pay for your MVP, but it does mean that they’re willing to give your
-    product a try versus something else.
-- Pick a persona ... Take Uber as an example. When Uber started, they targeted a specific user persona, a city commuter.
-- Needs vs. Wants: Using Uber again as an example, a user needs to provide their exact location to be picked up, know
-    what car to get into when it arrives, and provide payment details so that they can pay for their ride. ...
-    An Uber user may want to change their pickup location because they are in a congested area, or see a photo of
-    the driver so they know who is picking them up.
-    ...
-    A good MVP covers all the needs, and just enough of the wants to validate if you’re developing a viable product
-    Which wants you pick depend on your product and business, but pick the wants that will differentiate you
-    immediately. Uber picked features such as real-time ride tracking, and automatic credit card payments to
-    create distinct differences from cab companies.
-    Real-time tracking isn’t needed for users to get from point A to point B, however, it was a want that Uber
-    suspected would create a significant enough advantage to overcome the switching costs of existing products.
-- "Coming Soon"-Bildschirme um zu testen, welche Features gewünscht werden!
-    -> Zähler
-    -> "tief" genug, damit jemand nicht beim "durchzappen" den Zähler auslöst
-    Don't invest in features people don't use, and remove features that are not adding value.
-- Releasing your MVP doesn't mean that you will be ready to go to market and launch to the world. You’ll likely need
-    to iterate for a little bit, and find that critical mass of features that have been tested, validated, and used.
-    You may find that you need a couple of MVP’s combined before you’re ready to go to market. The point at which
-    you’re ready to launch is called the Minimum Marketable Product (MMP).
-
-
-
-Quelle: http://scalemybusiness.com/the-ultimate-guide-to-minimum-viable-products/
-- Explainer Video: "Before their launch, Dropbox had already got 5K subscribers, all based on their video."
-- Landing Page:
-    The job of a landing page is to quickly communicate the value of your offering, diffuse objections, and call
-    the visitor to action.
-    Landing pages are where the excrement hits the fan. Based upon your interviews, surveys, and your product
-    development you build a landing page.
-    Wait a minute, isn’t a landing page a marketing instrument?
-    Sure it is. But it is also an MVP. The landing page validates your value proposition, product-solution fit,
-    sales argumentation and can even validate your pricing.
-- A “Wizard of Oz” MVP is when you put up a front that looks like a real working product, but you manually carry out
-    product functions. It’s also known as “Flinstoning”.
-    ...
-    But it was an experiment designed focused on answering one question: is there already sufficient demand for a
-    superior online shopping experience for shoes? And it allowed the founder to validate most of his assumptions
-    with a very little investment.
-- Concierge MVP: "Instead of providing a product, you start with a manual service. But not just any service! The
-    service should consist of exactly the same steps people would go through with your product."
-    ...
-    Before building anything, the two founders went to their local shop in Austin. They interviewed shoppers until they found one that was interested in their service.
-    She got a concierge treatment.
-    The CEO visited her every week. He came with a shopping list and selected recipes, carefully chosen based on (a) her preferences and (b) promotions in the local store. The list was updated on the spot based on her desires and feedback. Most importantly, the CEO would pick a check of $9.95 for this service.
-    This was no way to get rich.
-    But each week, they would learn more about what it takes to make their product a success. They kept adding more customers to their weekly visits, until they couldn’t handle the load any more.
-    Only then they started coding.
-    One week they start sending lists and recipes via e-mail. A next one they wrote a piece of software to parse promotional store lists. Eventually, they started taking payments online.
-    Only after validating the basic product with customers of their initial store, they started adding stores, first in their region, to eventually grow into a nationwide business.
-    ***
-    GEFAHR: Nicht statistisch relevant!
-- Piecemeal MVP
-    Zwischending zwischen "Wizard of Oz" und "Concierge" -> emulate using existing tools
-    ...
-    It is so simple, it took BJ a couple of hours to create a bare bones minimum viable product:
-    Sign up form was a Google Docs form
-    The instructions were described in a Google Docs document (which BJ was still editing as I was reading it)
-    An email reminder was sent manually every day. You had to reply, and write “y” if you’ve done your tiny habit, and another “y” if you wanted to go on the next day.
-    You’d then get a reply back with an encouragement.
-    ***
-    GEFAHR: Nicht statistisch relevant!
-- Raise Funds from Customers (Kickstarter, IndieGoGo, RocketHub
-- A Single Featured MVP (vgl. Google, Dropbox)
-    "The key is to restate any hard problem that requires a lot of software into a simple problem that requires much
-    less. You may not be solving exactly the same problem but that’s alright. Solving 80% of the original problem for
-    20% of the effort is a major win. The original problem is almost never so bad that it’s worth five times the
-    effort to solve it."
-- The first is the Element of time and money – Lean is much more about saving time then money. I’ve got to the point
-    where I say only time as when you include both time and money the focus always becomes saving money, which is wrong.
-- "... (café) ... They open up very quickly, sign a three month lease, sell just coffee but have their full menu.
-    Ask customers what they want as they order and track customer archetypes and which products were ordered."
-- "The important thing is if you don’t get a definitive answer don’t do it"
-
-
-Quelle: http://scalemybusiness.com/5-reasons-why-solving-the-right-problem-can-make-you-rich/
-- Die Vorteile dieses Spiels gegenüber anderen Spielen müssen hervorgehoben werden!
-- Es muss klar werden, inwiefern damit ein PRoblem des Benutzers gelöst wird! (Und es wird ja meiner
-    Meinung nach eins gelöst!)
-
-Quelle: https://en.wikipedia.org/wiki/How_to_Win_Friends_and_Influence_People
-
-"Unfortunately, people often get these concepts confused… and MVP often gets mis-labelled as;
- Something you must deliver in less than X period of time
- A less than complete product missing key features
- A product that does not add value to its intended user
-"
-
-
-https://medium.com/hackerlife/how-to-define-your-minimum-viable-product-dc7e118baec1
-- target audience (age, gender, region, price
-- top 3 features?
-- In case your product doesn’t get many users, you certainly get the clear idea of two things
-    Either your product is not solving any problem or you are pitching in the wrong Audience.
-
-
-Ideen:
 - seltene Erze, die man finden will/sollte
 - Facebook page (passt das zur Zielgruppe? Wer ist die?)
     -> später vllt facebook, jetzt aktuell ist das eine zu große ablenkung
@@ -195,67 +75,62 @@ Ideen:
 - Die ersten Spieler haben privilegien, indem sie eher als game master agieren
     (sofern gewünscht). Das bringt auch noch mal ganz neue Aspekte rein im Vergleich zum
     reinen Wettbewerb
+- Freunde und Bekannte als erste "Dauertester", von da aus weiter
+- Handel als *nötiges* Element schon im MVP. Das soll ja später auch ein Kernpunkt sein.
+    -> welche Kernpunkte gibt es noch?
+    --> brainstorming nötig!
 
-Was ist der "pain point", der gelöst wird?
+Überlegung:
+- Was ist der "pain point", der gelöst wird?
+- Was soll später alles möglich sein (Brainstorming)
 
-https://www.agileplannerapp.com/blog/building-agile-planner/choosing-an-mvp
-- "If you are building out a half of a product as your first stab, you might as well just call it version one or
-    iteration zero or something like that. No sense in polluting the MVP term."
-- Fragen:
-    - What are you trying to learn with this particular MVP?
-    - What data are you collecting about your experiment?
-    - What determines the success or failure of the experiment?
-- After a week or so of research (and some serious thought), I had three candidate MVPs:
-    - A landing page explaining the product, a "Buy" button, and an Adwords campaign.
-    - A survey designed to identify how many people would pay for my app.
-    - A demo video highlighting the differences between existing products and Agile Planner.
-- "It's not enough for them to decide to buy it because they think it looks pretty; I need to know whether they
-    still want to buy it after they've appreciated what it won't do."
-- "With a video you can track:
-    how many people visit the page,
-    how many start watching the video,
-    how many stop watching the video part way through (and if you use Wistia, you can see how far they get), and
-    how many people go on to try and purchase your app.
 
-http://www.panozzaj.com/blog/2012/01/11/signs-you-arent-really-building-a-minimum-viable-product/
-- MVP != erste Iteration; MVP hat Fokus auf Lernen
-- You should start with the riskiest assumptions that you can test and try to make them fail.
-- Here are my concerns when the term MVP is used loosely:
-    there is little emphasis on what assumptions the MVP seeks to [in]validate,
-    there are no clear success or failure criteria, and
-    there might be an easier way to learn as a result.
-- "I've started to use "experiments" instead of MVP. MVP, beyond the problem of being an acronym, tends to get
-    people thinking too much in terms of product and, even worse, a point release."
-- "I also like to ask of myself, "Could I test this hypothesis without building anything?" It usually turns out that
-    the answer is yes."
-- "First, it is important to know what is exactly is an MVP. For example, we built a simple product to display core
-    functionality. We showed it to a room of 50 people and asked: Who would use this? Almost everyone raised their
-    hands. In retrospect, that was our MVP. Yet, I spent the next few weeks talking about building an MVP. But
-    the MVP was done, so really I should have been focused on building V1."
-    ...
-    My partner who is an amazing developer was more focused on optimizing performance. In the end, performance is key.
-    (performance im allgemeineren Sinne: fehlerfreiheit, zuverlässigkeit, ...)
-    ...
-    When I got into the Porsche, I was amazed at how sparse it was. It was basically an empty cockpit with a
-    pathetic after-market stereo. Then I turned it on, put it in first gear, and slalomed through the back roads.
-    Damn; it was the definition of performance. Then I got into the Jaguar. It had everything. Plush seats, a great
-    stereo, beautiful wood paneling. It was comfortable and pretty but it didn't drive much better than my dad's
-    Grand Marquis. And even worse, the Jaguar was always in the shop. In short, the Jag was all features and no
-    performance.
-    --> Porsche > Jaguar
+Was sind die Kernelemente des Spiels? Diese soll der MVP zeigen:
+- asynchronous gameplay. Man soll nur ab und zu mal einloggen und nachbessern müssen, ohne dass daraus ein Nachteil
+    entsteht.
+        - langsames Gameplay
+        - Action Queue
+        - keine schnellen Reaktionen auf andere Spieler nötig
+        - Alarme und Scripting
+- massively multiplayer
+- "Unternehmungen". Man soll im Spiel erfolgreich sein, indem man kreative und ungewöhnliche Dinge tut, wo der Erfolg
+    unklar ist und das Risiko hoch. Vgl. Bau einer Station in lowsec bei EO.
+- Verwandt damit ist, dass die Spielwelt so komplex ist, dass man sie nicht vollständig überblicken kann. Die
+    Grundregeln sollen klar und einfach sein, aber z.B. die verfügbaren Items, Herstellungswege etc. nicht.
+    Ebenso soll das räumliche Ausmaß riesig sein.
+- Die andere Komponente für Erfolg soll die Kooperation zwischen Spielern sein. Je mehr Beziehungen zu anderen
+    Spielern man hat, desto besser. Hier sollen aber nur "echte" Beziehungen gelten, also nicht einfach Bonuspunkte
+    für eine lange "Freundeliste", sondern die tatsächliche Zusammenarbeit soll besser funktionieren als das alleine
+    Spielen. Dazu zählen auch "Gilden" / "Firmen".
+- Durch Erfolg sollen die Spieler ingame-Prestige erlangen. Z.B. könnte eine POS bekannt werden als wichtiger
+    Handelspunkt. Idealerweise so weit, dass die Spieler in Foren etc. außerhalb des Spiels damit angeben.
+- Neue Spieler sollen einen gewissen Schutz genießen.
 
-http://www.skorks.com/2011/11/what-is-a-startup-or-a-startup-idea/
-- AARRR (acquisition, activation, retention, referral, revenue) = funnel
+Wie sollen diese umgesetzt werden?
+- Handel und Industrie! Der Fokus sollte hier noch mehr darauf sein, kein EO-Klon zu sein, sondern das "Weltweite
+    Handels- und Industriespiel", was ich mir schonmal ausgedacht hatte, nur als MMO und im Weltraum statt auf der
+    Erde.
+- Dazu sind unglaublich viele verschiedene Items und Produktionswege nötig, außerdem viele verschiedene "Arten" von
+    Items mit Sonderregeln.
+- Sinnvoll sind auch Parametrisierte Items, da diese 1. die Vielfalt drastisch erhöhen und 2. eigene Spielerstrategien
+    erlauben, um die Parameter zu verbessern. Bsp:
+    - Erz: Reinheit, Schädliche Verunreinigung, Kompression/Dichte, Isotope (das könnten aber auch verschiedene Items sein)
+    - Rohstoffe: Reinheit, Kompression
+    - Teile: Materialgüte (aus Reinheit), Qualität der Verarbeitung, Belastbarkeit
+    - Spezifische Parameter für einzelne Itemtypen
 
-http://thestartuptoolkit.com/blog/2010/08/the-risk-validation-pyramid/
-- compare -> observe -> interview -> fake it -> make it
-- before asking someone to give you money, you first ask them for their opinion. It turns out people love doing
-    this, because it’s the only time in life that you get to bitch about what annoys you to someone who’s so
-    excited to hear it that he writes down every word and buys you coffee.
-- The 5 levels of risk validation
-    Compare to an analog
-    Observe what your customers already do
-    Interview customers or experts
-    Fake it with a dummy product, dead-end button, or “demo”
-    Build the actual product
+Was sind keine Kernelemente sondern nette Features?
+- "kein Kampf" -- ist nur Hilfsmittel für asynchronous gameplay
+
+Konkrete Umsetzung:
+- Man könnte per Init-Script die Zwischenprodukte und die Manufacturing-Regeln *zufällig* erzeugen! Das ist für einen
+    MVP ausreichend.
+- Market muss umgesetzt werden. player-to-player, da ansonsten fiktive Preise festgelegt werden müssten. Das
+    Market-System ist ja auch schon halb fertig.
+- Manufacturing muss umgesetzt werden, aber z.B. blueprint-los, als action innerhalb des Spielerschiffs (reicht für MVP)
+
+
+
+
+
 

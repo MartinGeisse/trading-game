@@ -8,3 +8,15 @@ click (for now handle static/dynamic space objects the same):
 
 map selection indicator -> follow selected object
 
+Umsetzungs-Überlegungen (betr. alle Milestones)
+- Spielzeit bei vielen Spielobjekten
+	- für alle Objekte tick() aufrufen wird irgendwann das System ausbremsen!
+	- einfacher Ansatz: Objekte geben an, ob ihre tick()-Methode leer ist, und werden dann massenweise davon ausgenommen
+	- Verbesserung 1: Jedes Objekt liefert die Anzahl ticks, bis etwas interessantes passiert. Außerdem lässt jedes
+		Objekt einen Zähler mitlaufen, wie viele Ticks es schon bekommen hat. Erst wenn die Ticks nötig sind, werden
+		sie ausgeführt, und dann massenhaft (nötig: nötig für UI oder es passiert etwas interessantes anhand vorheriger
+		Def, z.B. Aktion fertig) -> optimiert für Spieler, die gerade offline sind.
+    - Verbesserung 2: Es gibt keine Ticks mehr. Stattdessen wird ein Call ausgeführt, sobald etwas interessantes
+    	passiert. Für UI sowie beim Abbruch von Aktionen wird ein Zwischenergebnis interpoliert.
+    	Das vermeidet auch Rundungsfehler beim Zwischenergebnis von Bewegung ganz gut, ist aber davon abhängig, dass
+    	die Gesamtzeit für Bewegung genau ermittelt wird.

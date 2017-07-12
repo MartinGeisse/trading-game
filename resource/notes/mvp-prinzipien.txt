@@ -1,0 +1,292 @@
+
+https://en.wikipedia.org/wiki/Lean_software_development
+
+
+Quelle 1: https://www.devbridge.com/articles/4-steps-to-defining-a-minimum-viable-product/
+- We believe that viability means delivering enough value to a user that they’re willing to use your product.
+    It doesn’t necessarily mean that they’ll pay for your MVP, but it does mean that they’re willing to give your
+    product a try versus something else.
+- Pick a persona ... Take Uber as an example. When Uber started, they targeted a specific user persona, a city commuter.
+- Needs vs. Wants: Using Uber again as an example, a user needs to provide their exact location to be picked up, know
+    what car to get into when it arrives, and provide payment details so that they can pay for their ride. ...
+    An Uber user may want to change their pickup location because they are in a congested area, or see a photo of
+    the driver so they know who is picking them up.
+    ...
+    A good MVP covers all the needs, and just enough of the wants to validate if you’re developing a viable product
+    Which wants you pick depend on your product and business, but pick the wants that will differentiate you
+    immediately. Uber picked features such as real-time ride tracking, and automatic credit card payments to
+    create distinct differences from cab companies.
+    Real-time tracking isn’t needed for users to get from point A to point B, however, it was a want that Uber
+    suspected would create a significant enough advantage to overcome the switching costs of existing products.
+- "Coming Soon"-Bildschirme um zu testen, welche Features gewünscht werden!
+    -> Zähler
+    -> "tief" genug, damit jemand nicht beim "durchzappen" den Zähler auslöst
+    Don't invest in features people don't use, and remove features that are not adding value.
+- Releasing your MVP doesn't mean that you will be ready to go to market and launch to the world. You’ll likely need
+    to iterate for a little bit, and find that critical mass of features that have been tested, validated, and used.
+    You may find that you need a couple of MVP’s combined before you’re ready to go to market. The point at which
+    you’re ready to launch is called the Minimum Marketable Product (MMP).
+
+
+Quelle: http://scalemybusiness.com/the-ultimate-guide-to-minimum-viable-products/
+- Explainer Video: "Before their launch, Dropbox had already got 5K subscribers, all based on their video."
+- Landing Page:
+    The job of a landing page is to quickly communicate the value of your offering, diffuse objections, and call
+    the visitor to action.
+    Landing pages are where the excrement hits the fan. Based upon your interviews, surveys, and your product
+    development you build a landing page.
+    Wait a minute, isn’t a landing page a marketing instrument?
+    Sure it is. But it is also an MVP. The landing page validates your value proposition, product-solution fit,
+    sales argumentation and can even validate your pricing.
+- A “Wizard of Oz” MVP is when you put up a front that looks like a real working product, but you manually carry out
+    product functions. It’s also known as “Flinstoning”.
+    ...
+    But it was an experiment designed focused on answering one question: is there already sufficient demand for a
+    superior online shopping experience for shoes? And it allowed the founder to validate most of his assumptions
+    with a very little investment.
+- Concierge MVP: "Instead of providing a product, you start with a manual service. But not just any service! The
+    service should consist of exactly the same steps people would go through with your product."
+    ...
+    Before building anything, the two founders went to their local shop in Austin. They interviewed shoppers until they found one that was interested in their service.
+    She got a concierge treatment.
+    The CEO visited her every week. He came with a shopping list and selected recipes, carefully chosen based on (a) her preferences and (b) promotions in the local store. The list was updated on the spot based on her desires and feedback. Most importantly, the CEO would pick a check of $9.95 for this service.
+    This was no way to get rich.
+    But each week, they would learn more about what it takes to make their product a success. They kept adding more customers to their weekly visits, until they couldn’t handle the load any more.
+    Only then they started coding.
+    One week they start sending lists and recipes via e-mail. A next one they wrote a piece of software to parse promotional store lists. Eventually, they started taking payments online.
+    Only after validating the basic product with customers of their initial store, they started adding stores, first in their region, to eventually grow into a nationwide business.
+    ***
+    GEFAHR: Nicht statistisch relevant!
+- Piecemeal MVP
+    Zwischending zwischen "Wizard of Oz" und "Concierge" -> emulate using existing tools
+    ...
+    It is so simple, it took BJ a couple of hours to create a bare bones minimum viable product:
+    Sign up form was a Google Docs form
+    The instructions were described in a Google Docs document (which BJ was still editing as I was reading it)
+    An email reminder was sent manually every day. You had to reply, and write “y” if you’ve done your tiny habit, and another “y” if you wanted to go on the next day.
+    You’d then get a reply back with an encouragement.
+    ***
+    GEFAHR: Nicht statistisch relevant!
+- Raise Funds from Customers (Kickstarter, IndieGoGo, RocketHub
+- A Single Featured MVP (vgl. Google, Dropbox)
+    "The key is to restate any hard problem that requires a lot of software into a simple problem that requires much
+    less. You may not be solving exactly the same problem but that’s alright. Solving 80% of the original problem for
+    20% of the effort is a major win. The original problem is almost never so bad that it’s worth five times the
+    effort to solve it."
+- The first is the Element of time and money – Lean is much more about saving time then money. I’ve got to the point
+    where I say only time as when you include both time and money the focus always becomes saving money, which is wrong.
+- "... (café) ... They open up very quickly, sign a three month lease, sell just coffee but have their full menu.
+    Ask customers what they want as they order and track customer archetypes and which products were ordered."
+- "The important thing is if you don’t get a definitive answer don’t do it"
+
+
+Quelle: http://scalemybusiness.com/5-reasons-why-solving-the-right-problem-can-make-you-rich/
+- Die Vorteile dieses Spiels gegenüber anderen Spielen müssen hervorgehoben werden!
+- Es muss klar werden, inwiefern damit ein PRoblem des Benutzers gelöst wird! (Und es wird ja meiner
+    Meinung nach eins gelöst!)
+
+Quelle: https://en.wikipedia.org/wiki/How_to_Win_Friends_and_Influence_People
+
+"Unfortunately, people often get these concepts confused… and MVP often gets mis-labelled as;
+ Something you must deliver in less than X period of time
+ A less than complete product missing key features
+ A product that does not add value to its intended user
+"
+
+
+https://medium.com/hackerlife/how-to-define-your-minimum-viable-product-dc7e118baec1
+- target audience (age, gender, region, price
+- top 3 features?
+- In case your product doesn’t get many users, you certainly get the clear idea of two things
+    Either your product is not solving any problem or you are pitching in the wrong Audience.
+
+
+https://www.agileplannerapp.com/blog/building-agile-planner/choosing-an-mvp
+- "If you are building out a half of a product as your first stab, you might as well just call it version one or
+    iteration zero or something like that. No sense in polluting the MVP term."
+- Fragen:
+    - What are you trying to learn with this particular MVP?
+    - What data are you collecting about your experiment?
+    - What determines the success or failure of the experiment?
+- After a week or so of research (and some serious thought), I had three candidate MVPs:
+    - A landing page explaining the product, a "Buy" button, and an Adwords campaign.
+    - A survey designed to identify how many people would pay for my app.
+    - A demo video highlighting the differences between existing products and Agile Planner.
+- "It's not enough for them to decide to buy it because they think it looks pretty; I need to know whether they
+    still want to buy it after they've appreciated what it won't do."
+- "With a video you can track:
+    how many people visit the page,
+    how many start watching the video,
+    how many stop watching the video part way through (and if you use Wistia, you can see how far they get), and
+    how many people go on to try and purchase your app.
+
+http://www.panozzaj.com/blog/2012/01/11/signs-you-arent-really-building-a-minimum-viable-product/
+- MVP != erste Iteration; MVP hat Fokus auf Lernen
+- You should start with the riskiest assumptions that you can test and try to make them fail.
+- Here are my concerns when the term MVP is used loosely:
+    there is little emphasis on what assumptions the MVP seeks to [in]validate,
+    there are no clear success or failure criteria, and
+    there might be an easier way to learn as a result.
+- "I've started to use "experiments" instead of MVP. MVP, beyond the problem of being an acronym, tends to get
+    people thinking too much in terms of product and, even worse, a point release."
+- "I also like to ask of myself, "Could I test this hypothesis without building anything?" It usually turns out that
+    the answer is yes."
+- "First, it is important to know what is exactly is an MVP. For example, we built a simple product to display core
+    functionality. We showed it to a room of 50 people and asked: Who would use this? Almost everyone raised their
+    hands. In retrospect, that was our MVP. Yet, I spent the next few weeks talking about building an MVP. But
+    the MVP was done, so really I should have been focused on building V1."
+    ...
+    My partner who is an amazing developer was more focused on optimizing performance. In the end, performance is key.
+    (performance im allgemeineren Sinne: fehlerfreiheit, zuverlässigkeit, ...)
+    ...
+    When I got into the Porsche, I was amazed at how sparse it was. It was basically an empty cockpit with a
+    pathetic after-market stereo. Then I turned it on, put it in first gear, and slalomed through the back roads.
+    Damn; it was the definition of performance. Then I got into the Jaguar. It had everything. Plush seats, a great
+    stereo, beautiful wood paneling. It was comfortable and pretty but it didn't drive much better than my dad's
+    Grand Marquis. And even worse, the Jaguar was always in the shop. In short, the Jag was all features and no
+    performance.
+    --> Porsche > Jaguar
+
+http://www.skorks.com/2011/11/what-is-a-startup-or-a-startup-idea/
+- AARRR (acquisition, activation, retention, referral, revenue) = funnel
+
+http://thestartuptoolkit.com/blog/2010/08/the-risk-validation-pyramid/
+- compare -> observe -> interview -> fake it -> make it
+- before asking someone to give you money, you first ask them for their opinion. It turns out people love doing
+    this, because it’s the only time in life that you get to bitch about what annoys you to someone who’s so
+    excited to hear it that he writes down every word and buys you coffee.
+- The 5 levels of risk validation
+    Compare to an analog
+    Observe what your customers already do
+    Interview customers or experts
+    Fake it with a dummy product, dead-end button, or “demo”
+    Build the actual product
+
+
+------------------------------------------------------------------------------------
+bzgl. game
+------------------------------------------------------------------------------------
+
+- you need to build the bare minimum game experience necessary to prove that people find your core game mechanic engaging
+- hypothesis, metrics
+- Hypothesis. Your hypothesis is what you expect will happen when players play your game. A good hypothesis will
+    include a question to be answered, a characterization of the user and why they would act in a way that would
+    validate the hypothesis, and a specific, quantified expectation of what will happen. You should base the metrics
+    you use on what you need to measure to validate your hypothesis.
+    -->
+    funnel, hypothesis = minimum numbers
+- "However, one of the points of feedback that I got while writing this article is that most players are no longer
+    willing to accept half-baked games on mature gaming platforms such as Facebook. I would counter this concern with
+    one of the key lessons that Eric learned from his time at IMVU: no matter how much your product is lacking, early
+    adopters that love it will still use it. The early adopter community that you should target will differ by game
+    type, but finding an early group of excited alpha testers is not as hard as it seems."
+- "You can also seek out communities that support indie game development, like /r/IndieGaming."
+- ... interest does not necessarily denote customers. A good next step would be to test players' willingness to sign
+    up based on messaging by creating landing pages for each copy. As with a Lean Startup, your goal is to continuously
+    learn and improve your product in tandem.
+- But instead of putting it out to market, I put out daily builds for a group of testers, so it's a much smaller group.
+    - I set up my games such that when they run, they (the testers) get a startup screen with a news feed
+    - One word of advice: If you are going to have testers or even marketplace users test for you, you HAVE to make
+        it as simple and as painless as possible for them. You can't make them run six different programs, fiddle
+        with their registry, move directories and all that.
+
+However, there are downsides to MVP that you should be aware of; primarily marketing and attention.
+- If you market your MVP too aggressively before it is ready for prime time you will eschew the innovators and early
+    adopter crowd in favour of the early majority, and possibly even the cusp of the late majority, which will sow
+    confusion and burn through attention with a product that may not be usable or feature rich enough to make people
+    actually switch.
+- The core precept of minimum viable product is “viable.” You have to make the minimum product you can, but it still
+    needs to be usable. Making an eBay clone that consists of just a single page saying “Under Construction” is not an
+    MVP. This is where many people who talk about MVP fall down, they think its a quick fix, a panacea to getting
+    audience attention and gaining market share when in fact MVP is a way to verify that your idea is viable.
+- Grasping the entire concept of MVP and how it translates to a marketable product rather than just "minimum product"
+    is very important and one that many entrepreneurs and managers and innovators miss entirely.
+- Imagine having to finish an entire game without a single game save. This is how many game developers create software:
+    all-or-nothing, no safety net, you either hit it out of the park or crash and burn. No middle ground. No accounting
+    for unplanned contingencies. This is a sure fire way to unintentionally aim for failure.
+- One great way to pare down the massive, feature-creepy, overly optimistic tome that is a typical gamedev's brainstorm is to rate each bullet point on a few scales, like:
+    Originality
+    Viability
+    Ease of development
+    How much art it would require
+    How fun it sounds to play
+    How fun it sounds to code
+- For each item in your top picks, ask one final question: is this a must have or a nice to have? For the first
+    prototype, focus solely on the essential, couldn't-possibly-work-without-it features.
+- What are are aiming for when you attack your giant brainstorm is to pare it down to the absolute essentials only.
+    Distil your idea to the single core game mechanic you like the most that would be easy to implement. Do one thing
+    well, not a dozen things half-baked.
+- Pretend you need to convince a major publisher executive of the viability of your game during a chance meeting in an
+    elevator. You have ten seconds. Can you describe your game so enthusiastically, so interestingly, so mindblowingly
+    that in that brief moment you could score a huge upfront royalty payment and publishing contract?
+    Write this elevator pitch down. Edit it. Make it shorter. Pretend, instead of the above scenario, this would be
+    the text copy of the back of your game's box if it was sitting on a store shelf. Imagine a gamer picking up the
+    box and turning it around. They have hundreds of other games to choose from, but they've decided to give you a
+    dozen seconds of their time to considering yours. Does this pitch sell the game?
+- What we're aiming for here is functionality: something, anything, that you could stop working on and yet have
+    something to show (and play!). It may be horribly un-fun or ugly as sin, but that's not in the slightest bit
+    important. At the very least, you'll have a code project that compiles without errors and produces a deliverable.
+- Just remember one thing: don't work on a little of this or that all at once. Focus on one task and finish it to the
+    minimal basic complete state before moving on.
+- You may get bored of working on something and need a break. That's fine - but attempt to be disciplined enough to
+    keep working on the minimal system until it exists in a state that you could walk away from if need be.
+- By working as linearly as you can (within reason), you will find that you are juggling fewer things at once. Your
+    mind will be free to concentrate on a single task at a time rather than being overwhelmed by fifty different bugs
+    in fifty different classes. This is essential to keep your motivation, concentration, and enthusiasm. Nothing makes
+    you want to quit more than having so many problems to solve that you get discouraged.
+- Keep Hitting Save Points. In the life of a gamedev, you create a metaphorical save point any time you complete an
+    MVP or playable prototype or released version of a game. Remember to save this playable version of the game
+    somewhere other than your working folder. (z.b. git tag). Whatever you do, ensure that if you destroy everything
+    from this point on, you could step back one version and ship it.
+- Always aim to create many iteratively improved and incrementally enhanced working, functional, executables. If you've
+    gone more than a day without having a solid backup version of your game that could, if needed, be made public, then
+    you should be getting nervous.
+- For this reason, the linear, iterative approach outlined above also holds true for your art content or game levels.
+    Work on polishing one good level at a time. This way, if you run out of time, money, patience or enthusiasm before
+    you finish all 99 levels you'd planning in your design document, the three or four that you did finish are good
+    enough that you could still be proud of them.
+- Remember that most games you play on console, for example, have had a hundred people working on them, full time,
+    for several years. If you are a solo indie attempting to compete with these kinds of teams all you have to do is a
+    little math to realize that the human-hours of labor add up to more than one indie developer's lifetime.
+- You simply have to accept the fact that you need to aim lower in order to finish unless you want to spend years on a
+    single game. Considering that the average good indie game nets a few thousand dollars of profit, you cannot afford
+    to spend hundreds or thousands of hours on your game unless you're betting the farm on a life's work or epic
+    masterpiece. You need to design games that would take 20 to 50 hours of work.
+- Remember: Accept Imperfection
+- Remember: Release Early, Release Often. When you run out of time, energy, money or motivation, launch what you have.
+    If you've adhered to the save point system development methodology, you should have something playable at any stage
+    of the project, even if there are all sorts of features left over in your wishlist or to-do list. That's okay!
+
+
+
+
+
+
+
+
+
+
+Bsp. Elevator Pitch:
+    You are the villain. Two lovers desperately want to embrace each other. Your mission is to keep them apart by
+    building walls that drive them farther apart without ever making it impossible. A turn-based strategy puzzle
+    game based on A-star pathfinding.
+
+In den Beispielen reden die von einem "no art early playable" innerhalb von *Stunden* -- keine Ahnung, wie die
+das schaffen. Vermutlich weil deren Spiel einfacher gestrickt ist. Der grundsätzliche Gedanke ist aber richtig.
+
+Außerdem: Mal planen, welche Features das Spiel alles haben *wird*. Damit lässt sich prüfen, ob die Idee überhaupt
+ausbaufähig ist.
+
+
+
+
+
+
+
+Mitgenommen:
+- Meine Sorge, dass ein zu früher Release nur dazu führt, dass die Benutzer wieder gehen, weil es noch nicht fertig ist,
+    ist vermutlich unbegründet. Normale Benutzer würden das tun, early adopters nicht. Letztere erwarten etwas
+    unfertiges. Sie erwarten aber auch einen persönlichen Kontakt, News, usw.
+- Consuming attention too often and too early can in the development cycle can lead to burnout of your core audience.
+    It’s too easy for your audience to grow bored or tired if you don’t nail the minimum viable product feature set
+    just so.
