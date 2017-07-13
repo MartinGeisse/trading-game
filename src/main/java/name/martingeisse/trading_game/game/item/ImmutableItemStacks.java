@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * An immutable list of immutable item stacks.
  * <p>
- * Among other purposes, this class may be used as a "bill of materials" for crafting recipes IF valid according
+ * Among other purposes, this class may be used as a "bill of materials" for manufacturing IF valid according
  * to {@link #isValidBillOfMaterials()}. This method ensures that no two item stacks with the same item type exist
  * in this object.
  */

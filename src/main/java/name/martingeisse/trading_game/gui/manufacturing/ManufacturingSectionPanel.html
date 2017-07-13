@@ -1,0 +1,29 @@
+<html>
+<body>
+<wicket:panel>
+    <h2>Manufacturing</h2>
+    <ul>
+        <li wicket:id="blueprints">
+            <div wicket:id="name"></div>
+            <div>
+                Requires:
+                <ul>
+                    <li wicket:id="billOfMaterials">
+                        <span wicket:id="quantity"></span> <span wicket:id="itemType"></span>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                Produces:
+                <ul>
+                    <li wicket:id="yield">
+                        <span wicket:id="quantity"></span> <span wicket:id="itemType"></span>
+                    </li>
+                </ul>
+            </div>
+            <div>Time required: <span wicket:id="totalTime"></span></div>
+        </li>
+    </ul>
+</wicket:panel>
+</body>
+</html>

@@ -4,6 +4,7 @@ import com.querydsl.core.types.Path;
 import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.item.ItemType;
 import name.martingeisse.trading_game.game.jackson.JacksonService;
+import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.game.space.SpaceObject;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.postgres_entities.QMarketOrderRow;
@@ -62,6 +63,10 @@ public final class MarketOrder {
 
 	public Long getPrincipalPlayerId() {
 		return getField(QMarketOrderRow.MarketOrder.principalPlayerId);
+	}
+
+	public Player getPrincipal() {
+		return entityProvider.getPlayer(getPrincipalPlayerId());
 	}
 
 	public Integer getQuantity() {

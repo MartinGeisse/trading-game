@@ -1,7 +1,9 @@
 package name.martingeisse.trading_game.gui.gamepage;
 
 import name.martingeisse.trading_game.gui.inventory.InventorySectionPanel;
+import name.martingeisse.trading_game.gui.manufacturing.ManufacturingSectionPanel;
 import name.martingeisse.trading_game.gui.map.MapSectionPanel;
+import name.martingeisse.trading_game.gui.market.MarketSectionPanel;
 import name.martingeisse.trading_game.gui.players.PlayerListPanel;
 import name.martingeisse.trading_game.gui.self.SelfPlayerPanel;
 import name.martingeisse.trading_game.gui.websockets.GameListenerWebSocketBehavior;
@@ -25,7 +27,8 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -76,31 +79,44 @@ public class GamePage extends AbstractPage {
 
 		add(new GameListenerWebSocketBehavior());
 
-		ITab mapTab = new PanelClassRecognizingTab(Model.of("Map"), MapSectionPanel.class) {
+		List<ITab> tabs = new ArrayList<>();
+		tabs.add(new PanelClassRecognizingTab(Model.of("Map"), MapSectionPanel.class) {
 			@Override
 			public WebMarkupContainer getPanel(String panelId) {
 				return new MapSectionPanel(panelId);
 			}
-		};
-		ITab selfPlayerTab = new PanelClassRecognizingTab(Model.of("Player"), SelfPlayerPanel.class) {
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Player"), SelfPlayerPanel.class) {
 			@Override
 			public WebMarkupContainer getPanel(String panelId) {
 				return new SelfPlayerPanel(panelId);
 			}
-		};
-		ITab playerListTab = new PanelClassRecognizingTab(Model.of("Players"), PlayerListPanel.class) {
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Players"), PlayerListPanel.class) {
 			@Override
 			public WebMarkupContainer getPanel(String panelId) {
 				return new PlayerListPanel(panelId);
 			}
-		};
-		ITab inventoryTab = new PanelClassRecognizingTab(Model.of("Inventory"), InventorySectionPanel.class) {
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Inventory"), InventorySectionPanel.class) {
 			@Override
 			public WebMarkupContainer getPanel(String panelId) {
 				return new InventorySectionPanel(panelId);
 			}
-		};
-		add(new MainMenuTabbedPanel<>("tabbedPanel", Arrays.asList(mapTab, selfPlayerTab, playerListTab, inventoryTab)));
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Market"), InventorySectionPanel.class) {
+			@Override
+			public WebMarkupContainer getPanel(String panelId) {
+				return new MarketSectionPanel(panelId);
+			}
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Manufacturing"), InventorySectionPanel.class) {
+			@Override
+			public WebMarkupContainer getPanel(String panelId) {
+				return new ManufacturingSectionPanel(panelId);
+			}
+		});
+		add(new MainMenuTabbedPanel<>("tabbedPanel", tabs));
 
 		add(new AjaxEventBehavior("popstate") {
 

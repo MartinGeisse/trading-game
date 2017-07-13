@@ -30,6 +30,14 @@ public class MarketOrderRepository {
 		this.entityProvider = entityProvider;
 	}
 
+	public List<MarketOrder> getMarketOrders() {
+		return getMarketOrders((BooleanExpression)null);
+	}
+
+	public List<MarketOrder> getMarketOrders(MarketOrderType type) {
+		return getMarketOrders(qmo.type.eq(type));
+	}
+
 	public List<MarketOrder> getMarketOrdersByPrincipal(Player principal) {
 		return getMarketOrders(qmo.principalPlayerId.eq(principal.getId()));
 	}

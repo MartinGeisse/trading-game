@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType;
 import name.martingeisse.trading_game.game.item.ItemType;
+import name.martingeisse.trading_game.game.manufacturing.Blueprint;
 import name.martingeisse.trading_game.game.player.PlayerAttributeKey;
 import name.martingeisse.trading_game.game.skill.SimpleSkill;
 import name.martingeisse.trading_game.game.skill.Skill;
@@ -24,6 +25,8 @@ public final class GameDefinition {
 	private final ImmutableList<ItemType> oreItemTypes;
 
 	private final ImmutableList<Skill> skills;
+
+	private final ImmutableList<Blueprint> blueprints;
 
 	/**
 	 *
@@ -68,36 +71,36 @@ public final class GameDefinition {
 		this.itemTypes = ImmutableList.copyOf(itemTypes);
 
 		/* TODO
-		CraftingRecipe redPixelCraftingRecipe = new FixedCraftingRecipe(100, ImmutableItemStacks.EMPTY, redPixelItemType);
-		CraftingRecipe redPixelAssemblyCraftingRecipe = new FixedCraftingRecipe(300, ImmutableItemStacks.from(redPixelItemType, 5), redPixelAssemblyItemType);
-		CraftingRecipe redPixelLineCraftingRecipe = new FixedCraftingRecipe(300, ImmutableItemStacks.from(redPixelItemType, 10), redPixelLineItemType);
-		CraftingRecipe redPixelGlueCraftingRecipe = new FixedCraftingRecipe(50, ImmutableItemStacks.from(redPixelItemType, 5), redPixelGlueItemType);
-		CraftingRecipe fellTreeRecipe = new FixedCraftingRecipe(1000, ImmutableItemStacks.from(pixelAxeItemType, 1), ImmutableItemStacks.from(pixelAxeItemType, 1, logItemType, 3));
+		Blueprint redPixelBlueprint = new FixedBlueprint(100, ImmutableItemStacks.EMPTY, redPixelItemType);
+		Blueprint redPixelAssemblyBlueprint = new FixedBlueprint(300, ImmutableItemStacks.from(redPixelItemType, 5), redPixelAssemblyItemType);
+		Blueprint redPixelLineBlueprint = new FixedBlueprint(300, ImmutableItemStacks.from(redPixelItemType, 10), redPixelLineItemType);
+		Blueprint redPixelGlueBlueprint = new FixedBlueprint(50, ImmutableItemStacks.from(redPixelItemType, 5), redPixelGlueItemType);
+		Blueprint fellTreeBlueprint = new FixedBlueprint(1000, ImmutableItemStacks.from(pixelAxeItemType, 1), ImmutableItemStacks.from(pixelAxeItemType, 1, logItemType, 3));
 		ImmutableItemStacks pixelToolBillOfMaterials = new ImmutableItemStacks(ImmutableList.of(
 				new ImmutableItemStack(redPixelLineItemType, 3),
 				new ImmutableItemStack(redPixelAssemblyItemType, 5),
 				new ImmutableItemStack(redPixelItemType, 10),
 				new ImmutableItemStack(redPixelGlueItemType, 1)
 		));
-		CraftingRecipe pixelAxeCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelAxeItemType);
-		CraftingRecipe pixelHoeCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelHoeItemType);
-		CraftingRecipe pixelHammerCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelHammerItemType);
-		CraftingRecipe pixelPickaxeCraftingRecipe = new FixedCraftingRecipe(1000, pixelToolBillOfMaterials, pixelPickaxeItemType);
+		Blueprint pixelAxeBlueprint = new FixedBlueprint(1000, pixelToolBillOfMaterials, pixelAxeItemType);
+		Blueprint pixelHoeBlueprint = new FixedBlueprint(1000, pixelToolBillOfMaterials, pixelHoeItemType);
+		Blueprint pixelHammerBlueprint = new FixedBlueprint(1000, pixelToolBillOfMaterials, pixelHammerItemType);
+		Blueprint pixelPickaxeBlueprint = new FixedBlueprint(1000, pixelToolBillOfMaterials, pixelPickaxeItemType);
 		*/
 
 		// TODO
 //		this.contextFreeActionDefinitions = ImmutableList.of(
-//			new ContextFreeActionDefinition(redPixelCraftingRecipe),
-//			new ContextFreeActionDefinition(redPixelAssemblyCraftingRecipe),
-//			new ContextFreeActionDefinition(redPixelLineCraftingRecipe),
-//			new ContextFreeActionDefinition(redPixelGlueCraftingRecipe),
+//			new ContextFreeActionDefinition(redPixelBlueprint),
+//			new ContextFreeActionDefinition(redPixelAssemblyBlueprint),
+//			new ContextFreeActionDefinition(redPixelLineBlueprint),
+//			new ContextFreeActionDefinition(redPixelGlueBlueprint),
 //
-//			new ContextFreeActionDefinition(pixelAxeCraftingRecipe),
-//			new ContextFreeActionDefinition(pixelHoeCraftingRecipe),
-//			new ContextFreeActionDefinition(pixelHammerCraftingRecipe),
-//			new ContextFreeActionDefinition(pixelPickaxeCraftingRecipe),
+//			new ContextFreeActionDefinition(pixelAxeBlueprint),
+//			new ContextFreeActionDefinition(pixelHoeBlueprint),
+//			new ContextFreeActionDefinition(pixelHammerBlueprint),
+//			new ContextFreeActionDefinition(pixelPickaxeBlueprint),
 //
-//			new ContextFreeActionDefinition("Fell a tree", fellTreeRecipe)
+//			new ContextFreeActionDefinition("Fell a tree", fellTreeBlueprint)
 //		);
 
 		this.skills = ImmutableList.of(
@@ -111,6 +114,8 @@ public final class GameDefinition {
 				new SimpleSkill("Jury-rigging", 10_000),
 				new SimpleSkill("Electronics", 10_000)
 		);
+
+		this.blueprints = ImmutableList.of();
 	}
 
 	public ImmutableList<Skill> getSkills() {
@@ -137,6 +142,10 @@ public final class GameDefinition {
 			}
 		}
 		return null;
+	}
+
+	public ImmutableList<Blueprint> getAllBlueprints() {
+		return blueprints;
 	}
 
 }

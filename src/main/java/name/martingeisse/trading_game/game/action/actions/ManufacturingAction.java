@@ -1,30 +1,30 @@
 package name.martingeisse.trading_game.game.action.actions;
 
 import name.martingeisse.trading_game.game.action.Action;
-import name.martingeisse.trading_game.game.crafting.CraftingRecipe;
+import name.martingeisse.trading_game.game.manufacturing.Blueprint;
 import name.martingeisse.trading_game.game.item.ImmutableItemStack;
 import name.martingeisse.trading_game.game.item.ImmutableItemStacks;
 import name.martingeisse.trading_game.game.item.NotEnoughItemsException;
 import name.martingeisse.trading_game.game.player.Player;
 
 /**
- * An action backed by a {@link CraftingRecipe}.
+ * An action backed by a {@link Blueprint}.
  * <p>
  * TODO serialization
  */
-public final class CraftingAction extends FixedEffortAction {
+public final class ManufacturingAction extends FixedEffortAction {
 
 	private final Player player;
-	private final CraftingRecipe recipe;
+	private final Blueprint blueprint;
 	private final String customName;
 
-	public CraftingAction(Player player, CraftingRecipe recipe) {
-		this(player, recipe, null);
+	public ManufacturingAction(Player player, Blueprint blueprint) {
+		this(player, blueprint, null);
 	}
 
-	public CraftingAction(Player player, CraftingRecipe recipe, String customName) {
+	public ManufacturingAction(Player player, Blueprint blueprint, String customName) {
 		this.player = player;
-		this.recipe = recipe;
+		this.blueprint = blueprint;
 		this.customName = customName;
 	}
 
@@ -35,13 +35,13 @@ public final class CraftingAction extends FixedEffortAction {
 
 	@Override
 	public int getTotalRequiredProgressPoints() {
-		return recipe.getRequiredProgressPoints();
+		return blueprint.getRequiredProgressPoints();
 	}
 
 	@Override
 	protected boolean onStart() {
 		try {
-			player.getInventory().removeBillOfMaterials(player.getId(), recipe.getBillOfMaterials());
+			player.getInventory().removeBillOfMaterials(player.getId(), blueprint.getBillOfMaterials());
 			return true;
 		} catch (NotEnoughItemsException e) {
 			return false;
@@ -50,19 +50,19 @@ public final class CraftingAction extends FixedEffortAction {
 
 	@Override
 	protected void onCancel() {
-		player.getInventory().add(player.getId(), recipe.getBillOfMaterials());
+		player.getInventory().add(player.getId(), blueprint.getBillOfMaterials());
 	}
 
 	@Override
 	protected boolean onFinish() {
 		// TODO check inventory space
-		player.getInventory().add(player.getId(), recipe.getYield());
+		player.getInventory().add(player.getId(), blueprint.getYield());
 		return true;
 	}
 
 	@Override
 	public String getName() {
-		return (customName == null ? getDefaultText(recipe) : customName);
+		return (customName == null ? getDefaultText(blueprint) : customName);
 	}
 
 	@Override
@@ -71,10 +71,10 @@ public final class CraftingAction extends FixedEffortAction {
 	}
 
 	/**
-	 * Builds the default name for a crafting action with the specified recipe.
+	 * Builds the default name for a manufacturing action with the specified blueprint.
 	 */
-	public static String getDefaultText(CraftingRecipe recipe) {
-		ImmutableItemStacks products = recipe.getYield();
+	public static String getDefaultText(Blueprint blueprint) {
+		ImmutableItemStacks products = blueprint.getYield();
 		if (products.getStacks().size() == 1) {
 			ImmutableItemStack stack = products.getStacks().get(0);
 			if (stack.getSize() == 1) {
@@ -83,7 +83,7 @@ public final class CraftingAction extends FixedEffortAction {
 				return "craft " + stack.getSize() + ' ' + stack.getItemType() + 's';
 			}
 		} else {
-			return recipe.toString();
+			return blueprint.toString();
 		}
 	}
 
