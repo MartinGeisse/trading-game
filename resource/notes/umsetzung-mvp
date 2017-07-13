@@ -1,15 +1,10 @@
 
 Next:
-- port 80
-    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
-    --> in script eintragen
-    --> https://askubuntu.com/questions/270693/how-can-set-these-iptables-rules-to-run-at-startup
 - Möglichkeit, anhand von existierenden BUY orders dinge (Erz!) zu verkaufen
     --> nach existierenden market orders suchen wenn man im inventory ist
         -> blind gecoded, noch testen, dann ist das fertig
 - Überlegen, wie das "Bezahlen" per FaH gehen soll
     - DB neu erzeugen,
-- SSH public key lokal erzeugen und auf dem server hinterlegen,. damit das Einloggen schneller geht
 
 Next:
 - Fehler: Wechsel zu Inventory und zurück -> AwesomeMap verliert den Canvas
