@@ -66,7 +66,9 @@ public class MarketOrderRepository {
 	private List<MarketOrder> getMarketOrders(BooleanExpression predicate) {
 		List<MarketOrder> result = new ArrayList<>();
 		try (CloseableIterator<Long> iterator = postgresContextService.select(qmo.id).from(qmo).where(predicate).iterate()) {
-			result.add(entityProvider.getMarketOrder(iterator.next()));
+			while (iterator.hasNext()) {
+				result.add(entityProvider.getMarketOrder(iterator.next()));
+			}
 		}
 		return result;
 	}
