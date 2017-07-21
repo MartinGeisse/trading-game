@@ -20,6 +20,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptContentHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -30,6 +31,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,7 @@ import java.util.Map;
 public class MapSectionPanel extends AbstractPanel implements GuiGameEventListener {
 
 	private static final Map<SpaceObjectType, String> SPACE_OBJECT_RENDER_MAPPING = new HashMap<>();
+
 	static {
 		SPACE_OBJECT_RENDER_MAPPING.put(SpaceObjectType.STAR, "star");
 		SPACE_OBJECT_RENDER_MAPPING.put(SpaceObjectType.PLANET, "planet");
@@ -77,7 +80,7 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 				link.add(new GlyphiconComponent("icon", actionItem.getModel()) {
 					@Override
 					protected String getGlyphiconIdentifier() {
-						return ((Action)getDefaultModelObject()).getGlyphiconName();
+						return ((Action) getDefaultModelObject()).getGlyphiconName();
 					}
 				});
 				actionItem.add(link);
@@ -172,7 +175,13 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 		buildStaticSpaceObjectsData(builder);
 		buildDynamicSpaceObjectsData(builder);
 		builder.append("initializeMapSectionPanel();");
-		response.render(JavaScriptHeaderItem.forScript(builder.toString(), null));
+
+		response.render(new JavaScriptContentHeaderItem(builder.toString(), null, null) {
+			@Override
+			public Iterable<?> getRenderTokens() {
+				return Arrays.asList();
+			}
+		});
 
 	}
 

@@ -49,207 +49,209 @@
 
     </style>
     <script type="text/javascript">
-        latestDynamicSpaceObjectsUpdateTimestamp = new Date().getTime();
-        selectedSpaceObjectId = null;
-        selectionDistance = 10;
-        secondsSinceLatestDynamicSpaceObjectsUpdate = 0;
         initializeMapSectionPanel = function() {
+            latestDynamicSpaceObjectsUpdateTimestamp = new Date().getTime();
+            selectedSpaceObjectId = null;
+            selectionDistance = 10;
+            secondsSinceLatestDynamicSpaceObjectsUpdate = 0;
             $(function() {
+                setTimeout(function() {
 
-                // drawing helpers
-                function buildCircleRenderFunction(color, vanishRadius, minRadius) {
-                    return function(context, viewport, object, position) {
-                        var zoomedRadius = viewport.zoom * object.r;
-                        var radius;
-                        if (zoomedRadius < vanishRadius) {
-                            return;
-                        } else if (zoomedRadius < minRadius) {
-                            radius = minRadius / viewport.zoom;
-                        } else {
-                            radius = object.r;
-                        }
-                        context.fillStyle = color;
-                        context.beginPath();
-                        context.arc(position.x, position.y, radius, 0, 2 * Math.PI);
-                        context.fill();
-                    };
-                };
-                var renderFunctions = {
-                    star: buildCircleRenderFunction('#ffcc00', 0.05, 0.5),
-                    planet: buildCircleRenderFunction('#cccccc', 0.05, 0.5),
-                    asteroid: buildCircleRenderFunction('#aaaaaa', 0.05, 0.5),
-                    self: buildCircleRenderFunction('#ff0000', -1, 2),
-                    ship: buildCircleRenderFunction('#00ffff', 0.05, 0.5),
-                    spaceStation: buildCircleRenderFunction('#0000ff', 0.05, 0.5),
-                };
-
-                // create the map and its layers
-                function interpolateSpaceObjectPosition(object) {
-                    if (('x2' in object) && ('y2' in object) && ('t' in object) && (object.t > 0)) {
-                        var alpha = secondsSinceLatestDynamicSpaceObjectsUpdate / object.t;
-                        if (alpha >= 1) {
-                            return {
-                                x: object.x2,
-                                y: object.y2
-                            };
-                        } else {
-                            return {
-                                x: alpha * object.x2 + (1 - alpha) * object.x,
-                                y: alpha * object.y2 + (1 - alpha) * object.y
-                            };
-                        }
-                    } else {
-                        return {
-                            x: object.x,
-                            y: object.y
+                    // drawing helpers
+                    function buildCircleRenderFunction(color, vanishRadius, minRadius) {
+                        return function(context, viewport, object, position) {
+                            var zoomedRadius = viewport.zoom * object.r;
+                            var radius;
+                            if (zoomedRadius < vanishRadius) {
+                                return;
+                            } else if (zoomedRadius < minRadius) {
+                                radius = minRadius / viewport.zoom;
+                            } else {
+                                radius = object.r;
+                            }
+                            context.fillStyle = color;
+                            context.beginPath();
+                            context.arc(position.x, position.y, radius, 0, 2 * Math.PI);
+                            context.fill();
                         };
-                    }
-                }
-                map = new AwesomeMap.Map($('#map')[0]);
-                map.onBeforeRender = function(context) {
-                    secondsSinceLatestDynamicSpaceObjectsUpdate = (new Date().getTime() - latestDynamicSpaceObjectsUpdateTimestamp) / 1000;
-                };
-                selectionIndicatorLayer = new AwesomeMap.Layer();
-                selectionIndicatorLayer.objects = [0];
-                selectionIndicatorLayer.renderer = function(context, viewport, object) {
-                    var selectedSpaceObject = getSelectedSpaceObject();
-                    if (selectedSpaceObject !== null) {
-                        var position = interpolateSpaceObjectPosition(selectedSpaceObject);
-                        context.fillStyle = '#008000';
-                        context.strokeStyle = '#00ff00';
-                        context.lineWidth = map.viewport.untransformDistance(2);
-                        context.beginPath();
-                        context.arc(position.x, position.y, selectedSpaceObject.r + viewport.untransformDistance(selectionDistance), 0, 2 * Math.PI);
-                        context.fill();
-                        context.stroke();
-                    }
-                };
-                staticSpaceObjectsLayer = new AwesomeMap.Layer();
-                staticSpaceObjectsLayer.renderer = function(context, viewport, object) {
-                    renderFunctions[object.f](context, viewport, object, object);
-                };
-                dynamicSpaceObjectsLayer = new AwesomeMap.Layer();
-                dynamicSpaceObjectsLayer.renderer = function(context, viewport, object) {
-                    renderFunctions[object.f](context, viewport, object, interpolateSpaceObjectPosition(object));
-                };
-                map.layers = [selectionIndicatorLayer, staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
-                map.installResizer(function(canvas) {
-                    var $container = $(canvas).parent();
-                    canvas.width = $container.width();
-                    canvas.height = $container.height();
-                });
-                staticSpaceObjectsLayer.objects = staticSpaceObjects;
-                dynamicSpaceObjectsLayer.objects = dynamicSpaceObjects;
+                    };
+                    var renderFunctions = {
+                        star: buildCircleRenderFunction('#ffcc00', 0.05, 0.5),
+                        planet: buildCircleRenderFunction('#cccccc', 0.05, 0.5),
+                        asteroid: buildCircleRenderFunction('#aaaaaa', 0.05, 0.5),
+                        self: buildCircleRenderFunction('#ff0000', -1, 2),
+                        ship: buildCircleRenderFunction('#00ffff', 0.05, 0.5),
+                        spaceStation: buildCircleRenderFunction('#0000ff', 0.05, 0.5),
+                    };
 
-                // re-render periodically to animate dynamic space objects
-                setInterval(function() {
-                    map.render();
-                }, 100);
-
-                // object selection
-                getSelectedSpaceObject = function() {
-                    if (selectedSpaceObjectId === null) {
-                        return null;
-                    }
-                    if (selectedSpaceObjectId in staticSpaceObjects) {
-                        return staticSpaceObjects[selectedSpaceObjectId];
-                    }
-                    if (selectedSpaceObjectId in dynamicSpaceObjects) {
-                        return dynamicSpaceObjects[selectedSpaceObjectId];
-                    }
-                    return null;
-                };
-                selectSpaceObject = function(id) {
-                    if (id !== null && (typeof id) !== 'string') {
-                        throw 'invalid id type: ' + (typeof id) + ' in ' + id;
-                    }
-                    selectedSpaceObjectId = id;
-                    map.render();
-                    setStateCookie('mapSelection', {id: id});
-                    $('#propertiesBoxLoadingIndicator').show();
-                    if (id === null) {
-                        $('#propertiesBox').hide();
-                        sendUnselectCommand();
-                    } else {
-                        $('#propertiesBox').show();
-                        sendSelectCommand(id);
-                    }
-                };
-                selectNearestSpaceObject = function(event) {
-                    var point = map.viewport.untransformMouseEvent(event);
-                    var clickRadius = map.viewport.untransformDistance(selectionDistance);
-                    var clickTargetLayers = [staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
-                    var id = null;
-                    layerLoop: for (i in clickTargetLayers) {
-                        var clickTargetLayer = clickTargetLayers[i];
-                        for (var j in clickTargetLayer.objects) {
-                            var object = clickTargetLayer.objects[j];
-                            var maxDistance = clickRadius + object.r;
-                            var dx = (point.x - object.x);
-                            if (dx > maxDistance || dx < -maxDistance) {
-                                continue;
+                    // create the map and its layers
+                    function interpolateSpaceObjectPosition(object) {
+                        if (('x2' in object) && ('y2' in object) && ('t' in object) && (object.t > 0)) {
+                            var alpha = secondsSinceLatestDynamicSpaceObjectsUpdate / object.t;
+                            if (alpha >= 1) {
+                                return {
+                                    x: object.x2,
+                                    y: object.y2
+                                };
+                            } else {
+                                return {
+                                    x: alpha * object.x2 + (1 - alpha) * object.x,
+                                    y: alpha * object.y2 + (1 - alpha) * object.y
+                                };
                             }
-                            var dy = (point.y - object.y);
-                            if (dy > maxDistance || dy < -maxDistance) {
-                                continue;
-                            }
-                            if (dx * dx + dy * dy <= maxDistance * maxDistance) {
-                                id = object.id;
-                                break;
-                            }
+                        } else {
+                            return {
+                                x: object.x,
+                                y: object.y
+                            };
                         }
                     }
-                    selectSpaceObject(id);
-                };
-
-                // clicking selects an object
-                //
-                // TODO currently uses 'contextmenu' event since we cannot distinguish left-clicking from dragging yet
-                //
-                map.clickCallback = function(event) {
-                    selectNearestSpaceObject(event);
-                    return false;
-                };
-
-                // utility links
-                $(document).on('click', '#selectOwnShipLink', function() {
-                    selectSpaceObject(playerShipId);
-                    return false;
-                });
-                $(document).on('click', '#centerSelectedObjectLink', function() {
-                    var object = getSelectedSpaceObject();
-                    map.focusMapCoordinates(object.x, object.y);
-                    return false;
-                });
-
-                // restore previous position and zoom
-                oldState = getStateCookie('mapState');
-                if (oldState) {
-                    map.viewport.mapOriginX = oldState.mapOriginX;
-                    map.viewport.mapOriginY = oldState.mapOriginY;
-                    map.viewport.zoom = oldState.zoom;
-                } else {
-                    map.viewport.mapOriginX = 0;
-                    map.viewport.mapOriginY = 0;
-                    map.viewport.zoom = 0.001;
-                }
-                oldSelection = getStateCookie('mapSelection');
-                if (oldSelection) {
-                    selectSpaceObject(oldSelection.id);
-                } else {
-                    selectSpaceObject(null);
-                }
-
-                // save position/zoom changes from here
-                map.viewport.onChange = function() {
-                    setStateCookie('mapState', {
-                        mapOriginX: map.viewport.mapOriginX,
-                        mapOriginY: map.viewport.mapOriginY,
-                        zoom: map.viewport.zoom,
+                    map = new AwesomeMap.Map($('#map')[0]);
+                    map.onBeforeRender = function(context) {
+                        secondsSinceLatestDynamicSpaceObjectsUpdate = (new Date().getTime() - latestDynamicSpaceObjectsUpdateTimestamp) / 1000;
+                    };
+                    selectionIndicatorLayer = new AwesomeMap.Layer();
+                    selectionIndicatorLayer.objects = [0];
+                    selectionIndicatorLayer.renderer = function(context, viewport, object) {
+                        var selectedSpaceObject = getSelectedSpaceObject();
+                        if (selectedSpaceObject !== null) {
+                            var position = interpolateSpaceObjectPosition(selectedSpaceObject);
+                            context.fillStyle = '#008000';
+                            context.strokeStyle = '#00ff00';
+                            context.lineWidth = map.viewport.untransformDistance(2);
+                            context.beginPath();
+                            context.arc(position.x, position.y, selectedSpaceObject.r + viewport.untransformDistance(selectionDistance), 0, 2 * Math.PI);
+                            context.fill();
+                            context.stroke();
+                        }
+                    };
+                    staticSpaceObjectsLayer = new AwesomeMap.Layer();
+                    staticSpaceObjectsLayer.renderer = function(context, viewport, object) {
+                        renderFunctions[object.f](context, viewport, object, object);
+                    };
+                    dynamicSpaceObjectsLayer = new AwesomeMap.Layer();
+                    dynamicSpaceObjectsLayer.renderer = function(context, viewport, object) {
+                        renderFunctions[object.f](context, viewport, object, interpolateSpaceObjectPosition(object));
+                    };
+                    map.layers = [selectionIndicatorLayer, staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
+                    map.installResizer(function(canvas) {
+                        var $container = $(canvas).parent();
+                        canvas.width = $container.width();
+                        canvas.height = $container.height();
                     });
-                };
+                    staticSpaceObjectsLayer.objects = staticSpaceObjects;
+                    dynamicSpaceObjectsLayer.objects = dynamicSpaceObjects;
 
-                map.render();
+                    // re-render periodically to animate dynamic space objects
+                    setInterval(function() {
+                        map.render();
+                    }, 100);
+
+                    // object selection
+                    getSelectedSpaceObject = function() {
+                        if (selectedSpaceObjectId === null) {
+                            return null;
+                        }
+                        if (selectedSpaceObjectId in staticSpaceObjects) {
+                            return staticSpaceObjects[selectedSpaceObjectId];
+                        }
+                        if (selectedSpaceObjectId in dynamicSpaceObjects) {
+                            return dynamicSpaceObjects[selectedSpaceObjectId];
+                        }
+                        return null;
+                    };
+                    selectSpaceObject = function(id) {
+                        if (id !== null && (typeof id) !== 'string') {
+                            throw 'invalid id type: ' + (typeof id) + ' in ' + id;
+                        }
+                        selectedSpaceObjectId = id;
+                        map.render();
+                        setStateCookie('mapSelection', {id: id});
+                        $('#propertiesBoxLoadingIndicator').show();
+                        if (id === null) {
+                            $('#propertiesBox').hide();
+                            sendUnselectCommand();
+                        } else {
+                            $('#propertiesBox').show();
+                            sendSelectCommand(id);
+                        }
+                    };
+                    selectNearestSpaceObject = function(event) {
+                        var point = map.viewport.untransformMouseEvent(event);
+                        var clickRadius = map.viewport.untransformDistance(selectionDistance);
+                        var clickTargetLayers = [staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
+                        var id = null;
+                        layerLoop: for (i in clickTargetLayers) {
+                            var clickTargetLayer = clickTargetLayers[i];
+                            for (var j in clickTargetLayer.objects) {
+                                var object = clickTargetLayer.objects[j];
+                                var maxDistance = clickRadius + object.r;
+                                var dx = (point.x - object.x);
+                                if (dx > maxDistance || dx < -maxDistance) {
+                                    continue;
+                                }
+                                var dy = (point.y - object.y);
+                                if (dy > maxDistance || dy < -maxDistance) {
+                                    continue;
+                                }
+                                if (dx * dx + dy * dy <= maxDistance * maxDistance) {
+                                    id = object.id;
+                                    break;
+                                }
+                            }
+                        }
+                        selectSpaceObject(id);
+                    };
+
+                    // clicking selects an object
+                    //
+                    // TODO currently uses 'contextmenu' event since we cannot distinguish left-clicking from dragging yet
+                    //
+                    map.clickCallback = function(event) {
+                        selectNearestSpaceObject(event);
+                        return false;
+                    };
+
+                    // utility links
+                    $(document).on('click', '#selectOwnShipLink', function() {
+                        selectSpaceObject(playerShipId);
+                        return false;
+                    });
+                    $(document).on('click', '#centerSelectedObjectLink', function() {
+                        var object = getSelectedSpaceObject();
+                        map.focusMapCoordinates(object.x, object.y);
+                        return false;
+                    });
+
+                    // restore previous position and zoom
+                    oldState = getStateCookie('mapState');
+                    if (oldState) {
+                        map.viewport.mapOriginX = oldState.mapOriginX;
+                        map.viewport.mapOriginY = oldState.mapOriginY;
+                        map.viewport.zoom = oldState.zoom;
+                    } else {
+                        map.viewport.mapOriginX = 0;
+                        map.viewport.mapOriginY = 0;
+                        map.viewport.zoom = 0.001;
+                    }
+                    oldSelection = getStateCookie('mapSelection');
+                    if (oldSelection) {
+                        selectSpaceObject(oldSelection.id);
+                    } else {
+                        selectSpaceObject(null);
+                    }
+
+                    // save position/zoom changes from here
+                    map.viewport.onChange = function() {
+                        setStateCookie('mapState', {
+                            mapOriginX: map.viewport.mapOriginX,
+                            mapOriginY: map.viewport.mapOriginY,
+                            zoom: map.viewport.zoom,
+                        });
+                    };
+
+                    map.render();
+                }, 0);
             });
         };
         updateDynamicSpaceObjectsOnMap = function() {
