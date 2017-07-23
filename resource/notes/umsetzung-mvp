@@ -7,13 +7,6 @@ Next:
     - DB neu erzeugen,
 
 Next:
-- Fehler: Wechsel zu Inventory und zurück -> AwesomeMap verliert den Canvas
-- ein paar mehr Upgrades anlegen
-	- schnellerer Antrib (3 levels)
-	- größerer Frachtraum (3 levels)
-	- schnelleres Mining (3 levels)
-	- höhere Ausbeute (3 levels)
-	--> automatisch generieren, dann gehen auch 10 Levels
 - location-lose BUY orders für erz
 - location-lose SELL orders für upgrades
 - Möglichkeit, anhand von existierenden SELL orders dinge (Upgrades!) zu kaufen

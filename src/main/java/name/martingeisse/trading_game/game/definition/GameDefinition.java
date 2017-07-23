@@ -42,15 +42,20 @@ public final class GameDefinition {
 		ItemType tinOre = new ItemType("tin ore", "no_icon.png", 10);
 		this.oreItemTypes = ImmutableList.of(ironOre, copperOre, aluminiumOre, silverOre, titaniumOre, tinOre);
 
-		ItemType level2Engine = new ItemType("level 2 engines", "no_icon.png", 10, PlayerShipEquipmentSlotType.ENGINE, ImmutableMap.of(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 10_000));
-		ItemType level3Engine = new ItemType("level 3 engines", "no_icon.png", 10, PlayerShipEquipmentSlotType.ENGINE, ImmutableMap.of(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 20_000));
-		ItemType level4Engine = new ItemType("level 4 engines", "no_icon.png", 10, PlayerShipEquipmentSlotType.ENGINE, ImmutableMap.of(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 30_000));
-		ItemType level2MiningGear = new ItemType("level 2 mining gear", "no_icon.png", 10, PlayerShipEquipmentSlotType.MINING_GEAR, ImmutableMap.of(PlayerAttributeKey.MINING_SPEED, 10_000));
-		ItemType level3MiningGear = new ItemType("level 3 mining gear", "no_icon.png", 10, PlayerShipEquipmentSlotType.MINING_GEAR, ImmutableMap.of(PlayerAttributeKey.MINING_SPEED, 20_000));
-		ItemType level4MiningGear = new ItemType("level 4 mining gear", "no_icon.png", 10, PlayerShipEquipmentSlotType.MINING_GEAR, ImmutableMap.of(PlayerAttributeKey.MINING_SPEED, 30_000));
-		ItemType level2CargoHold = new ItemType("level 2 cargo hold", "no_icon.png", 10, PlayerShipEquipmentSlotType.CARGO_HOLD, ImmutableMap.of(PlayerAttributeKey.MAXIMUM_CARGO_MASS, 5_000));
-		ItemType level3CargoHold = new ItemType("level 3 cargo hold", "no_icon.png", 10, PlayerShipEquipmentSlotType.CARGO_HOLD, ImmutableMap.of(PlayerAttributeKey.MAXIMUM_CARGO_MASS, 10_000));
-		ItemType level4CargoHold = new ItemType("level 4 cargo hold", "no_icon.png", 10, PlayerShipEquipmentSlotType.CARGO_HOLD, ImmutableMap.of(PlayerAttributeKey.MAXIMUM_CARGO_MASS, 20_000));
+		List<ItemType> upgradeItemTypes = new ArrayList<>();
+		int factor = 1;
+		for (int level = 2; level < 10; level++) {
+			upgradeItemTypes.add(new ItemType("level " + level + " engines", "no_icon.png", level * 10,
+					PlayerShipEquipmentSlotType.ENGINE, ImmutableMap.of(PlayerAttributeKey.SHIP_MOVEMENT_SPEED,
+					10_000 * factor)));
+			upgradeItemTypes.add(new ItemType("level " + level + " mining gear", "no_icon.png", level * 10,
+					PlayerShipEquipmentSlotType.MINING_GEAR, ImmutableMap.of(PlayerAttributeKey.MINING_SPEED,
+					10_000 * factor)));
+			upgradeItemTypes.add(new ItemType("level " + level + " cargo hold", "no_icon.png", level * 10,
+					PlayerShipEquipmentSlotType.CARGO_HOLD, ImmutableMap.of(PlayerAttributeKey.MAXIMUM_CARGO_MASS,
+					5_000 * factor)));
+			factor = factor * 3 / 2;
+		}
 
 		List<ItemType> itemTypes = new ArrayList<>();
 		itemTypes.add(ironOre);
@@ -59,15 +64,7 @@ public final class GameDefinition {
 		itemTypes.add(silverOre);
 		itemTypes.add(titaniumOre);
 		itemTypes.add(tinOre);
-		itemTypes.add(level2Engine);
-		itemTypes.add(level3Engine);
-		itemTypes.add(level4Engine);
-		itemTypes.add(level2MiningGear);
-		itemTypes.add(level3MiningGear);
-		itemTypes.add(level4MiningGear);
-		itemTypes.add(level2CargoHold);
-		itemTypes.add(level3CargoHold);
-		itemTypes.add(level4CargoHold);
+		itemTypes.addAll(upgradeItemTypes);
 		this.itemTypes = ImmutableList.copyOf(itemTypes);
 
 		/* TODO
