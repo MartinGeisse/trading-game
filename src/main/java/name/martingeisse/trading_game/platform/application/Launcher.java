@@ -1,7 +1,7 @@
 package name.martingeisse.trading_game.platform.application;
 
 import com.google.inject.servlet.GuiceFilter;
-import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.session.HashSessionIdManager;
 import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
@@ -9,6 +9,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServlet;
@@ -62,11 +63,21 @@ public final class Launcher {
 		sessionHandler.setHandler(contextHandler);
 
 		Server server = new Server(8080);
+		server.addConnector(buildSslConnector(server));
 		server.setHandler(sessionHandler);
 		server.setSessionIdManager(new HashSessionIdManager());
 		server.start();
 		server.join();
 
+	}
+
+	private static ServerConnector buildSslConnector(Server server) {
+		SslContextFactory contextFactory = new SslContextFactory();
+		contextFactory.setKeyStorePath("/etc/trading_game/keystore.jks");
+		contextFactory.setKeyStorePassword("password"); // pointless since there is no more secure place to store the password
+		ServerConnector connector = new ServerConnector(server, contextFactory);
+		connector.setPort(8443);
+		return connector;
 	}
 
 	/**
