@@ -6,7 +6,8 @@
 
 package name.martingeisse.trading_game.platform.wicket;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wicket.DefaultExceptionMapper;
 import org.apache.wicket.request.IExceptionMapper;
 import org.apache.wicket.request.IRequestHandler;
@@ -22,7 +23,7 @@ public final class MyExceptionMapper extends DefaultExceptionMapper {
 	/**
 	 * the logger
 	 */
-	private static Logger logger = Logger.getLogger(MyExceptionMapper.class);
+	private static Logger logger = LogManager.getLogger(MyExceptionMapper.class);
 
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.request.IExceptionMapper#map(java.lang.Exception)

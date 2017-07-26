@@ -7,7 +7,8 @@
 package name.martingeisse.trading_game.gui.util;
 
 import name.martingeisse.wicket.internal.JsUtil;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.request.IRequestHandler;
@@ -22,7 +23,7 @@ public class AjaxRequestUtil {
 	/**
 	 * the logger
 	 */
-	private static Logger logger = Logger.getLogger(AjaxRequestUtil.class);
+	private static Logger logger = LogManager.getLogger(AjaxRequestUtil.class);
 
 	/**
 	 * Prevent instantiation.
