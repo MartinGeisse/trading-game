@@ -20,3 +20,6 @@ Umsetzungs-Überlegungen (betr. alle Milestones)
     	passiert. Für UI sowie beim Abbruch von Aktionen wird ein Zwischenergebnis interpoliert.
     	Das vermeidet auch Rundungsfehler beim Zwischenergebnis von Bewegung ganz gut, ist aber davon abhängig, dass
     	die Gesamtzeit für Bewegung genau ermittelt wird.
+
+HTTPS: Den normalen Zugriff per HTTP ohne S nur noch auf HTTPS redirecten. Aktuell wird dann noch die Seite
+unverschlüsselt geladen.
