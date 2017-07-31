@@ -14,40 +14,47 @@ import java.io.Serializable;
 public class PlayerSkillRow implements Serializable {
 
 	/**
+	 * the id
+	 */
+	private Long id;
+	/**
+	 * the learningFinished
+	 */
+	private Boolean learningFinished;
+	/**
+	 * the learningOrderIndex
+	 */
+	private Integer learningOrderIndex;
+	/**
+	 * the learningPoints
+	 */
+	private Integer learningPoints;
+	/**
+	 * the name
+	 */
+	private String name;
+	/**
+	 * the playerId
+	 */
+	private Long playerId;
+
+	/**
 	 * Constructor.
 	 */
 	public PlayerSkillRow() {
 	}
 
 	/**
-	 * the id
+	 * Loads the instance with the specified ID.
+	 *
+	 * @param connection the database connection
+	 * @param id         the ID of the instance to load
+	 * @return the loaded instance
 	 */
-	private Long id;
-
-	/**
-	 * the learningFinished
-	 */
-	private Boolean learningFinished;
-
-	/**
-	 * the learningOrderIndex
-	 */
-	private Integer learningOrderIndex;
-
-	/**
-	 * the learningPoints
-	 */
-	private Integer learningPoints;
-
-	/**
-	 * the name
-	 */
-	private String name;
-
-	/**
-	 * the playerId
-	 */
-	private Long playerId;
+	public static PlayerSkillRow loadById(PostgresConnection connection, Long id) {
+		QPlayerSkillRow q = QPlayerSkillRow.PlayerSkill;
+		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	}
 
 	/**
 	 * Getter method for the id.
@@ -155,18 +162,6 @@ public class PlayerSkillRow implements Serializable {
 	 */
 	public void setPlayerId(Long playerId) {
 		this.playerId = playerId;
-	}
-
-	/**
-	 * Loads the instance with the specified ID.
-	 *
-	 * @param connection the database connection
-	 * @param id         the ID of the instance to load
-	 * @return the loaded instance
-	 */
-	public static PlayerSkillRow loadById(PostgresConnection connection, Long id) {
-		QPlayerSkillRow q = QPlayerSkillRow.PlayerSkill;
-		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
 	}
 
 	/**

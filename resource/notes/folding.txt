@@ -3,12 +3,7 @@
 "Bezahlen" per folding@home
 ------------------------------------------------
 
-Technische Umsetzung:
-- Feld spentFoldingCredits in Tabelle Player
-    - langfristig trennen, aber erst mal geht das schneller
-- Feld remainingPlayTime (Sekunden)
-    - wird in tick() heruntergezählt; wenn 0, dann wird tick() nicht mehr ausgeführt
-    - damit wird auch automatisch, sobald wieder remainingPlayTime da ist, weitergemacht
+Technische Umsetzung (Rest):
 - Regelmäßiger Job (1x täglich), der für alle Player-Objekte die Credits von der FaH-API abholt und ggf. in
     remainingPlayTime umwandelt, dabei spentFoldingCredits hochsetzt
 

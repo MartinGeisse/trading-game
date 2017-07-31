@@ -14,30 +14,39 @@ import java.io.Serializable;
 public class PlayerShipEquipmentSlotRow implements Serializable {
 
 	/**
+	 * the id
+	 */
+	private Long id;
+	/**
+	 * the itemType
+	 */
+	private String itemType;
+	/**
+	 * the slotType
+	 */
+	private name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType slotType;
+	/**
+	 * the spaceObjectBaseDataId
+	 */
+	private Long spaceObjectBaseDataId;
+
+	/**
 	 * Constructor.
 	 */
 	public PlayerShipEquipmentSlotRow() {
 	}
 
 	/**
-	 * the id
+	 * Loads the instance with the specified ID.
+	 *
+	 * @param connection the database connection
+	 * @param id         the ID of the instance to load
+	 * @return the loaded instance
 	 */
-	private Long id;
-
-	/**
-	 * the itemType
-	 */
-	private String itemType;
-
-	/**
-	 * the slotType
-	 */
-	private name.martingeisse.trading_game.game.equipment.PlayerShipEquipmentSlotType slotType;
-
-	/**
-	 * the spaceObjectBaseDataId
-	 */
-	private Long spaceObjectBaseDataId;
+	public static PlayerShipEquipmentSlotRow loadById(PostgresConnection connection, Long id) {
+		QPlayerShipEquipmentSlotRow q = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
+		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	}
 
 	/**
 	 * Getter method for the id.
@@ -109,18 +118,6 @@ public class PlayerShipEquipmentSlotRow implements Serializable {
 	 */
 	public void setSpaceObjectBaseDataId(Long spaceObjectBaseDataId) {
 		this.spaceObjectBaseDataId = spaceObjectBaseDataId;
-	}
-
-	/**
-	 * Loads the instance with the specified ID.
-	 *
-	 * @param connection the database connection
-	 * @param id         the ID of the instance to load
-	 * @return the loaded instance
-	 */
-	public static PlayerShipEquipmentSlotRow loadById(PostgresConnection connection, Long id) {
-		QPlayerShipEquipmentSlotRow q = QPlayerShipEquipmentSlotRow.PlayerShipEquipmentSlot;
-		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
 	}
 
 	/**

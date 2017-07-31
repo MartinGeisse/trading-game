@@ -14,35 +14,43 @@ import java.io.Serializable;
 public class InventorySlotRow implements Serializable {
 
 	/**
+	 * the id
+	 */
+	private Long id;
+	/**
+	 * the inventoryId
+	 */
+	private Long inventoryId;
+	/**
+	 * the itemType
+	 */
+	private String itemType;
+	/**
+	 * the playerId
+	 */
+	private Long playerId;
+	/**
+	 * the quantity
+	 */
+	private Integer quantity;
+
+	/**
 	 * Constructor.
 	 */
 	public InventorySlotRow() {
 	}
 
 	/**
-	 * the id
+	 * Loads the instance with the specified ID.
+	 *
+	 * @param connection the database connection
+	 * @param id         the ID of the instance to load
+	 * @return the loaded instance
 	 */
-	private Long id;
-
-	/**
-	 * the inventoryId
-	 */
-	private Long inventoryId;
-
-	/**
-	 * the itemType
-	 */
-	private String itemType;
-
-	/**
-	 * the playerId
-	 */
-	private Long playerId;
-
-	/**
-	 * the quantity
-	 */
-	private Integer quantity;
+	public static InventorySlotRow loadById(PostgresConnection connection, Long id) {
+		QInventorySlotRow q = QInventorySlotRow.InventorySlot;
+		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	}
 
 	/**
 	 * Getter method for the id.
@@ -132,18 +140,6 @@ public class InventorySlotRow implements Serializable {
 	 */
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
-	}
-
-	/**
-	 * Loads the instance with the specified ID.
-	 *
-	 * @param connection the database connection
-	 * @param id         the ID of the instance to load
-	 * @return the loaded instance
-	 */
-	public static InventorySlotRow loadById(PostgresConnection connection, Long id) {
-		QInventorySlotRow q = QInventorySlotRow.InventorySlot;
-		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
 	}
 
 	/**

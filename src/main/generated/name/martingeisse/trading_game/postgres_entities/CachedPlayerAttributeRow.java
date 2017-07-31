@@ -14,30 +14,39 @@ import java.io.Serializable;
 public class CachedPlayerAttributeRow implements Serializable {
 
 	/**
+	 * the id
+	 */
+	private Long id;
+	/**
+	 * the key
+	 */
+	private name.martingeisse.trading_game.game.player.PlayerAttributeKey key;
+	/**
+	 * the playerId
+	 */
+	private Long playerId;
+	/**
+	 * the value
+	 */
+	private String value;
+
+	/**
 	 * Constructor.
 	 */
 	public CachedPlayerAttributeRow() {
 	}
 
 	/**
-	 * the id
+	 * Loads the instance with the specified ID.
+	 *
+	 * @param connection the database connection
+	 * @param id         the ID of the instance to load
+	 * @return the loaded instance
 	 */
-	private Long id;
-
-	/**
-	 * the key
-	 */
-	private name.martingeisse.trading_game.game.player.PlayerAttributeKey key;
-
-	/**
-	 * the playerId
-	 */
-	private Long playerId;
-
-	/**
-	 * the value
-	 */
-	private String value;
+	public static CachedPlayerAttributeRow loadById(PostgresConnection connection, Long id) {
+		QCachedPlayerAttributeRow q = QCachedPlayerAttributeRow.CachedPlayerAttribute;
+		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	}
 
 	/**
 	 * Getter method for the id.
@@ -109,18 +118,6 @@ public class CachedPlayerAttributeRow implements Serializable {
 	 */
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	/**
-	 * Loads the instance with the specified ID.
-	 *
-	 * @param connection the database connection
-	 * @param id         the ID of the instance to load
-	 * @return the loaded instance
-	 */
-	public static CachedPlayerAttributeRow loadById(PostgresConnection connection, Long id) {
-		QCachedPlayerAttributeRow q = QCachedPlayerAttributeRow.CachedPlayerAttribute;
-		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
 	}
 
 	/**

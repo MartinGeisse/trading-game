@@ -12,4 +12,9 @@ public final class GameConstants {
 	 */
 	public static final long BASE_MINING_SPEED = 1000;
 
+	/**
+	 * The number of seconds of play time earned for each Folding@Home credit.
+	 */
+	public static final long PLAY_TIME_SECONDS_PER_FAH_CREDIT = 2500;
+
 }

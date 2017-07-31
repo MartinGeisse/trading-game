@@ -11,7 +11,6 @@ import java.sql.Types;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
-
 /**
  * QInventorySlotRow is a Querydsl query type for InventorySlotRow
  */
@@ -19,10 +18,8 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QInventorySlotRow extends com.querydsl.sql.RelationalPathBase<InventorySlotRow> {
 
-	private static final long serialVersionUID = -20640913;
-
 	public static final QInventorySlotRow InventorySlot = new QInventorySlotRow("InventorySlot");
-
+	private static final long serialVersionUID = -20640913;
 	public final NumberPath<Long> id = createNumber("id", Long.class);
 
 	public final NumberPath<Long> inventoryId = createNumber("inventoryId", Long.class);

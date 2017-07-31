@@ -13,7 +13,6 @@ import java.sql.Types;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
-
 /**
  * QGameFeedbackRow is a Querydsl query type for GameFeedbackRow
  */
@@ -21,10 +20,8 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QGameFeedbackRow extends com.querydsl.sql.RelationalPathBase<GameFeedbackRow> {
 
-	private static final long serialVersionUID = -1433832076;
-
 	public static final QGameFeedbackRow GameFeedback = new QGameFeedbackRow("GameFeedback");
-
+	private static final long serialVersionUID = -1433832076;
 	public final SimplePath<name.martingeisse.trading_game.tools.codegen.PostgresJsonb> context = createSimple("context", name.martingeisse.trading_game.tools.codegen.PostgresJsonb.class);
 
 	public final NumberPath<Long> id = createNumber("id", Long.class);

@@ -12,7 +12,6 @@ import java.sql.Types;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
-
 /**
  * QPlayerShipEquipmentSlotRow is a Querydsl query type for PlayerShipEquipmentSlotRow
  */
@@ -20,10 +19,8 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QPlayerShipEquipmentSlotRow extends com.querydsl.sql.RelationalPathBase<PlayerShipEquipmentSlotRow> {
 
-	private static final long serialVersionUID = 639401754;
-
 	public static final QPlayerShipEquipmentSlotRow PlayerShipEquipmentSlot = new QPlayerShipEquipmentSlotRow("PlayerShipEquipmentSlot");
-
+	private static final long serialVersionUID = 639401754;
 	public final NumberPath<Long> id = createNumber("id", Long.class);
 
 	public final StringPath itemType = createString("itemType");

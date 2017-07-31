@@ -13,7 +13,6 @@ import java.sql.Types;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
-
 /**
  * QSpaceObjectBaseDataRow is a Querydsl query type for SpaceObjectBaseDataRow
  */
@@ -21,10 +20,8 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QSpaceObjectBaseDataRow extends com.querydsl.sql.RelationalPathBase<SpaceObjectBaseDataRow> {
 
-	private static final long serialVersionUID = 944017097;
-
 	public static final QSpaceObjectBaseDataRow SpaceObjectBaseData = new QSpaceObjectBaseDataRow("SpaceObjectBaseData");
-
+	private static final long serialVersionUID = 944017097;
 	public final NumberPath<Long> id = createNumber("id", Long.class);
 
 	public final NumberPath<Long> inventoryId = createNumber("inventoryId", Long.class);

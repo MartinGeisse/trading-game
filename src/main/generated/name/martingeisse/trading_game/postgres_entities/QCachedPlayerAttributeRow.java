@@ -12,7 +12,6 @@ import java.sql.Types;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
-
 /**
  * QCachedPlayerAttributeRow is a Querydsl query type for CachedPlayerAttributeRow
  */
@@ -20,10 +19,8 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QCachedPlayerAttributeRow extends com.querydsl.sql.RelationalPathBase<CachedPlayerAttributeRow> {
 
-	private static final long serialVersionUID = 129179216;
-
 	public static final QCachedPlayerAttributeRow CachedPlayerAttribute = new QCachedPlayerAttributeRow("CachedPlayerAttribute");
-
+	private static final long serialVersionUID = 129179216;
 	public final NumberPath<Long> id = createNumber("id", Long.class);
 
 	public final EnumPath<name.martingeisse.trading_game.game.player.PlayerAttributeKey> key = createEnum("key", name.martingeisse.trading_game.game.player.PlayerAttributeKey.class);

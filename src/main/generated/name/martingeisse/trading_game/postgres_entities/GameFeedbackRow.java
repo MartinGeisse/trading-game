@@ -14,40 +14,47 @@ import java.io.Serializable;
 public class GameFeedbackRow implements Serializable {
 
 	/**
+	 * the context
+	 */
+	private name.martingeisse.trading_game.tools.codegen.PostgresJsonb context;
+	/**
+	 * the id
+	 */
+	private Long id;
+	/**
+	 * the playerId
+	 */
+	private Long playerId;
+	/**
+	 * the sessionId
+	 */
+	private String sessionId;
+	/**
+	 * the text
+	 */
+	private String text;
+	/**
+	 * the timestamp
+	 */
+	private org.joda.time.DateTime timestamp;
+
+	/**
 	 * Constructor.
 	 */
 	public GameFeedbackRow() {
 	}
 
 	/**
-	 * the context
+	 * Loads the instance with the specified ID.
+	 *
+	 * @param connection the database connection
+	 * @param id         the ID of the instance to load
+	 * @return the loaded instance
 	 */
-	private name.martingeisse.trading_game.tools.codegen.PostgresJsonb context;
-
-	/**
-	 * the id
-	 */
-	private Long id;
-
-	/**
-	 * the playerId
-	 */
-	private Long playerId;
-
-	/**
-	 * the sessionId
-	 */
-	private String sessionId;
-
-	/**
-	 * the text
-	 */
-	private String text;
-
-	/**
-	 * the timestamp
-	 */
-	private org.joda.time.DateTime timestamp;
+	public static GameFeedbackRow loadById(PostgresConnection connection, Long id) {
+		QGameFeedbackRow q = QGameFeedbackRow.GameFeedback;
+		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	}
 
 	/**
 	 * Getter method for the context.
@@ -155,18 +162,6 @@ public class GameFeedbackRow implements Serializable {
 	 */
 	public void setTimestamp(org.joda.time.DateTime timestamp) {
 		this.timestamp = timestamp;
-	}
-
-	/**
-	 * Loads the instance with the specified ID.
-	 *
-	 * @param connection the database connection
-	 * @param id         the ID of the instance to load
-	 * @return the loaded instance
-	 */
-	public static GameFeedbackRow loadById(PostgresConnection connection, Long id) {
-		QGameFeedbackRow q = QGameFeedbackRow.GameFeedback;
-		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
 	}
 
 	/**

@@ -12,7 +12,6 @@ import java.sql.Types;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
-
 /**
  * QActionQueueSlotRow is a Querydsl query type for ActionQueueSlotRow
  */
@@ -20,10 +19,8 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QActionQueueSlotRow extends com.querydsl.sql.RelationalPathBase<ActionQueueSlotRow> {
 
-	private static final long serialVersionUID = 2076014512;
-
 	public static final QActionQueueSlotRow ActionQueueSlot = new QActionQueueSlotRow("ActionQueueSlot");
-
+	private static final long serialVersionUID = 2076014512;
 	public final SimplePath<name.martingeisse.trading_game.tools.codegen.PostgresJsonb> action = createSimple("action", name.martingeisse.trading_game.tools.codegen.PostgresJsonb.class);
 
 	public final NumberPath<Long> actionQueueId = createNumber("actionQueueId", Long.class);

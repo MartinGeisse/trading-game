@@ -14,15 +14,27 @@ import java.io.Serializable;
 public class ActionQueueRow implements Serializable {
 
 	/**
+	 * the id
+	 */
+	private Long id;
+
+	/**
 	 * Constructor.
 	 */
 	public ActionQueueRow() {
 	}
 
 	/**
-	 * the id
+	 * Loads the instance with the specified ID.
+	 *
+	 * @param connection the database connection
+	 * @param id         the ID of the instance to load
+	 * @return the loaded instance
 	 */
-	private Long id;
+	public static ActionQueueRow loadById(PostgresConnection connection, Long id) {
+		QActionQueueRow q = QActionQueueRow.ActionQueue;
+		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	}
 
 	/**
 	 * Getter method for the id.
@@ -40,18 +52,6 @@ public class ActionQueueRow implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	/**
-	 * Loads the instance with the specified ID.
-	 *
-	 * @param connection the database connection
-	 * @param id         the ID of the instance to load
-	 * @return the loaded instance
-	 */
-	public static ActionQueueRow loadById(PostgresConnection connection, Long id) {
-		QActionQueueRow q = QActionQueueRow.ActionQueue;
-		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
 	}
 
 	/**

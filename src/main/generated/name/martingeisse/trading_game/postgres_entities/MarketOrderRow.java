@@ -14,45 +14,51 @@ import java.io.Serializable;
 public class MarketOrderRow implements Serializable {
 
 	/**
+	 * the id
+	 */
+	private Long id;
+	/**
+	 * the itemType
+	 */
+	private String itemType;
+	/**
+	 * the locationSpaceObjectBaseDataId
+	 */
+	private Long locationSpaceObjectBaseDataId;
+	/**
+	 * the principalPlayerId
+	 */
+	private Long principalPlayerId;
+	/**
+	 * the quantity
+	 */
+	private Integer quantity;
+	/**
+	 * the type
+	 */
+	private name.martingeisse.trading_game.game.market.MarketOrderType type;
+	/**
+	 * the unitPrice
+	 */
+	private Long unitPrice;
+
+	/**
 	 * Constructor.
 	 */
 	public MarketOrderRow() {
 	}
 
 	/**
-	 * the id
+	 * Loads the instance with the specified ID.
+	 *
+	 * @param connection the database connection
+	 * @param id         the ID of the instance to load
+	 * @return the loaded instance
 	 */
-	private Long id;
-
-	/**
-	 * the itemType
-	 */
-	private String itemType;
-
-	/**
-	 * the locationSpaceObjectBaseDataId
-	 */
-	private Long locationSpaceObjectBaseDataId;
-
-	/**
-	 * the principalPlayerId
-	 */
-	private Long principalPlayerId;
-
-	/**
-	 * the quantity
-	 */
-	private Integer quantity;
-
-	/**
-	 * the type
-	 */
-	private name.martingeisse.trading_game.game.market.MarketOrderType type;
-
-	/**
-	 * the unitPrice
-	 */
-	private Long unitPrice;
+	public static MarketOrderRow loadById(PostgresConnection connection, Long id) {
+		QMarketOrderRow q = QMarketOrderRow.MarketOrder;
+		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	}
 
 	/**
 	 * Getter method for the id.
@@ -178,18 +184,6 @@ public class MarketOrderRow implements Serializable {
 	 */
 	public void setUnitPrice(Long unitPrice) {
 		this.unitPrice = unitPrice;
-	}
-
-	/**
-	 * Loads the instance with the specified ID.
-	 *
-	 * @param connection the database connection
-	 * @param id         the ID of the instance to load
-	 * @return the loaded instance
-	 */
-	public static MarketOrderRow loadById(PostgresConnection connection, Long id) {
-		QMarketOrderRow q = QMarketOrderRow.MarketOrder;
-		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
 	}
 
 	/**

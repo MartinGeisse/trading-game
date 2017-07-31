@@ -12,7 +12,6 @@ import java.sql.Types;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
-
 /**
  * QPlayerSkillRow is a Querydsl query type for PlayerSkillRow
  */
@@ -20,10 +19,8 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QPlayerSkillRow extends com.querydsl.sql.RelationalPathBase<PlayerSkillRow> {
 
-	private static final long serialVersionUID = 1568834809;
-
 	public static final QPlayerSkillRow PlayerSkill = new QPlayerSkillRow("PlayerSkill");
-
+	private static final long serialVersionUID = 1568834809;
 	public final NumberPath<Long> id = createNumber("id", Long.class);
 
 	public final BooleanPath learningFinished = createBoolean("learningFinished");

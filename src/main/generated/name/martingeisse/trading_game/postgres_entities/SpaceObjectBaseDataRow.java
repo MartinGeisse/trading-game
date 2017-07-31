@@ -14,40 +14,47 @@ import java.io.Serializable;
 public class SpaceObjectBaseDataRow implements Serializable {
 
 	/**
+	 * the id
+	 */
+	private Long id;
+	/**
+	 * the inventoryId
+	 */
+	private Long inventoryId;
+	/**
+	 * the longField1
+	 */
+	private Long longField1;
+	/**
+	 * the name
+	 */
+	private String name;
+	/**
+	 * the position
+	 */
+	private org.postgresql.geometric.PGpoint position;
+	/**
+	 * the type
+	 */
+	private name.martingeisse.trading_game.game.space.SpaceObjectType type;
+
+	/**
 	 * Constructor.
 	 */
 	public SpaceObjectBaseDataRow() {
 	}
 
 	/**
-	 * the id
+	 * Loads the instance with the specified ID.
+	 *
+	 * @param connection the database connection
+	 * @param id         the ID of the instance to load
+	 * @return the loaded instance
 	 */
-	private Long id;
-
-	/**
-	 * the inventoryId
-	 */
-	private Long inventoryId;
-
-	/**
-	 * the longField1
-	 */
-	private Long longField1;
-
-	/**
-	 * the name
-	 */
-	private String name;
-
-	/**
-	 * the position
-	 */
-	private org.postgresql.geometric.PGpoint position;
-
-	/**
-	 * the type
-	 */
-	private name.martingeisse.trading_game.game.space.SpaceObjectType type;
+	public static SpaceObjectBaseDataRow loadById(PostgresConnection connection, Long id) {
+		QSpaceObjectBaseDataRow q = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
+		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	}
 
 	/**
 	 * Getter method for the id.
@@ -155,18 +162,6 @@ public class SpaceObjectBaseDataRow implements Serializable {
 	 */
 	public void setType(name.martingeisse.trading_game.game.space.SpaceObjectType type) {
 		this.type = type;
-	}
-
-	/**
-	 * Loads the instance with the specified ID.
-	 *
-	 * @param connection the database connection
-	 * @param id         the ID of the instance to load
-	 * @return the loaded instance
-	 */
-	public static SpaceObjectBaseDataRow loadById(PostgresConnection connection, Long id) {
-		QSpaceObjectBaseDataRow q = QSpaceObjectBaseDataRow.SpaceObjectBaseData;
-		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
 	}
 
 	/**

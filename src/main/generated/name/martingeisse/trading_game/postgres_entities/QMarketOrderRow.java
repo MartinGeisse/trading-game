@@ -12,7 +12,6 @@ import java.sql.Types;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
-
 /**
  * QMarketOrderRow is a Querydsl query type for MarketOrderRow
  */
@@ -20,10 +19,8 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QMarketOrderRow extends com.querydsl.sql.RelationalPathBase<MarketOrderRow> {
 
-	private static final long serialVersionUID = -923158217;
-
 	public static final QMarketOrderRow MarketOrder = new QMarketOrderRow("MarketOrder");
-
+	private static final long serialVersionUID = -923158217;
 	public final NumberPath<Long> id = createNumber("id", Long.class);
 
 	public final StringPath itemType = createString("itemType");
@@ -67,9 +64,9 @@ public class QMarketOrderRow extends com.querydsl.sql.RelationalPathBase<MarketO
 	public void addMetadata() {
 		addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
 		addMetadata(itemType, ColumnMetadata.named("itemType").withIndex(5).ofType(Types.VARCHAR).withSize(2000).notNull());
-		addMetadata(locationSpaceObjectBaseDataId, ColumnMetadata.named("locationSpaceObjectBaseDataId").withIndex(3).ofType(Types.BIGINT).withSize(19).notNull());
+		addMetadata(locationSpaceObjectBaseDataId, ColumnMetadata.named("locationSpaceObjectBaseDataId").withIndex(3).ofType(Types.BIGINT).withSize(19));
 		addMetadata(principalPlayerId, ColumnMetadata.named("principalPlayerId").withIndex(2).ofType(Types.BIGINT).withSize(19).notNull());
-		addMetadata(quantity, ColumnMetadata.named("quantity").withIndex(6).ofType(Types.INTEGER).withSize(10).notNull());
+		addMetadata(quantity, ColumnMetadata.named("quantity").withIndex(6).ofType(Types.INTEGER).withSize(10));
 		addMetadata(type, ColumnMetadata.named("type").withIndex(4).ofType(Types.VARCHAR).withSize(2147483647).notNull());
 		addMetadata(unitPrice, ColumnMetadata.named("unitPrice").withIndex(7).ofType(Types.BIGINT).withSize(19).notNull());
 	}

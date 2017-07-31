@@ -14,45 +14,59 @@ import java.io.Serializable;
 public class PlayerRow implements Serializable {
 
 	/**
+	 * the actionQueueId
+	 */
+	private Long actionQueueId;
+	/**
+	 * the emailAddress
+	 */
+	private String emailAddress;
+	/**
+	 * the id
+	 */
+	private Long id;
+	/**
+	 * the loginToken
+	 */
+	private String loginToken;
+	/**
+	 * the money
+	 */
+	private Long money;
+	/**
+	 * the name
+	 */
+	private String name;
+	/**
+	 * the remainingPlayTime
+	 */
+	private Long remainingPlayTime;
+	/**
+	 * the shipId
+	 */
+	private Long shipId;
+	/**
+	 * the spentFoldingCredits
+	 */
+	private Long spentFoldingCredits;
+
+	/**
 	 * Constructor.
 	 */
 	public PlayerRow() {
 	}
 
 	/**
-	 * the actionQueueId
+	 * Loads the instance with the specified ID.
+	 *
+	 * @param connection the database connection
+	 * @param id         the ID of the instance to load
+	 * @return the loaded instance
 	 */
-	private Long actionQueueId;
-
-	/**
-	 * the emailAddress
-	 */
-	private String emailAddress;
-
-	/**
-	 * the id
-	 */
-	private Long id;
-
-	/**
-	 * the loginToken
-	 */
-	private String loginToken;
-
-	/**
-	 * the money
-	 */
-	private Long money;
-
-	/**
-	 * the name
-	 */
-	private String name;
-
-	/**
-	 * the shipId
-	 */
-	private Long shipId;
+	public static PlayerRow loadById(PostgresConnection connection, Long id) {
+		QPlayerRow q = QPlayerRow.Player;
+		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	}
 
 	/**
 	 * Getter method for the actionQueueId.
@@ -163,6 +177,24 @@ public class PlayerRow implements Serializable {
 	}
 
 	/**
+	 * Getter method for the remainingPlayTime.
+	 *
+	 * @return the remainingPlayTime
+	 */
+	public Long getRemainingPlayTime() {
+		return remainingPlayTime;
+	}
+
+	/**
+	 * Setter method for the remainingPlayTime.
+	 *
+	 * @param remainingPlayTime the remainingPlayTime to set
+	 */
+	public void setRemainingPlayTime(Long remainingPlayTime) {
+		this.remainingPlayTime = remainingPlayTime;
+	}
+
+	/**
 	 * Getter method for the shipId.
 	 *
 	 * @return the shipId
@@ -181,15 +213,21 @@ public class PlayerRow implements Serializable {
 	}
 
 	/**
-	 * Loads the instance with the specified ID.
+	 * Getter method for the spentFoldingCredits.
 	 *
-	 * @param connection the database connection
-	 * @param id         the ID of the instance to load
-	 * @return the loaded instance
+	 * @return the spentFoldingCredits
 	 */
-	public static PlayerRow loadById(PostgresConnection connection, Long id) {
-		QPlayerRow q = QPlayerRow.Player;
-		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	public Long getSpentFoldingCredits() {
+		return spentFoldingCredits;
+	}
+
+	/**
+	 * Setter method for the spentFoldingCredits.
+	 *
+	 * @param spentFoldingCredits the spentFoldingCredits to set
+	 */
+	public void setSpentFoldingCredits(Long spentFoldingCredits) {
+		this.spentFoldingCredits = spentFoldingCredits;
 	}
 
 	/**
@@ -206,7 +244,9 @@ public class PlayerRow implements Serializable {
 		insert.set(q.loginToken, loginToken);
 		insert.set(q.money, money);
 		insert.set(q.name, name);
+		insert.set(q.remainingPlayTime, remainingPlayTime);
 		insert.set(q.shipId, shipId);
+		insert.set(q.spentFoldingCredits, spentFoldingCredits);
 		id = insert.executeWithKey(Long.class);
 	}
 
@@ -215,7 +255,7 @@ public class PlayerRow implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "{PlayerRow. actionQueueId = " + actionQueueId + ", emailAddress = " + emailAddress + ", id = " + id + ", loginToken = " + loginToken + ", money = " + money + ", name = " + name + ", shipId = " + shipId + "}";
+		return "{PlayerRow. actionQueueId = " + actionQueueId + ", emailAddress = " + emailAddress + ", id = " + id + ", loginToken = " + loginToken + ", money = " + money + ", name = " + name + ", remainingPlayTime = " + remainingPlayTime + ", shipId = " + shipId + ", spentFoldingCredits = " + spentFoldingCredits + "}";
 	}
 
 }

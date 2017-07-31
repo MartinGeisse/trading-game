@@ -11,7 +11,6 @@ import java.sql.Types;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
-
 /**
  * QPlayerRow is a Querydsl query type for PlayerRow
  */
@@ -19,10 +18,8 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 
-	private static final long serialVersionUID = -1042415446;
-
 	public static final QPlayerRow Player = new QPlayerRow("Player");
-
+	private static final long serialVersionUID = -1042415446;
 	public final NumberPath<Long> actionQueueId = createNumber("actionQueueId", Long.class);
 
 	public final StringPath emailAddress = createString("emailAddress");
@@ -35,7 +32,11 @@ public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 
 	public final StringPath name = createString("name");
 
+	public final NumberPath<Long> remainingPlayTime = createNumber("remainingPlayTime", Long.class);
+
 	public final NumberPath<Long> shipId = createNumber("shipId", Long.class);
+
+	public final NumberPath<Long> spentFoldingCredits = createNumber("spentFoldingCredits", Long.class);
 
 	public final com.querydsl.sql.PrimaryKey<PlayerRow> playerPkey = createPrimaryKey(id);
 
@@ -80,7 +81,9 @@ public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 		addMetadata(loginToken, ColumnMetadata.named("loginToken").withIndex(3).ofType(Types.VARCHAR).withSize(500));
 		addMetadata(money, ColumnMetadata.named("money").withIndex(7).ofType(Types.BIGINT).withSize(19).notNull());
 		addMetadata(name, ColumnMetadata.named("name").withIndex(2).ofType(Types.VARCHAR).withSize(500).notNull());
+		addMetadata(remainingPlayTime, ColumnMetadata.named("remainingPlayTime").withIndex(9).ofType(Types.BIGINT).withSize(19).notNull());
 		addMetadata(shipId, ColumnMetadata.named("shipId").withIndex(5).ofType(Types.BIGINT).withSize(19).notNull());
+		addMetadata(spentFoldingCredits, ColumnMetadata.named("spentFoldingCredits").withIndex(8).ofType(Types.BIGINT).withSize(19).notNull());
 	}
 
 }

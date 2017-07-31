@@ -10,7 +10,6 @@ import java.sql.Types;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
-
 /**
  * QActionQueueRow is a Querydsl query type for ActionQueueRow
  */
@@ -18,10 +17,8 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QActionQueueRow extends com.querydsl.sql.RelationalPathBase<ActionQueueRow> {
 
-	private static final long serialVersionUID = 2004712590;
-
 	public static final QActionQueueRow ActionQueue = new QActionQueueRow("ActionQueue");
-
+	private static final long serialVersionUID = 2004712590;
 	public final NumberPath<Long> id = createNumber("id", Long.class);
 
 	public final com.querydsl.sql.PrimaryKey<ActionQueueRow> actionQueuePkey = createPrimaryKey(id);

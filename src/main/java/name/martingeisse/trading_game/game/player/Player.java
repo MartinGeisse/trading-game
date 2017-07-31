@@ -1,11 +1,13 @@
 package name.martingeisse.trading_game.game.player;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Path;
 import name.martingeisse.trading_game.game.EntityProvider;
 import name.martingeisse.trading_game.game.GameLogicException;
 import name.martingeisse.trading_game.game.NameAlreadyUsedException;
 import name.martingeisse.trading_game.game.action.ActionQueue;
+import name.martingeisse.trading_game.game.definition.GameConstants;
 import name.martingeisse.trading_game.game.equipment.PlayerShipEquipment;
 import name.martingeisse.trading_game.game.equipment.SlotInfo;
 import name.martingeisse.trading_game.game.item.Inventory;
@@ -60,6 +62,11 @@ public final class Player {
 	}
 
 	private <T> void setField(Path<T> path, T newValue) {
+		QPlayerRow qp = QPlayerRow.Player;
+		postgresContextService.update(qp).set(path, newValue).where(qp.id.eq(id)).execute();
+	}
+
+	private <T> void setField(Path<T> path, Expression<T> newValue) {
 		QPlayerRow qp = QPlayerRow.Player;
 		postgresContextService.update(qp).set(path, newValue).where(qp.id.eq(id)).execute();
 	}
@@ -184,8 +191,12 @@ public final class Player {
 	 * Called once every second to advance game logic.
 	 */
 	public void tick() {
-		getActionQueue().tick();
-		getSkills().tick();
+		long remainingPlayTime = getField(QPlayerRow.Player.remainingPlayTime);
+		if (remainingPlayTime >= 1) {
+			getActionQueue().tick();
+			getSkills().tick();
+			setField(QPlayerRow.Player.remainingPlayTime, QPlayerRow.Player.remainingPlayTime.subtract(1L));
+		}
 	}
 
 	/**
@@ -260,6 +271,19 @@ public final class Player {
 			return i1 - i2;
 		});
 		return (result instanceof SpaceStation) ? (SpaceStation) result : null;
+	}
+
+	/**
+	 * The argument should be the total credits for this player on FaH. This method checks if the player has "spent"
+	 * less than this total, and if so, "spends" the remaining credits for additional play time.
+	 */
+	public void updatePlayTimeCredits(long totalEarnedCredits) {
+		long spentCredits = getField(QPlayerRow.Player.spentFoldingCredits);
+		if (spentCredits < totalEarnedCredits) {
+			long additionalPlayTime = (totalEarnedCredits - spentCredits) * GameConstants.PLAY_TIME_SECONDS_PER_FAH_CREDIT;
+			setField(QPlayerRow.Player.spentFoldingCredits, totalEarnedCredits);
+			setField(QPlayerRow.Player.remainingPlayTime, QPlayerRow.Player.remainingPlayTime.add(additionalPlayTime));
+		}
 	}
 
 }

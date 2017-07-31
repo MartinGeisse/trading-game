@@ -14,35 +14,43 @@ import java.io.Serializable;
 public class ActionQueueSlotRow implements Serializable {
 
 	/**
+	 * the action
+	 */
+	private name.martingeisse.trading_game.tools.codegen.PostgresJsonb action;
+	/**
+	 * the actionQueueId
+	 */
+	private Long actionQueueId;
+	/**
+	 * the id
+	 */
+	private Long id;
+	/**
+	 * the prerequisite
+	 */
+	private Boolean prerequisite;
+	/**
+	 * the started
+	 */
+	private Boolean started;
+
+	/**
 	 * Constructor.
 	 */
 	public ActionQueueSlotRow() {
 	}
 
 	/**
-	 * the action
+	 * Loads the instance with the specified ID.
+	 *
+	 * @param connection the database connection
+	 * @param id         the ID of the instance to load
+	 * @return the loaded instance
 	 */
-	private name.martingeisse.trading_game.tools.codegen.PostgresJsonb action;
-
-	/**
-	 * the actionQueueId
-	 */
-	private Long actionQueueId;
-
-	/**
-	 * the id
-	 */
-	private Long id;
-
-	/**
-	 * the prerequisite
-	 */
-	private Boolean prerequisite;
-
-	/**
-	 * the started
-	 */
-	private Boolean started;
+	public static ActionQueueSlotRow loadById(PostgresConnection connection, Long id) {
+		QActionQueueSlotRow q = QActionQueueSlotRow.ActionQueueSlot;
+		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	}
 
 	/**
 	 * Getter method for the action.
@@ -132,18 +140,6 @@ public class ActionQueueSlotRow implements Serializable {
 	 */
 	public void setStarted(Boolean started) {
 		this.started = started;
-	}
-
-	/**
-	 * Loads the instance with the specified ID.
-	 *
-	 * @param connection the database connection
-	 * @param id         the ID of the instance to load
-	 * @return the loaded instance
-	 */
-	public static ActionQueueSlotRow loadById(PostgresConnection connection, Long id) {
-		QActionQueueSlotRow q = QActionQueueSlotRow.ActionQueueSlot;
-		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
 	}
 
 	/**

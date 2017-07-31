@@ -14,35 +14,43 @@ import java.io.Serializable;
 public class PlayerSkillLearningQueueSlotRow implements Serializable {
 
 	/**
+	 * the id
+	 */
+	private Long id;
+	/**
+	 * the learningOrderIndex
+	 */
+	private Integer learningOrderIndex;
+	/**
+	 * the learningPoints
+	 */
+	private Integer learningPoints;
+	/**
+	 * the playerId
+	 */
+	private Long playerId;
+	/**
+	 * the skillType
+	 */
+	private String skillType;
+
+	/**
 	 * Constructor.
 	 */
 	public PlayerSkillLearningQueueSlotRow() {
 	}
 
 	/**
-	 * the id
+	 * Loads the instance with the specified ID.
+	 *
+	 * @param connection the database connection
+	 * @param id         the ID of the instance to load
+	 * @return the loaded instance
 	 */
-	private Long id;
-
-	/**
-	 * the learningOrderIndex
-	 */
-	private Integer learningOrderIndex;
-
-	/**
-	 * the learningPoints
-	 */
-	private Integer learningPoints;
-
-	/**
-	 * the playerId
-	 */
-	private Long playerId;
-
-	/**
-	 * the skillType
-	 */
-	private String skillType;
+	public static PlayerSkillLearningQueueSlotRow loadById(PostgresConnection connection, Long id) {
+		QPlayerSkillLearningQueueSlotRow q = QPlayerSkillLearningQueueSlotRow.PlayerSkillLearningQueueSlot;
+		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
+	}
 
 	/**
 	 * Getter method for the id.
@@ -132,18 +140,6 @@ public class PlayerSkillLearningQueueSlotRow implements Serializable {
 	 */
 	public void setSkillType(String skillType) {
 		this.skillType = skillType;
-	}
-
-	/**
-	 * Loads the instance with the specified ID.
-	 *
-	 * @param connection the database connection
-	 * @param id         the ID of the instance to load
-	 * @return the loaded instance
-	 */
-	public static PlayerSkillLearningQueueSlotRow loadById(PostgresConnection connection, Long id) {
-		QPlayerSkillLearningQueueSlotRow q = QPlayerSkillLearningQueueSlotRow.PlayerSkillLearningQueueSlot;
-		return connection.query().select(q).from(q).where(q.id.eq(id)).fetchFirst();
 	}
 
 	/**

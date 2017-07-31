@@ -11,7 +11,6 @@ import java.sql.Types;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
-
 /**
  * QPlayerSkillLearningQueueSlotRow is a Querydsl query type for PlayerSkillLearningQueueSlotRow
  */
@@ -19,10 +18,8 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 @SuppressWarnings("all")
 public class QPlayerSkillLearningQueueSlotRow extends com.querydsl.sql.RelationalPathBase<PlayerSkillLearningQueueSlotRow> {
 
-	private static final long serialVersionUID = 1588103594;
-
 	public static final QPlayerSkillLearningQueueSlotRow PlayerSkillLearningQueueSlot = new QPlayerSkillLearningQueueSlotRow("PlayerSkillLearningQueueSlot");
-
+	private static final long serialVersionUID = 1588103594;
 	public final NumberPath<Long> id = createNumber("id", Long.class);
 
 	public final NumberPath<Integer> learningOrderIndex = createNumber("learningOrderIndex", Integer.class);
