@@ -3,6 +3,7 @@
  */
 package name.martingeisse.trading_game.api.internal;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import name.martingeisse.trading_game.peripherals.payment.folding_at_home.FoldingAtHomePaymentService;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,7 @@ public class ApiFilter implements Filter {
 
 	private final FoldingAtHomePaymentService foldingAtHomePaymentService;
 
+	@Inject
 	public ApiFilter(FoldingAtHomePaymentService foldingAtHomePaymentService) {
 		this.foldingAtHomePaymentService = foldingAtHomePaymentService;
 	}
