@@ -39,6 +39,9 @@ public class PlayerFactory {
 		data.setActionQueueId(actionQueueFactory.createActionQueue());
 		data.setName("noname");
 		data.setLoginToken(RandomStringUtils.randomAlphanumeric(50));
+		data.setSpentFoldingCredits(0L);
+		data.setRemainingPlayTime(3600L * 24 * 30);
+		data.setFoldingUserHash(RandomStringUtils.random(64, "0123456789abcdef"));
 		data.setMoney(0L);
 		data.insert(postgresContextService.getConnection());
 		Player player = entityProvider.getPlayer(data.getId());

@@ -286,4 +286,8 @@ public final class Player {
 		}
 	}
 
+	public String getFoldingUserHash() {
+		return getField(QPlayerRow.Player.foldingUserHash);
+	}
+
 }

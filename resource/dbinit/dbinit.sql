@@ -86,8 +86,8 @@ CREATE TABLE "game"."Player" (
 	"shipId" bigint NOT NULL REFERENCES "game"."SpaceObjectBaseData",
 	"actionQueueId" bigint NOT NULL REFERENCES "game"."ActionQueue",
 	"money" bigint NOT NULL CHECK ("money" >= 0),
-	"spentFoldingCredits" bigint NOT NULL CHECK ("spentFoldingCredits" >= 0),
-	"remainingPlayTime" bigint NOT NULL CHECK ("remainingPlayTime" >= 0),
+	"spentFoldingCredits" bigint NOT NULL DEFAULT 0 CHECK ("spentFoldingCredits" >= 0),
+	"remainingPlayTime" bigint NOT NULL DEFAULT 0 CHECK ("remainingPlayTime" >= 0),
 	"foldingUserHash" character varying(200) CHECK (LENGTH("foldingUserHash") >= 5)
 );
 CREATE INDEX "Player_nameIndex" ON "game"."Player" ("name");

@@ -36,14 +36,14 @@ public class FoldingAtHomeApiService {
 		if (!(data.get("results") instanceof List)) {
 			throw new RuntimeException("missing results list");
 		}
-		List<?> results = (List<?>)data.get("results");
+		List<?> results = (List<?>) data.get("results");
 		if (results.size() != 1) {
 			throw new RuntimeException("wrong number of results: " + results.size());
 		}
 		if (!(results.get(0) instanceof Map)) {
 			throw new RuntimeException("invalid result element structure");
 		}
-		return parseTeamScore((Map<String, Object>)results.get(0));
+		return parseTeamScore((Map<String, Object>) results.get(0));
 	}
 
 	public UserScore getUserScore(String name) {
@@ -55,7 +55,9 @@ public class FoldingAtHomeApiService {
 			HttpGet request = new HttpGet(url);
 			HttpResponse response = httpClient.execute(request);
 			try {
-				if (response.getStatusLine().getStatusCode() != 200) {
+				if (response.getStatusLine().getStatusCode() == 404) {
+					return null;
+				} else if (response.getStatusLine().getStatusCode() != 200) {
 					throw new RuntimeException("unexpected status code: " + response.getStatusLine().getStatusCode());
 				}
 				HttpEntity responseBody = response.getEntity();
@@ -76,16 +78,24 @@ public class FoldingAtHomeApiService {
 	}
 
 	private UserScore parseUserScore(Map<String, ?> data) {
-		return new UserScore(parseInt(data, "wus"), parseInt(data, "credit"));
+		if (data == null) {
+			return new UserScore(0, 0);
+		} else {
+			return new UserScore(parseInt(data, "wus"), parseInt(data, "credit"));
+		}
 	}
 
 	private TeamScore parseTeamScore(Map<String, ?> data) {
-		return new TeamScore(parseInt(data, "wus"), parseInt(data, "credit"), parseInt(data, "rank"));
+		if (data == null) {
+			throw new RuntimeException("team score record not found");
+		} else {
+			return new TeamScore(parseInt(data, "wus"), parseInt(data, "credit"), parseInt(data, "rank"));
+		}
 	}
 
 	private static int parseInt(Map<String, ?> data, String key) {
 		try {
-			return (Integer)data.get(key);
+			return (Integer) data.get(key);
 		} catch (Exception e) {
 			return -1;
 		}
