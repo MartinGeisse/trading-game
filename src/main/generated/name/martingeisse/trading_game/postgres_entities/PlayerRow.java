@@ -22,6 +22,10 @@ public class PlayerRow implements Serializable {
 	 */
 	private String emailAddress;
 	/**
+	 * the foldingUserHash
+	 */
+	private String foldingUserHash;
+	/**
 	 * the id
 	 */
 	private Long id;
@@ -102,6 +106,24 @@ public class PlayerRow implements Serializable {
 	 */
 	public void setEmailAddress(String emailAddress) {
 		this.emailAddress = emailAddress;
+	}
+
+	/**
+	 * Getter method for the foldingUserHash.
+	 *
+	 * @return the foldingUserHash
+	 */
+	public String getFoldingUserHash() {
+		return foldingUserHash;
+	}
+
+	/**
+	 * Setter method for the foldingUserHash.
+	 *
+	 * @param foldingUserHash the foldingUserHash to set
+	 */
+	public void setFoldingUserHash(String foldingUserHash) {
+		this.foldingUserHash = foldingUserHash;
 	}
 
 	/**
@@ -241,6 +263,7 @@ public class PlayerRow implements Serializable {
 		SQLInsertClause insert = connection.insert(q);
 		insert.set(q.actionQueueId, actionQueueId);
 		insert.set(q.emailAddress, emailAddress);
+		insert.set(q.foldingUserHash, foldingUserHash);
 		insert.set(q.loginToken, loginToken);
 		insert.set(q.money, money);
 		insert.set(q.name, name);
@@ -255,7 +278,7 @@ public class PlayerRow implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "{PlayerRow. actionQueueId = " + actionQueueId + ", emailAddress = " + emailAddress + ", id = " + id + ", loginToken = " + loginToken + ", money = " + money + ", name = " + name + ", remainingPlayTime = " + remainingPlayTime + ", shipId = " + shipId + ", spentFoldingCredits = " + spentFoldingCredits + "}";
+		return "{PlayerRow. actionQueueId = " + actionQueueId + ", emailAddress = " + emailAddress + ", foldingUserHash = " + foldingUserHash + ", id = " + id + ", loginToken = " + loginToken + ", money = " + money + ", name = " + name + ", remainingPlayTime = " + remainingPlayTime + ", shipId = " + shipId + ", spentFoldingCredits = " + spentFoldingCredits + "}";
 	}
 
 }

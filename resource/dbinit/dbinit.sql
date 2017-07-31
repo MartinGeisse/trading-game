@@ -87,7 +87,8 @@ CREATE TABLE "game"."Player" (
 	"actionQueueId" bigint NOT NULL REFERENCES "game"."ActionQueue",
 	"money" bigint NOT NULL CHECK ("money" >= 0),
 	"spentFoldingCredits" bigint NOT NULL CHECK ("spentFoldingCredits" >= 0),
-	"remainingPlayTime" bigint NOT NULL CHECK ("remainingPlayTime" >= 0)
+	"remainingPlayTime" bigint NOT NULL CHECK ("remainingPlayTime" >= 0),
+	"foldingUserHash" character varying(200) CHECK (LENGTH("foldingUserHash") >= 5)
 );
 CREATE INDEX "Player_nameIndex" ON "game"."Player" ("name");
 CREATE INDEX "Player_shipIdIndex" ON "game"."Player" ("shipId");

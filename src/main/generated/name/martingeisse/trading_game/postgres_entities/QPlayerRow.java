@@ -24,6 +24,8 @@ public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 
 	public final StringPath emailAddress = createString("emailAddress");
 
+	public final StringPath foldingUserHash = createString("foldingUserHash");
+
 	public final NumberPath<Long> id = createNumber("id", Long.class);
 
 	public final StringPath loginToken = createString("loginToken");
@@ -77,6 +79,7 @@ public class QPlayerRow extends com.querydsl.sql.RelationalPathBase<PlayerRow> {
 	public void addMetadata() {
 		addMetadata(actionQueueId, ColumnMetadata.named("actionQueueId").withIndex(6).ofType(Types.BIGINT).withSize(19).notNull());
 		addMetadata(emailAddress, ColumnMetadata.named("emailAddress").withIndex(4).ofType(Types.VARCHAR).withSize(500));
+		addMetadata(foldingUserHash, ColumnMetadata.named("foldingUserHash").withIndex(10).ofType(Types.VARCHAR).withSize(200));
 		addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
 		addMetadata(loginToken, ColumnMetadata.named("loginToken").withIndex(3).ofType(Types.VARCHAR).withSize(500));
 		addMetadata(money, ColumnMetadata.named("money").withIndex(7).ofType(Types.BIGINT).withSize(19).notNull());

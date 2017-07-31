@@ -9,8 +9,11 @@ package name.martingeisse.trading_game.platform.application;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
+import name.martingeisse.trading_game.api.internal.ApiFilter;
 import name.martingeisse.trading_game.common.util.profiling.ThreadProfiling;
 import name.martingeisse.trading_game.gui.websockets.WebSocketConstants;
+import name.martingeisse.trading_game.peripherals.payment.folding_at_home.FoldingAtHomeApiService;
+import name.martingeisse.trading_game.peripherals.payment.folding_at_home.FoldingAtHomePaymentService;
 import name.martingeisse.trading_game.platform.postgres.PostgresContextService;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.platform.wicket.MyWicketFilter;
@@ -36,6 +39,9 @@ public class WebModule extends ServletModule {
 
 		// reset the per-thread PostgresContext after each request, so the next request uses a fresh state
 		filterRegex("/.*").through(MyFilter.class);
+
+		// handle API requests
+		filterRegex("/.*").through(ApiFilter.class);
 
 		// bind Wicket
 		{
