@@ -8,6 +8,7 @@ import name.martingeisse.trading_game.game.event.GameEventBatch;
 import name.martingeisse.trading_game.game.item.InventoryChangedEvent;
 import name.martingeisse.trading_game.game.item.ObjectWithInventory;
 import name.martingeisse.trading_game.game.space.*;
+import name.martingeisse.trading_game.gui.cache.GuiCache;
 import name.martingeisse.trading_game.gui.gamepage.GuiNavigationLink;
 import name.martingeisse.trading_game.gui.websockets.GuiGameEventListener;
 import name.martingeisse.trading_game.platform.wicket.AbstractPanel;
@@ -18,7 +19,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptContentHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -186,17 +186,22 @@ public class MapSectionPanel extends AbstractPanel implements GuiGameEventListen
 	}
 
 	private void buildStaticSpaceObjectsData(StringBuilder builder) {
-		builder.append("staticSpaceObjects = {\n");
-		boolean first = true;
-		for (StaticSpaceObject spaceObject : getSpace().getStaticSpaceObjects()) {
-			if (first) {
-				first = false;
-			} else {
-				builder.append(',');
+		if (GuiCache.staticSpaceObjectData == null) {
+			StringBuilder subBuilder = new StringBuilder();
+			subBuilder.append("staticSpaceObjects = {\n");
+			boolean first = true;
+			for (StaticSpaceObject spaceObject : getSpace().getStaticSpaceObjects()) {
+				if (first) {
+					first = false;
+				} else {
+					subBuilder.append(',');
+				}
+				buildSpaceObjectData(subBuilder, spaceObject, null);
 			}
-			buildSpaceObjectData(builder, spaceObject, null);
+			subBuilder.append("};\n");
+			GuiCache.staticSpaceObjectData = subBuilder.toString();
 		}
-		builder.append("};\n");
+		builder.append(GuiCache.staticSpaceObjectData);
 	}
 
 	private void buildDynamicSpaceObjectsData(StringBuilder builder) {
