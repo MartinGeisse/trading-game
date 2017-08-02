@@ -16,6 +16,7 @@ public class AaaMain {
 		Injector injector = CommandLineApplicationBootstrapper.bootstrap();
 		DatabaseStructureInitMain.init(injector);
 		SpaceInitMain.init(injector);
+		GlobalMarketOrderInitMain.init(injector);
 	}
 
 }

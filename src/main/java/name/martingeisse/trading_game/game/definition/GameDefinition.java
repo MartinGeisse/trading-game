@@ -23,6 +23,7 @@ public final class GameDefinition {
 
 	private final ImmutableList<ItemType> itemTypes;
 	private final ImmutableList<ItemType> oreItemTypes;
+	private final ImmutableList<ImmutableList<ItemType>> upgradeItemTypes;
 
 	private final ImmutableList<Skill> skills;
 
@@ -43,19 +44,24 @@ public final class GameDefinition {
 		this.oreItemTypes = ImmutableList.of(ironOre, copperOre, aluminiumOre, silverOre, titaniumOre, tinOre);
 
 		List<ItemType> upgradeItemTypes = new ArrayList<>();
+		List<ImmutableList<ItemType>> upgradeItemTypesByLevel = new ArrayList<>();
 		int factor = 1;
 		for (int level = 2; level < 10; level++) {
-			upgradeItemTypes.add(new ItemType("level " + level + " engines", "no_icon.png", level * 10,
+			List<ItemType> upgradesForThisLevel = new ArrayList<>();
+			upgradesForThisLevel.add(new ItemType("level " + level + " engines", "no_icon.png", level * 10,
 					PlayerShipEquipmentSlotType.ENGINE, ImmutableMap.of(PlayerAttributeKey.SHIP_MOVEMENT_SPEED,
 					10_000 * factor)));
-			upgradeItemTypes.add(new ItemType("level " + level + " mining gear", "no_icon.png", level * 10,
+			upgradesForThisLevel.add(new ItemType("level " + level + " mining gear", "no_icon.png", level * 10,
 					PlayerShipEquipmentSlotType.MINING_GEAR, ImmutableMap.of(PlayerAttributeKey.MINING_SPEED,
 					10_000 * factor)));
-			upgradeItemTypes.add(new ItemType("level " + level + " cargo hold", "no_icon.png", level * 10,
+			upgradesForThisLevel.add(new ItemType("level " + level + " cargo hold", "no_icon.png", level * 10,
 					PlayerShipEquipmentSlotType.CARGO_HOLD, ImmutableMap.of(PlayerAttributeKey.MAXIMUM_CARGO_MASS,
 					5_000 * factor)));
+			upgradeItemTypes.addAll(upgradesForThisLevel);
+			upgradeItemTypesByLevel.add(ImmutableList.copyOf(upgradesForThisLevel));
 			factor = factor * 3 / 2;
 		}
+		this.upgradeItemTypes = ImmutableList.copyOf(upgradeItemTypesByLevel);
 
 		List<ItemType> itemTypes = new ArrayList<>();
 		itemTypes.add(ironOre);
@@ -121,6 +127,10 @@ public final class GameDefinition {
 
 	public ImmutableList<ItemType> getOreItemTypes() {
 		return oreItemTypes;
+	}
+
+	public ImmutableList<ImmutableList<ItemType>> getUpgradeItemTypes() {
+		return upgradeItemTypes;
 	}
 
 	public ItemType getItemTypeByName(String itemTypeName) {

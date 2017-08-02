@@ -3,17 +3,17 @@ package name.martingeisse.trading_game.gui.market;
 import name.martingeisse.trading_game.common.util.UnexpectedExceptionException;
 import name.martingeisse.trading_game.game.GameLogicException;
 import name.martingeisse.trading_game.game.event.GameEventBatch;
-import name.martingeisse.trading_game.game.market.MarketOrder;
-import name.martingeisse.trading_game.game.market.MarketOrderFactory;
-import name.martingeisse.trading_game.game.market.MarketOrderRepository;
-import name.martingeisse.trading_game.game.market.MarketOrderType;
+import name.martingeisse.trading_game.game.market.*;
 import name.martingeisse.trading_game.game.player.Player;
 import name.martingeisse.trading_game.gui.gamepage.GuiNavigationLink;
 import name.martingeisse.trading_game.gui.inventory.InventorySectionPanel;
+import name.martingeisse.trading_game.gui.util.AjaxRequestUtil;
 import name.martingeisse.trading_game.gui.websockets.GuiGameEventListener;
 import name.martingeisse.trading_game.platform.wicket.AbstractPanel;
 import name.martingeisse.trading_game.platform.wicket.MyWicketApplication;
 import name.martingeisse.trading_game.platform.wicket.page.AbstractPage;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -76,15 +76,15 @@ public class MarketSectionPanel extends AbstractPanel implements GuiGameEventLis
 		@Override
 		protected void populateItem(ListItem<MarketOrder> item) {
 			MarketOrder marketOrder = item.getModelObject();
-			Link<Void> link = new Link<Void>("link") {
+			AjaxLink<Void> link = new AjaxLink<Void>("link") {
 				@Override
-				public void onClick() {
+				public void onClick(AjaxRequestTarget target) {
 					MarketOrderFactory marketOrderFactory = MyWicketApplication.get().getDependency(MarketOrderFactory.class);
 					Player player = ((AbstractPage)getPage()).getPlayer();
 					try {
 						marketOrderFactory.createMatchingMarketOrderForGlobal(player, player.getShip(), marketOrder, 1);
 					} catch (GameLogicException e) {
-						throw new UnexpectedExceptionException(e);
+						AjaxRequestUtil.alert(e.getMessage());
 					}
 				}
 			};

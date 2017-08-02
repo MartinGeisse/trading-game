@@ -1,5 +1,7 @@
 package name.martingeisse.trading_game.game.market;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
@@ -16,12 +18,14 @@ import name.martingeisse.trading_game.postgres_entities.QMarketOrderRow;
 /**
  * Finds matching market orders and resolves them against each other.
  */
+@Singleton
 public class MarketOrderMatchingService {
 
 	private final PostgresContextService postgresContextService;
 	private final EntityProvider entityProvider;
 	private final EscrowService escrowService;
 
+	@Inject
 	public MarketOrderMatchingService(PostgresContextService postgresContextService, EntityProvider entityProvider, EscrowService escrowService) {
 		this.postgresContextService = postgresContextService;
 		this.entityProvider = entityProvider;
