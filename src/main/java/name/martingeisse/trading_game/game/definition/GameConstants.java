@@ -10,7 +10,7 @@ public final class GameConstants {
 	/**
 	 * The amount of rock mined from asteroids per second. This is the base value before upgrades and skills have been applied.
 	 */
-	public static final long BASE_MINING_SPEED = 1000;
+	public static final long BASE_MINING_SPEED = 10;
 
 	/**
 	 * The number of seconds of play time earned for each Folding@Home credit.
