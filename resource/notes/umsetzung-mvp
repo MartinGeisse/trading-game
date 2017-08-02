@@ -5,6 +5,10 @@ Next:
         -> blind gecoded, noch testen, dann ist das fertig
 - Überlegen, wie das "Bezahlen" per FaH gehen soll
     - DB neu erzeugen,
+- Möglichkeit, anhand von existierenden SELL orders dinge (Upgrades!) zu kaufen
+    -> location-lose Orders legen das Item direkt ins Spielerschiff
+    -> blind halb gecoded, noch fertig und testen, dann ist das fertig
+
 
 Next:
 - location-lose BUY orders für erz

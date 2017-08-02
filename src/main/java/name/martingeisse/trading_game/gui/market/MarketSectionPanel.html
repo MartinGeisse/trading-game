@@ -2,16 +2,31 @@
 <body>
 <wicket:panel>
     <h2>Market</h2>
+    <h3>Shop</h3>
+    <p>Things you buy here will appear in your ship's cargo.</p>
+    <ul>
+        <li wicket:id="shopSellOrders">
+            <a wicket:id="link">
+                <span wicket:id="itemType"></span> <span wicket:id="unitPrice"></span>
+            </a>
+        </li>
+    </ul>
     <h3>Sellers</h3>
+    <p>Things you buy here will appear at the location you bought them.</p>
     <ul>
         <li wicket:id="sellOrders">
-            <span wicket:id="quantity"></span> <span wicket:id="itemType"></span> <span wicket:id="unitPrice"></span> <span wicket:id="location"></span> <span wicket:id="principal"></span>
+            <a wicket:id="link">
+                <span wicket:id="quantity"></span> <span wicket:id="itemType"></span> <span wicket:id="unitPrice"></span> <span wicket:id="location"></span> <span wicket:id="principal"></span>
+            </a>
         </li>
     </ul>
     <h3>Buyers</h3>
+    <p>Things you sell here must be at the buyer's location. To sell things to the shop, go to the <a wicket:id="inventoryLink">inventory</a> page.</p>
     <ul>
         <li wicket:id="buyOrders">
-            <span wicket:id="quantity"></span> <span wicket:id="itemType"></span> <span wicket:id="unitPrice"></span> <span wicket:id="location"></span> <span wicket:id="principal"></span>
+            <a wicket:id="link">
+                <span wicket:id="quantity"></span> <span wicket:id="itemType"></span> <span wicket:id="unitPrice"></span> <span wicket:id="location"></span> <span wicket:id="principal"></span>
+            </a>
         </li>
     </ul>
 </wicket:panel>

@@ -34,8 +34,28 @@ public class MarketOrderRepository {
 		return getMarketOrders((BooleanExpression)null);
 	}
 
+	public List<MarketOrder> getMarketOrders(Boolean global) {
+		if (global == null) {
+			return getMarketOrders((BooleanExpression)null);
+		} else if (global) {
+			return getMarketOrders(qmo.locationSpaceObjectBaseDataId.isNull());
+		} else {
+			return getMarketOrders(qmo.locationSpaceObjectBaseDataId.isNotNull());
+		}
+	}
+
 	public List<MarketOrder> getMarketOrders(MarketOrderType type) {
-		return getMarketOrders(qmo.type.eq(type));
+		return getMarketOrders(type, null);
+	}
+
+	public List<MarketOrder> getMarketOrders(MarketOrderType type, Boolean global) {
+		if (global == null) {
+			return getMarketOrders(qmo.type.eq(type));
+		} else if (global) {
+			return getMarketOrders(qmo.type.eq(type).and(qmo.locationSpaceObjectBaseDataId.isNull()));
+		} else {
+			return getMarketOrders(qmo.type.eq(type).and(qmo.locationSpaceObjectBaseDataId.isNotNull()));
+		}
 	}
 
 	public List<MarketOrder> getMarketOrdersByPrincipal(Player principal) {
