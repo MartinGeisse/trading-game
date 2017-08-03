@@ -184,7 +184,7 @@ public class InventorySectionPanel extends AbstractPanel implements GuiGameEvent
 							}
 							if (!foundBuyOrder || buyOrder.getUnitPrice() > foundUnitPrice) {
 								foundUnitPrice = buyOrder.getUnitPrice();
-								foundQuantity = buyOrder.getQuantity(); // TODO crashes here when selling ores
+								foundQuantity = buyOrder.getQuantity() == null ? Integer.MAX_VALUE : buyOrder.getQuantity();
 							} else if (buyOrder.getUnitPrice() == foundUnitPrice) {
 								foundQuantity += buyOrder.getQuantity();
 							} else {
