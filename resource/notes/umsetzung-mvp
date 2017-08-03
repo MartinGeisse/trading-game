@@ -3,16 +3,12 @@ Next:
 - Möglichkeit, anhand von existierenden BUY orders dinge (Erz!) zu verkaufen
     --> nach existierenden market orders suchen wenn man im inventory ist
         -> blind gecoded, noch testen, dann ist das fertig
-- Überlegen, wie das "Bezahlen" per FaH gehen soll
-    - DB neu erzeugen,
 - Möglichkeit, anhand von existierenden SELL orders dinge (Upgrades!) zu kaufen
     -> location-lose Orders legen das Item direkt ins Spielerschiff
     -> blind halb gecoded, noch fertig und testen, dann ist das fertig
 
 
 Next:
-- location-lose BUY orders für erz
-- location-lose SELL orders für upgrades
 - Möglichkeit, anhand von existierenden SELL orders dinge (Upgrades!) zu kaufen
     --> location muss angegeben werden --> wie?
         überlegiung: Langfristig soll es keine globalen market orers geben, dh market orders haben von sich aus eine location.
@@ -32,17 +28,12 @@ Next:
 
 Milestones:
 - Spielinhalt
-	- Erz in SpaceStation verkaufen
-	- Schiffe können Upgrades haben
-	- Upgrades in SpaceStation kaufen
-	- verschiedene Erzsorten in den Asteroiden
 	- Upgrades müssen als Actions mit Zeit gebaut werden, brauchen verschiedene Erze und sind gleich im Schiff verbaut
 		- schneller fliegen
 		- schneller Erz abbauen
 		- höhere Ausbeute
 		- mehr Frachtraum
-- market orders (siehe market-orders.txt)
-- ggf. manufacturing (???)
+- market orders zwischen spielern
 - Feinschliff
 	- Restzeit bei Mining anhand von Restbestand und Frachtraum ermitteln
 	- prerequisite actions farblich hervorgehoben und nicht cancellable
