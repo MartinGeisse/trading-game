@@ -66,6 +66,14 @@ public class SpaceInitMain {
 				long planetY = (long)(starY + Math.sin(angle) * distance);
 				initialSpaceObjectsFactory.createPlanet(planetName, planetX, planetY);
 
+				// space station
+				if (random.nextInt() % 5 == 0) {
+					double spaceStationAngle = random.nextDouble() * 2 * Math.PI;
+					long spaceStationX = (long)(planetX + Math.cos(angle) * 10_000);
+					long spaceStationY = (long)(planetY + Math.sin(angle) * 10_000);
+					initialSpaceObjectsFactory.createSpaceStation(planetName + " base", spaceStationX, spaceStationY);
+				}
+
 			} else if (typeKey < 90) {
 
 				// partial asteroid belt
