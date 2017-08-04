@@ -52,7 +52,8 @@
         initializeMapSectionPanel = function() {
             latestDynamicSpaceObjectsUpdateTimestamp = new Date().getTime();
             selectedSpaceObjectId = null;
-            selectionDistance = 10;
+            selectionDistance = 30;
+            selectionIndicatorRadius = 10;
             secondsSinceLatestDynamicSpaceObjectsUpdate = 0;
             $(function() {
                 setTimeout(function() {
@@ -120,7 +121,7 @@
                             context.strokeStyle = '#00ff00';
                             context.lineWidth = map.viewport.untransformDistance(2);
                             context.beginPath();
-                            context.arc(position.x, position.y, selectedSpaceObject.r + viewport.untransformDistance(selectionDistance), 0, 2 * Math.PI);
+                            context.arc(position.x, position.y, selectedSpaceObject.r + viewport.untransformDistance(selectionIndicatorRadius), 0, 2 * Math.PI);
                             context.fill();
                             context.stroke();
                         }
@@ -181,6 +182,7 @@
                         var clickRadius = map.viewport.untransformDistance(selectionDistance);
                         var clickTargetLayers = [staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
                         var id = null;
+                        var foundDistanceSquared = null;
                         layerLoop: for (i in clickTargetLayers) {
                             var clickTargetLayer = clickTargetLayers[i];
                             for (var j in clickTargetLayer.objects) {
@@ -194,9 +196,12 @@
                                 if (dy > maxDistance || dy < -maxDistance) {
                                     continue;
                                 }
-                                if (dx * dx + dy * dy <= maxDistance * maxDistance) {
-                                    id = object.id;
-                                    break;
+                                var distanceSquared = dx * dx + dy * dy;
+                                if (distanceSquared <= maxDistance * maxDistance) {
+                                    if (id == null || distanceSquared < foundDistanceSquared) {
+                                        id = object.id;
+                                        foundDistanceSquared = distanceSquared;
+                                    }
                                 }
                             }
                         }
@@ -223,22 +228,22 @@
                         return false;
                     });
 
-                    // restore previous position and zoom
+                    // restore previous selection, position, zoom
+                    oldSelection = getStateCookie('mapSelection');
+                    if (oldSelection) {
+                        selectSpaceObject(oldSelection.id);
+                    } else {
+                        selectSpaceObject(playerShipId);
+                    }
                     oldState = getStateCookie('mapState');
                     if (oldState) {
                         map.viewport.mapOriginX = oldState.mapOriginX;
                         map.viewport.mapOriginY = oldState.mapOriginY;
                         map.viewport.zoom = oldState.zoom;
                     } else {
-                        map.viewport.mapOriginX = 0;
-                        map.viewport.mapOriginY = 0;
+                        var object = getSelectedSpaceObject();
+                        map.focusMapCoordinates(object.x, object.y);
                         map.viewport.zoom = 0.001;
-                    }
-                    oldSelection = getStateCookie('mapSelection');
-                    if (oldSelection) {
-                        selectSpaceObject(oldSelection.id);
-                    } else {
-                        selectSpaceObject(null);
                     }
 
                     // save position/zoom changes from here
