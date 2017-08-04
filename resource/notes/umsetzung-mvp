@@ -37,6 +37,8 @@ Milestones:
 - Feinschliff
 	- Restzeit bei Mining anhand von Restbestand und Frachtraum ermitteln
 	- prerequisite actions farblich hervorgehoben und nicht cancellable
+	- space stations sind schlecht zu finden, da zu klein in der Karte dargestellt
+	- Asteroiden sind auf der Karte schwer vom Staub auf dem Bildschirm zu unterscheiden
 - analytics
 - "Bezahlung" per folding@home
 
