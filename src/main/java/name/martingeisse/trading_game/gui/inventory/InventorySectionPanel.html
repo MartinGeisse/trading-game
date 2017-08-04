@@ -2,19 +2,27 @@
 <body>
 <wicket:panel>
     <h2>Inventory</h2>
+    <p>To sell items, go to a space station, unload the items, then sell them. Items on your ship cannot be sold directly
+    without unloading them first.</p>
     <div wicket:id="inventories">
         <h3 wicket:id="inventoryTitle"></h3>
         <ul>
             <li wicket:id="itemStacks">
                 <span wicket:id="size"></span> <span wicket:id="itemType"></span> <img wicket:id="icon">
-                <a wicket:id="loadLink">load</a>
-                <a wicket:id="unloadLink">unload</a>
-                <a wicket:id="equipLink">equip</a>
-                <a wicket:id="transferOwnershipLink">Transfer Ownership</a>
+                <wicket:enclosure child="loadLink">
+                    <a wicket:id="loadLink">load</a> |
+                </wicket:enclosure>
+                <wicket:enclosure child="unloadLink">
+                    <a wicket:id="unloadLink">unload</a> |
+                </wicket:enclosure>
+                <wicket:enclosure child="equipLink">
+                    <a wicket:id="equipLink">equip</a> |
+                </wicket:enclosure>
+                <wicket:enclosure child="transferOwnershipLink">
+                    <a wicket:id="transferOwnershipLink">Transfer Ownership</a> |
+                </wicket:enclosure>
                 <wicket:enclosure child="sellLink">
-                    <div>
-                        <a wicket:id="sellLink">Sell <span wicket:id="quantity"></span> for <span wicket:id="unitPrice"></span> each.</a>
-                    </div>
+                    <a wicket:id="sellLink">Sell <span wicket:id="quantity"></span> for <span wicket:id="unitPrice"></span> each.</a>
                 </wicket:enclosure>
             </li>
         </ul>

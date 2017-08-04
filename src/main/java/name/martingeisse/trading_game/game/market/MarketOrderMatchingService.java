@@ -60,7 +60,7 @@ public class MarketOrderMatchingService {
 			predicate = predicate.and(qmo.unitPrice.goe(marketOrder.getUnitPrice()));
 			order = qmo.unitPrice.desc();
 		}
-		try (CloseableIterator<Tuple> iterator = postgresContextService.select(qmo.id, qmo.quantity, qmo.unitPrice).from(qmo).where(predicate).orderBy(order).iterate()) {
+		try (CloseableIterator<Tuple> iterator = postgresContextService.select(qmo.id, qmo.quantity, qmo.unitPrice, qmo.principalPlayerId).from(qmo).where(predicate).orderBy(order).iterate()) {
 			while (iterator.hasNext()) {
 				int quantity = marketOrder.getQuantity();
 				if (quantity < 1) {

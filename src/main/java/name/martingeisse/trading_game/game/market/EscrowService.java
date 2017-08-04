@@ -31,7 +31,11 @@ public class EscrowService {
 	}
 
 	public void removeItemsFromEscrow(SpaceObject location, Player owner, ItemType itemType, int quantity) {
-		checkLocationValidForEscrow(location);
+		// for now, buying from the store puts items directly into the player's ship. These items never were in escrow.
+		// So we disable the check for now. That's okay because this is a double check -- at a player's ship, there
+		// cannot be a market order other than shop-sells orders, so trying to remove an item from escrow there
+		// is impossible anyway.
+		// checkLocationValidForEscrow(location);
 		Inventory inventory = ((ObjectWithInventory) location).getInventory();
 		inventory.add(owner.getId(), itemType, quantity);
 	}
