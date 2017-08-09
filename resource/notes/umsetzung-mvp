@@ -7,14 +7,16 @@ Milestones:
 		- schneller Erz abbauen
 		- höhere Ausbeute
 		- mehr Frachtraum
-- market orders zwischen spielern
-- Feinschliff
-	- Restzeit bei Mining anhand von Restbestand und Frachtraum ermitteln
-	- prerequisite actions farblich hervorgehoben und nicht cancellable
-	- space stations sind schlecht zu finden, da zu klein in der Karte dargestellt
-	- Asteroiden sind auf der Karte schwer vom Staub auf dem Bildschirm zu unterscheiden
 - analytics
 - "Bezahlung" per folding@home
+- sollen diverse zukünftige Features als Fake angeboten werden oder lieber geheim halten?
+    - wenn ja, dann anzeigen und dann aber verhindern, dass sie genutzt werden, um zu verbergen, dass sie noch gar nicht
+        gehen. Beispiele:
+        - only for closed beta users
+            - Mit Fake-Bewerbungsformular. Hinweis, dass die User zufällig ausgewählt werden, dann ist keiner enttäuscht,
+                dass er nicht drankommt.
+        - please enter beta user code: (Eingabeformular)
+            Nicht so toll, das klingt eher nach Bezahlfeature, auch wenn es nicht so gemeint ist und nicht so da steht
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
