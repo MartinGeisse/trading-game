@@ -1,6 +1,7 @@
 package name.martingeisse.trading_game.gui.gamepage;
 
 import name.martingeisse.trading_game.gui.inventory.InventorySectionPanel;
+import name.martingeisse.trading_game.gui.manufacturing.ManufacturingSectionDummyPanel;
 import name.martingeisse.trading_game.gui.manufacturing.ManufacturingSectionPanel;
 import name.martingeisse.trading_game.gui.map.MapSectionPanel;
 import name.martingeisse.trading_game.gui.market.MarketSectionPanel;
@@ -104,16 +105,17 @@ public class GamePage extends AbstractPage {
 				return new InventorySectionPanel(panelId);
 			}
 		});
-		tabs.add(new PanelClassRecognizingTab(Model.of("Market"), InventorySectionPanel.class) {
+		tabs.add(new PanelClassRecognizingTab(Model.of("Market"), MarketSectionPanel.class) {
 			@Override
 			public WebMarkupContainer getPanel(String panelId) {
 				return new MarketSectionPanel(panelId);
 			}
 		});
-		tabs.add(new PanelClassRecognizingTab(Model.of("Manufacturing"), InventorySectionPanel.class) {
+		tabs.add(new PanelClassRecognizingTab(Model.of("Manufacturing"), ManufacturingSectionDummyPanel.class) {
 			@Override
 			public WebMarkupContainer getPanel(String panelId) {
-				return new ManufacturingSectionPanel(panelId);
+				// return new ManufacturingSectionPanel(panelId);
+				return new ManufacturingSectionDummyPanel(panelId);
 			}
 		});
 		add(new MainMenuTabbedPanel<>("tabbedPanel", tabs));
