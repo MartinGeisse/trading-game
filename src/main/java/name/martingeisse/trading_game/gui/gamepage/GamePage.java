@@ -1,13 +1,20 @@
 package name.martingeisse.trading_game.gui.gamepage;
 
+import name.martingeisse.trading_game.gui.assets.AssetsDummyPanel;
+import name.martingeisse.trading_game.gui.brokerage.BrokerageDummyPanel;
+import name.martingeisse.trading_game.gui.financial.FinancialDummyPanel;
 import name.martingeisse.trading_game.gui.inventory.InventorySectionPanel;
 import name.martingeisse.trading_game.gui.manufacturing.ManufacturingSectionDummyPanel;
 import name.martingeisse.trading_game.gui.manufacturing.ManufacturingSectionPanel;
 import name.martingeisse.trading_game.gui.map.MapSectionPanel;
 import name.martingeisse.trading_game.gui.market.MarketSectionPanel;
 import name.martingeisse.trading_game.gui.players.PlayerListPanel;
+import name.martingeisse.trading_game.gui.remote_drones.RemoteDronesDummyPanel;
+import name.martingeisse.trading_game.gui.renting.RentalContractPanel;
+import name.martingeisse.trading_game.gui.research.ResearchDummyPanel;
 import name.martingeisse.trading_game.gui.self.SelfPlayerPanel;
 import name.martingeisse.trading_game.gui.services.ServiceContractsDummyPanel;
+import name.martingeisse.trading_game.gui.vanity.VanityDummyPanel;
 import name.martingeisse.trading_game.gui.websockets.GameListenerWebSocketBehavior;
 import name.martingeisse.trading_game.platform.wicket.LoginCookieUtil;
 import name.martingeisse.trading_game.platform.wicket.MyWicketSession;
@@ -119,10 +126,52 @@ public class GamePage extends AbstractPage {
 				return new ManufacturingSectionDummyPanel(panelId);
 			}
 		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Assets"), AssetsDummyPanel.class) {
+			@Override
+			public WebMarkupContainer getPanel(String panelId) {
+				return new AssetsDummyPanel(panelId);
+			}
+		});
 		tabs.add(new PanelClassRecognizingTab(Model.of("Service Contracts"), ServiceContractsDummyPanel.class) {
 			@Override
 			public WebMarkupContainer getPanel(String panelId) {
 				return new ServiceContractsDummyPanel(panelId);
+			}
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Rental Contracts"), RentalContractPanel.class) {
+			@Override
+			public WebMarkupContainer getPanel(String panelId) {
+				return new RentalContractPanel(panelId);
+			}
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Remote Drones"), RemoteDronesDummyPanel.class) {
+			@Override
+			public WebMarkupContainer getPanel(String panelId) {
+				return new RemoteDronesDummyPanel(panelId);
+			}
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Research"), ResearchDummyPanel.class) {
+			@Override
+			public WebMarkupContainer getPanel(String panelId) {
+				return new ResearchDummyPanel(panelId);
+			}
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Brokerage"), BrokerageDummyPanel.class) {
+			@Override
+			public WebMarkupContainer getPanel(String panelId) {
+				return new BrokerageDummyPanel(panelId);
+			}
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Financial"), FinancialDummyPanel.class) {
+			@Override
+			public WebMarkupContainer getPanel(String panelId) {
+				return new FinancialDummyPanel(panelId);
+			}
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Vanity"), VanityDummyPanel.class) {
+			@Override
+			public WebMarkupContainer getPanel(String panelId) {
+				return new VanityDummyPanel(panelId);
 			}
 		});
 		add(new MainMenuTabbedPanel<>("tabbedPanel", tabs));
