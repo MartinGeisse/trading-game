@@ -7,6 +7,7 @@ import name.martingeisse.trading_game.gui.map.MapSectionPanel;
 import name.martingeisse.trading_game.gui.market.MarketSectionPanel;
 import name.martingeisse.trading_game.gui.players.PlayerListPanel;
 import name.martingeisse.trading_game.gui.self.SelfPlayerPanel;
+import name.martingeisse.trading_game.gui.services.ServiceContractsDummyPanel;
 import name.martingeisse.trading_game.gui.websockets.GameListenerWebSocketBehavior;
 import name.martingeisse.trading_game.platform.wicket.LoginCookieUtil;
 import name.martingeisse.trading_game.platform.wicket.MyWicketSession;
@@ -116,6 +117,12 @@ public class GamePage extends AbstractPage {
 			public WebMarkupContainer getPanel(String panelId) {
 				// return new ManufacturingSectionPanel(panelId);
 				return new ManufacturingSectionDummyPanel(panelId);
+			}
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Service Contracts"), ServiceContractsDummyPanel.class) {
+			@Override
+			public WebMarkupContainer getPanel(String panelId) {
+				return new ServiceContractsDummyPanel(panelId);
 			}
 		});
 		add(new MainMenuTabbedPanel<>("tabbedPanel", tabs));
