@@ -2,11 +2,18 @@
 <html>
 <wicket:head>
     <style type="text/css">
+
             .tab-row .selected .btn {
                 background-color: #80c040;
             }
 
+            .tab-row > div {
+                margin-top: 2px;
+            }
 
+            .tab-row > .last {
+                margin-top: 20px;
+            }
 
     </style>
     <script type="text/javascript">
@@ -19,8 +26,6 @@
                 }
             });
         });
-
-
     </script>
 </wicket:head>
 <body>
@@ -28,13 +33,12 @@
     <div style="position: fixed; left: 0px; top: 0px; bottom: 0px; width: 300px; padding: 5px;">
         <h1>Main Menu</h1>
         <div wicket:id="tabs-container" class="tab-row">
-            <div wicket:id="tabs" style="margin-bottom: 5px;">
+            <div wicket:id="tabs">
                 <a href="#" wicket:id="link" class="btn btn-primary btn-block"><span
                         wicket:id="title">[[tab title]]</span></a>
             </div>
         </div>
-        <hr style="margin-top: 20px">
-        <form id="feedbackForm" wicket:id="feedbackForm">
+        <form id="feedbackForm" wicket:id="feedbackForm" style="position: absolute; left: 10px; right: 10px; bottom: 0px;">
             <div>Feedback?</div>
             <div><textarea wicket:id="text"
                            style="width: 100%; margin-bottom: 3px; resize: none; background-color: #aaa; color: black; "></textarea>
