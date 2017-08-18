@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+<wicket:head>
+    <style type="text/css">
+
+        .invisible-table td {
+            padding: 5px;
+        }
+
+    </style>
+</wicket:head>
+<body>
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+    <h2>Account</h2>
+    <h3>Playtime</h3>
+    <table class="invisible-table">
+        <tr>
+            <td>Remaining playtime:</td>
+            <td wicket:id="remainingPlaytime"></td>
+        </tr>
+        <tr>
+            <td>F@H username:</td>
+            <td wicket:id="foldingUsername"></td>
+        </tr>
+        <tr>
+            <td>Folding credits counted for playtime:</td>
+            <td wicket:id="spentFoldingCredits"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>Earned F@H credits will be counted for playtime in regular intervals. You won't lose these credits in the F@H stats.</td>
+        </tr>
+        <tr>
+            <td>All players:</td>
+            <td wicket:id="gameTotalContainer"><span wicket:id="gameTotal"></span></td>
+        </tr>
+    </table>
+    <br><br>
+    <p>This game is "paid" for in an unusual way: By offering computing time on your computer to Folding@Home, a
+    medical research project that is in need of lots of computing power to better understand certain diseases. See
+    their <a href="http://folding.stanford.edu">home page</a> for general information on the project and detailed
+    information on how to contribute computing time.</p>
+    <p>In the future, we expect the need to pay for playtime in a traditional way, using money, by players who cannot
+        or don't want to deal with F@H, for example for technical reasons. This is planned long-term only, so please
+        be patient. Payment will only affect playtime though, and never have any in-game effect:</p>
+    <div class="container">
+        <div class="jumbotron">
+            <b>This game will never be pay-to-win, and any attempt to make it pay-to-win (such as selling in-game
+            items for real money) is prohibited. </b>
+        </div>
+    </div>
+    <p>Furthermore, I really want to keep the F@H "payment" up long-term because I like the idea. So if you want to
+        continue playing without paying, you can. You should expect the "price" in terms of F@œH credits needed for
+        playtime to rise in the future, though.
+    </p>
+
+</wicket:panel>
+</body>
+</html>

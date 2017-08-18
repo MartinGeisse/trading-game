@@ -50,7 +50,7 @@ public final class GameDefinition {
 			List<ItemType> upgradesForThisLevel = new ArrayList<>();
 			upgradesForThisLevel.add(new ItemType("level " + level + " engines", "no_icon.png", level * 10,
 					PlayerShipEquipmentSlotType.ENGINE, ImmutableMap.of(PlayerAttributeKey.SHIP_MOVEMENT_SPEED,
-					10_000 * factor)));
+					3 * factor))); // TODO player is still moving fast!
 			upgradesForThisLevel.add(new ItemType("level " + level + " mining gear", "no_icon.png", level * 10,
 					PlayerShipEquipmentSlotType.MINING_GEAR, ImmutableMap.of(PlayerAttributeKey.MINING_SPEED,
 					10_000 * factor)));

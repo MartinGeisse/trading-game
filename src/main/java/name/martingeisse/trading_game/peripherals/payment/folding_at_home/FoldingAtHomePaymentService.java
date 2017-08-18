@@ -24,7 +24,7 @@ public class FoldingAtHomePaymentService {
 		playerRepository.forEachPlayer(player -> {
 			String userHash = player.getFoldingUserHash();
 			if (userHash != null) {
-				String userName = "SpaceTrading-" + userHash;
+				String userName = FoldingAtHomeConstants.NAME_PREFIX + userHash;
 				UserScore userScore = foldingAtHomeApiService.getUserScore(userName);
 				player.updatePlayTimeCredits(userScore.getCredits());
 			}

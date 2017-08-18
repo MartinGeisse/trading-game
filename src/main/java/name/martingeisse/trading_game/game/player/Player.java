@@ -208,7 +208,7 @@ public final class Player {
 
 		// set up base values
 		Map<PlayerAttributeKey, Integer> attributes = new HashMap<>();
-		attributes.put(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 30_000);
+		attributes.put(PlayerAttributeKey.SHIP_MOVEMENT_SPEED, 2);
 		attributes.put(PlayerAttributeKey.MAXIMUM_CARGO_MASS, 10_000);
 
 		// apply equipment bonus
@@ -284,6 +284,14 @@ public final class Player {
 			setField(QPlayerRow.Player.spentFoldingCredits, totalEarnedCredits);
 			setField(QPlayerRow.Player.remainingPlayTime, QPlayerRow.Player.remainingPlayTime.add(additionalPlayTime));
 		}
+	}
+
+	public long getSpentFoldingCredits() {
+		return getField(QPlayerRow.Player.spentFoldingCredits);
+	}
+
+	public long getRemainingPlayTime() {
+		return getField(QPlayerRow.Player.remainingPlayTime);
 	}
 
 	public String getFoldingUserHash() {

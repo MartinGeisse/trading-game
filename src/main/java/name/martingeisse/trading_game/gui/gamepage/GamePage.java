@@ -1,5 +1,6 @@
 package name.martingeisse.trading_game.gui.gamepage;
 
+import name.martingeisse.trading_game.gui.account.AccountPanel;
 import name.martingeisse.trading_game.gui.assets.AssetsDummyPanel;
 import name.martingeisse.trading_game.gui.brokerage.BrokerageDummyPanel;
 import name.martingeisse.trading_game.gui.financial.FinancialDummyPanel;
@@ -172,6 +173,12 @@ public class GamePage extends AbstractPage {
 			@Override
 			public WebMarkupContainer getPanel(String panelId) {
 				return new VanityDummyPanel(panelId);
+			}
+		});
+		tabs.add(new PanelClassRecognizingTab(Model.of("Account"), AccountPanel.class) {
+			@Override
+			public WebMarkupContainer getPanel(String panelId) {
+				return new AccountPanel(panelId);
 			}
 		});
 		add(new MainMenuTabbedPanel<>("tabbedPanel", tabs));
