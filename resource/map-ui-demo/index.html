@@ -1,0 +1,301 @@
+<html>
+    <head>
+    <style type="text/css">
+
+        .tool {
+            border: 1px solid #40b0b0;
+            background-color: #004040;
+            padding: 4px 3px 3px;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            color: #0080ff;
+            text-decoration: none;
+            font-family: sans-serif;
+            user-select: none;
+        }
+
+    </style>
+    <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="jquery.mousewheel.js"></script>
+    <script type="text/javascript" src="jscookie.js"></script>
+    <script type="text/javascript" src="general.js"></script>
+    <script type="text/javascript" src="AwesomeMap.js"></script>
+    <script type="text/javascript">
+
+
+        setStateCookie = function(name, value) {
+            Cookies.set(name, value, {
+                expires: 365,
+                path: '/',
+                secure: false
+            });
+        };
+
+        getStateCookie = function(name) {
+            var result = Cookies.getJSON(name);
+            if ((typeof result) === 'undefined') {
+                return null;
+            } else {
+                return result;
+            }
+        };
+
+        function buildRandomSpaceObject(id, dynamic) {
+            var spaceSize = 10000000;
+            var object = {
+                id: id,
+                x: (Math.random() - 0.5) * spaceSize,
+                y: (Math.random() - 0.5) * spaceSize,
+                r: Math.random() * 100,
+                f: ['star', 'planet', 'asteroid', 'spaceStation'][Math.floor(Math.random() * 4)]
+            };
+            if (dynamic) {
+                object.x2 = (Math.random() - 0.5) * spaceSize;
+                object.y2 = (Math.random() - 0.5) * spaceSize;
+                object.t = Math.random() * 100;
+            }
+            return object;
+        }
+
+        staticSpaceObjects = [];
+        for (var i = 0; i < 1000; i++) {
+            var object = buildRandomSpaceObject('s' + i, false);
+            staticSpaceObjects[object.id] = object;
+        }
+        dynamicSpaceObjects = [];
+        for (var i = 0; i < 100; i++) {
+            var object = buildRandomSpaceObject('d' + i, true);
+            dynamicSpaceObjects[object.id] = object;
+        }
+        initializeMapSectionPanel = function() {
+            latestDynamicSpaceObjectsUpdateTimestamp = new Date().getTime();
+            selectedSpaceObjectId = null;
+            selectionDistance = 30;
+            selectionIndicatorRadius = 10;
+            secondsSinceLatestDynamicSpaceObjectsUpdate = 0;
+            $(function() {
+                setTimeout(function() {
+
+                    // drawing helpers
+                    function buildCircleRenderFunction(color, vanishRadius, minRadius) {
+                        return function(context, viewport, object, position) {
+                            var zoomedRadius = viewport.zoom * object.r;
+                            var radius;
+                            if (zoomedRadius < vanishRadius) {
+                                return;
+                            } else if (zoomedRadius < minRadius) {
+                                radius = minRadius / viewport.zoom;
+                            } else {
+                                radius = object.r;
+                            }
+                            context.fillStyle = color;
+                            context.beginPath();
+                            context.arc(position.x, position.y, radius, 0, 2 * Math.PI);
+                            context.fill();
+                        };
+                    };
+                    var renderFunctions = {
+                        star: buildCircleRenderFunction('#ffcc00', 0.05, 6),
+                        planet: buildCircleRenderFunction('#cccccc', 0.05, 4),
+                        asteroid: buildCircleRenderFunction('#aaaaaa', 0.05, 1),
+                        self: buildCircleRenderFunction('#ff0000', -1, 8),
+                        ship: buildCircleRenderFunction('#00ffff', 0.05, 2),
+                        spaceStation: buildCircleRenderFunction('#0080ff', 0.003, 2),
+                    };
+
+                    // create the map and its layers
+                    function interpolateSpaceObjectPosition(object) {
+                        if (('x2' in object) && ('y2' in object) && ('t' in object) && (object.t > 0)) {
+                            var alpha = secondsSinceLatestDynamicSpaceObjectsUpdate / object.t;
+                            if (alpha >= 1) {
+                                return {
+                                    x: object.x2,
+                                    y: object.y2
+                                };
+                            } else {
+                                return {
+                                    x: alpha * object.x2 + (1 - alpha) * object.x,
+                                    y: alpha * object.y2 + (1 - alpha) * object.y
+                                };
+                            }
+                        } else {
+                            return {
+                                x: object.x,
+                                y: object.y
+                            };
+                        }
+                    }
+                    map = new AwesomeMap.Map($('#map')[0]);
+                    map.onBeforeRender = function(context) {
+                        secondsSinceLatestDynamicSpaceObjectsUpdate = (new Date().getTime() - latestDynamicSpaceObjectsUpdateTimestamp) / 1000;
+                    };
+                    selectionIndicatorLayer = new AwesomeMap.Layer();
+                    selectionIndicatorLayer.objects = [{}];
+                    selectionIndicatorLayer.renderer = function(context, viewport, object) {
+                        var selectedSpaceObject = getSelectedSpaceObject();
+                        if (selectedSpaceObject !== null) {
+                            var position = interpolateSpaceObjectPosition(selectedSpaceObject);
+                            context.fillStyle = '#008000';
+                            context.strokeStyle = '#00ff00';
+                            context.lineWidth = map.viewport.untransformDistance(2);
+                            context.beginPath();
+                            context.arc(position.x, position.y, selectedSpaceObject.r + viewport.untransformDistance(selectionIndicatorRadius), 0, 2 * Math.PI);
+                            context.fill();
+                            context.stroke();
+                        }
+                    };
+                    staticSpaceObjectsLayer = new AwesomeMap.Layer();
+                    staticSpaceObjectsLayer.renderer = function(context, viewport, object) {
+                        renderFunctions[object.f](context, viewport, object, object);
+                    };
+                    dynamicSpaceObjectsLayer = new AwesomeMap.Layer();
+                    dynamicSpaceObjectsLayer.renderer = function(context, viewport, object) {
+                        renderFunctions[object.f](context, viewport, object, interpolateSpaceObjectPosition(object));
+                    };
+                    map.layers = [selectionIndicatorLayer, staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
+                    map.installResizer(function(canvas) {
+                        var $container = $(canvas).parent();
+                        canvas.width = $container.width();
+                        canvas.height = $container.height();
+                    });
+                    staticSpaceObjectsLayer.objects = staticSpaceObjects;
+                    dynamicSpaceObjectsLayer.objects = dynamicSpaceObjects;
+
+                    // re-render periodically to animate dynamic space objects
+                    setInterval(function() {
+                        map.render();
+                    }, 100);
+
+                    // object selection
+                    getSelectedSpaceObject = function() {
+                        if (selectedSpaceObjectId === null) {
+                            return null;
+                        }
+                        if (selectedSpaceObjectId in staticSpaceObjects) {
+                            return staticSpaceObjects[selectedSpaceObjectId];
+                        }
+                        if (selectedSpaceObjectId in dynamicSpaceObjects) {
+                            return dynamicSpaceObjects[selectedSpaceObjectId];
+                        }
+                        return null;
+                    };
+                    selectSpaceObject = function(id) {
+                        if (id !== null && (typeof id) !== 'string') {
+                            throw 'invalid id type: ' + (typeof id) + ' in ' + id;
+                        }
+                        selectedSpaceObjectId = id;
+                        map.render();
+                        setStateCookie('mapSelection', {id: id});
+                        $('#propertiesBoxLoadingIndicator').show();
+                        if (id === null) {
+                            $('#propertiesBox').hide();
+                            // server side needed: sendUnselectCommand();
+                        } else {
+                            $('#propertiesBox').show();
+                            // server side needed: sendSelectCommand(id);
+                        }
+                    };
+                    selectNearestSpaceObject = function(event) {
+                        var point = map.viewport.untransformMouseEvent(event);
+                        var clickRadius = map.viewport.untransformDistance(selectionDistance);
+                        var clickTargetLayers = [staticSpaceObjectsLayer, dynamicSpaceObjectsLayer];
+                        var id = null;
+                        var foundDistanceSquared = null;
+                        layerLoop: for (i in clickTargetLayers) {
+                            var clickTargetLayer = clickTargetLayers[i];
+                            for (var j in clickTargetLayer.objects) {
+                                var object = clickTargetLayer.objects[j];
+                                var interpolated = interpolateSpaceObjectPosition(object);
+                                var maxDistance = clickRadius + object.r;
+                                var dx = (point.x - interpolated.x);
+                                if (dx > maxDistance || dx < -maxDistance) {
+                                    continue;
+                                }
+                                var dy = (point.y - interpolated.y);
+                                if (dy > maxDistance || dy < -maxDistance) {
+                                    continue;
+                                }
+                                var distanceSquared = dx * dx + dy * dy;
+                                if (distanceSquared <= maxDistance * maxDistance) {
+                                    if (id == null || distanceSquared < foundDistanceSquared) {
+                                        id = object.id;
+                                        foundDistanceSquared = distanceSquared;
+                                    }
+                                }
+                            }
+                        }
+                        selectSpaceObject(id);
+                    };
+
+                    // clicking selects an object
+                    //
+                    // TODO currently uses 'contextmenu' event since we cannot distinguish left-clicking from dragging yet
+                    //
+                    map.clickCallback = function(event) {
+                        selectNearestSpaceObject(event);
+                        return false;
+                    };
+
+                    // utility links
+                    $(document).on('click', '#selectOwnShipLink', function() {
+                        // server side needed: selectSpaceObject(playerShipId);
+                        return false;
+                    });
+                    $(document).on('click', '#centerSelectedObjectLink', function() {
+                        var object = getSelectedSpaceObject();
+                        if (object !== null) {
+                            var interpolated = interpolateSpaceObjectPosition(object);
+                            map.focusMapCoordinates(interpolated.x, interpolated.y);
+                        }
+                        return false;
+                    });
+
+                    // restore previous selection, position, zoom
+                    oldSelection = getStateCookie('mapSelection');
+                    if (oldSelection) {
+                        selectSpaceObject(oldSelection.id);
+                    } else {
+                        // server side needed: selectSpaceObject(playerShipId);
+                    }
+                    oldState = getStateCookie('mapState');
+                    if (oldState) {
+                        map.viewport.mapOriginX = oldState.mapOriginX;
+                        map.viewport.mapOriginY = oldState.mapOriginY;
+                        map.viewport.zoom = oldState.zoom;
+                    } else {
+                        var object = getSelectedSpaceObject();
+                        if (object !== null) {
+                            map.focusMapCoordinates(object.x, object.y);
+                        }
+                        map.viewport.zoom = 0.001;
+                    }
+
+                    // save position/zoom changes from here
+                    map.viewport.onChange = function() {
+                        setStateCookie('mapState', {
+                            mapOriginX: map.viewport.mapOriginX,
+                            mapOriginY: map.viewport.mapOriginY,
+                            zoom: map.viewport.zoom,
+                        });
+                    };
+
+                    map.render();
+                }, 0);
+            });
+        };
+        updateDynamicSpaceObjectsOnMap = function() {
+            latestDynamicSpaceObjectsUpdateTimestamp = new Date().getTime();
+            dynamicSpaceObjectsLayer.objects = dynamicSpaceObjects;
+            map.render();
+        };
+        $(initializeMapSectionPanel);
+    </script>
+</head>
+<body>
+    <canvas id="map" style="display: block; margin: 0px; padding: 0px; z-index: 0; "></canvas>
+    <div style="position: absolute; left: 20px; bottom: 20px; z-index: 1">
+        <a class="tool" href="#" id="centerSelectedObjectLink">center</span></a>
+    </div>
+</body>
+</html>
