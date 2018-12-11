@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2016 Service-Reisen Giessen Heyne GmbH & Co KG
- */
 package name.martingeisse.trading_game.api.internal;
 
 import com.google.inject.Inject;
